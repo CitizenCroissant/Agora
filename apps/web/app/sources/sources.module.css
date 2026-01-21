@@ -1,0 +1,141 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background: var(--color-primary);
+  color: white;
+  padding: var(--spacing-lg) 0;
+}
+
+.backLink {
+  display: inline-block;
+  margin-bottom: var(--spacing-sm);
+  color: white;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+}
+
+.backLink:hover {
+  opacity: 1;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.main {
+  flex: 1;
+  padding: var(--spacing-xl) 0;
+}
+
+.section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.section h2 {
+  font-size: 1.75rem;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.section p {
+  line-height: 1.8;
+  margin-bottom: var(--spacing-md);
+  font-size: 1.125rem;
+}
+
+.sources {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+}
+
+.source {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow);
+}
+
+.source h3 {
+  font-size: 1.25rem;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.source p {
+  margin-bottom: var(--spacing-md);
+  line-height: 1.6;
+  color: var(--color-text-light);
+}
+
+.sourceLink {
+  display: inline-block;
+  color: var(--color-primary);
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+.sourceLink:hover {
+  opacity: 0.8;
+}
+
+.glossary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.term {
+  background: var(--color-background-alt);
+  border-left: 4px solid var(--color-primary);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+}
+
+.term h4 {
+  font-size: 1.125rem;
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-text);
+}
+
+.term p {
+  margin: 0;
+  font-size: 0.938rem;
+  line-height: 1.6;
+  color: var(--color-text-light);
+}
+
+.footer {
+  background: var(--color-background-alt);
+  border-top: 1px solid var(--color-border);
+  padding: var(--spacing-lg) 0;
+  text-align: center;
+  color: var(--color-text-light);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem;
+  }
+
+  .section h2 {
+    font-size: 1.5rem;
+  }
+
+  .section p {
+    font-size: 1rem;
+  }
+
+  .glossary {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,254 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background: var(--color-primary);
+  padding: var(--spacing-md) 0;
+}
+
+.backLink {
+  color: white;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+}
+
+.backLink:hover {
+  opacity: 1;
+}
+
+.main {
+  flex: 1;
+  padding: var(--spacing-xl) 0;
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: var(--spacing-xl);
+  font-size: 1.125rem;
+  color: var(--color-text-light);
+}
+
+.error {
+  color: var(--color-secondary);
+}
+
+.sittingHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.title {
+  font-size: 2rem;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.date {
+  font-size: 1.125rem;
+  color: var(--color-text-light);
+  text-transform: capitalize;
+}
+
+.timeRange {
+  background: var(--color-background-alt);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  text-align: center;
+  min-width: 150px;
+}
+
+.timeLabel {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-xs);
+}
+
+.time {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-lg);
+}
+
+.locationIcon {
+  font-size: 1.25rem;
+}
+
+.description {
+  margin-bottom: var(--spacing-xl);
+  line-height: 1.6;
+  font-size: 1.125rem;
+}
+
+.agendaSection {
+  margin-bottom: var(--spacing-xl);
+}
+
+.agendaSection h2 {
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--color-primary);
+}
+
+.agendaItems {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.agendaItem {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+}
+
+.itemHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.itemNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: var(--color-primary);
+  color: white;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.itemTime {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.itemCategory {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-primary);
+  color: white;
+  border-radius: var(--border-radius);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.itemTitle {
+  font-size: 1.125rem;
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text);
+}
+
+.itemDescription {
+  margin-bottom: var(--spacing-sm);
+  line-height: 1.6;
+  color: var(--color-text-light);
+}
+
+.itemReference {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-sm);
+}
+
+.itemLink {
+  display: inline-block;
+  color: var(--color-primary);
+  font-weight: 500;
+  font-size: 0.938rem;
+  text-decoration: underline;
+}
+
+.itemLink:hover {
+  opacity: 0.8;
+}
+
+.source {
+  margin-top: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+}
+
+.source h3 {
+  font-size: 1.25rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.source p {
+  margin-bottom: var(--spacing-sm);
+  font-size: 0.938rem;
+}
+
+.sourceDate {
+  color: var(--color-text-light);
+  font-size: 0.875rem;
+}
+
+.sourceLink {
+  display: inline-block;
+  margin-top: var(--spacing-sm);
+  color: var(--color-primary);
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+.sourceLink:hover {
+  opacity: 0.8;
+}
+
+.footer {
+  background: var(--color-background-alt);
+  border-top: 1px solid var(--color-border);
+  padding: var(--spacing-lg) 0;
+  text-align: center;
+  color: var(--color-text-light);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .sittingHeader {
+    flex-direction: column;
+  }
+
+  .timeRange {
+    width: 100%;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .itemHeader {
+    flex-wrap: wrap;
+  }
+}
