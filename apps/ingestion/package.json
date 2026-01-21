@@ -6,17 +6,22 @@
     "dev": "vercel dev",
     "build": "tsc",
     "ingest": "ts-node src/ingest.ts",
-    "lint": "tsc --noEmit"
+    "lint": "eslint . && tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@agora/shared": "*",
-    "@supabase/supabase-js": "^2.47.10",
-    "node-fetch": "^2.7.0"
+    "@supabase/supabase-js": "^2.48.1",
+    "dotenv": "^16.4.7",
+    "node-fetch": "^3.3.2",
+    "unzipper": "^0.12.3"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
-    "@types/node-fetch": "^2.6.12",
-    "@vercel/node": "^3.3.1",
+    "@types/unzipper": "^0.10.10",
+    "@vercel/node": "^5.3.21",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
   }

@@ -23,22 +23,24 @@ Next.js web application for Agora.
    npm install
    ```
 
-2. Copy `env.example` to `.env.local` and configure:
-   ```bash
-   cp env.example .env.local
-   ```
+2. Configure API URL (optional):
+   - Copy `env.example` to `.env.local`:
+     ```bash
+     cp env.example .env.local
+     ```
+   - The API URL defaults to `http://localhost:3000/api`
+   - To use a different URL, set in `.env.local`:
+     ```
+     NEXT_PUBLIC_API_URL=https://your-api.vercel.app/api
+     ```
+   - Configuration is centralized in `lib/config.ts`
 
-3. Set the API URL:
-   ```
-   NEXT_PUBLIC_API_URL=http://localhost:3001/api
-   ```
-
-4. Run development server:
+3. Run development server:
    ```bash
    npm run dev
    ```
 
-The app will be available at `http://localhost:3000`
+The app will be available at `http://localhost:3000` (or next available port)
 
 ## Pages
 

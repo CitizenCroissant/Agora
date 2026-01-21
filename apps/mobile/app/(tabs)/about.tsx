@@ -1,3 +1,4 @@
+import React from 'react'
 import { View, Text, ScrollView, StyleSheet, Linking, TouchableOpacity } from 'react-native'
 
 export default function AboutScreen() {
@@ -10,12 +11,12 @@ export default function AboutScreen() {
       <View style={styles.section}>
         <Text style={styles.heading}>Notre mission</Text>
         <Text style={styles.paragraph}>
-          Agora a pour objectif de rendre l'activité de l'Assemblée
+          Agora a pour objectif de rendre l&apos;activité de l&apos;Assemblée
           nationale plus accessible et transparente pour tous les citoyens.
         </Text>
         <Text style={styles.paragraph}>
           Nous croyons que chacun devrait pouvoir consulter facilement ce que
-          font ses représentants aujourd'hui, cette semaine, et au-delà.
+          font ses représentants aujourd&apos;hui, cette semaine, et au-delà.
         </Text>
       </View>
 
@@ -30,7 +31,7 @@ export default function AboutScreen() {
             <Text style={styles.stepTitle}>Collecte des données</Text>
             <Text style={styles.stepText}>
               Nous récupérons automatiquement les données officielles de
-              l'Assemblée nationale via leurs sources ouvertes.
+              l&apos;Assemblée nationale via leurs sources ouvertes.
             </Text>
           </View>
         </View>
@@ -55,7 +56,7 @@ export default function AboutScreen() {
           <View style={styles.stepContent}>
             <Text style={styles.stepTitle}>Présentation claire</Text>
             <Text style={styles.stepText}>
-              Nous présentons l'information de manière simple et accessible.
+              Nous présentons l&apos;information de manière simple et accessible.
             </Text>
           </View>
         </View>
@@ -65,7 +66,7 @@ export default function AboutScreen() {
         <Text style={styles.heading}>Sources de données</Text>
         <Text style={styles.paragraph}>
           Toutes les informations proviennent directement des sources
-          officielles de l'Assemblée nationale.
+          officielles de l&apos;Assemblée nationale.
         </Text>
         
         <TouchableOpacity
@@ -96,7 +97,7 @@ export default function AboutScreen() {
           Agora v0.1.0
         </Text>
         <Text style={styles.footerText}>
-          Données officielles de l'Assemblée nationale
+          Données officielles de l&apos;Assemblée nationale
         </Text>
       </View>
     </ScrollView>

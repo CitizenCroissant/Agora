@@ -160,7 +160,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               description: sitting.description,
               location: sitting.location || undefined,
               time_range: timeRange,
-              agenda_items: items.map((item) => ({
+              agenda_items: items.map((item: DbAgendaItem) => ({
                 id: item.id,
                 sitting_id: item.sitting_id,
                 scheduled_time: item.scheduled_time || undefined,
@@ -176,12 +176,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         // Get latest sync time for this date
         const dateMetadata = dateSittings
-          .map((s) => metadataBySitting[s.id])
+          .map((s: DbSitting) => metadataBySitting[s.id])
           .filter(Boolean);
         const lastUpdated =
           dateMetadata.length > 0
             ? Math.max(
-                ...dateMetadata.map((m) => new Date(m.last_synced_at).getTime())
+                ...dateMetadata.map((m: DbSourceMetadata) => new Date(m.last_synced_at).getTime())
               )
             : Date.now();
 

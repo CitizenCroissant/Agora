@@ -45,10 +45,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       dryRun: dryRun || false,
     });
 
-    return res.status(200).json({
-      success: true,
-      ...result,
-    });
+    return res.status(200).json(result);
   } catch (error) {
     console.error('Ingestion error:', error);
     return res.status(500).json({

@@ -3,17 +3,26 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vercel dev",
+    "dev": "ts-node dev-server.ts",
+    "dev:vercel": "vercel dev",
     "build": "tsc",
-    "lint": "tsc --noEmit"
+    "lint": "eslint . && tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@agora/shared": "*",
-    "@supabase/supabase-js": "^2.47.10"
+    "@supabase/supabase-js": "^2.48.1"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node": "^22.10.2",
-    "@vercel/node": "^3.3.1",
-    "typescript": "^5.7.2"
+    "@vercel/node": "^5.3.21",
+    "dotenv": "^16.4.7",
+    "express": "^5.2.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2",
+    "vercel": "^50.4.8"
   }
 }

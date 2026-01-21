@@ -28,7 +28,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { id } = req.query;
+    // Support both Vercel (query) and Express (params) routing
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const id = (req.query.id || (req as any).params?.id) as string;
 
     if (!id || typeof id !== 'string') {
       throw new ApiError(400, 'Sitting ID is required', 'BadRequest');

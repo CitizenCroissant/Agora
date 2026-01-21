@@ -18,6 +18,9 @@ Agora is a transparent, modern web and mobile application that shows what the Fr
 - 🔗 **Source Transparency**: Direct links to official data
 - ⚡ **Fast & Modern**: Built with latest web technologies
 - 🌐 **Open Source**: Fully transparent, MIT licensed
+- ✅ **Real Data**: Integrated with live Assemblée nationale open data
+
+> **New!** Phase 4 complete: Now fetching real parliamentary data from `data.assemblee-nationale.fr`
 
 ## 🏗️ Architecture
 
@@ -124,6 +127,33 @@ Agora/
 
 For detailed setup instructions, see [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md).
 
+## 🧪 Testing & Linting
+
+### Run Tests
+
+```bash
+# Run all tests
+npm run test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage
+npm run test:coverage
+```
+
+### Run Linting
+
+```bash
+# Lint all packages
+npm run lint
+
+# Lint and auto-fix issues
+cd apps/web && npx eslint . --ext .ts,.tsx --fix
+```
+
+For comprehensive testing and linting documentation, see [docs/TESTING_AND_LINTING.md](docs/TESTING_AND_LINTING.md).
+
 ## 🛠️ Tech Stack
 
 ### Backend
@@ -147,6 +177,7 @@ For detailed setup instructions, see [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md).
 - [Setup Guide](docs/SETUP_GUIDE.md) - Detailed setup instructions
 - [Architecture](docs/ARCHITECTURE.md) - Technical architecture
 - [API Documentation](docs/API_DOCUMENTATION.md) - REST API reference
+- [Testing and Linting](docs/TESTING_AND_LINTING.md) - Testing and code quality guide
 - [Contributing](CONTRIBUTING.md) - How to contribute
 
 ## 🎯 Current Status
@@ -161,10 +192,12 @@ For detailed setup instructions, see [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md).
 - Mobile app with navigation
 - Data ingestion system
 - Complete documentation
+- Linting (ESLint + TypeScript)
+- Testing framework (Vitest + Jest)
+- CI/CD pipeline with automated tests
 
 🚧 **In Progress**:
 - Integration with real Assemblée nationale API (currently uses mock data)
-- Automated tests
 - Error monitoring
 
 📋 **Planned**:

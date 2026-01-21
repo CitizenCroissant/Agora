@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, ScrollView, ActivityIndicator, StyleSheet, Linking, TouchableOpacity } from 'react-native'
 import { useLocalSearchParams, Stack } from 'expo-router'
 import { SittingDetailResponse } from '@agora/shared'
 import { createApiClient, formatDate } from '@agora/shared'
+import { Config } from '../../config'
 
-// TODO: Replace with your actual API URL
-const API_URL = 'https://your-api.vercel.app/api'
-const apiClient = createApiClient(API_URL)
+const apiClient = createApiClient(Config.API_URL)
 
 export default function SittingDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -122,7 +121,7 @@ export default function SittingDetailScreen() {
               <View style={styles.sourceContainer}>
                 <Text style={styles.sourceTitle}>Source et provenance</Text>
                 <Text style={styles.sourceLabel}>
-                  Données officielles de l'Assemblée nationale
+                  Données officielles de l&apos;Assemblée nationale
                 </Text>
                 <Text style={styles.sourceDate}>
                   Dernière synchronisation:{' '}

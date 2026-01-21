@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native'
 import { useRouter } from 'expo-router'
 import { AgendaResponse } from '@agora/shared'
 import { createApiClient, getTodayDate, formatDate, addDays, subtractDays } from '@agora/shared'
+import { Config } from '../../config'
 
-// TODO: Replace with your actual API URL
-const API_URL = 'https://your-api.vercel.app/api'
-const apiClient = createApiClient(API_URL)
+const apiClient = createApiClient(Config.API_URL)
 
 export default function TodayScreen() {
   const router = useRouter()
@@ -47,21 +46,24 @@ export default function TodayScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.dateNav}>
-        <TouchableOpacity style={styles.navButton} onPress={goToPreviousDay}>
-          <Text style={styles.navButtonText}>← Précédent</Text>
-        </TouchableOpacity>
-        <View style={styles.dateDisplay}>
-          <Text style={styles.dateText}>{formatDate(currentDate)}</Text>
-          {currentDate !== getTodayDate() && (
-            <TouchableOpacity style={styles.todayButton} onPress={goToToday}>
-              <Text style={styles.todayButtonText}>Aujourd'hui</Text>
+      <View style={styles.controlBar}>
+        <View style={styles.topRow}>
+          <View style={styles.navigationControls}>
+            <TouchableOpacity style={styles.iconButton} onPress={goToPreviousDay}>
+              <Text style={styles.iconButtonText}>‹</Text>
             </TouchableOpacity>
-          )}
+            <TouchableOpacity style={styles.iconButton} onPress={goToNextDay}>
+              <Text style={styles.iconButtonText}>›</Text>
+            </TouchableOpacity>
+            {currentDate !== getTodayDate() && (
+              <TouchableOpacity style={styles.todayButton} onPress={goToToday}>
+                <Text style={styles.todayButtonText}>Aujourd&apos;hui</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
-        <TouchableOpacity style={styles.navButton} onPress={goToNextDay}>
-          <Text style={styles.navButtonText}>Suivant →</Text>
-        </TouchableOpacity>
+
+        <Text style={styles.dateTitle}>{formatDate(currentDate)}</Text>
       </View>
 
       <ScrollView style={styles.content}>
@@ -112,7 +114,7 @@ export default function TodayScreen() {
                   {sitting.agenda_items.length > 0 && (
                     <View style={styles.itemsCount}>
                       <Text style={styles.itemsCountText}>
-                        {sitting.agenda_items.length} point(s) à l'ordre du jour
+                        {sitting.agenda_items.length} point(s) à l&apos;ordre du jour
                       </Text>
                     </View>
                   )}
@@ -140,44 +142,61 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
-  dateNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
+  controlBar: {
     backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: 'rgba(0, 85, 164, 0.1)',
+    padding: 16,
+    paddingBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 3,
   },
-  navButton: {
-    padding: 8,
+  topRow: {
+    marginBottom: 12,
   },
-  navButtonText: {
-    color: '#0055a4',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  dateDisplay: {
+  navigationControls: {
+    flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
+    gap: 6,
+    justifyContent: 'center',
   },
-  dateText: {
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
-    textTransform: 'capitalize',
+  iconButton: {
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    borderRadius: 8,
+    backgroundColor: '#fff',
+  },
+  iconButtonText: {
+    fontSize: 28,
+    fontWeight: '300',
+    color: '#333',
+    lineHeight: 32,
   },
   todayButton: {
-    marginTop: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    backgroundColor: '#ef4135',
-    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    backgroundColor: '#0055a4',
+    borderRadius: 8,
+    marginLeft: 6,
   },
   todayButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
     color: '#fff',
-    fontSize: 12,
-    fontWeight: '500',
+  },
+  dateTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    textAlign: 'center',
+    textTransform: 'capitalize',
   },
   content: {
     flex: 1,

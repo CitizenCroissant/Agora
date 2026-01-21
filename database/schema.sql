@@ -46,7 +46,7 @@ CREATE INDEX idx_agenda_items_sitting_id ON agenda_items(sitting_id);
 -- Tracks provenance and synchronization information
 CREATE TABLE source_metadata (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    sitting_id UUID NOT NULL REFERENCES sittings(id) ON DELETE CASCADE,
+    sitting_id UUID NOT NULL UNIQUE REFERENCES sittings(id) ON DELETE CASCADE,
     original_source_url TEXT NOT NULL,
     last_synced_at TIMESTAMPTZ DEFAULT NOW(),
     checksum TEXT NOT NULL,
@@ -54,8 +54,8 @@ CREATE TABLE source_metadata (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Index on sitting_id for efficient lookups
-CREATE INDEX idx_source_metadata_sitting_id ON source_metadata(sitting_id);
+-- Index on sitting_id for efficient lookups (unique constraint already provides an index)
+-- CREATE INDEX idx_source_metadata_sitting_id ON source_metadata(sitting_id);
 
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()

@@ -2,7 +2,7 @@
  * Error handling utilities
  */
 
-import { VercelRequest, VercelResponse } from '@vercel/node';
+import { VercelResponse } from '@vercel/node';
 
 export class ApiError extends Error {
   constructor(

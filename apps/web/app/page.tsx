@@ -3,12 +3,11 @@
 import { useEffect, useState } from 'react'
 import { AgendaResponse } from '@agora/shared'
 import { createApiClient, getTodayDate, formatDate, addDays, subtractDays } from '@agora/shared'
+import { Config } from '@/lib/config'
 import Link from 'next/link'
 import styles from './page.module.css'
 
-const apiClient = createApiClient(
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
-)
+const apiClient = createApiClient(Config.API_URL)
 
 export default function Home() {
   const [currentDate, setCurrentDate] = useState<string>(getTodayDate())
@@ -46,6 +45,13 @@ export default function Home() {
     setCurrentDate(getTodayDate())
   }
 
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDate = e.target.value
+    if (newDate && newDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      setCurrentDate(newDate)
+    }
+  }
+
   return (
     <div className={styles.page}>
       <header className={styles.header}>
@@ -75,21 +81,51 @@ export default function Home() {
 
       <main className={styles.main}>
         <div className="container">
-          <div className={styles.dateNav}>
-            <button onClick={goToPreviousDay} className={styles.dateNavBtn}>
-              ← Jour précédent
-            </button>
-            <div className={styles.dateDisplay}>
-              <h2>{formatDate(currentDate)}</h2>
+          <div className={styles.controlBar}>
+            <div className={styles.leftControls}>
+              <button 
+                className={styles.iconButton}
+                onClick={goToPreviousDay}
+                aria-label="Jour précédent"
+                title="Jour précédent"
+              >
+                ‹
+              </button>
+              <button 
+                className={styles.iconButton}
+                onClick={goToNextDay}
+                aria-label="Jour suivant"
+                title="Jour suivant"
+              >
+                ›
+              </button>
               {currentDate !== getTodayDate() && (
-                <button onClick={goToToday} className={styles.todayBtn}>
-                  Retour à aujourd'hui
+                <button 
+                  className={styles.todayButton}
+                  onClick={goToToday}
+                >
+                  Aujourd'hui
                 </button>
               )}
             </div>
-            <button onClick={goToNextDay} className={styles.dateNavBtn}>
-              Jour suivant →
-            </button>
+
+            <div className={styles.centerControls}>
+              <h2 className={styles.dateTitle}>{formatDate(currentDate)}</h2>
+            </div>
+
+            <div className={styles.rightControls}>
+              <div className={styles.datePickerWrapper}>
+                <span className={styles.calendarIcon}>📅</span>
+                <input
+                  type="date"
+                  className={styles.datePicker}
+                  value={currentDate}
+                  onChange={handleDateChange}
+                  aria-label="Sélectionner une date"
+                  title="Choisir une date"
+                />
+              </div>
+            </div>
           </div>
 
           {loading && (

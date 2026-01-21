@@ -45,7 +45,7 @@ export function transformAgendaItems(
     category: point.nature || 'autre',
     reference_code: point.texteRef,
     official_url: point.texteRef
-      ? `https://www.assemblee-nationale.fr/dyn/16/textes/${point.texteRef}`
+      ? `https://www.assemblee-nationale.fr/dyn/${seance.legislature}/dossiers_/${point.texteRef}`
       : undefined,
   }));
 }
@@ -57,7 +57,9 @@ export function createSourceMetadata(
   seance: AssembleeSeance,
   sittingId: string
 ): SourceMetadataInsert {
-  const sourceUrl = `https://data.assemblee-nationale.fr/seances/${seance.uid}`;
+  // Link to the date-specific agenda page on the official Assemblée nationale website
+  // Format: https://www2.assemblee-nationale.fr/agendas/les-agendas/YYYY-MM-DD
+  const sourceUrl = `https://www2.assemblee-nationale.fr/agendas/les-agendas/${seance.dateSeance}`;
   const checksum = generateChecksum(seance);
 
   return {

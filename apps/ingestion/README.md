@@ -66,9 +66,32 @@ When deployed to Vercel, the function runs automatically at 2 AM daily (configur
 
 ## Data Source
 
-Currently uses mock data for demonstration. In production, integrate with:
-- Assemblée nationale open data API
-- Official data.assemblee-nationale.fr portal
-- Parliament data feeds
+**Now integrated with real Assemblée nationale data!**
+
+The ingestion system fetches live parliamentary data from:
+- **Source**: `http://data.assemblee-nationale.fr/static/openData/repository/17/vp/reunions/Agenda.json.zip`
+- **Legislature**: 17th (2024-2029)
+- **Format**: ZIP archive containing JSON files for each meeting
+- **Update frequency**: Updated regularly by the Assemblée nationale
+- **Coverage**: All public sessions (séances publiques) and commission meetings
+
+### Data Structure
+
+Each meeting includes:
+- Unique identifier (UID)
+- Date and time (start/end)
+- Location (e.g., "Assemblée nationale", "Sénat")
+- Meeting type (séance publique, commission, etc.)
+- Agenda items (ordre du jour) with:
+  - Title and description
+  - Legislative dossier references
+  - Type (Questions au Gouvernement, Discussion, etc.)
+  - Status (Confirmé, Supprimé)
+
+### Caching
+
+- Downloaded data is cached in memory for 1 hour
+- Subsequent requests within the cache period use cached data
+- Reduces load on the official API
 
 See `src/assemblee-client.ts` for implementation details.

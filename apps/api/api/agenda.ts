@@ -124,7 +124,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           description: sitting.description,
           location: sitting.location || undefined,
           time_range: timeRange,
-          agenda_items: items.map((item) => ({
+          agenda_items: items.map((item: DbAgendaItem) => ({
             id: item.id,
             sitting_id: item.sitting_id,
             scheduled_time: item.scheduled_time || undefined,

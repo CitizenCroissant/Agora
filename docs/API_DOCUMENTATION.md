@@ -169,7 +169,7 @@ GET /api/sittings/550e8400-e29b-41d4-a716-446655440000
   "source_metadata": {
     "id": "660e8400-e29b-41d4-a716-446655440000",
     "sitting_id": "550e8400-e29b-41d4-a716-446655440000",
-    "original_source_url": "https://data.assemblee-nationale.fr/seances/SEANCE-2026-01-22-001",
+    "original_source_url": "https://www2.assemblee-nationale.fr/agendas/les-agendas/2026-01-22",
     "last_synced_at": "2026-01-22T08:30:00.000Z",
     "checksum": "abc123def456..."
   }
@@ -284,6 +284,39 @@ const range = await client.getAgendaRange('2026-01-20', '2026-01-27');
 const sitting = await client.getSitting('550e8400-...');
 ```
 
+## Data Source
+
+All data is sourced from the official French National Assembly open data portal:
+
+**Primary Source**: 
+- URL: `http://data.assemblee-nationale.fr/static/openData/repository/17/vp/reunions/Agenda.json.zip`
+- Legislature: 17th (2024-2029)
+- Format: ZIP archive with individual JSON files per meeting
+- License: Open Data (Licence Ouverte / Etalab)
+
+**Update Frequency**:
+- The official data is updated regularly by the Assemblée nationale
+- Our ingestion system runs daily at 2 AM (configurable)
+- Data is cached at the edge for 5 minutes with stale-while-revalidate
+
+**Data Coverage**:
+- Public sessions (séances publiques)
+- Commission meetings
+- Parliamentary group meetings
+- All legislative work with full provenance tracking
+
+**Data Quality**:
+- Each sitting includes original source URL
+- Checksums track data changes
+- Full audit trail via `last_synced_at` timestamps
+- Official identifiers preserved (`official_id` field)
+
+**Attribution**:
+All data © Assemblée nationale. When displaying this data, please include:
+```
+Source: Assemblée nationale (data.assemblee-nationale.fr)
+```
+
 ## Changelog
 
 ### v0.1.0 (2026-01-21)
@@ -291,3 +324,4 @@ const sitting = await client.getSitting('550e8400-...');
 - Three core endpoints
 - CORS support
 - Edge caching
+- Real Assemblée nationale data integration

@@ -1,30 +1,54 @@
-import { useState, useEffect } from 'react'
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, StyleSheet, Alert } from 'react-native'
 import { useRouter } from 'expo-router'
 import { AgendaRangeResponse } from '@agora/shared'
-import { createApiClient, getTodayDate, formatDate, addDays, subtractDays } from '@agora/shared'
+import { 
+  createApiClient, 
+  getTodayDate, 
+  formatDate,
+  getWeekStart,
+  getWeekEnd,
+  getMonthStart,
+  getMonthEnd,
+  addWeeks,
+  addMonths,
+  formatDateRange,
+  formatMonth,
+} from '@agora/shared'
+import { Config } from '../../config'
 
-// TODO: Replace with your actual API URL
-const API_URL = 'https://your-api.vercel.app/api'
-const apiClient = createApiClient(API_URL)
+const apiClient = createApiClient(Config.API_URL)
+
+type ViewMode = 'week' | 'month'
 
 export default function TimelineScreen() {
   const router = useRouter()
   const [agendaRange, setAgendaRange] = useState<AgendaRangeResponse | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  const [viewMode, setViewMode] = useState<ViewMode>('week')
+  const [currentDate, setCurrentDate] = useState<string>(getTodayDate())
 
   useEffect(() => {
     loadTimeline()
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewMode, currentDate])
 
   const loadTimeline = async () => {
     setLoading(true)
     setError(null)
     try {
-      const today = getTodayDate()
-      const from = subtractDays(today, 7)
-      const to = addDays(today, 14)
+      let from: string
+      let to: string
+
+      if (viewMode === 'week') {
+        from = getWeekStart(currentDate)
+        to = getWeekEnd(currentDate)
+      } else {
+        from = getMonthStart(currentDate)
+        to = getMonthEnd(currentDate)
+      }
+
       const data = await apiClient.getAgendaRange(from, to)
       setAgendaRange(data)
     } catch (err) {
@@ -35,8 +59,82 @@ export default function TimelineScreen() {
     }
   }
 
+  const handlePrevious = () => {
+    if (viewMode === 'week') {
+      setCurrentDate(addWeeks(currentDate, -1))
+    } else {
+      setCurrentDate(addMonths(currentDate, -1))
+    }
+  }
+
+  const handleNext = () => {
+    if (viewMode === 'week') {
+      setCurrentDate(addWeeks(currentDate, 1))
+    } else {
+      setCurrentDate(addMonths(currentDate, 1))
+    }
+  }
+
+  const handleToday = () => {
+    setCurrentDate(getTodayDate())
+  }
+
+  const handleDateSelect = () => {
+    // TODO: Implement native date picker modal for mobile
+    // For now, using Alert as placeholder
+    Alert.alert('Date picker', 'Date picker coming soon! Use navigation buttons for now.')
+  }
+
+  const getPeriodLabel = () => {
+    if (viewMode === 'week') {
+      const from = getWeekStart(currentDate)
+      const to = getWeekEnd(currentDate)
+      return formatDateRange(from, to)
+    } else {
+      return formatMonth(currentDate)
+    }
+  }
+
   return (
     <View style={styles.container}>
+      <View style={styles.controlBar}>
+        <View style={styles.topRow}>
+          <View style={styles.navigationControls}>
+            <TouchableOpacity style={styles.iconButton} onPress={handlePrevious}>
+              <Text style={styles.iconButtonText}>‹</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton} onPress={handleNext}>
+              <Text style={styles.iconButtonText}>›</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.todayButton} onPress={handleToday}>
+              <Text style={styles.todayButtonText}>Aujourd&apos;hui</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.rightControls}>
+            <TouchableOpacity style={styles.dateButton} onPress={handleDateSelect}>
+              <Text style={styles.dateButtonText}>📅</Text>
+            </TouchableOpacity>
+            <View style={styles.viewToggle}>
+              <TouchableOpacity
+                style={[styles.viewButton, viewMode === 'week' && styles.viewButtonActive]}
+                onPress={() => setViewMode('week')}
+              >
+                <Text style={[styles.viewButtonText, viewMode === 'week' && styles.viewButtonTextActive]}>S</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.viewButton, viewMode === 'month' && styles.viewButtonActive]}
+                onPress={() => setViewMode('month')}
+              >
+                <Text style={[styles.viewButtonText, viewMode === 'month' && styles.viewButtonTextActive]}>M</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
+        <Text style={styles.periodLabel}>{getPeriodLabel()}</Text>
+      </View>
+
       <ScrollView style={styles.content}>
         {loading && (
           <View style={styles.centerContent}>
@@ -64,7 +162,7 @@ export default function TimelineScreen() {
                   <View key={agenda.date} style={[styles.dateSection, isToday && styles.todaySection]}>
                     <View style={styles.dateHeader}>
                       <Text style={styles.dateText}>{formatDate(agenda.date)}</Text>
-                      {isToday && <Text style={styles.todayBadge}>Aujourd'hui</Text>}
+                      {isToday && <Text style={styles.todayBadge}>Aujourd&apos;hui</Text>}
                     </View>
 
                     {agenda.sittings.length === 0 ? (
@@ -83,7 +181,7 @@ export default function TimelineScreen() {
                             )}
                           </View>
                           <Text style={styles.itemCount}>
-                            {sitting.agenda_items.length} point(s) à l'ordre du jour
+                            {sitting.agenda_items.length} point(s) à l&apos;ordre du jour
                           </Text>
                         </TouchableOpacity>
                       ))
@@ -103,6 +201,117 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+  },
+  controlBar: {
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 85, 164, 0.1)',
+    padding: 16,
+    paddingBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  topRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  navigationControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  iconButton: {
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    borderRadius: 8,
+    backgroundColor: '#fff',
+  },
+  iconButtonText: {
+    fontSize: 28,
+    fontWeight: '300',
+    color: '#333',
+    lineHeight: 32,
+  },
+  todayButton: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    backgroundColor: '#0055a4',
+    borderRadius: 8,
+    marginLeft: 6,
+  },
+  todayButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  rightControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  dateButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 6,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    minWidth: 44,
+  },
+  dateButtonText: {
+    fontSize: 18,
+    lineHeight: 20,
+  },
+  viewToggle: {
+    flexDirection: 'row',
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
+    padding: 3,
+    gap: 2,
+  },
+  viewButton: {
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 6,
+    backgroundColor: 'transparent',
+  },
+  viewButtonActive: {
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  viewButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#666',
+  },
+  viewButtonTextActive: {
+    color: '#0055a4',
+  },
+  periodLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    textAlign: 'center',
+    textTransform: 'capitalize',
   },
   content: {
     flex: 1,

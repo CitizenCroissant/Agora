@@ -24,9 +24,11 @@ React Native/Expo mobile application for Agora.
    npm install
    ```
 
-2. Update API URL:
-   - Edit `app/(tabs)/index.tsx`, `app/(tabs)/timeline.tsx`, and `app/sitting/[id].tsx`
-   - Replace `const API_URL = 'https://your-api.vercel.app/api'` with your actual API URL
+2. Configure API URL:
+   - The API URL is configured in `config.ts`
+   - For development: it automatically uses `http://localhost:3000/api` for web and your local IP for mobile
+   - To customize, edit `config.ts` or add `apiUrl` to `app.json` under `expo.extra`
+   - For production: set the API URL in your build configuration
 
 3. Start development server:
    ```bash

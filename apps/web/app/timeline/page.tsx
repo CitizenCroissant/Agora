@@ -2,30 +2,54 @@
 
 import { useEffect, useState } from 'react'
 import { AgendaRangeResponse } from '@agora/shared'
-import { createApiClient, getTodayDate, formatDate, addDays, subtractDays } from '@agora/shared'
+import { 
+  createApiClient, 
+  getTodayDate, 
+  formatDate,
+  getWeekStart,
+  getWeekEnd,
+  getMonthStart,
+  getMonthEnd,
+  addWeeks,
+  addMonths,
+  formatDateRange,
+  formatMonth,
+} from '@agora/shared'
+import { Config } from '@/lib/config'
 import Link from 'next/link'
 import styles from './timeline.module.css'
 
-const apiClient = createApiClient(
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
-)
+const apiClient = createApiClient(Config.API_URL)
+
+type ViewMode = 'week' | 'month'
 
 export default function TimelinePage() {
   const [agendaRange, setAgendaRange] = useState<AgendaRangeResponse | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  const [viewMode, setViewMode] = useState<ViewMode>('week')
+  const [currentDate, setCurrentDate] = useState<string>(getTodayDate())
+  const [dateInput, setDateInput] = useState<string>(getTodayDate())
 
   useEffect(() => {
     loadTimeline()
-  }, [])
+  }, [viewMode, currentDate])
 
   const loadTimeline = async () => {
     setLoading(true)
     setError(null)
     try {
-      const today = getTodayDate()
-      const from = subtractDays(today, 7)
-      const to = addDays(today, 14)
+      let from: string
+      let to: string
+
+      if (viewMode === 'week') {
+        from = getWeekStart(currentDate)
+        to = getWeekEnd(currentDate)
+      } else {
+        from = getMonthStart(currentDate)
+        to = getMonthEnd(currentDate)
+      }
+
       const data = await apiClient.getAgendaRange(from, to)
       setAgendaRange(data)
     } catch (err) {
@@ -33,6 +57,46 @@ export default function TimelinePage() {
       setAgendaRange(null)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handlePrevious = () => {
+    if (viewMode === 'week') {
+      setCurrentDate(addWeeks(currentDate, -1))
+    } else {
+      setCurrentDate(addMonths(currentDate, -1))
+    }
+  }
+
+  const handleNext = () => {
+    if (viewMode === 'week') {
+      setCurrentDate(addWeeks(currentDate, 1))
+    } else {
+      setCurrentDate(addMonths(currentDate, 1))
+    }
+  }
+
+  const handleToday = () => {
+    const today = getTodayDate()
+    setCurrentDate(today)
+    setDateInput(today)
+  }
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDate = e.target.value
+    setDateInput(newDate)
+    if (newDate && newDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      setCurrentDate(newDate)
+    }
+  }
+
+  const getPeriodLabel = () => {
+    if (viewMode === 'week') {
+      const from = getWeekStart(currentDate)
+      const to = getWeekEnd(currentDate)
+      return formatDateRange(from, to)
+    } else {
+      return formatMonth(currentDate)
     }
   }
 
@@ -52,6 +116,67 @@ export default function TimelinePage() {
 
       <main className={styles.main}>
         <div className="container">
+          <div className={styles.controlBar}>
+            <div className={styles.leftControls}>
+              <button 
+                className={styles.iconButton}
+                onClick={handlePrevious}
+                aria-label="Période précédente"
+                title="Période précédente"
+              >
+                ‹
+              </button>
+              <button 
+                className={styles.iconButton}
+                onClick={handleNext}
+                aria-label="Période suivante"
+                title="Période suivante"
+              >
+                ›
+              </button>
+              <button 
+                className={styles.todayButton}
+                onClick={handleToday}
+              >
+                Aujourd'hui
+              </button>
+            </div>
+
+            <div className={styles.centerControls}>
+              <h2 className={styles.periodTitle}>{getPeriodLabel()}</h2>
+            </div>
+
+            <div className={styles.rightControls}>
+              <div className={styles.datePickerWrapper}>
+                <span className={styles.calendarIcon}>📅</span>
+                <input
+                  type="date"
+                  className={styles.datePicker}
+                  value={dateInput}
+                  onChange={handleDateChange}
+                  aria-label="Sélectionner une date"
+                  title="Choisir une date"
+                />
+              </div>
+              <div className={styles.viewToggle}>
+                <button
+                  className={`${styles.viewButton} ${viewMode === 'week' ? styles.activeView : ''}`}
+                  onClick={() => setViewMode('week')}
+                  title="Vue semaine"
+                >
+                  S
+                </button>
+                <button
+                  className={`${styles.viewButton} ${viewMode === 'month' ? styles.activeView : ''}`}
+                  onClick={() => setViewMode('month')}
+                  title="Vue mois"
+                >
+                  M
+                </button>
+              </div>
+            </div>
+          </div>
+
           {loading && (
             <div className={styles.loading}>
               Chargement du calendrier...
