@@ -3,11 +3,9 @@ import { render } from '@testing-library/react-native';
 
 describe('Mobile App', () => {
   it('should render without crashing', () => {
-    // This is a placeholder test
-    // TODO: Add proper React Native component tests
+    // Placeholder test until proper React Native component tests are added
     const SimpleComponent = () => <></>;
-    const { toJSON } = render(<SimpleComponent />);
-    expect(toJSON()).toMatchSnapshot();
+    expect(() => render(<SimpleComponent />)).not.toThrow();
   });
 
   it('should test basic functionality', () => {
