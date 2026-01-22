@@ -1,0 +1,86 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start API Server",
+      "type": "shell",
+      "command": "npm run dev -- --filter=@agora/api",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false,
+        "clear": true
+      },
+      "runOptions": {
+        "runOn": "default"
+      },
+      "isBackground": true
+    },
+    {
+      "label": "Start Web App",
+      "type": "shell",
+      "command": "npm run dev -- --filter=@agora/web",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false,
+        "clear": true
+      },
+      "runOptions": {
+        "runOn": "default"
+      },
+      "isBackground": true
+    },
+    {
+      "label": "Start Mobile App",
+      "type": "shell",
+      "command": "npm run dev -- --filter=@agora/mobile",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false,
+        "clear": true
+      },
+      "runOptions": {
+        "runOn": "default"
+      },
+      "isBackground": true
+    },
+    {
+      "label": "Start Shared Package (Watch)",
+      "type": "shell",
+      "command": "npm run dev -- --filter=@agora/shared",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false,
+        "clear": true
+      },
+      "runOptions": {
+        "runOn": "default"
+      },
+      "isBackground": true
+    },
+    {
+      "label": "Start All Apps",
+      "dependsOn": [
+        "Start API Server",
+        "Start Web App",
+        "Start Mobile App"
+      ],
+      "dependsOrder": "parallel",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    }
+  ]
+}
