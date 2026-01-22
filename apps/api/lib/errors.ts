@@ -38,6 +38,12 @@ export function validateDateFormat(date: string): boolean {
   if (!dateRegex.test(date)) {
     return false;
   }
-  const parsedDate = new Date(date);
-  return !isNaN(parsedDate.getTime());
+  const [y, m, d] = date.split('-').map(Number);
+  const parsed = new Date(y, m - 1, d);
+  return (
+    !isNaN(parsed.getTime()) &&
+    parsed.getFullYear() === y &&
+    parsed.getMonth() === m - 1 &&
+    parsed.getDate() === d
+  );
 }

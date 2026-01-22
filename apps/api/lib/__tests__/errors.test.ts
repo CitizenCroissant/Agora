@@ -18,6 +18,14 @@ describe('errors', () => {
   });
 
   describe('handleError', () => {
+    beforeEach(() => {
+      vi.spyOn(console, 'error').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
     it('should handle ApiError correctly', () => {
       const mockRes = {
         status: vi.fn().mockReturnThis(),
