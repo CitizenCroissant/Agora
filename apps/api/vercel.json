@@ -1,15 +1,8 @@
 {
-  "outputDirectory": "public",
   "functions": {
-    "apps/api/api/**/*.ts": {
+    "api/**/*.ts": {
       "memory": 1024,
       "maxDuration": 10
     }
-  },
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/apps/api/api/$1"
-    }
-  ]
+  }
 }
