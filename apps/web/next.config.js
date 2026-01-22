@@ -4,4 +4,4 @@ const nextConfig = {
   transpilePackages: ['@agora/shared'],
 }
 
-module.exports = nextConfig
+export default nextConfig

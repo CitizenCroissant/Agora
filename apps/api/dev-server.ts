@@ -11,7 +11,8 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 config({ path: '.env.local' });
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+// Use static port 3001 for API server
+const PORT = 3001;
 
 // Middleware for parsing JSON
 app.use(express.json());

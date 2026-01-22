@@ -8,5 +8,5 @@ export const Config = {
    * API base URL
    * Defaults to local development server if not set in environment
    */
-  API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api',
+  API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api',
 } as const;

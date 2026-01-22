@@ -14,6 +14,10 @@ export class ApiClient {
   private baseUrl: string;
 
   constructor(baseUrl: string) {
+    // Ensure baseUrl is a string
+    if (typeof baseUrl !== 'string') {
+      throw new Error(`ApiClient: baseUrl must be a string, got ${typeof baseUrl}`);
+    }
     this.baseUrl = baseUrl.replace(/\/$/, ''); // Remove trailing slash
   }
 
