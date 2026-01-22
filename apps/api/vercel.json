@@ -1,4 +1,5 @@
 {
+  "buildCommand": "cd ../.. && npm run build -- --filter=@agora/api",
   "functions": {
     "api/**/*.ts": {
       "memory": 1024,
