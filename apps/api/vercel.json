@@ -1,4 +1,6 @@
 {
+  "buildCommand": "npm run build -- --filter=@agora/shared --filter=@agora/api",
+  "outputDirectory": ".",
   "functions": {
     "api/**/*.ts": {
       "memory": 1024,
