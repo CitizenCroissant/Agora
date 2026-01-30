@@ -1,65 +1,69 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { AgendaResponse } from '@agora/shared'
-import { createApiClient, getTodayDate, formatDate, addDays, subtractDays } from '@agora/shared'
-import { Config } from '@/lib/config'
-import Link from 'next/link'
-import styles from './page.module.css'
+import { useEffect, useState } from "react";
+import { AgendaResponse } from "@agora/shared";
+import {
+  createApiClient,
+  getTodayDate,
+  formatDate,
+  addDays,
+  subtractDays,
+} from "@agora/shared";
+import { Config } from "@/lib/config";
+import Link from "next/link";
+import styles from "./page.module.css";
 
-const apiClient = createApiClient(Config.API_URL)
+const apiClient = createApiClient(Config.API_URL);
 
 export default function Home() {
-  const [currentDate, setCurrentDate] = useState<string>(getTodayDate())
-  const [agenda, setAgenda] = useState<AgendaResponse | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
-  const [error, setError] = useState<string | null>(null)
+  const [currentDate, setCurrentDate] = useState<string>(getTodayDate());
+  const [agenda, setAgenda] = useState<AgendaResponse | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadAgenda(currentDate)
-  }, [currentDate])
+    loadAgenda(currentDate);
+  }, [currentDate]);
 
   const loadAgenda = async (date: string) => {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
     try {
-      const data = await apiClient.getAgenda(date)
-      setAgenda(data)
+      const data = await apiClient.getAgenda(date);
+      setAgenda(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load agenda')
-      setAgenda(null)
+      setError(err instanceof Error ? err.message : "Failed to load agenda");
+      setAgenda(null);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const goToPreviousDay = () => {
-    setCurrentDate(subtractDays(currentDate, 1))
-  }
+    setCurrentDate(subtractDays(currentDate, 1));
+  };
 
   const goToNextDay = () => {
-    setCurrentDate(addDays(currentDate, 1))
-  }
+    setCurrentDate(addDays(currentDate, 1));
+  };
 
   const goToToday = () => {
-    setCurrentDate(getTodayDate())
-  }
+    setCurrentDate(getTodayDate());
+  };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newDate = e.target.value
+    const newDate = e.target.value;
     if (newDate && newDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
-      setCurrentDate(newDate)
+      setCurrentDate(newDate);
     }
-  }
+  };
 
   return (
     <div className={styles.page}>
       <header className={styles.header}>
         <div className="container">
           <h1 className={styles.title}>Agora</h1>
-          <p className={styles.subtitle}>
-            Agenda de l'Assemblée nationale
-          </p>
+          <p className={styles.subtitle}>Agenda de l'Assemblée nationale</p>
         </div>
       </header>
 
@@ -72,6 +76,15 @@ export default function Home() {
             <Link href="/timeline" className={styles.navLink}>
               Calendrier
             </Link>
+            <Link href="/votes" className={styles.navLink}>
+              Scrutins
+            </Link>
+            <Link href="/groupes" className={styles.navLink}>
+              Groupes politiques
+            </Link>
+            <Link href="/search" className={styles.navLink}>
+              Recherche
+            </Link>
             <Link href="/about" className={styles.navLink}>
               À propos
             </Link>
@@ -83,7 +96,7 @@ export default function Home() {
         <div className="container">
           <div className={styles.controlBar}>
             <div className={styles.leftControls}>
-              <button 
+              <button
                 className={styles.iconButton}
                 onClick={goToPreviousDay}
                 aria-label="Jour précédent"
@@ -91,7 +104,7 @@ export default function Home() {
               >
                 ‹
               </button>
-              <button 
+              <button
                 className={styles.iconButton}
                 onClick={goToNextDay}
                 aria-label="Jour suivant"
@@ -100,10 +113,7 @@ export default function Home() {
                 ›
               </button>
               {currentDate !== getTodayDate() && (
-                <button 
-                  className={styles.todayButton}
-                  onClick={goToToday}
-                >
+                <button className={styles.todayButton} onClick={goToToday}>
                   Aujourd'hui
                 </button>
               )}
@@ -129,9 +139,7 @@ export default function Home() {
           </div>
 
           {loading && (
-            <div className={styles.loading}>
-              Chargement de l'agenda...
-            </div>
+            <div className={styles.loading}>Chargement de l'agenda...</div>
           )}
 
           {error && (
@@ -165,12 +173,14 @@ export default function Home() {
                           </span>
                         )}
                       </div>
-                      
+
                       {sitting.location && (
                         <p className={styles.location}>📍 {sitting.location}</p>
                       )}
 
-                      <p className={styles.description}>{sitting.description}</p>
+                      <p className={styles.description}>
+                        {sitting.description}
+                      </p>
 
                       {sitting.agenda_items.length > 0 && (
                         <div className={styles.agendaItems}>
@@ -188,7 +198,8 @@ export default function Home() {
                             ))}
                             {sitting.agenda_items.length > 3 && (
                               <li className={styles.moreItems}>
-                                ... et {sitting.agenda_items.length - 3} autre(s)
+                                ... et {sitting.agenda_items.length - 3}{" "}
+                                autre(s)
                               </li>
                             )}
                           </ul>
@@ -210,8 +221,10 @@ export default function Home() {
                   <strong>{agenda.source.label}</strong>
                 </p>
                 <p className={styles.sourceDate}>
-                  Dernière mise à jour :{' '}
-                  {new Date(agenda.source.last_updated_at).toLocaleString('fr-FR')}
+                  Dernière mise à jour :{" "}
+                  {new Date(agenda.source.last_updated_at).toLocaleString(
+                    "fr-FR",
+                  )}
                 </p>
               </div>
             </>
@@ -221,15 +234,13 @@ export default function Home() {
 
       <footer className={styles.footer}>
         <div className="container">
+          <p>Agora - Données officielles de l'Assemblée nationale</p>
           <p>
-            Agora - Données officielles de l'Assemblée nationale
-          </p>
-          <p>
-            <Link href="/about">En savoir plus</Link> |{' '}
+            <Link href="/about">En savoir plus</Link> |{" "}
             <Link href="/sources">Sources</Link>
           </p>
         </div>
       </footer>
     </div>
-  )
+  );
 }

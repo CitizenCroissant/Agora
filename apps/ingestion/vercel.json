@@ -10,6 +10,14 @@
     {
       "path": "/api/ingest",
       "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/ingest-scrutins",
+      "schedule": "15 2 * * *"
+    },
+    {
+      "path": "/api/ingest-deputies",
+      "schedule": "0 3 1 * *"
     }
   ]
 }

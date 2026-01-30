@@ -1,42 +1,42 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
-import { SittingDetailResponse } from '@agora/shared'
-import { createApiClient, formatDate } from '@agora/shared'
-import { Config } from '@/lib/config'
-import Link from 'next/link'
-import styles from './sitting.module.css'
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { SittingDetailResponse } from "@agora/shared";
+import { createApiClient, formatDate } from "@agora/shared";
+import { Config } from "@/lib/config";
+import Link from "next/link";
+import styles from "./sitting.module.css";
 
-const apiClient = createApiClient(Config.API_URL)
+const apiClient = createApiClient(Config.API_URL);
 
 export default function SittingPage() {
-  const params = useParams()
-  const id = params.id as string
+  const params = useParams();
+  const id = params.id as string;
 
-  const [sitting, setSitting] = useState<SittingDetailResponse | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
-  const [error, setError] = useState<string | null>(null)
+  const [sitting, setSitting] = useState<SittingDetailResponse | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) {
-      loadSitting(id)
+      loadSitting(id);
     }
-  }, [id])
+  }, [id]);
 
   const loadSitting = async (sittingId: string) => {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
     try {
-      const data = await apiClient.getSitting(sittingId)
-      setSitting(data)
+      const data = await apiClient.getSitting(sittingId);
+      setSitting(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load sitting')
-      setSitting(null)
+      setError(err instanceof Error ? err.message : "Failed to load sitting");
+      setSitting(null);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className={styles.page}>
@@ -51,9 +51,7 @@ export default function SittingPage() {
       <main className={styles.main}>
         <div className="container">
           {loading && (
-            <div className={styles.loading}>
-              Chargement des détails...
-            </div>
+            <div className={styles.loading}>Chargement des détails...</div>
           )}
 
           {error && (
@@ -87,6 +85,37 @@ export default function SittingPage() {
               <div className={styles.description}>
                 <p>{sitting.description}</p>
               </div>
+
+              {sitting.scrutins && sitting.scrutins.length > 0 && (
+                <div className={styles.scrutinsSection}>
+                  <h2>Scrutins de cette séance</h2>
+                  <div className={styles.scrutinsList}>
+                    {sitting.scrutins.map((scrutin) => (
+                      <Link
+                        key={scrutin.id}
+                        href={`/votes/${scrutin.id}`}
+                        className={styles.scrutinItem}
+                      >
+                        <span
+                          className={
+                            scrutin.sort_code === "adopté"
+                              ? styles.scrutinBadgeAdopte
+                              : styles.scrutinBadgeRejete
+                          }
+                        >
+                          {scrutin.sort_code === "adopté" ? "Adopté" : "Rejeté"}
+                        </span>
+                        <span className={styles.scrutinTitle}>
+                          {scrutin.titre}
+                        </span>
+                        <span className={styles.scrutinLink}>
+                          Voir le scrutin →
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {sitting.agenda_items.length > 0 && (
                 <div className={styles.agendaSection}>
@@ -132,28 +161,31 @@ export default function SittingPage() {
                 </div>
               )}
 
-              {sitting.source_metadata && sitting.source_metadata.original_source_url && (
-                <div className={styles.source}>
-                  <h3>Source et provenance</h3>
-                  <p>
-                    <strong>Données officielles de l'Assemblée nationale</strong>
-                  </p>
-                  <p className={styles.sourceDate}>
-                    Dernière synchronisation :{' '}
-                    {new Date(
-                      sitting.source_metadata.last_synced_at
-                    ).toLocaleString('fr-FR')}
-                  </p>
-                  <a
-                    href={sitting.source_metadata.original_source_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.sourceLink}
-                  >
-                    Voir la source originale →
-                  </a>
-                </div>
-              )}
+              {sitting.source_metadata &&
+                sitting.source_metadata.original_source_url && (
+                  <div className={styles.source}>
+                    <h3>Source et provenance</h3>
+                    <p>
+                      <strong>
+                        Données officielles de l'Assemblée nationale
+                      </strong>
+                    </p>
+                    <p className={styles.sourceDate}>
+                      Dernière synchronisation :{" "}
+                      {new Date(
+                        sitting.source_metadata.last_synced_at,
+                      ).toLocaleString("fr-FR")}
+                    </p>
+                    <a
+                      href={sitting.source_metadata.original_source_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.sourceLink}
+                    >
+                      Voir la source originale →
+                    </a>
+                  </div>
+                )}
             </>
           )}
         </div>
@@ -165,5 +197,5 @@ export default function SittingPage() {
         </div>
       </footer>
     </div>
-  )
+  );
 }

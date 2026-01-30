@@ -15,6 +15,9 @@ dist
 # Production
 build
 
+# Cursor IDE (local setup, MCP config may contain tokens)
+.cursor/
+
 # Misc
 .DS_Store
 *.pem

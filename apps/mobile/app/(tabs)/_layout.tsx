@@ -1,18 +1,18 @@
-import React from 'react'
-import { Tabs } from 'expo-router'
+import React from "react";
+import { Tabs } from "expo-router";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#0055a4',
-        tabBarInactiveTintColor: '#666',
+        tabBarActiveTintColor: "#0055a4",
+        tabBarInactiveTintColor: "#666",
         headerStyle: {
-          backgroundColor: '#0055a4',
+          backgroundColor: "#0055a4",
         },
-        headerTintColor: '#fff',
+        headerTintColor: "#fff",
         headerTitleStyle: {
-          fontWeight: 'bold',
+          fontWeight: "bold",
         },
       }}
     >
@@ -21,25 +21,41 @@ export default function TabLayout() {
         options={{
           title: "Aujourd'hui",
           tabBarLabel: "Aujourd'hui",
-          headerTitle: 'Agora',
+          headerTitle: "Agora",
         }}
       />
       <Tabs.Screen
         name="timeline"
         options={{
-          title: 'Calendrier',
-          tabBarLabel: 'Calendrier',
-          headerTitle: 'Calendrier',
+          title: "Calendrier",
+          tabBarLabel: "Calendrier",
+          headerTitle: "Calendrier",
+        }}
+      />
+      <Tabs.Screen
+        name="votes"
+        options={{
+          title: "Scrutins",
+          tabBarLabel: "Scrutins",
+          headerTitle: "Scrutins",
+        }}
+      />
+      <Tabs.Screen
+        name="groupes"
+        options={{
+          title: "Groupes",
+          tabBarLabel: "Groupes",
+          headerTitle: "Groupes politiques",
         }}
       />
       <Tabs.Screen
         name="about"
         options={{
-          title: 'À propos',
-          tabBarLabel: 'À propos',
-          headerTitle: 'À propos',
+          title: "À propos",
+          tabBarLabel: "À propos",
+          headerTitle: "À propos",
         }}
       />
     </Tabs>
-  )
+  );
 }

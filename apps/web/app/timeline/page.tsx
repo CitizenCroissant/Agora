@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { AgendaRangeResponse } from '@agora/shared'
-import { 
-  createApiClient, 
-  getTodayDate, 
+import { useEffect, useState } from "react";
+import { AgendaRangeResponse } from "@agora/shared";
+import {
+  createApiClient,
+  getTodayDate,
   formatDate,
   getWeekStart,
   getWeekEnd,
@@ -14,91 +14,94 @@ import {
   addMonths,
   formatDateRange,
   formatMonth,
-} from '@agora/shared'
-import { Config } from '@/lib/config'
-import Link from 'next/link'
-import styles from './timeline.module.css'
+  isVoteLikeAgendaItem,
+} from "@agora/shared";
+import { Config } from "@/lib/config";
+import Link from "next/link";
+import styles from "./timeline.module.css";
 
-const apiClient = createApiClient(Config.API_URL)
+const apiClient = createApiClient(Config.API_URL);
 
-type ViewMode = 'week' | 'month'
+type ViewMode = "week" | "month";
 
 export default function TimelinePage() {
-  const [agendaRange, setAgendaRange] = useState<AgendaRangeResponse | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
-  const [error, setError] = useState<string | null>(null)
-  const [viewMode, setViewMode] = useState<ViewMode>('week')
-  const [currentDate, setCurrentDate] = useState<string>(getTodayDate())
-  const [dateInput, setDateInput] = useState<string>(getTodayDate())
+  const [agendaRange, setAgendaRange] = useState<AgendaRangeResponse | null>(
+    null,
+  );
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>("week");
+  const [currentDate, setCurrentDate] = useState<string>(getTodayDate());
+  const [dateInput, setDateInput] = useState<string>(getTodayDate());
 
   useEffect(() => {
-    loadTimeline()
-  }, [viewMode, currentDate])
+    loadTimeline();
+  }, [viewMode, currentDate]);
 
   const loadTimeline = async () => {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
     try {
-      let from: string
-      let to: string
+      let from: string;
+      let to: string;
 
-      if (viewMode === 'week') {
-        from = getWeekStart(currentDate)
-        to = getWeekEnd(currentDate)
+      if (viewMode === "week") {
+        from = getWeekStart(currentDate);
+        to = getWeekEnd(currentDate);
       } else {
-        from = getMonthStart(currentDate)
-        to = getMonthEnd(currentDate)
+        from = getMonthStart(currentDate);
+        to = getMonthEnd(currentDate);
       }
 
-      const data = await apiClient.getAgendaRange(from, to)
-      setAgendaRange(data)
+      const data = await apiClient.getAgendaRange(from, to);
+      setAgendaRange(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load timeline')
-      setAgendaRange(null)
+      setError(err instanceof Error ? err.message : "Failed to load timeline");
+      setAgendaRange(null);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handlePrevious = () => {
-    if (viewMode === 'week') {
-      setCurrentDate(addWeeks(currentDate, -1))
+    if (viewMode === "week") {
+      setCurrentDate(addWeeks(currentDate, -1));
     } else {
-      setCurrentDate(addMonths(currentDate, -1))
+      setCurrentDate(addMonths(currentDate, -1));
     }
-  }
+  };
 
   const handleNext = () => {
-    if (viewMode === 'week') {
-      setCurrentDate(addWeeks(currentDate, 1))
+    if (viewMode === "week") {
+      setCurrentDate(addWeeks(currentDate, 1));
     } else {
-      setCurrentDate(addMonths(currentDate, 1))
+      setCurrentDate(addMonths(currentDate, 1));
     }
-  }
+  };
 
   const handleToday = () => {
-    const today = getTodayDate()
-    setCurrentDate(today)
-    setDateInput(today)
-  }
+    const today = getTodayDate();
+    setCurrentDate(today);
+    setDateInput(today);
+  };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newDate = e.target.value
-    setDateInput(newDate)
+    const newDate = e.target.value;
+    setDateInput(newDate);
     if (newDate && newDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
-      setCurrentDate(newDate)
+      setCurrentDate(newDate);
     }
-  }
+  };
 
   const getPeriodLabel = () => {
-    if (viewMode === 'week') {
-      const from = getWeekStart(currentDate)
-      const to = getWeekEnd(currentDate)
-      return formatDateRange(from, to)
+    if (viewMode === "week") {
+      const from = getWeekStart(currentDate);
+      const to = getWeekEnd(currentDate);
+      return formatDateRange(from, to);
     } else {
-      return formatMonth(currentDate)
+      return formatMonth(currentDate);
     }
-  }
+  };
 
   return (
     <div className={styles.page}>
@@ -118,7 +121,7 @@ export default function TimelinePage() {
         <div className="container">
           <div className={styles.controlBar}>
             <div className={styles.leftControls}>
-              <button 
+              <button
                 className={styles.iconButton}
                 onClick={handlePrevious}
                 aria-label="Période précédente"
@@ -126,7 +129,7 @@ export default function TimelinePage() {
               >
                 ‹
               </button>
-              <button 
+              <button
                 className={styles.iconButton}
                 onClick={handleNext}
                 aria-label="Période suivante"
@@ -134,10 +137,7 @@ export default function TimelinePage() {
               >
                 ›
               </button>
-              <button 
-                className={styles.todayButton}
-                onClick={handleToday}
-              >
+              <button className={styles.todayButton} onClick={handleToday}>
                 Aujourd'hui
               </button>
             </div>
@@ -160,15 +160,15 @@ export default function TimelinePage() {
               </div>
               <div className={styles.viewToggle}>
                 <button
-                  className={`${styles.viewButton} ${viewMode === 'week' ? styles.activeView : ''}`}
-                  onClick={() => setViewMode('week')}
+                  className={`${styles.viewButton} ${viewMode === "week" ? styles.activeView : ""}`}
+                  onClick={() => setViewMode("week")}
                   title="Vue semaine"
                 >
                   S
                 </button>
                 <button
-                  className={`${styles.viewButton} ${viewMode === 'month' ? styles.activeView : ''}`}
-                  onClick={() => setViewMode('month')}
+                  className={`${styles.viewButton} ${viewMode === "month" ? styles.activeView : ""}`}
+                  onClick={() => setViewMode("month")}
                   title="Vue mois"
                 >
                   M
@@ -178,9 +178,7 @@ export default function TimelinePage() {
           </div>
 
           {loading && (
-            <div className={styles.loading}>
-              Chargement du calendrier...
-            </div>
+            <div className={styles.loading}>Chargement du calendrier...</div>
           )}
 
           {error && (
@@ -197,49 +195,76 @@ export default function TimelinePage() {
                 </div>
               ) : (
                 agendaRange.agendas.map((agenda) => {
-                  const isToday = agenda.date === getTodayDate()
+                  const isToday = agenda.date === getTodayDate();
                   return (
                     <div
                       key={agenda.date}
                       className={`${styles.dateSection} ${
-                        isToday ? styles.today : ''
+                        isToday ? styles.today : ""
                       }`}
                     >
                       <div className={styles.dateHeader}>
                         <h2>{formatDate(agenda.date)}</h2>
-                        {isToday && <span className={styles.todayBadge}>Aujourd'hui</span>}
-                        <Link href={`/?date=${agenda.date}`} className={styles.viewDay}>
+                        {isToday && (
+                          <span className={styles.todayBadge}>Aujourd'hui</span>
+                        )}
+                        <Link
+                          href={`/?date=${agenda.date}`}
+                          className={styles.viewDay}
+                        >
                           Voir cette journée →
                         </Link>
                       </div>
 
                       {agenda.sittings.length === 0 ? (
-                        <p className={styles.noSittings}>Aucune séance prévue</p>
+                        <p className={styles.noSittings}>
+                          Aucune séance prévue
+                        </p>
                       ) : (
                         <div className={styles.sittings}>
-                          {agenda.sittings.map((sitting) => (
-                            <Link
-                              key={sitting.id}
-                              href={`/sitting/${sitting.id}`}
-                              className={styles.sittingCard}
-                            >
-                              <div className={styles.sittingHeader}>
-                                <h3>{sitting.title}</h3>
-                                {sitting.time_range && (
-                                  <span className={styles.timeRange}>
-                                    {sitting.time_range}
-                                  </span>
-                                )}
-                              </div>
-                              <p className={styles.itemCount}>
-                                {sitting.agenda_items.length} point(s) à l'ordre du jour
-                              </p>
-                            </Link>
-                          ))}
+                          {agenda.sittings.map((sitting) => {
+                            const hasVoteLike = (
+                              sitting.agenda_items ?? []
+                            ).some((item) =>
+                              isVoteLikeAgendaItem(
+                                item.title,
+                                item.description,
+                                item.category,
+                              ),
+                            );
+                            return (
+                              <Link
+                                key={sitting.id}
+                                href={`/sitting/${sitting.id}`}
+                                className={`${styles.sittingCard} ${hasVoteLike ? styles.sittingCardVote : ""}`}
+                              >
+                                <div className={styles.sittingHeader}>
+                                  <h3>{sitting.title}</h3>
+                                  {sitting.time_range && (
+                                    <span className={styles.timeRange}>
+                                      {sitting.time_range}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className={styles.itemCount}>
+                                  {sitting.agenda_items.length} point(s) à
+                                  l&apos;ordre du jour
+                                  {hasVoteLike && (
+                                    <span
+                                      className={styles.voteBadge}
+                                      title="Points susceptibles de donner lieu à un vote"
+                                    >
+                                      · Scrutin possible
+                                    </span>
+                                  )}
+                                </p>
+                              </Link>
+                            );
+                          })}
                         </div>
                       )}
                     </div>
-                  )
+                  );
                 })
               )}
             </div>
@@ -253,5 +278,5 @@ export default function TimelinePage() {
         </div>
       </footer>
     </div>
-  )
+  );
 }

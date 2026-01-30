@@ -3,12 +3,12 @@
  * This allows running the API locally without Vercel CLI
  */
 
-import { config } from 'dotenv';
-import express, { Request, Response } from 'express';
-import { VercelRequest, VercelResponse } from '@vercel/node';
+import { config } from "dotenv";
+import express, { Request, Response } from "express";
+import { VercelRequest, VercelResponse } from "@vercel/node";
 
 // Load environment variables
-config({ path: '.env.local' });
+config({ path: ".env.local" });
 
 const app = express();
 // Use static port 3001 for API server
@@ -19,26 +19,29 @@ app.use(express.json());
 
 // CORS middleware
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  if (req.method === "OPTIONS") {
     return res.sendStatus(200);
   }
   next();
 });
 
 // Helper to adapt Express req/res to Vercel req/res
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function adaptHandler(handler: (req: VercelRequest, res: VercelResponse) => Promise<any>) {
+function adaptHandler(
+  handler: (req: VercelRequest, res: VercelResponse) => Promise<unknown>,
+) {
   return async (req: Request, res: Response) => {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await handler(req as any, res as any);
+      await handler(
+        req as unknown as VercelRequest,
+        res as unknown as VercelResponse,
+      );
     } catch (error) {
-      console.error('Handler error:', error);
+      console.error("Handler error:", error);
       if (!res.headersSent) {
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: "Internal server error" });
       }
     }
   };
@@ -46,17 +49,34 @@ function adaptHandler(handler: (req: VercelRequest, res: VercelResponse) => Prom
 
 // Import and setup routes dynamically
 async function setupRoutes() {
-  const agendaHandler = await import('./api/agenda');
-  const rangeHandler = await import('./api/agenda/range');
-  const sittingsHandler = await import('./api/sittings/[id]');
+  const agendaHandler = await import("./api/agenda");
+  const rangeHandler = await import("./api/agenda/range");
+  const sittingsHandler = await import("./api/sittings/[id]");
+  const scrutinsIndexHandler = await import("./api/scrutins/index");
+  const scrutinsIdHandler = await import("./api/scrutins/[id]");
+  const deputyHandler = await import("./api/deputy/[acteurRef]");
+  const deputiesVotesHandler = await import("./api/deputies/[acteurRef]/votes");
+  const groupsIndexHandler = await import("./api/groups/index");
+  const groupsSlugHandler = await import("./api/groups/[slug]");
+  const searchHandler = await import("./api/search");
 
-  app.get('/api/agenda', adaptHandler(agendaHandler.default));
-  app.get('/api/agenda/range', adaptHandler(rangeHandler.default));
-  app.get('/api/sittings/:id', adaptHandler(sittingsHandler.default));
+  app.get("/api/agenda", adaptHandler(agendaHandler.default));
+  app.get("/api/agenda/range", adaptHandler(rangeHandler.default));
+  app.get("/api/sittings/:id", adaptHandler(sittingsHandler.default));
+  app.get("/api/scrutins", adaptHandler(scrutinsIndexHandler.default));
+  app.get("/api/scrutins/:id", adaptHandler(scrutinsIdHandler.default));
+  app.get("/api/deputy/:acteurRef", adaptHandler(deputyHandler.default));
+  app.get(
+    "/api/deputies/:acteurRef/votes",
+    adaptHandler(deputiesVotesHandler.default),
+  );
+  app.get("/api/groups", adaptHandler(groupsIndexHandler.default));
+  app.get("/api/groups/:slug", adaptHandler(groupsSlugHandler.default));
+  app.get("/api/search", adaptHandler(searchHandler.default));
 
   // Health check
-  app.get('/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  app.get("/health", (req, res) => {
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
   });
 
   // Start server
@@ -66,11 +86,18 @@ async function setupRoutes() {
     console.log(`  GET /api/agenda?date=YYYY-MM-DD`);
     console.log(`  GET /api/agenda/range?from=YYYY-MM-DD&to=YYYY-MM-DD`);
     console.log(`  GET /api/sittings/:id`);
+    console.log(`  GET /api/scrutins?from=YYYY-MM-DD&to=YYYY-MM-DD`);
+    console.log(`  GET /api/scrutins/:id`);
+    console.log(`  GET /api/deputy/:acteurRef`);
+    console.log(`  GET /api/deputies/:acteurRef/votes`);
+    console.log(`  GET /api/groups`);
+    console.log(`  GET /api/groups/:slug`);
+    console.log(`  GET /api/search?q=...&type=scrutins|deputies|groups|all`);
     console.log(`  GET /health\n`);
   });
 }
 
 setupRoutes().catch((error) => {
-  console.error('Failed to start server:', error);
+  console.error("Failed to start server:", error);
   process.exit(1);
 });

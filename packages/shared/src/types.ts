@@ -62,6 +62,129 @@ export interface AgendaRangeResponse {
 
 export interface SittingDetailResponse extends SittingWithItems {
   source_metadata: SourceMetadata;
+  /** Scrutins (votes) held during this sitting */
+  scrutins?: Scrutin[];
+}
+
+/**
+ * Scrutin (roll-call vote) types
+ */
+
+export interface Scrutin {
+  id: string;
+  official_id: string;
+  sitting_id: string | null;
+  date_scrutin: string; // YYYY-MM-DD
+  numero: string;
+  type_vote_code: string | null;
+  type_vote_libelle: string | null;
+  sort_code: string; // 'adopté' | 'rejeté'
+  sort_libelle: string | null;
+  titre: string;
+  synthese_pour: number;
+  synthese_contre: number;
+  synthese_abstentions: number;
+  synthese_non_votants: number;
+  official_url: string | null;
+}
+
+export type ScrutinVotePosition =
+  | "pour"
+  | "contre"
+  | "abstention"
+  | "non_votant";
+
+export interface ScrutinVote {
+  id: string;
+  scrutin_id: string;
+  acteur_ref: string;
+  position: ScrutinVotePosition;
+}
+
+/** Scrutin vote with optional deputy display name (when deputies table is populated) */
+export interface ScrutinVoteWithName extends ScrutinVote {
+  acteur_nom?: string | null;
+}
+
+export interface ScrutinWithVotes extends Scrutin {
+  votes?: ScrutinVote[];
+}
+
+export interface ScrutinsResponse {
+  from: string;
+  to: string;
+  scrutins: Scrutin[];
+  source: {
+    label: string;
+    last_updated_at?: string;
+  };
+}
+
+export interface ScrutinDetailResponse extends Scrutin {
+  votes?: ScrutinVoteWithName[];
+}
+
+/** Single vote record for deputy voting record */
+export interface DeputyVoteRecord {
+  scrutin_id: string;
+  scrutin_titre: string;
+  date_scrutin: string;
+  position: ScrutinVotePosition;
+}
+
+export interface DeputyVotesResponse {
+  acteur_ref: string;
+  /** Display name when deputy is in deputies table */
+  acteur_nom?: string | null;
+  votes: DeputyVoteRecord[];
+}
+
+export interface Deputy {
+  acteur_ref: string;
+  civil_nom: string;
+  civil_prenom: string;
+  date_naissance: string | null;
+  lieu_naissance: string | null;
+  profession: string | null;
+  sexe: string | null;
+  parti_politique: string | null;
+  groupe_politique: string | null;
+  circonscription: string | null;
+  departement: string | null;
+  date_debut_mandat: string | null;
+  legislature: number | null;
+  official_url: string | null;
+}
+
+/** Political group (groupe politique) summary for list */
+export interface PoliticalGroupSummary {
+  slug: string;
+  label: string;
+  deputy_count: number;
+}
+
+/** Political group detail with deputies */
+export interface PoliticalGroupDetail {
+  slug: string;
+  label: string;
+  deputy_count: number;
+  deputies: Deputy[];
+}
+
+export interface PoliticalGroupsListResponse {
+  groups: PoliticalGroupSummary[];
+}
+
+/**
+ * Search result types
+ */
+export type SearchType = "scrutins" | "deputies" | "groups" | "all";
+
+export interface SearchResponse {
+  q: string;
+  scrutins: Scrutin[];
+  deputies: Deputy[];
+  groups: PoliticalGroupSummary[];
 }
 
 /**

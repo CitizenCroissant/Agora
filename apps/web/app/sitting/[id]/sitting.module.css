@@ -39,7 +39,7 @@
 .sittingHeader {
   display: flex;
   justify-content: space-between;
-  align-items: start;
+  align-items: flex-start;
   gap: var(--spacing-lg);
   margin-bottom: var(--spacing-lg);
   padding-bottom: var(--spacing-lg);
@@ -98,6 +98,74 @@
   margin-bottom: var(--spacing-xl);
   line-height: 1.6;
   font-size: 1.125rem;
+}
+
+.scrutinsSection {
+  margin-bottom: var(--spacing-xl);
+}
+
+.scrutinsSection h2 {
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--color-primary);
+}
+
+.scrutinsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.scrutinItem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  transition: all 0.2s;
+}
+
+.scrutinItem:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.scrutinBadgeAdopte {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: #0d7d3d;
+  color: white;
+  border-radius: var(--border-radius);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.scrutinBadgeRejete {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-secondary);
+  color: white;
+  border-radius: var(--border-radius);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.scrutinTitle {
+  flex: 1;
+  font-size: 0.938rem;
+  color: var(--color-text);
+  min-width: 0;
+}
+
+.scrutinLink {
+  font-size: 0.875rem;
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.scrutinItem:hover .scrutinLink {
+  text-decoration: underline;
 }
 
 .agendaSection {

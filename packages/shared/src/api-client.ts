@@ -7,18 +7,51 @@ import {
   AgendaResponse,
   AgendaRangeResponse,
   SittingDetailResponse,
+  ScrutinsResponse,
+  ScrutinDetailResponse,
+  DeputyVotesResponse,
+  Deputy,
+  PoliticalGroupsListResponse,
+  PoliticalGroupDetail,
+  SearchResponse,
+  SearchType,
   ApiError,
-} from './types';
+} from "./types";
+
+const API_NOT_JSON_MESSAGE =
+  "L'API a renvoyé une page HTML au lieu de JSON. Vérifiez que l'API est démarrée (port 3001) et que NEXT_PUBLIC_API_URL pointe vers elle (ex. http://localhost:3001/api).";
+
+/**
+ * Parse response as JSON or throw a clear error if the body is HTML (e.g. 404 page).
+ */
+async function parseJsonOrThrow<T>(response: Response): Promise<T> {
+  const contentType = response.headers.get("content-type") ?? "";
+  if (!contentType.includes("application/json")) {
+    const text = await response.text();
+    if (
+      text.trimStart().startsWith("<!") ||
+      text.trimStart().toLowerCase().startsWith("<html")
+    ) {
+      throw new Error(API_NOT_JSON_MESSAGE);
+    }
+    throw new Error(
+      `Réponse non-JSON (Content-Type: ${contentType}). ${API_NOT_JSON_MESSAGE}`,
+    );
+  }
+  return response.json() as Promise<T>;
+}
 
 export class ApiClient {
   private baseUrl: string;
 
   constructor(baseUrl: string) {
     // Ensure baseUrl is a string
-    if (typeof baseUrl !== 'string') {
-      throw new Error(`ApiClient: baseUrl must be a string, got ${typeof baseUrl}`);
+    if (typeof baseUrl !== "string") {
+      throw new Error(
+        `ApiClient: baseUrl must be a string, got ${typeof baseUrl}`,
+      );
     }
-    this.baseUrl = baseUrl.replace(/\/$/, ''); // Remove trailing slash
+    this.baseUrl = baseUrl.replace(/\/$/, ""); // Remove trailing slash
   }
 
   /**
@@ -26,10 +59,10 @@ export class ApiClient {
    */
   async getAgenda(date: string): Promise<AgendaResponse> {
     const response = await fetch(`${this.baseUrl}/agenda?date=${date}`);
-    
+
     if (!response.ok) {
       const error: ApiError = await response.json();
-      throw new Error(error.message || 'Failed to fetch agenda');
+      throw new Error(error.message || "Failed to fetch agenda");
     }
 
     return response.json();
@@ -40,12 +73,12 @@ export class ApiClient {
    */
   async getAgendaRange(from: string, to: string): Promise<AgendaRangeResponse> {
     const response = await fetch(
-      `${this.baseUrl}/agenda/range?from=${from}&to=${to}`
+      `${this.baseUrl}/agenda/range?from=${from}&to=${to}`,
     );
 
     if (!response.ok) {
       const error: ApiError = await response.json();
-      throw new Error(error.message || 'Failed to fetch agenda range');
+      throw new Error(error.message || "Failed to fetch agenda range");
     }
 
     return response.json();
@@ -59,7 +92,122 @@ export class ApiClient {
 
     if (!response.ok) {
       const error: ApiError = await response.json();
-      throw new Error(error.message || 'Failed to fetch sitting');
+      throw new Error(error.message || "Failed to fetch sitting");
+    }
+
+    return response.json();
+  }
+
+  /**
+   * Fetch scrutins (roll-call votes) for a date range
+   */
+  async getScrutins(from: string, to: string): Promise<ScrutinsResponse> {
+    const response = await fetch(
+      `${this.baseUrl}/scrutins?from=${from}&to=${to}`,
+    );
+
+    if (!response.ok) {
+      const error: ApiError = await response.json();
+      throw new Error(error.message || "Failed to fetch scrutins");
+    }
+
+    return response.json();
+  }
+
+  /**
+   * Fetch a single scrutin by ID (UUID or official_id)
+   */
+  async getScrutin(id: string): Promise<ScrutinDetailResponse> {
+    const response = await fetch(`${this.baseUrl}/scrutins/${id}`);
+
+    if (!response.ok) {
+      const error: ApiError = await response.json();
+      throw new Error(error.message || "Failed to fetch scrutin");
+    }
+
+    return response.json();
+  }
+
+  /**
+   * Fetch deputy profile by acteur_ref (e.g. PA842279)
+   */
+  async getDeputy(acteurRef: string): Promise<Deputy> {
+    const encoded = encodeURIComponent(acteurRef);
+    const response = await fetch(`${this.baseUrl}/deputy/${encoded}`);
+
+    if (!response.ok) {
+      const error: ApiError = await response.json();
+      throw new Error(error.message || "Failed to fetch deputy");
+    }
+
+    return response.json();
+  }
+
+  /**
+   * Fetch voting record for a deputy by acteur_ref (e.g. PA842279)
+   */
+  async getDeputyVotes(acteurRef: string): Promise<DeputyVotesResponse> {
+    const encoded = encodeURIComponent(acteurRef);
+    const response = await fetch(`${this.baseUrl}/deputies/${encoded}/votes`);
+
+    if (!response.ok) {
+      const error: ApiError = await response.json();
+      throw new Error(error.message || "Failed to fetch deputy votes");
+    }
+
+    return response.json();
+  }
+
+  /**
+   * Fetch list of political groups (groupes politiques) with deputy counts
+   */
+  async getPoliticalGroups(): Promise<PoliticalGroupsListResponse> {
+    const response = await fetch(`${this.baseUrl}/groups`);
+
+    const data = await parseJsonOrThrow<PoliticalGroupsListResponse | ApiError>(
+      response,
+    );
+
+    if (!response.ok) {
+      const error = data as ApiError;
+      throw new Error(error.message || "Failed to fetch political groups");
+    }
+
+    return data as PoliticalGroupsListResponse;
+  }
+
+  /**
+   * Fetch a political group by slug with its deputies
+   */
+  async getPoliticalGroup(slug: string): Promise<PoliticalGroupDetail> {
+    const encoded = encodeURIComponent(slug);
+    const response = await fetch(`${this.baseUrl}/groups/${encoded}`);
+
+    const data = await parseJsonOrThrow<PoliticalGroupDetail | ApiError>(
+      response,
+    );
+
+    if (!response.ok) {
+      const error = data as ApiError;
+      throw new Error(error.message || "Failed to fetch political group");
+    }
+
+    return data as PoliticalGroupDetail;
+  }
+
+  /**
+   * Search scrutins, deputies, and/or groups by query string
+   */
+  async search(q: string, type: SearchType = "all"): Promise<SearchResponse> {
+    const params = new URLSearchParams({ q: q.trim() });
+    if (type !== "all") {
+      params.set("type", type);
+    }
+    const response = await fetch(`${this.baseUrl}/search?${params.toString()}`);
+
+    if (!response.ok) {
+      const error: ApiError = await response.json();
+      throw new Error(error.message || "Search failed");
     }
 
     return response.json();

@@ -7,11 +7,11 @@
  */
 export function formatDate(dateString: string): string {
   const date = new Date(dateString);
-  return date.toLocaleDateString('fr-FR', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+  return date.toLocaleDateString("fr-FR", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 }
 
@@ -19,8 +19,8 @@ export function formatDate(dateString: string): string {
  * Format a time string (HH:MM:SS) to HH:MM
  */
 export function formatTime(timeString?: string): string {
-  if (!timeString) return '';
-  const [hours, minutes] = timeString.split(':');
+  if (!timeString) return "";
+  const [hours, minutes] = timeString.split(":");
   return `${hours}:${minutes}`;
 }
 
@@ -28,7 +28,7 @@ export function formatTime(timeString?: string): string {
  * Format a time range for display
  */
 export function formatTimeRange(startTime?: string, endTime?: string): string {
-  if (!startTime && !endTime) return '';
+  if (!startTime && !endTime) return "";
   if (!endTime) return formatTime(startTime);
   return `${formatTime(startTime)} - ${formatTime(endTime)}`;
 }
@@ -37,7 +37,7 @@ export function formatTimeRange(startTime?: string, endTime?: string): string {
  * Get today's date in YYYY-MM-DD format
  */
 export function getTodayDate(): string {
-  return new Date().toISOString().split('T')[0];
+  return new Date().toISOString().split("T")[0];
 }
 
 /**
@@ -46,7 +46,7 @@ export function getTodayDate(): string {
 export function addDays(dateString: string, days: number): string {
   const date = new Date(dateString);
   date.setDate(date.getDate() + days);
-  return date.toISOString().split('T')[0];
+  return date.toISOString().split("T")[0];
 }
 
 /**
@@ -66,7 +66,11 @@ export function isToday(dateString: string): boolean {
 /**
  * Get a date range for queries
  */
-export function getDateRange(centerDate: string, daysBefore: number, daysAfter: number): { from: string; to: string } {
+export function getDateRange(
+  centerDate: string,
+  daysBefore: number,
+  daysAfter: number,
+): { from: string; to: string } {
   return {
     from: subtractDays(centerDate, daysBefore),
     to: addDays(centerDate, daysAfter),
@@ -81,7 +85,7 @@ export function getWeekStart(dateString: string): string {
   const day = date.getDay();
   const diff = day === 0 ? -6 : 1 - day; // Adjust when day is Sunday
   date.setDate(date.getDate() + diff);
-  return date.toISOString().split('T')[0];
+  return date.toISOString().split("T")[0];
 }
 
 /**
@@ -97,7 +101,7 @@ export function getWeekEnd(dateString: string): string {
  */
 export function getMonthStart(dateString: string): string {
   const date = new Date(dateString);
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-01`;
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`;
 }
 
 /**
@@ -108,7 +112,7 @@ export function getMonthEnd(dateString: string): string {
   const year = date.getFullYear();
   const month = date.getMonth();
   const lastDay = new Date(year, month + 1, 0).getDate();
-  return `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+  return `${year}-${String(month + 1).padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
 }
 
 /**
@@ -124,7 +128,7 @@ export function addWeeks(dateString: string, weeks: number): string {
 export function addMonths(dateString: string, months: number): string {
   const date = new Date(dateString);
   date.setMonth(date.getMonth() + months);
-  return date.toISOString().split('T')[0];
+  return date.toISOString().split("T")[0];
 }
 
 /**
@@ -133,18 +137,18 @@ export function addMonths(dateString: string, months: number): string {
 export function formatDateRange(from: string, to: string): string {
   const fromDate = new Date(from);
   const toDate = new Date(to);
-  
-  const fromFormatted = fromDate.toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'short',
+
+  const fromFormatted = fromDate.toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "short",
   });
-  
-  const toFormatted = toDate.toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
+
+  const toFormatted = toDate.toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
   });
-  
+
   return `${fromFormatted} - ${toFormatted}`;
 }
 
@@ -153,8 +157,57 @@ export function formatDateRange(from: string, to: string): string {
  */
 export function formatMonth(dateString: string): string {
   const date = new Date(dateString);
-  return date.toLocaleDateString('fr-FR', {
-    month: 'long',
-    year: 'numeric',
+  return date.toLocaleDateString("fr-FR", {
+    month: "long",
+    year: "numeric",
+  });
+}
+
+/** Keywords and categories that typically indicate a vote or scrutin on the agenda */
+const VOTE_LIKE_KEYWORDS = [
+  "scrutin",
+  "vote",
+  "adoption",
+  "rejet",
+  "déclaration du gouvernement",
+  "motion de procédure",
+  "motion de censure",
+  "question de confiance",
+  "résolution",
+  "suffrages exprimés",
+];
+
+/**
+ * Slugify a string for URL use (e.g. political group label -> path segment)
+ */
+export function slugify(text: string): string {
+  return text
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+/**
+ * Heuristic: whether an agenda item is likely to involve a vote (scrutin)
+ */
+export function isVoteLikeAgendaItem(
+  title?: string | null,
+  description?: string | null,
+  category?: string | null,
+): boolean {
+  const text = [title, description, category]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\u0301/g, "") // strip acute accents for matching
+    .replace(/[\u0300-\u036f]/g, "");
+  const categoryLower = (category ?? "").toLowerCase();
+  return VOTE_LIKE_KEYWORDS.some((kw) => {
+    const kwNorm = kw.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return text.includes(kwNorm) || categoryLower.includes(kwNorm);
   });
 }

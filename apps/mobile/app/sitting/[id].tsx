@@ -1,44 +1,54 @@
-import React, { useState, useEffect } from 'react'
-import { View, Text, ScrollView, ActivityIndicator, StyleSheet, Linking, TouchableOpacity } from 'react-native'
-import { useLocalSearchParams, Stack } from 'expo-router'
-import { SittingDetailResponse } from '@agora/shared'
-import { createApiClient, formatDate } from '@agora/shared'
-import { Config } from '../../config'
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  ActivityIndicator,
+  StyleSheet,
+  Linking,
+  TouchableOpacity,
+} from "react-native";
+import { useLocalSearchParams, Stack } from "expo-router";
+import { useRouter } from "expo-router";
+import { SittingDetailResponse } from "@agora/shared";
+import { createApiClient, formatDate } from "@agora/shared";
+import { Config } from "../../config";
 
-const apiClient = createApiClient(Config.API_URL)
+const apiClient = createApiClient(Config.API_URL);
 
 export default function SittingDetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>()
-  const [sitting, setSitting] = useState<SittingDetailResponse | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
-  const [error, setError] = useState<string | null>(null)
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
+  const [sitting, setSitting] = useState<SittingDetailResponse | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) {
-      loadSitting(id)
+      loadSitting(id);
     }
-  }, [id])
+  }, [id]);
 
   const loadSitting = async (sittingId: string) => {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
     try {
-      const data = await apiClient.getSitting(sittingId)
-      setSitting(data)
+      const data = await apiClient.getSitting(sittingId);
+      setSitting(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load sitting')
-      setSitting(null)
+      setError(err instanceof Error ? err.message : "Failed to load sitting");
+      setSitting(null);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <>
       <Stack.Screen
         options={{
-          headerTitle: sitting?.title || 'Détails',
-          headerBackTitle: 'Retour',
+          headerTitle: sitting?.title || "Détails",
+          headerBackTitle: "Retour",
         }}
       />
       <ScrollView style={styles.container}>
@@ -78,6 +88,38 @@ export default function SittingDetailScreen() {
               <Text style={styles.description}>{sitting.description}</Text>
             </View>
 
+            {sitting.scrutins && sitting.scrutins.length > 0 && (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>
+                  Scrutins de cette séance
+                </Text>
+                {sitting.scrutins.map((scrutin) => (
+                  <TouchableOpacity
+                    key={scrutin.id}
+                    style={styles.scrutinItem}
+                    onPress={() => router.push(`/votes/${scrutin.id}`)}
+                  >
+                    <View
+                      style={[
+                        styles.scrutinBadge,
+                        scrutin.sort_code === "adopté"
+                          ? styles.scrutinBadgeAdopte
+                          : styles.scrutinBadgeRejete,
+                      ]}
+                    >
+                      <Text style={styles.scrutinBadgeText}>
+                        {scrutin.sort_code === "adopté" ? "Adopté" : "Rejeté"}
+                      </Text>
+                    </View>
+                    <Text style={styles.scrutinTitle} numberOfLines={2}>
+                      {scrutin.titre}
+                    </Text>
+                    <Text style={styles.scrutinLink}>Voir le scrutin →</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+
             {sitting.agenda_items.length > 0 && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Ordre du jour</Text>
@@ -96,7 +138,9 @@ export default function SittingDetailScreen() {
                     </View>
                     <Text style={styles.itemTitle}>{item.title}</Text>
                     {item.description !== item.title && (
-                      <Text style={styles.itemDescription}>{item.description}</Text>
+                      <Text style={styles.itemDescription}>
+                        {item.description}
+                      </Text>
                     )}
                     {item.reference_code && (
                       <Text style={styles.itemReference}>
@@ -117,55 +161,62 @@ export default function SittingDetailScreen() {
               </View>
             )}
 
-            {sitting.source_metadata && sitting.source_metadata.original_source_url && (
-              <View style={styles.sourceContainer}>
-                <Text style={styles.sourceTitle}>Source et provenance</Text>
-                <Text style={styles.sourceLabel}>
-                  Données officielles de l&apos;Assemblée nationale
-                </Text>
-                <Text style={styles.sourceDate}>
-                  Dernière synchronisation:{' '}
-                  {new Date(sitting.source_metadata.last_synced_at).toLocaleDateString('fr-FR')}
-                </Text>
-                <TouchableOpacity
-                  onPress={() => Linking.openURL(sitting.source_metadata!.original_source_url)}
-                >
-                  <Text style={styles.sourceLink}>
-                    Voir la source originale →
+            {sitting.source_metadata &&
+              sitting.source_metadata.original_source_url && (
+                <View style={styles.sourceContainer}>
+                  <Text style={styles.sourceTitle}>Source et provenance</Text>
+                  <Text style={styles.sourceLabel}>
+                    Données officielles de l&apos;Assemblée nationale
                   </Text>
-                </TouchableOpacity>
-              </View>
-            )}
+                  <Text style={styles.sourceDate}>
+                    Dernière synchronisation:{" "}
+                    {new Date(
+                      sitting.source_metadata.last_synced_at,
+                    ).toLocaleDateString("fr-FR")}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() =>
+                      Linking.openURL(
+                        sitting.source_metadata!.original_source_url,
+                      )
+                    }
+                  >
+                    <Text style={styles.sourceLink}>
+                      Voir la source originale →
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
           </View>
         )}
       </ScrollView>
     </>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   centerContent: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 48,
   },
   loadingText: {
     marginTop: 16,
-    color: '#666',
+    color: "#666",
     fontSize: 16,
   },
   errorContainer: {
     padding: 24,
-    alignItems: 'center',
+    alignItems: "center",
   },
   errorText: {
-    color: '#ef4135',
+    color: "#ef4135",
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   content: {
     padding: 16,
@@ -174,38 +225,38 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingBottom: 16,
     borderBottomWidth: 2,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: "#e0e0e0",
   },
   title: {
     fontSize: 24,
-    fontWeight: '700',
-    color: '#0055a4',
+    fontWeight: "700",
+    color: "#0055a4",
     marginBottom: 8,
   },
   date: {
     fontSize: 16,
-    color: '#666',
-    textTransform: 'capitalize',
+    color: "#666",
+    textTransform: "capitalize",
     marginBottom: 12,
   },
   timeContainer: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
     padding: 12,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   timeLabel: {
     fontSize: 12,
-    color: '#666',
+    color: "#666",
     marginBottom: 4,
   },
   time: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#0055a4',
+    fontWeight: "600",
+    color: "#0055a4",
   },
   locationContainer: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,
@@ -218,47 +269,47 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: '600',
-    color: '#0055a4',
+    fontWeight: "600",
+    color: "#0055a4",
     marginBottom: 12,
   },
   description: {
     fontSize: 16,
     lineHeight: 24,
-    color: '#333',
+    color: "#333",
   },
   agendaItem: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: "#e0e0e0",
     borderRadius: 8,
     padding: 12,
     marginBottom: 12,
   },
   itemHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 8,
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
   },
   itemNumber: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: '#0055a4',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#0055a4",
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 8,
   },
   itemNumberText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   itemTime: {
     fontSize: 12,
-    color: '#666',
-    backgroundColor: '#f5f5f5',
+    color: "#666",
+    backgroundColor: "#f5f5f5",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
@@ -266,62 +317,99 @@ const styles = StyleSheet.create({
   },
   itemCategory: {
     fontSize: 10,
-    color: '#fff',
-    backgroundColor: '#0055a4',
+    color: "#fff",
+    backgroundColor: "#0055a4",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
-    textTransform: 'uppercase',
-    fontWeight: '500',
+    textTransform: "uppercase",
+    fontWeight: "500",
   },
   itemTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 4,
-    color: '#333',
+    color: "#333",
   },
   itemDescription: {
     fontSize: 14,
     lineHeight: 20,
-    color: '#666',
+    color: "#666",
     marginBottom: 4,
   },
   itemReference: {
     fontSize: 12,
-    color: '#999',
+    color: "#999",
     marginBottom: 4,
   },
   itemLink: {
     fontSize: 14,
-    color: '#0055a4',
-    fontWeight: '500',
+    color: "#0055a4",
+    fontWeight: "500",
   },
   sourceContainer: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: "#e0e0e0",
     marginTop: 16,
   },
   sourceTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 8,
   },
   sourceLabel: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
     marginBottom: 4,
   },
   sourceDate: {
     fontSize: 12,
-    color: '#666',
+    color: "#666",
     marginBottom: 8,
   },
   sourceLink: {
     fontSize: 14,
-    color: '#0055a4',
-    fontWeight: '500',
+    color: "#0055a4",
+    fontWeight: "500",
   },
-})
+  scrutinItem: {
+    backgroundColor: "#f5f5f5",
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    marginBottom: 12,
+  },
+  scrutinBadge: {
+    alignSelf: "flex-start",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    marginBottom: 8,
+  },
+  scrutinBadgeAdopte: {
+    backgroundColor: "rgba(0, 128, 0, 0.15)",
+  },
+  scrutinBadgeRejete: {
+    backgroundColor: "rgba(200, 0, 0, 0.15)",
+  },
+  scrutinBadgeText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#333",
+  },
+  scrutinTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 8,
+  },
+  scrutinLink: {
+    fontSize: 14,
+    color: "#0055a4",
+    fontWeight: "500",
+  },
+});

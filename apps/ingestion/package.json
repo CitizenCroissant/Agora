@@ -6,6 +6,8 @@
     "dev": "vercel dev",
     "build": "tsc",
     "ingest": "ts-node src/ingest.ts",
+    "ingest:scrutins": "ts-node src/ingest-scrutins-cli.ts",
+    "ingest:deputies": "ts-node src/ingest-deputies-cli.ts",
     "lint": "eslint . && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
