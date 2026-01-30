@@ -3,6 +3,11 @@
  */
 
 import {
+  resolveCirconscriptionName,
+  circonscriptionRefCanonical,
+  circonscriptionId,
+} from "@agora/shared";
+import {
   AssembleeMandat,
   AssembleeOrgane,
   DeputyInsert,
@@ -24,70 +29,164 @@ function extractUid(uid: unknown): string | null {
   return null;
 }
 
+const todayIso = () => new Date().toISOString().split("T")[0];
+
 function firstMandatDepute(
   mandats: AssembleeMandat[] | undefined,
   _organesMap: Map<string, AssembleeOrgane>,
 ): {
   circonscription: string | null;
+  ref_circonscription: string | null;
   departement: string | null;
   dateDebut: string | null;
+  dateFin: string | null;
   groupeRef: string | null;
 } {
   if (!mandats?.length)
     return {
       circonscription: null,
+      ref_circonscription: null,
       departement: null,
       dateDebut: null,
+      dateFin: null,
       groupeRef: null,
     };
   const mandatsList = toList(mandats);
-  const deputeMandat =
-    mandatsList.find(
-      (m) => m.election?.refCirconscription || m.election?.lieu,
-    ) ??
-    mandatsList.find((m) =>
+  const deputeMandats = mandatsList.filter(
+    (m) =>
+      m.election?.refCirconscription ||
+      m.election?.lieu ||
       (m.infosQualite?.libelleQualiteSex ?? "")
         .toLowerCase()
         .includes("député"),
-    ) ??
-    mandatsList[0];
-  const gpMandat = mandatsList.find((m) => m.typeOrgane === "GP");
+  );
+  const deputeMandatsList =
+    deputeMandats.length > 0 ? deputeMandats : mandatsList;
+  const today = todayIso();
+  const isCurrent = (m: AssembleeMandat) =>
+    !m.dateFin || m.dateFin.split("T")[0] >= today;
+  const deputeMandat =
+    deputeMandatsList.find((m) => isCurrent(m)) ??
+    [...deputeMandatsList].sort((a, b) => {
+      const endA = a.dateFin?.split("T")[0] ?? "";
+      const endB = b.dateFin?.split("T")[0] ?? "";
+      return endB.localeCompare(endA);
+    })[0];
+  const gpMandatRes = mandatsList.find((m) => m.typeOrgane === "GP");
+
   if (!deputeMandat)
     return {
       circonscription: null,
+      ref_circonscription: null,
       departement: null,
       dateDebut: null,
+      dateFin: null,
       groupeRef: null,
     };
 
-  let circonscription: string | null = null;
-  let departement: string | null = null;
-  if (deputeMandat.election) {
-    const lieu = deputeMandat.election.lieu;
+  function fromElection(election: AssembleeMandat["election"]): {
+    circonscription: string | null;
+    refCirconscription: string | null;
+    departement: string | null;
+  } {
+    if (!election)
+      return {
+        circonscription: null,
+        refCirconscription: null,
+        departement: null,
+      };
+    let c: string | null = null;
+    let d: string | null = null;
+    const refCirconscription =
+      typeof election.refCirconscription === "string"
+        ? election.refCirconscription.trim() || null
+        : null;
+    const lieu = election.lieu;
     if (lieu) {
-      departement = lieu.departement?.libelle ?? null;
-      const numCirco = lieu.numCirco;
-      const region = lieu.region?.libelle;
-      if (departement && numCirco) {
-        circonscription = `${departement} - ${numCirco}e circonscription`;
-      } else if (departement) {
-        circonscription = departement;
+      // AMO30: lieu.departement is string; AMO10: lieu.departement.libelle
+      const deptVal = lieu.departement;
+      d =
+        typeof deptVal === "string"
+          ? deptVal.trim() || null
+          : (deptVal?.libelle?.trim() ?? null);
+      const numCirco = lieu.numCirco?.trim();
+      const regionVal = lieu.region;
+      const region =
+        typeof regionVal === "string"
+          ? regionVal.trim()
+          : regionVal?.libelle?.trim();
+      if (d && numCirco) {
+        c = `${d} - ${numCirco}e circonscription`;
+      } else if (d) {
+        c = d;
       } else if (region) {
-        circonscription = region;
+        c = region;
       }
     }
-    if (!circonscription && deputeMandat.election.refCirconscription) {
-      circonscription = deputeMandat.election.refCirconscription;
+    // Prefer lieu-derived name; use refCirconscription only when lieu had no usable data
+    if (!c && refCirconscription) {
+      c = resolveCirconscriptionName(refCirconscription) ?? refCirconscription;
+    }
+    return {
+      circonscription: c,
+      refCirconscription,
+      departement: d,
+    };
+  }
+
+  let { circonscription, refCirconscription, departement } = fromElection(
+    deputeMandat.election,
+  );
+
+  // If primary mandat has no circonscription, take from any mandat that has it (e.g. current mandat may lack election data)
+  if (!circonscription || !refCirconscription) {
+    for (const m of deputeMandatsList) {
+      if (m === deputeMandat) continue;
+      const fallback = fromElection(m.election);
+      if (fallback.circonscription) {
+        circonscription = circonscription ?? fallback.circonscription;
+        refCirconscription = refCirconscription ?? fallback.refCirconscription;
+        if (fallback.departement)
+          departement = departement ?? fallback.departement;
+        break;
+      }
+    }
+  }
+  if (!circonscription || !refCirconscription) {
+    for (const m of mandatsList) {
+      const fallback = fromElection(m.election);
+      if (fallback.circonscription) {
+        circonscription = circonscription ?? fallback.circonscription;
+        refCirconscription = refCirconscription ?? fallback.refCirconscription;
+        if (fallback.departement)
+          departement = departement ?? fallback.departement;
+        break;
+      }
     }
   }
 
+  const ref_circonscription =
+    circonscriptionRefCanonical(refCirconscription ?? null) ??
+    (circonscription ? circonscriptionId(circonscription) : null);
+
   const groupeRef =
-    extractUid(gpMandat?.organeRef) ??
-    extractUid(gpMandat?.organes?.organeRef) ??
+    extractUid(gpMandatRes?.organeRef) ??
+    extractUid(gpMandatRes?.organes?.organeRef) ??
     null;
   const dateDebut = deputeMandat.dateDebut ?? null;
+  const dateFin =
+    typeof deputeMandat.dateFin === "string"
+      ? deputeMandat.dateFin.split("T")[0]
+      : null;
 
-  return { circonscription, departement, dateDebut, groupeRef };
+  return {
+    circonscription,
+    ref_circonscription,
+    departement,
+    dateDebut,
+    dateFin,
+    groupeRef,
+  };
 }
 
 export function transformDeputy(item: DeputyWithOrganes): DeputyInsert | null {
@@ -119,9 +218,16 @@ export function transformDeputy(item: DeputyWithOrganes): DeputyInsert | null {
   const sexe = typeof acteur.sexe === "string" ? acteur.sexe.trim() : null;
 
   const mandats = toList(acteur.mandats?.mandat);
-  const { circonscription, departement, dateDebut, groupeRef } =
-    firstMandatDepute(mandats, organesMap);
+  const {
+    circonscription,
+    ref_circonscription,
+    departement,
+    dateDebut,
+    dateFin,
+    groupeRef,
+  } = firstMandatDepute(mandats, organesMap);
   const date_debut_mandat = dateDebut;
+  const date_fin_mandat = dateFin;
 
   let groupe_politique: string | null = null;
   if (groupeRef) {
@@ -143,8 +249,10 @@ export function transformDeputy(item: DeputyWithOrganes): DeputyInsert | null {
     parti_politique: null,
     groupe_politique,
     circonscription,
+    ref_circonscription,
     departement,
     date_debut_mandat,
+    date_fin_mandat,
     legislature,
     official_url,
   };

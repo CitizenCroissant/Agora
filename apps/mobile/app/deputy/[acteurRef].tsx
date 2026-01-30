@@ -135,7 +135,25 @@ export default function DeputyDetailScreen() {
               {deputy.circonscription && (
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Circonscription</Text>
-                  <Text style={styles.infoValue}>{deputy.circonscription}</Text>
+                  {deputy.circonscription_ref ? (
+                    <TouchableOpacity
+                      onPress={() =>
+                        router.push(
+                          `/circonscriptions/${encodeURIComponent(
+                            deputy.circonscription_ref ?? "",
+                          )}`,
+                        )
+                      }
+                    >
+                      <Text style={styles.linkText}>
+                        {deputy.circonscription}
+                      </Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <Text style={styles.infoValue}>
+                      {deputy.circonscription}
+                    </Text>
+                  )}
                 </View>
               )}
               {deputy.departement && (

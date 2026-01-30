@@ -9,7 +9,8 @@ import {
 } from "react-native";
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useRouter } from "expo-router";
-import type { PoliticalGroupDetail } from "@agora/shared";
+import type { PoliticalGroupDetail, Deputy } from "@agora/shared";
+import { isCurrentlySitting } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 
 export default function GroupDetailScreen() {
@@ -61,39 +62,97 @@ export default function GroupDetailScreen() {
           </View>
         )}
 
-        {!loading && !error && group && (
-          <View style={styles.content}>
-            <Text style={styles.deputyCount}>
-              {group.deputy_count} député{group.deputy_count !== 1 ? "s" : ""}{" "}
-              dans ce groupe
-            </Text>
+        {!loading &&
+          !error &&
+          group &&
+          (() => {
+            const current: Deputy[] = [];
+            const past: Deputy[] = [];
+            for (const d of group.deputies) {
+              if (isCurrentlySitting(d.date_fin_mandat)) current.push(d);
+              else past.push(d);
+            }
+            const renderDeputy = (d: Deputy) => {
+              const name = `${d.civil_prenom} ${d.civil_nom}`.trim();
+              return (
+                <TouchableOpacity
+                  key={d.acteur_ref}
+                  style={styles.deputyCard}
+                  onPress={() =>
+                    router.push(`/deputy/${encodeURIComponent(d.acteur_ref)}`)
+                  }
+                >
+                  <Text style={styles.deputyName}>{name}</Text>
+                  {(d.circonscription || d.departement) && (
+                    <View style={styles.deputyMetaRow}>
+                      {d.circonscription_ref ? (
+                        <TouchableOpacity
+                          onPress={(e) => {
+                            e.stopPropagation();
+                            router.push(
+                              `/circonscriptions/${encodeURIComponent(
+                                d.circonscription_ref ?? "",
+                              )}`,
+                            );
+                          }}
+                          style={styles.deputyMetaTouchable}
+                        >
+                          <Text style={styles.deputyMetaLink}>
+                            {d.circonscription}
+                          </Text>
+                        </TouchableOpacity>
+                      ) : d.circonscription ? (
+                        <Text style={styles.deputyMeta}>
+                          {d.circonscription}
+                        </Text>
+                      ) : null}
+                      {d.circonscription && d.departement ? (
+                        <Text style={styles.deputyMeta}> — </Text>
+                      ) : null}
+                      {d.departement ? (
+                        <Text style={styles.deputyMeta}>{d.departement}</Text>
+                      ) : null}
+                    </View>
+                  )}
+                  <Text style={styles.deputyLink}>Voir la fiche →</Text>
+                </TouchableOpacity>
+              );
+            };
+            return (
+              <View style={styles.content}>
+                <Text style={styles.deputyCount}>
+                  {group.deputy_count} député
+                  {group.deputy_count !== 1 ? "s" : ""} dans ce groupe
+                </Text>
 
-            <View style={styles.deputyList}>
-              {group.deputies.map((d) => {
-                const name = `${d.civil_prenom} ${d.civil_nom}`.trim();
-                return (
-                  <TouchableOpacity
-                    key={d.acteur_ref}
-                    style={styles.deputyCard}
-                    onPress={() =>
-                      router.push(`/deputy/${encodeURIComponent(d.acteur_ref)}`)
-                    }
-                  >
-                    <Text style={styles.deputyName}>{name}</Text>
-                    {(d.circonscription || d.departement) && (
-                      <Text style={styles.deputyMeta}>
-                        {[d.circonscription, d.departement]
-                          .filter(Boolean)
-                          .join(" — ")}
-                      </Text>
-                    )}
-                    <Text style={styles.deputyLink}>Voir la fiche →</Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </View>
-        )}
+                {current.length > 0 && (
+                  <>
+                    <Text style={styles.sectionTitle}>
+                      Députés en mandat ({current.length})
+                    </Text>
+                    <View style={styles.deputyList}>
+                      {current.map(renderDeputy)}
+                    </View>
+                  </>
+                )}
+
+                {past.length > 0 && (
+                  <>
+                    <Text style={styles.sectionTitle}>
+                      Anciens députés ({past.length})
+                    </Text>
+                    <View style={styles.deputyList}>
+                      {past.map(renderDeputy)}
+                    </View>
+                  </>
+                )}
+
+                {current.length === 0 && past.length === 0 && (
+                  <Text style={styles.empty}>Aucun député dans ce groupe.</Text>
+                )}
+              </View>
+            );
+          })()}
       </ScrollView>
     </>
   );
@@ -131,6 +190,20 @@ const styles = StyleSheet.create({
     color: "#666",
     marginBottom: 16,
   },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#0055a4",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    marginTop: 20,
+    marginBottom: 12,
+  },
+  empty: {
+    fontSize: 16,
+    color: "#666",
+    marginTop: 24,
+  },
   deputyList: {
     gap: 12,
   },
@@ -147,10 +220,22 @@ const styles = StyleSheet.create({
     color: "#0055a4",
     marginBottom: 4,
   },
+  deputyMetaRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginBottom: 8,
+  },
+  deputyMetaTouchable: {
+    alignSelf: "flex-start",
+  },
   deputyMeta: {
     fontSize: 14,
     color: "#666",
-    marginBottom: 8,
+  },
+  deputyMetaLink: {
+    fontSize: 14,
+    color: "#0055a4",
+    fontWeight: "500",
   },
   deputyLink: {
     fontSize: 14,

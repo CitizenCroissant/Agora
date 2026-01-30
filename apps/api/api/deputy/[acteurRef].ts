@@ -6,7 +6,7 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { supabase } from "../../lib/supabase";
 import { ApiError, handleError } from "../../lib/errors";
-import { Deputy } from "@agora/shared";
+import { Deputy, getCirconscriptionDisplayName } from "@agora/shared";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -59,9 +59,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       sexe: deputy.sexe,
       parti_politique: deputy.parti_politique,
       groupe_politique: deputy.groupe_politique,
-      circonscription: deputy.circonscription,
+      circonscription:
+        getCirconscriptionDisplayName(deputy.circonscription) ??
+        deputy.circonscription,
+      circonscription_ref: deputy.ref_circonscription ?? null,
       departement: deputy.departement,
       date_debut_mandat: deputy.date_debut_mandat,
+      date_fin_mandat: deputy.date_fin_mandat ?? null,
       legislature: deputy.legislature,
       official_url: deputy.official_url,
     };

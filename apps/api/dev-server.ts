@@ -58,6 +58,11 @@ async function setupRoutes() {
   const deputiesVotesHandler = await import("./api/deputies/[acteurRef]/votes");
   const groupsIndexHandler = await import("./api/groups/index");
   const groupsSlugHandler = await import("./api/groups/[slug]");
+  const circonscriptionsIndexHandler =
+    await import("./api/circonscriptions/index");
+  const circonscriptionsGeojsonHandler =
+    await import("./api/circonscriptions/geojson");
+  const circonscriptionsIdHandler = await import("./api/circonscriptions/[id]");
   const searchHandler = await import("./api/search");
 
   app.get("/api/agenda", adaptHandler(agendaHandler.default));
@@ -72,6 +77,18 @@ async function setupRoutes() {
   );
   app.get("/api/groups", adaptHandler(groupsIndexHandler.default));
   app.get("/api/groups/:slug", adaptHandler(groupsSlugHandler.default));
+  app.get(
+    "/api/circonscriptions",
+    adaptHandler(circonscriptionsIndexHandler.default),
+  );
+  app.get(
+    "/api/circonscriptions/geojson",
+    adaptHandler(circonscriptionsGeojsonHandler.default),
+  );
+  app.get(
+    "/api/circonscriptions/:id",
+    adaptHandler(circonscriptionsIdHandler.default),
+  );
   app.get("/api/search", adaptHandler(searchHandler.default));
 
   // Health check
@@ -92,6 +109,9 @@ async function setupRoutes() {
     console.log(`  GET /api/deputies/:acteurRef/votes`);
     console.log(`  GET /api/groups`);
     console.log(`  GET /api/groups/:slug`);
+    console.log(`  GET /api/circonscriptions`);
+    console.log(`  GET /api/circonscriptions/geojson`);
+    console.log(`  GET /api/circonscriptions/:id`);
     console.log(`  GET /api/search?q=...&type=scrutins|deputies|groups|all`);
     console.log(`  GET /health\n`);
   });

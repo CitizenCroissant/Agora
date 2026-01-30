@@ -6,7 +6,7 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { supabase } from "../../lib/supabase";
 import { ApiError, handleError } from "../../lib/errors";
-import { slugify } from "@agora/shared";
+import { slugify, isCurrentlySitting } from "@agora/shared";
 import type { PoliticalGroupSummary } from "@agora/shared";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -29,16 +29,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const { data: rows, error } = await supabase
       .from("deputies")
-      .select("groupe_politique")
-      .not("groupe_politique", "is", null);
+      .select("groupe_politique, date_fin_mandat")
+      .not("groupe_politique", "is", null)
+      .limit(10000);
 
     if (error) {
       throw new ApiError(500, "Failed to fetch groups", "DatabaseError");
     }
 
-    // Aggregate by groupe_politique (filter empty string)
+    // Count only deputies whose mandate is still active (same logic as isCurrentlySitting)
     const byLabel = new Map<string, number>();
     for (const row of rows ?? []) {
+      if (!isCurrentlySitting(row.date_fin_mandat ?? null)) continue;
       const label = (row.groupe_politique ?? "").trim();
       if (!label) continue;
       byLabel.set(label, (byLabel.get(label) ?? 0) + 1);

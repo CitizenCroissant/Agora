@@ -49,6 +49,14 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="circonscriptions"
+        options={{
+          title: "Circonscriptions",
+          tabBarLabel: "Circonscriptions",
+          headerTitle: "Circonscriptions",
+        }}
+      />
+      <Tabs.Screen
         name="about"
         options={{
           title: "À propos",

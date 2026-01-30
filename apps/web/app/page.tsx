@@ -2,12 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AgendaResponse } from "@agora/shared";
-import {
-  getTodayDate,
-  formatDate,
-  addDays,
-  subtractDays,
-} from "@agora/shared";
+import { getTodayDate, formatDate, addDays, subtractDays } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./page.module.css";
@@ -78,6 +73,9 @@ export default function Home() {
             </Link>
             <Link href="/groupes" className={styles.navLink}>
               Groupes politiques
+            </Link>
+            <Link href="/circonscriptions" className={styles.navLink}>
+              Circonscriptions
             </Link>
             <Link href="/search" className={styles.navLink}>
               Recherche

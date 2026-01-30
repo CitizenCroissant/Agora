@@ -131,6 +131,20 @@ CREATE TABLE scrutin_votes (
 CREATE INDEX idx_scrutin_votes_scrutin_id ON scrutin_votes(scrutin_id);
 CREATE INDEX idx_scrutin_votes_acteur_ref ON scrutin_votes(acteur_ref);
 
+-- Table: circonscriptions
+-- Electoral constituencies (single source of truth); id = official ref (e.g. "7505", "1801")
+-- geometry = GeoJSON geometry (Polygon/MultiPolygon) for map overlay (data.gouv.fr contours)
+CREATE TABLE circonscriptions (
+    id TEXT PRIMARY KEY,
+    label TEXT NOT NULL,
+    geometry JSONB,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TRIGGER update_circonscriptions_updated_at BEFORE UPDATE ON circonscriptions
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
 -- Table: deputies
 -- Deputy (député) profiles from Assemblée nationale acteurs data
 CREATE TABLE deputies (
@@ -144,8 +158,10 @@ CREATE TABLE deputies (
     parti_politique TEXT,
     groupe_politique TEXT,
     circonscription TEXT,
+    ref_circonscription TEXT,
     departement TEXT,
     date_debut_mandat DATE,
+    date_fin_mandat DATE,
     legislature INTEGER,
     official_url TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -154,6 +170,30 @@ CREATE TABLE deputies (
 
 CREATE INDEX idx_deputies_groupe ON deputies(groupe_politique);
 CREATE INDEX idx_deputies_departement ON deputies(departement);
+CREATE INDEX idx_deputies_ref_circonscription ON deputies(ref_circonscription);
+ALTER TABLE deputies ADD CONSTRAINT fk_deputies_ref_circonscription
+    FOREIGN KEY (ref_circonscription) REFERENCES circonscriptions(id) ON DELETE SET NULL;
 
 CREATE TRIGGER update_deputies_updated_at BEFORE UPDATE ON deputies
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Table: political_groups_metadata
+-- Optional metadata for political groups (dates, position, orientation, president)
+-- Keyed by slug (slugified group label). Source: data.gouv.fr / Assemblée open data.
+CREATE TABLE political_groups_metadata (
+    slug TEXT PRIMARY KEY,
+    date_debut DATE,
+    date_fin DATE,
+    position_politique TEXT CHECK (position_politique IN ('majoritaire', 'opposition', 'minoritaire')),
+    orientation TEXT CHECK (orientation IN ('gauche', 'centre', 'droite')),
+    couleur_hex TEXT,
+    president_name TEXT,
+    legislature INTEGER,
+    official_url TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TRIGGER update_political_groups_metadata_updated_at
+    BEFORE UPDATE ON political_groups_metadata
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

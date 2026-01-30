@@ -133,6 +133,16 @@
   border: 1px solid var(--color-border);
 }
 
+.mandatActuel {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.mandatPasse {
+  color: var(--color-text-light);
+  font-style: italic;
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;

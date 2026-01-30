@@ -28,9 +28,12 @@ export interface AssembleeMandat {
   dateFin?: string;
   election?: {
     lieu?: {
-      region?: { libelle?: string };
-      departement?: { libelle?: string };
+      /** AMO10: nested { libelle } */
+      region?: { libelle?: string } | string;
+      departement?: { libelle?: string } | string;
       numCirco?: string;
+      /** AMO30: flat numDepartement (e.g. "92") */
+      numDepartement?: string;
     };
     refCirconscription?: string;
   };
@@ -57,8 +60,10 @@ export interface DeputyInsert {
   parti_politique: string | null;
   groupe_politique: string | null;
   circonscription: string | null;
+  ref_circonscription: string | null;
   departement: string | null;
   date_debut_mandat: string | null;
+  date_fin_mandat: string | null;
   legislature: number | null;
   official_url: string | null;
 }

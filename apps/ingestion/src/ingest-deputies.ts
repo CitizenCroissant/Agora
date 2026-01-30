@@ -1,6 +1,7 @@
 /**
  * Ingest deputies (acteurs) from Assemblée nationale AMO data
- * Fetches AMO10_deputes_actifs, transforms, upserts deputies table
+ * Fetches AMO acteurs/mandats, transforms and upserts deputies.
+ * Circonscriptions must already exist (run ingest:circonscriptions from official source first).
  */
 
 import { supabase } from "./supabase";

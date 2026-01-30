@@ -191,6 +191,32 @@ export function slugify(text: string): string {
 }
 
 /**
+ * Whether a deputy is currently sitting (no end date or end date in the future).
+ * Use with Deputy.date_fin_mandat.
+ */
+export function isCurrentlySitting(dateFinMandat: string | null): boolean {
+  if (dateFinMandat == null) return true;
+  return dateFinMandat >= getTodayDate();
+}
+
+/**
+ * Human-readable mandate status for a deputy (e.g. "Mandat actuel" or "2017 – 2022").
+ */
+export function mandateStatusLabel(
+  dateDebut: string | null,
+  dateFin: string | null,
+): string {
+  if (!dateDebut && !dateFin) return "";
+  if (isCurrentlySitting(dateFin)) return "Mandat actuel";
+  const d = dateDebut ? new Date(dateDebut).getFullYear() : null;
+  const f = dateFin ? new Date(dateFin).getFullYear() : null;
+  if (d != null && f != null) return `${d} – ${f}`;
+  if (d != null) return `Depuis ${d}`;
+  if (f != null) return `Jusqu'en ${f}`;
+  return "";
+}
+
+/**
  * Heuristic: whether an agenda item is likely to involve a vote (scrutin)
  */
 export function isVoteLikeAgendaItem(

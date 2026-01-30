@@ -290,6 +290,7 @@ Retrieve deputy profile by acteur_ref (e.g. PA842279). Requires deputies table t
   "circonscription": "Paris - 5e circonscription",
   "departement": "Paris",
   "date_debut_mandat": "2024-07-01",
+  "date_fin_mandat": null,
   "legislature": 17,
   "official_url": "https://www.assemblee-nationale.fr/dyn/deputes/PA842279"
 }
@@ -385,6 +386,88 @@ Retrieve a single political group by slug (slugified `groupe_politique` label) w
 ```
 
 **Error Response** (404): Group not found when no deputies have that `groupe_politique` (slug does not match any label).
+
+---
+
+### Get Circonscriptions List
+
+Retrieve list of circonscriptions (electoral constituencies) with id, label and deputy count. Derived from deputies with non-null `circonscription`. Each item has a canonical `id` (e.g. `7505`, `1801`, `2A01`) for use in the detail URL.
+
+**Endpoint**: `GET /circonscriptions`
+
+**Success Response** (200):
+
+```json
+{
+  "circonscriptions": [
+    {
+      "id": "7505",
+      "label": "Paris - 5e circonscription",
+      "deputy_count": 1
+    }
+  ]
+}
+```
+
+---
+
+### Get Circonscription by ID
+
+Retrieve a single circonscription by id (canonical circonscription id, e.g. department code + ordinal) with its deputies.
+
+**Endpoint**: `GET /circonscriptions/:id`
+
+**Path Parameters**:
+
+- `id` (required): Canonical circonscription id (e.g. `7505`, `1801`, `2A01`, `97101`)
+
+**Success Response** (200):
+
+```json
+{
+  "id": "7505",
+  "label": "Paris - 5e circonscription",
+  "deputy_count": 1,
+  "deputies": [
+    {
+      "acteur_ref": "PA123",
+      "civil_nom": "Dupont",
+      "civil_prenom": "Marie",
+      "groupe_politique": "RENAISSANCE",
+      "circonscription": "Paris - 5e circonscription",
+      "departement": "Paris",
+      "..."
+    }
+  ]
+}
+```
+
+**Error Response** (404): Circonscription not found when no deputies match that id.
+
+---
+
+### Get Circonscriptions GeoJSON (map overlay)
+
+Returns a GeoJSON FeatureCollection of all circonscriptions with `id`, `label` in properties and geometry (Polygon/MultiPolygon) for use as an overlay on a map of France. Source: data.gouv.fr contours géographiques des circonscriptions législatives.
+
+**Endpoint**: `GET /circonscriptions/geojson`
+
+**Success Response** (200): `Content-Type: application/geo+json`
+
+```json
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "id": "7505", "label": "Paris - 5e circonscription" },
+      "geometry": { "type": "Polygon", "coordinates": [[[2.35, 48.85], ...]] }
+    }
+  ]
+}
+```
+
+Only circonscriptions with stored geometry are included. Run circonscriptions ingestion to populate geometry.
 
 ---
 

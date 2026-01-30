@@ -3,7 +3,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Deputy } from "@agora/shared";
-import { formatDate, slugify } from "@agora/shared";
+import {
+  formatDate,
+  slugify,
+  mandateStatusLabel,
+  isCurrentlySitting,
+} from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./deputy.module.css";
@@ -126,10 +131,40 @@ export default function DeputyPage() {
                 <div className={styles.infoSection}>
                   <h2>Mandat</h2>
                   <dl className={styles.infoList}>
+                    {(deputy.date_debut_mandat || deputy.date_fin_mandat) && (
+                      <div className={styles.infoRow}>
+                        <dt>Statut du mandat</dt>
+                        <dd>
+                          <span
+                            className={
+                              isCurrentlySitting(deputy.date_fin_mandat)
+                                ? styles.mandatActuel
+                                : styles.mandatPasse
+                            }
+                          >
+                            {mandateStatusLabel(
+                              deputy.date_debut_mandat,
+                              deputy.date_fin_mandat,
+                            )}
+                          </span>
+                        </dd>
+                      </div>
+                    )}
                     {deputy.circonscription && (
                       <div className={styles.infoRow}>
                         <dt>Circonscription</dt>
-                        <dd>{deputy.circonscription}</dd>
+                        <dd>
+                          {deputy.circonscription_ref ? (
+                            <Link
+                              href={`/circonscriptions/${encodeURIComponent(deputy.circonscription_ref ?? "")}`}
+                              className={styles.actionLink}
+                            >
+                              {deputy.circonscription}
+                            </Link>
+                          ) : (
+                            deputy.circonscription
+                          )}
+                        </dd>
                       </div>
                     )}
                     {deputy.departement && (
@@ -144,6 +179,13 @@ export default function DeputyPage() {
                         <dd>{formatDate(deputy.date_debut_mandat)}</dd>
                       </div>
                     )}
+                    {deputy.date_fin_mandat &&
+                      !isCurrentlySitting(deputy.date_fin_mandat) && (
+                        <div className={styles.infoRow}>
+                          <dt>Fin du mandat</dt>
+                          <dd>{formatDate(deputy.date_fin_mandat)}</dd>
+                        </div>
+                      )}
                     {deputy.legislature && (
                       <div className={styles.infoRow}>
                         <dt>Législature</dt>

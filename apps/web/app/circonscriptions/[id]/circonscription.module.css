@@ -58,87 +58,6 @@
   color: var(--color-text-light);
 }
 
-/* Metadata card (dates, position, orientation, president) */
-.metaCard {
-  margin-bottom: var(--spacing-lg);
-  padding: var(--spacing-lg);
-  background: var(--color-background-alt);
-  border-radius: var(--border-radius);
-  border: 1px solid var(--color-border);
-}
-
-.metaTitle {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-text-light);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin: 0 0 var(--spacing-md) 0;
-  padding-bottom: var(--spacing-xs);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.metaList {
-  display: grid;
-  gap: var(--spacing-sm) var(--spacing-md);
-  margin: 0;
-  grid-template-columns: auto 1fr;
-  align-items: baseline;
-}
-
-.metaTerm {
-  font-size: 0.875rem;
-  color: var(--color-text-light);
-  font-weight: 500;
-  margin: 0;
-}
-
-.metaValue {
-  font-size: 0.9375rem;
-  color: var(--color-text);
-  margin: 0;
-}
-
-.metaBadge {
-  display: inline-block;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.8125rem;
-  font-weight: 600;
-}
-
-.metaBadge[data-position="majoritaire"] {
-  background: #e3f2fd;
-  color: #1565c0;
-}
-
-.metaBadge[data-position="opposition"] {
-  background: #fff3e0;
-  color: #e65100;
-}
-
-.metaBadge[data-position="minoritaire"] {
-  background: #f3e5f5;
-  color: #6a1b9a;
-}
-
-.metaLink {
-  margin: var(--spacing-md) 0 0 0;
-  padding-top: var(--spacing-md);
-  border-top: 1px solid var(--color-border);
-  font-size: 0.875rem;
-}
-
-.metaLink a {
-  color: var(--color-primary);
-  text-decoration: none;
-}
-
-.metaLink a:hover {
-  text-decoration: underline;
-}
-
-/* Summary stat */
 .summary {
   display: flex;
   align-items: center;
@@ -167,7 +86,14 @@
   font-weight: 500;
 }
 
-/* Section title above list */
+.sectionBlock {
+  margin-top: var(--spacing-xl);
+}
+
+.sectionBlock:first-child {
+  margin-top: 0;
+}
+
 .sectionTitle {
   font-size: 1rem;
   font-weight: 600;
@@ -177,11 +103,6 @@
   margin-bottom: var(--spacing-md);
   padding-bottom: var(--spacing-xs);
   border-bottom: 2px solid var(--color-border);
-}
-
-/* Extra spacing before "Anciens députés" section */
-.pastSection {
-  margin-top: var(--spacing-xl);
 }
 
 .deputyList {
@@ -248,16 +169,6 @@
   margin-top: 2px;
 }
 
-.deputyMetaLink {
-  color: var(--color-primary);
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.deputyMetaLink:hover {
-  text-decoration: underline;
-}
-
 .deputyRef {
   flex-shrink: 0;
   font-size: 0.6875rem;
@@ -291,12 +202,6 @@
   background: var(--color-primary);
   color: white;
   transform: translateX(2px);
-}
-
-.empty {
-  color: var(--color-text-light);
-  font-size: 1rem;
-  margin: var(--spacing-lg) 0;
 }
 
 .footer {

@@ -162,3 +162,18 @@ npm run ingest:deputies -- --dry-run
 ```
 
 Deputy names are used to enrich scrutin vote lists (instead of showing only `acteur_ref`).
+
+### Circonscriptions
+
+Deputies have a foreign key `ref_circonscription` → `circonscriptions(id)`, so circonscriptions must exist before deputies. **Circonscriptions** are ingested from the **official source** (data.gouv.fr – Contours géographiques des circonscriptions législatives, GeoJSON). **Deputies ingestion** no longer creates circonscriptions; run `ingest:circonscriptions` first.
+
+**CLI**:
+
+```bash
+# 1. Ingest circonscriptions from official source (data.gouv.fr GeoJSON)
+npm run ingest:circonscriptions
+npm run ingest:circonscriptions -- --dry-run
+
+# 2. Then ingest deputies (requires circonscriptions to exist)
+npm run ingest:deputies
+```

@@ -6,8 +6,13 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { supabase } from "../../lib/supabase";
 import { ApiError, handleError } from "../../lib/errors";
-import { slugify } from "@agora/shared";
-import type { Deputy, PoliticalGroupDetail } from "@agora/shared";
+import { slugify, getCirconscriptionDisplayName } from "@agora/shared";
+import type {
+  Deputy,
+  PoliticalGroupDetail,
+  PoliticalOrientation,
+  PoliticalPosition,
+} from "@agora/shared";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -34,26 +39,49 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       throw new ApiError(400, "slug is required", "BadRequest");
     }
 
-    // Get distinct groupe_politique to resolve slug -> label
-    const { data: allDeputies, error: listError } = await supabase
-      .from("deputies")
-      .select("groupe_politique")
-      .not("groupe_politique", "is", null);
-
-    if (listError) {
-      throw new ApiError(500, "Failed to fetch groups", "DatabaseError");
+    // Resolve slug -> label: try metadata first (reliable), then distinct from deputies
+    let label: string | null = null;
+    let metaRow: {
+      label?: string | null;
+      date_debut?: string | null;
+      date_fin?: string | null;
+      position_politique?: string | null;
+      orientation?: string | null;
+      couleur_hex?: string | null;
+      president_name?: string | null;
+      legislature?: number | null;
+      official_url?: string | null;
+    } | null = null;
+    const { data: metaRowBySlug } = await supabase
+      .from("political_groups_metadata")
+      .select(
+        "label, date_debut, date_fin, position_politique, orientation, couleur_hex, president_name, legislature, official_url",
+      )
+      .eq("slug", slug)
+      .maybeSingle();
+    if (metaRowBySlug?.label) {
+      label = metaRowBySlug.label;
+      metaRow = metaRowBySlug;
     }
-
-    const labels = [
-      ...new Set(
-        (allDeputies ?? [])
-          .map((r) => (r.groupe_politique ?? "").trim())
-          .filter(Boolean),
-      ),
-    ];
-    const labelBySlug = new Map(labels.map((l) => [slugify(l), l]));
-    const label = labelBySlug.get(slug);
-
+    if (!label) {
+      const { data: allDeputies, error: listError } = await supabase
+        .from("deputies")
+        .select("groupe_politique")
+        .not("groupe_politique", "is", null)
+        .limit(10000);
+      if (listError) {
+        throw new ApiError(500, "Failed to fetch groups", "DatabaseError");
+      }
+      const labels = [
+        ...new Set(
+          (allDeputies ?? [])
+            .map((r) => (r.groupe_politique ?? "").trim())
+            .filter(Boolean),
+        ),
+      ];
+      const labelBySlug = new Map(labels.map((l) => [slugify(l), l]));
+      label = labelBySlug.get(slug) ?? null;
+    }
     if (!label) {
       throw new ApiError(404, "Political group not found", "NotFound");
     }
@@ -78,18 +106,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       sexe: d.sexe,
       parti_politique: d.parti_politique,
       groupe_politique: d.groupe_politique,
-      circonscription: d.circonscription,
+      circonscription:
+        getCirconscriptionDisplayName(d.circonscription) ?? d.circonscription,
+      circonscription_ref: d.ref_circonscription ?? null,
       departement: d.departement,
       date_debut_mandat: d.date_debut_mandat,
+      date_fin_mandat: d.date_fin_mandat ?? null,
       legislature: d.legislature,
       official_url: d.official_url,
     }));
+
+    // Optional metadata (already loaded above if we had a metadata row)
+    let metadata: PoliticalGroupDetail["metadata"] = null;
+    if (metaRow) {
+      metadata = {
+        date_debut: metaRow.date_debut ?? null,
+        date_fin: metaRow.date_fin ?? null,
+        position_politique: (metaRow.position_politique ??
+          null) as PoliticalPosition | null,
+        orientation: (metaRow.orientation ??
+          null) as PoliticalOrientation | null,
+        color_hex: metaRow.couleur_hex ?? null,
+        president_name: metaRow.president_name ?? null,
+        legislature: metaRow.legislature ?? null,
+        official_url: metaRow.official_url ?? null,
+      };
+    }
 
     const response: PoliticalGroupDetail = {
       slug,
       label,
       deputy_count: deputies.length,
       deputies,
+      metadata: metadata ?? undefined,
     };
 
     res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");

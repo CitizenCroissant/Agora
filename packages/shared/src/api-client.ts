@@ -13,6 +13,9 @@ import {
   Deputy,
   PoliticalGroupsListResponse,
   PoliticalGroupDetail,
+  CirconscriptionsListResponse,
+  CirconscriptionDetail,
+  CirconscriptionsGeoJSONResponse,
   SearchResponse,
   SearchType,
   ApiError,
@@ -193,6 +196,55 @@ export class ApiClient {
     }
 
     return data as PoliticalGroupDetail;
+  }
+
+  /**
+   * Fetch list of circonscriptions (electoral constituencies) with deputy counts
+   */
+  async getCirconscriptions(): Promise<CirconscriptionsListResponse> {
+    const response = await fetch(`${this.baseUrl}/circonscriptions`);
+
+    const data = await parseJsonOrThrow<
+      CirconscriptionsListResponse | ApiError
+    >(response);
+
+    if (!response.ok) {
+      const error = data as ApiError;
+      throw new Error(error.message ?? "Failed to fetch circonscriptions");
+    }
+
+    return data as CirconscriptionsListResponse;
+  }
+
+  /**
+   * Fetch GeoJSON FeatureCollection of all circonscriptions (id, label, geometry)
+   * for use as an overlay on a map of France.
+   */
+  async getCirconscriptionsGeojson(): Promise<CirconscriptionsGeoJSONResponse> {
+    const response = await fetch(`${this.baseUrl}/circonscriptions/geojson`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch circonscriptions GeoJSON");
+    }
+    return response.json();
+  }
+
+  /**
+   * Fetch a circonscription by id (e.g. "1801", "7505") with its deputies
+   */
+  async getCirconscription(id: string): Promise<CirconscriptionDetail> {
+    const encoded = encodeURIComponent(id);
+    const response = await fetch(`${this.baseUrl}/circonscriptions/${encoded}`);
+
+    const data = await parseJsonOrThrow<CirconscriptionDetail | ApiError>(
+      response,
+    );
+
+    if (!response.ok) {
+      const error = data as ApiError;
+      throw new Error(error.message ?? "Circonscription not found");
+    }
+
+    return data as CirconscriptionDetail;
   }
 
   /**

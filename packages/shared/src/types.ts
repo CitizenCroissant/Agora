@@ -153,10 +153,32 @@ export interface Deputy {
   parti_politique: string | null;
   groupe_politique: string | null;
   circonscription: string | null;
+  /** Official ref (canonical) for circonscription URL, e.g. "7505", "0101" */
+  circonscription_ref: string | null;
   departement: string | null;
   date_debut_mandat: string | null;
+  /** End of mandate (YYYY-MM-DD). Null = current mandate or unknown. */
+  date_fin_mandat: string | null;
   legislature: number | null;
   official_url: string | null;
+}
+
+/** Political position: majority, opposition, or minority */
+export type PoliticalPosition = "majoritaire" | "opposition" | "minoritaire";
+
+/** Political orientation: left, center, right */
+export type PoliticalOrientation = "gauche" | "centre" | "droite";
+
+/** Optional metadata for a political group (from political_groups_metadata) */
+export interface PoliticalGroupMetadata {
+  date_debut?: string | null;
+  date_fin?: string | null;
+  position_politique?: PoliticalPosition | null;
+  orientation?: PoliticalOrientation | null;
+  color_hex?: string | null;
+  president_name?: string | null;
+  legislature?: number | null;
+  official_url?: string | null;
 }
 
 /** Political group (groupe politique) summary for list */
@@ -164,6 +186,8 @@ export interface PoliticalGroupSummary {
   slug: string;
   label: string;
   deputy_count: number;
+  /** Optional metadata when available */
+  metadata?: PoliticalGroupMetadata | null;
 }
 
 /** Political group detail with deputies */
@@ -172,10 +196,49 @@ export interface PoliticalGroupDetail {
   label: string;
   deputy_count: number;
   deputies: Deputy[];
+  /** Optional metadata (dates, position, orientation, president) */
+  metadata?: PoliticalGroupMetadata | null;
 }
 
 export interface PoliticalGroupsListResponse {
   groups: PoliticalGroupSummary[];
+}
+
+/** Circonscription (electoral constituency) summary for list */
+export interface CirconscriptionSummary {
+  id: string;
+  label: string;
+  deputy_count: number;
+}
+
+/** Circonscription detail with deputies */
+export interface CirconscriptionDetail {
+  id: string;
+  label: string;
+  deputy_count: number;
+  deputies: Deputy[];
+}
+
+export interface CirconscriptionsListResponse {
+  circonscriptions: CirconscriptionSummary[];
+}
+
+/** GeoJSON geometry for map overlay (Polygon or MultiPolygon) */
+export type CirconscriptionGeometry =
+  | { type: "Polygon"; coordinates: number[][][] }
+  | { type: "MultiPolygon"; coordinates: number[][][][] };
+
+/** GeoJSON Feature for one circonscription (id, label in properties) */
+export interface CirconscriptionGeoJSONFeature {
+  type: "Feature";
+  properties: { id: string; label: string };
+  geometry: CirconscriptionGeometry;
+}
+
+/** GeoJSON FeatureCollection returned by GET /circonscriptions/geojson for map overlay */
+export interface CirconscriptionsGeoJSONResponse {
+  type: "FeatureCollection";
+  features: CirconscriptionGeoJSONFeature[];
 }
 
 /**

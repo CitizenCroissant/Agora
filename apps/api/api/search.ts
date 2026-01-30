@@ -12,8 +12,9 @@ import {
   PoliticalGroupSummary,
   SearchResponse,
   SearchType,
+  getCirconscriptionDisplayName,
+  slugify,
 } from "@agora/shared";
-import { slugify } from "@agora/shared";
 
 const LIMIT_SCRUTINS = 20;
 const LIMIT_DEPUTIES = 20;
@@ -111,7 +112,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         throw new ApiError(500, "Search failed", "DatabaseError");
       }
 
-      type DeputyRow = Deputy & { created_at?: string; updated_at?: string };
+      type DeputyRow = Deputy & {
+        ref_circonscription?: string | null;
+        created_at?: string;
+        updated_at?: string;
+      };
       response.deputies = (deputies || []).map((row: DeputyRow) => ({
         acteur_ref: row.acteur_ref,
         civil_nom: row.civil_nom,
@@ -122,9 +127,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         sexe: row.sexe,
         parti_politique: row.parti_politique,
         groupe_politique: row.groupe_politique,
-        circonscription: row.circonscription,
+        circonscription:
+          getCirconscriptionDisplayName(row.circonscription) ??
+          row.circonscription,
+        circonscription_ref: row.ref_circonscription ?? null,
         departement: row.departement,
         date_debut_mandat: row.date_debut_mandat,
+        date_fin_mandat: row.date_fin_mandat ?? null,
         legislature: row.legislature,
         official_url: row.official_url,
       }));
