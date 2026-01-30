@@ -54,11 +54,13 @@ Agora is a full-stack application with a serverless architecture:
 **Purpose**: Common code shared across all applications
 
 **Contents**:
+
 - TypeScript types for domain models
 - API client with typed methods
 - Utility functions (date formatting, etc.)
 
 **Key Files**:
+
 - `types.ts` - Domain types (Sitting, AgendaItem, etc.)
 - `api-client.ts` - HTTP client for API calls
 - `utils.ts` - Shared utilities
@@ -70,11 +72,13 @@ Agora is a full-stack application with a serverless architecture:
 **Technology**: Supabase (managed Postgres)
 
 **Schema**:
+
 - `sittings` - Parliamentary sessions
 - `agenda_items` - Items on each sitting's agenda
 - `source_metadata` - Provenance tracking
 
 **Key Features**:
+
 - UUID primary keys
 - Foreign key relationships
 - Indexes on date and sitting_id
@@ -86,17 +90,20 @@ Agora is a full-stack application with a serverless architecture:
 **Technology**: Vercel Functions (Node.js)
 
 **Endpoints**:
+
 - `GET /api/agenda?date=YYYY-MM-DD` - Single date agenda
 - `GET /api/agenda/range?from=...&to=...` - Date range
 - `GET /api/sittings/:id` - Sitting details
 
 **Key Features**:
+
 - CORS enabled for all origins
 - HTTP caching (5 minutes)
 - Error handling with typed errors
 - Supabase service role access
 
-**Why Serverless**: 
+**Why Serverless**:
+
 - No server management
 - Auto-scaling
 - Cost-effective for variable load
@@ -107,6 +114,7 @@ Agora is a full-stack application with a serverless architecture:
 **Technology**: Serverless functions + Cron
 
 **Features**:
+
 - Fetches official Assemblée data
 - Transforms to domain model
 - Upserts to Supabase
@@ -116,6 +124,7 @@ Agora is a full-stack application with a serverless architecture:
 **Schedule**: Daily at 2 AM (configurable)
 
 **CLI Usage**:
+
 ```bash
 npm run ingest -- --date 2026-01-22
 npm run ingest -- --from 2026-01-20 --to 2026-01-27
@@ -127,6 +136,7 @@ npm run ingest -- --dry-run
 **Technology**: Next.js 15 (App Router)
 
 **Pages**:
+
 - `/` - Today's agenda
 - `/timeline` - Calendar view
 - `/sitting/[id]` - Sitting details
@@ -134,16 +144,25 @@ npm run ingest -- --dry-run
 - `/sources` - Data sources
 
 **Architecture**:
+
 - Client-side rendering for dynamic content
 - CSS Modules for styling
 - Shared API client for data fetching
 - Responsive design
+
+**Description pages (SEO)**:
+
+- Some routes are static, indexable “description” pages that do not depend on the custom API (e.g. `/about`, `/sources`). They are pre-rendered at build time.
+- Each such page exports a `metadata` object (title, description, Open Graph) for search engines.
+- `app/sitemap.ts` lists static and key app routes for crawlers; add new description pages to the `STATIC_DESCRIPTION_PAGES` array.
+- `app/robots.ts` allows crawling and points to the sitemap. Set `NEXT_PUBLIC_APP_URL` (or rely on `VERCEL_URL`) so sitemap/robots use the correct base URL.
 
 ### 6. Mobile Application (`apps/mobile`)
 
 **Technology**: React Native + Expo
 
 **Screens**:
+
 - Today Tab - Current agenda
 - Timeline Tab - Calendar view
 - About Tab - Information
@@ -152,6 +171,7 @@ npm run ingest -- --dry-run
 **Navigation**: Expo Router (file-based)
 
 **Architecture**:
+
 - Native components
 - Same API client as web
 - Platform-specific styling
@@ -180,17 +200,20 @@ npm run ingest -- --dry-run
 ## Security
 
 ### API Layer
+
 - Public read-only endpoints
 - No authentication required (public data)
 - Rate limiting at edge (via Vercel)
 - CORS configured for all origins
 
 ### Ingestion
+
 - Protected by secret key
 - Service role access to Supabase
 - Scheduled execution only
 
 ### Database
+
 - Service role for server-side operations
 - RLS ready (currently disabled)
 - No direct client access
@@ -198,16 +221,19 @@ npm run ingest -- --dry-run
 ## Performance
 
 ### Caching Strategy
+
 - API responses cached for 5 minutes
 - `s-maxage` for edge caching
 - `stale-while-revalidate` for UX
 
 ### Database
+
 - Indexes on frequently queried columns
 - Efficient joins with foreign keys
 - Minimal N+1 queries
 
 ### Frontend
+
 - Code splitting (automatic with Next.js)
 - Lazy loading of pages
 - Optimized bundle size
@@ -215,11 +241,13 @@ npm run ingest -- --dry-run
 ## Scalability
 
 ### Current Scale
+
 - Handles ~1000 requests/day comfortably
 - Database: ~1000 sittings + ~10000 agenda items
 - Storage: <10 MB
 
 ### Growth Path
+
 - API: Auto-scales with Vercel
 - Database: Supabase scales automatically
 - CDN: Global edge caching
@@ -228,12 +256,14 @@ npm run ingest -- --dry-run
 ## Monitoring
 
 ### Recommended Tools
+
 - **Logs**: Vercel Dashboard
 - **Errors**: Sentry (optional)
 - **Analytics**: Vercel Analytics or Plausible
 - **Uptime**: UptimeRobot or similar
 
 ### Key Metrics
+
 - API response time
 - Error rate
 - Ingestion success rate
@@ -250,6 +280,7 @@ npm run ingest -- --dry-run
 ## Technology Choices
 
 ### Why Supabase?
+
 - Managed Postgres (no ops burden)
 - Good free tier
 - Real-time capabilities (future)
@@ -257,6 +288,7 @@ npm run ingest -- --dry-run
 - Easy to migrate from if needed
 
 ### Why Serverless?
+
 - No server management
 - Pay per use
 - Auto-scaling
@@ -264,6 +296,7 @@ npm run ingest -- --dry-run
 - Perfect for variable/low traffic
 
 ### Why Vercel?
+
 - Excellent Next.js support
 - Edge functions
 - Built-in cron
@@ -271,6 +304,7 @@ npm run ingest -- --dry-run
 - Good DX
 
 ### Why Expo?
+
 - Best React Native DX
 - OTA updates
 - Easy builds (EAS)
@@ -280,18 +314,21 @@ npm run ingest -- --dry-run
 ## Future Enhancements
 
 ### Short Term
+
 - Real Assemblée API integration
 - Error boundaries
 - Loading skeletons
 - Offline support (mobile)
 
 ### Medium Term
+
 - Push notifications (mobile)
 - Search functionality
 - Filters and categories
 - User preferences
 
 ### Long Term
+
 - Real-time updates
 - Historical data
 - Analytics dashboard

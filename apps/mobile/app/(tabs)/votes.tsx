@@ -8,19 +8,23 @@ import {
   StyleSheet,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { DatePickerModal } from "@/app/components/DatePickerModal";
 import type { Scrutin, ScrutinsResponse } from "@agora/shared";
 import {
-  createApiClient,
   getTodayDate,
   formatDate,
   getWeekStart,
   getWeekEnd,
+  getMonthStart,
+  getMonthEnd,
   addWeeks,
+  addMonths,
   formatDateRange,
+  formatMonth,
 } from "@agora/shared";
-import { Config } from "../../config";
+import { apiClient } from "@/lib/api";
 
-const apiClient = createApiClient(Config.API_URL);
+type ViewMode = "week" | "month";
 
 function groupScrutinsByDate(scrutins: Scrutin[]): Map<string, Scrutin[]> {
   const map = new Map<string, Scrutin[]>();
@@ -37,14 +41,25 @@ export default function VotesTabScreen() {
   const [data, setData] = useState<ScrutinsResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>("week");
   const [currentDate, setCurrentDate] = useState<string>(getTodayDate());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [pickerDate, setPickerDate] = useState<Date>(
+    () => new Date(getTodayDate() + "T12:00:00"),
+  );
 
   const loadScrutins = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const from = getWeekStart(currentDate);
-      const to = getWeekEnd(currentDate);
+      const from =
+        viewMode === "week"
+          ? getWeekStart(currentDate)
+          : getMonthStart(currentDate);
+      const to =
+        viewMode === "week"
+          ? getWeekEnd(currentDate)
+          : getMonthEnd(currentDate);
       const result = await apiClient.getScrutins(from, to);
       setData(result);
     } catch (err) {
@@ -53,22 +68,56 @@ export default function VotesTabScreen() {
     } finally {
       setLoading(false);
     }
-  }, [currentDate]);
+  }, [currentDate, viewMode]);
 
   useEffect(() => {
     loadScrutins();
   }, [loadScrutins]);
 
   const handlePrevious = () => {
-    setCurrentDate(addWeeks(currentDate, -1));
+    if (viewMode === "week") {
+      setCurrentDate(addWeeks(currentDate, -1));
+    } else {
+      setCurrentDate(addMonths(currentDate, -1));
+    }
   };
 
   const handleNext = () => {
-    setCurrentDate(addWeeks(currentDate, 1));
+    if (viewMode === "week") {
+      setCurrentDate(addWeeks(currentDate, 1));
+    } else {
+      setCurrentDate(addMonths(currentDate, 1));
+    }
   };
 
   const handleToday = () => {
     setCurrentDate(getTodayDate());
+  };
+
+  const openDatePicker = () => {
+    setPickerDate(new Date(currentDate + "T12:00:00"));
+    setShowDatePicker(true);
+  };
+
+  const dateToYyyyMmDd = (d: Date) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  };
+
+  const handleDateConfirm = (date: Date) => {
+    setCurrentDate(dateToYyyyMmDd(date));
+    setShowDatePicker(false);
+  };
+
+  const getPeriodLabel = () => {
+    if (viewMode === "week") {
+      const from = getWeekStart(currentDate);
+      const to = getWeekEnd(currentDate);
+      return formatDateRange(from, to);
+    }
+    return formatMonth(currentDate);
   };
 
   const scrutins = useMemo(() => data?.scrutins ?? [], [data]);
@@ -76,25 +125,71 @@ export default function VotesTabScreen() {
   const sortedDates = Array.from(byDate.keys()).sort((a, b) =>
     b.localeCompare(a),
   );
-  const from = getWeekStart(currentDate);
-  const to = getWeekEnd(currentDate);
-  const periodLabel = formatDateRange(from, to);
 
   return (
     <View style={styles.container}>
       <View style={styles.controlBar}>
-        <View style={styles.navigationControls}>
-          <TouchableOpacity style={styles.iconButton} onPress={handlePrevious}>
-            <Text style={styles.iconButtonText}>‹</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton} onPress={handleNext}>
-            <Text style={styles.iconButtonText}>›</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.todayButton} onPress={handleToday}>
-            <Text style={styles.todayButtonText}>Aujourd&apos;hui</Text>
-          </TouchableOpacity>
+        <View style={styles.topRow}>
+          <View style={styles.navigationControls}>
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={handlePrevious}
+            >
+              <Text style={styles.iconButtonText}>‹</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton} onPress={handleNext}>
+              <Text style={styles.iconButtonText}>›</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.todayButton} onPress={handleToday}>
+              <Text style={styles.todayButtonText}>Aujourd&apos;hui</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.rightControls}>
+            <TouchableOpacity
+              style={styles.dateButton}
+              onPress={openDatePicker}
+            >
+              <Text style={styles.dateButtonText}>📅</Text>
+            </TouchableOpacity>
+            <View style={styles.viewToggle}>
+              <TouchableOpacity
+                style={[
+                  styles.viewButton,
+                  viewMode === "week" && styles.viewButtonActive,
+                ]}
+                onPress={() => setViewMode("week")}
+              >
+                <Text
+                  style={[
+                    styles.viewButtonText,
+                    viewMode === "week" && styles.viewButtonTextActive,
+                  ]}
+                >
+                  S
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.viewButton,
+                  viewMode === "month" && styles.viewButtonActive,
+                ]}
+                onPress={() => setViewMode("month")}
+              >
+                <Text
+                  style={[
+                    styles.viewButtonText,
+                    viewMode === "month" && styles.viewButtonTextActive,
+                  ]}
+                >
+                  M
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-        <Text style={styles.periodTitle}>{periodLabel}</Text>
+
+        <Text style={styles.periodTitle}>{getPeriodLabel()}</Text>
       </View>
 
       <ScrollView style={styles.content}>
@@ -167,6 +262,13 @@ export default function VotesTabScreen() {
           </>
         )}
       </ScrollView>
+
+      <DatePickerModal
+        visible={showDatePicker}
+        value={pickerDate}
+        onConfirm={handleDateConfirm}
+        onCancel={() => setShowDatePicker(false)}
+      />
     </View>
   );
 }
@@ -182,12 +284,75 @@ const styles = StyleSheet.create({
     borderBottomColor: "rgba(0, 85, 164, 0.1)",
     padding: 16,
     paddingBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  topRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
   },
   navigationControls: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    gap: 6,
+  },
+  rightControls: {
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
+  },
+  dateButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 6,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    borderRadius: 8,
+    backgroundColor: "#fff",
+    minWidth: 44,
+  },
+  dateButtonText: {
+    fontSize: 18,
+    lineHeight: 20,
+  },
+  viewToggle: {
+    flexDirection: "row",
+    backgroundColor: "#f5f5f5",
+    borderRadius: 8,
+    padding: 3,
+    gap: 2,
+  },
+  viewButton: {
+    width: 32,
+    height: 32,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 6,
+    backgroundColor: "transparent",
+  },
+  viewButtonActive: {
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  viewButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#666",
+  },
+  viewButtonTextActive: {
+    color: "#0055a4",
   },
   iconButton: {
     width: 36,
@@ -216,11 +381,10 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   periodTitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "600",
     color: "#333",
     textAlign: "center",
-    marginTop: 12,
     textTransform: "capitalize",
   },
   content: {

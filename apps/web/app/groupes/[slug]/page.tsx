@@ -3,12 +3,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import type { PoliticalGroupDetail } from "@agora/shared";
-import { createApiClient } from "@agora/shared";
-import { Config } from "@/lib/config";
+import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./group.module.css";
-
-const apiClient = createApiClient(Config.API_URL);
 
 export default function GroupPage() {
   const params = useParams();

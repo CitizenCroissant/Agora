@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { ScrutinsResponse, Scrutin } from "@agora/shared";
 import {
-  createApiClient,
   getTodayDate,
   formatDate,
   getWeekStart,
@@ -15,11 +14,9 @@ import {
   formatDateRange,
   formatMonth,
 } from "@agora/shared";
-import { Config } from "@/lib/config";
+import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./votes.module.css";
-
-const apiClient = createApiClient(Config.API_URL);
 
 type ViewMode = "week" | "month";
 type SortFilter = "all" | "adopté" | "rejeté";

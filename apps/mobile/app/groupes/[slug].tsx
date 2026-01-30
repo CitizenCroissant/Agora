@@ -10,10 +10,7 @@ import {
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useRouter } from "expo-router";
 import type { PoliticalGroupDetail } from "@agora/shared";
-import { createApiClient } from "@agora/shared";
-import { Config } from "../../config";
-
-const apiClient = createApiClient(Config.API_URL);
+import { apiClient } from "@/lib/api";
 
 export default function GroupDetailScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();

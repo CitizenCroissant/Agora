@@ -1,5 +1,18 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import styles from './sources.module.css'
+
+export const metadata: Metadata = {
+  title: 'Sources de données | Agora - Agenda de l\'Assemblée nationale',
+  description:
+    'Toutes les données Agora proviennent des sources officielles de l\'Assemblée nationale. Découvrez nos sources, la fréquence de mise à jour et notre glossaire.',
+  openGraph: {
+    title: 'Sources de données | Agora',
+    description:
+      'Données officielles de l\'Assemblée nationale utilisées par Agora.',
+    type: 'website',
+  },
+}
 
 export default function SourcesPage() {
   return (

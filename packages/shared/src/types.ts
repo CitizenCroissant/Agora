@@ -3,6 +3,9 @@
  * Represents the data model for Assemblée nationale agenda items
  */
 
+/** Contract for app config (API base URL); resolution is app-specific (env, expo, etc.). */
+export type AppConfig = { API_URL: string };
+
 export interface Sitting {
   id: string;
   official_id: string;

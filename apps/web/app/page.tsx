@@ -3,17 +3,14 @@
 import { useEffect, useState } from "react";
 import { AgendaResponse } from "@agora/shared";
 import {
-  createApiClient,
   getTodayDate,
   formatDate,
   addDays,
   subtractDays,
 } from "@agora/shared";
-import { Config } from "@/lib/config";
+import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./page.module.css";
-
-const apiClient = createApiClient(Config.API_URL);
 
 export default function Home() {
   const [currentDate, setCurrentDate] = useState<string>(getTodayDate());

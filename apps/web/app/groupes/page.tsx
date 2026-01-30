@@ -2,12 +2,9 @@
 
 import { useEffect, useState } from "react";
 import type { PoliticalGroupSummary } from "@agora/shared";
-import { createApiClient } from "@agora/shared";
-import { Config } from "@/lib/config";
+import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./groupes.module.css";
-
-const apiClient = createApiClient(Config.API_URL);
 
 /** Palette of accent colors for group cards (Assemblée-inspired) */
 const ACCENT_COLORS = [

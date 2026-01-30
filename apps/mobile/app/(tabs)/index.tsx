@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native'
 import { useRouter } from 'expo-router'
 import { AgendaResponse } from '@agora/shared'
-import { createApiClient, getTodayDate, formatDate, addDays, subtractDays } from '@agora/shared'
-import { Config } from '../../config'
-
-const apiClient = createApiClient(Config.API_URL)
+import { getTodayDate, formatDate, addDays, subtractDays } from '@agora/shared'
+import { apiClient } from '@/lib/api'
 
 export default function TodayScreen() {
   const router = useRouter()

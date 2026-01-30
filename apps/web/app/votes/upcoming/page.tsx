@@ -3,17 +3,14 @@
 import { useEffect, useState } from "react";
 import { AgendaRangeResponse, AgendaItem } from "@agora/shared";
 import {
-  createApiClient,
   getTodayDate,
   formatDate,
   addDays,
   isVoteLikeAgendaItem,
 } from "@agora/shared";
-import { Config } from "@/lib/config";
+import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./upcoming.module.css";
-
-const apiClient = createApiClient(Config.API_URL);
 
 const DAYS_AHEAD = 14;
 

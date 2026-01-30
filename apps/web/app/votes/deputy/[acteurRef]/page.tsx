@@ -3,12 +3,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { DeputyVotesResponse, DeputyVoteRecord } from "@agora/shared";
-import { createApiClient, formatDate } from "@agora/shared";
-import { Config } from "@/lib/config";
+import { formatDate } from "@agora/shared";
+import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "../deputy.module.css";
-
-const apiClient = createApiClient(Config.API_URL);
 
 const POSITION_LABELS: Record<string, string> = {
   pour: "Pour",

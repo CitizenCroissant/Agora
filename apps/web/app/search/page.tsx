@@ -2,12 +2,10 @@
 
 import { useState, useCallback } from "react";
 import type { SearchResponse } from "@agora/shared";
-import { createApiClient, formatDate } from "@agora/shared";
-import { Config } from "@/lib/config";
+import { formatDate } from "@agora/shared";
+import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./search.module.css";
-
-const apiClient = createApiClient(Config.API_URL);
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");

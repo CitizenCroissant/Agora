@@ -10,10 +10,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import type { PoliticalGroupSummary } from "@agora/shared";
-import { createApiClient } from "@agora/shared";
-import { Config } from "../../config";
-
-const apiClient = createApiClient(Config.API_URL);
+import { apiClient } from "@/lib/api";
 
 export default function GroupesTabScreen() {
   const router = useRouter();

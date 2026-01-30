@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@agora/shared": "*",
+    "@react-native-community/datetimepicker": "^8.6.0",
     "@react-navigation/native": "^7.1.28",
     "expo": "^54.0.0",
     "expo-router": "~6.0.22",

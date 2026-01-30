@@ -10,10 +10,8 @@ import {
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useRouter } from "expo-router";
 import type { DeputyVotesResponse } from "@agora/shared";
-import { createApiClient, formatDate } from "@agora/shared";
-import { Config } from "../../../config";
-
-const apiClient = createApiClient(Config.API_URL);
+import { formatDate } from "@agora/shared";
+import { apiClient } from "@/lib/api";
 
 const POSITION_LABELS: Record<string, string> = {
   pour: "Pour",

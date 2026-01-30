@@ -11,10 +11,8 @@ import {
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useRouter } from "expo-router";
 import type { Deputy } from "@agora/shared";
-import { createApiClient, formatDate, slugify } from "@agora/shared";
-import { Config } from "../../config";
-
-const apiClient = createApiClient(Config.API_URL);
+import { formatDate, slugify } from "@agora/shared";
+import { apiClient } from "@/lib/api";
 
 function computeAge(dateNaissance: string | null): number | null {
   if (!dateNaissance) return null;

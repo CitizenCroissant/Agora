@@ -11,10 +11,8 @@ import {
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useRouter } from "expo-router";
 import { SittingDetailResponse } from "@agora/shared";
-import { createApiClient, formatDate } from "@agora/shared";
-import { Config } from "../../config";
-
-const apiClient = createApiClient(Config.API_URL);
+import { formatDate } from "@agora/shared";
+import { apiClient } from "@/lib/api";
 
 export default function SittingDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();

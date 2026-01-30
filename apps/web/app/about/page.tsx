@@ -1,5 +1,18 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import styles from './about.module.css'
+
+export const metadata: Metadata = {
+  title: 'À propos | Agora - Agenda de l\'Assemblée nationale',
+  description:
+    'Agora rend l\'activité de l\'Assemblée nationale accessible et transparente. Découvrez notre mission, notre fonctionnement et nos sources de données.',
+  openGraph: {
+    title: 'À propos | Agora - Agenda de l\'Assemblée nationale',
+    description:
+      'Agora rend l\'activité de l\'Assemblée nationale accessible et transparente.',
+    type: 'website',
+  },
+}
 
 export default function AboutPage() {
   return (

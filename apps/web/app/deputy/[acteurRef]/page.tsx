@@ -3,12 +3,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Deputy } from "@agora/shared";
-import { createApiClient, formatDate, slugify } from "@agora/shared";
-import { Config } from "@/lib/config";
+import { formatDate, slugify } from "@agora/shared";
+import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./deputy.module.css";
-
-const apiClient = createApiClient(Config.API_URL);
 
 function computeAge(dateNaissance: string | null): number | null {
   if (!dateNaissance) return null;

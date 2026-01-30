@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { AgendaRangeResponse } from "@agora/shared";
 import {
-  createApiClient,
   getTodayDate,
   formatDate,
   getWeekStart,
@@ -16,11 +15,9 @@ import {
   formatMonth,
   isVoteLikeAgendaItem,
 } from "@agora/shared";
-import { Config } from "@/lib/config";
+import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./timeline.module.css";
-
-const apiClient = createApiClient(Config.API_URL);
 
 type ViewMode = "week" | "month";
 

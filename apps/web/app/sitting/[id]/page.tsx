@@ -3,12 +3,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { SittingDetailResponse } from "@agora/shared";
-import { createApiClient, formatDate } from "@agora/shared";
-import { Config } from "@/lib/config";
+import { formatDate } from "@agora/shared";
+import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./sitting.module.css";
-
-const apiClient = createApiClient(Config.API_URL);
 
 export default function SittingPage() {
   const params = useParams();
