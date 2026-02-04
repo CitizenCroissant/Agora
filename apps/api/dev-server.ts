@@ -30,13 +30,13 @@ app.use((req, res, next) => {
 
 // Helper to adapt Express req/res to Vercel req/res
 function adaptHandler(
-  handler: (req: VercelRequest, res: VercelResponse) => Promise<unknown>,
+  handler: (req: VercelRequest, res: VercelResponse) => Promise<unknown>
 ) {
   return async (req: Request, res: Response) => {
     try {
       await handler(
         req as unknown as VercelRequest,
-        res as unknown as VercelResponse,
+        res as unknown as VercelResponse
       );
     } catch (error) {
       console.error("Handler error:", error);
@@ -55,13 +55,17 @@ async function setupRoutes() {
   const scrutinsIndexHandler = await import("./api/scrutins/index");
   const scrutinsIdHandler = await import("./api/scrutins/[id]");
   const deputyHandler = await import("./api/deputy/[acteurRef]");
+  const deputiesIndexHandler = await import("./api/deputies/index");
   const deputiesVotesHandler = await import("./api/deputies/[acteurRef]/votes");
+  const departementsIndexHandler = await import("./api/departements/index");
   const groupsIndexHandler = await import("./api/groups/index");
   const groupsSlugHandler = await import("./api/groups/[slug]");
-  const circonscriptionsIndexHandler =
-    await import("./api/circonscriptions/index");
-  const circonscriptionsGeojsonHandler =
-    await import("./api/circonscriptions/geojson");
+  const circonscriptionsIndexHandler = await import(
+    "./api/circonscriptions/index"
+  );
+  const circonscriptionsGeojsonHandler = await import(
+    "./api/circonscriptions/geojson"
+  );
   const circonscriptionsIdHandler = await import("./api/circonscriptions/[id]");
   const searchHandler = await import("./api/search");
 
@@ -71,23 +75,25 @@ async function setupRoutes() {
   app.get("/api/scrutins", adaptHandler(scrutinsIndexHandler.default));
   app.get("/api/scrutins/:id", adaptHandler(scrutinsIdHandler.default));
   app.get("/api/deputy/:acteurRef", adaptHandler(deputyHandler.default));
+  app.get("/api/departements", adaptHandler(departementsIndexHandler.default));
+  app.get("/api/deputies", adaptHandler(deputiesIndexHandler.default));
   app.get(
     "/api/deputies/:acteurRef/votes",
-    adaptHandler(deputiesVotesHandler.default),
+    adaptHandler(deputiesVotesHandler.default)
   );
   app.get("/api/groups", adaptHandler(groupsIndexHandler.default));
   app.get("/api/groups/:slug", adaptHandler(groupsSlugHandler.default));
   app.get(
     "/api/circonscriptions",
-    adaptHandler(circonscriptionsIndexHandler.default),
+    adaptHandler(circonscriptionsIndexHandler.default)
   );
   app.get(
     "/api/circonscriptions/geojson",
-    adaptHandler(circonscriptionsGeojsonHandler.default),
+    adaptHandler(circonscriptionsGeojsonHandler.default)
   );
   app.get(
     "/api/circonscriptions/:id",
-    adaptHandler(circonscriptionsIdHandler.default),
+    adaptHandler(circonscriptionsIdHandler.default)
   );
   app.get("/api/search", adaptHandler(searchHandler.default));
 
@@ -106,6 +112,8 @@ async function setupRoutes() {
     console.log(`  GET /api/scrutins?from=YYYY-MM-DD&to=YYYY-MM-DD`);
     console.log(`  GET /api/scrutins/:id`);
     console.log(`  GET /api/deputy/:acteurRef`);
+    console.log(`  GET /api/departements`);
+    console.log(`  GET /api/deputies?departement=...`);
     console.log(`  GET /api/deputies/:acteurRef/votes`);
     console.log(`  GET /api/groups`);
     console.log(`  GET /api/groups/:slug`);

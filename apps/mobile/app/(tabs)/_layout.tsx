@@ -25,6 +25,14 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="mon-depute"
+        options={{
+          title: "Mon député",
+          tabBarLabel: "Mon député",
+          headerTitle: "Mon député",
+        }}
+      />
+      <Tabs.Screen
         name="timeline"
         options={{
           title: "Calendrier",

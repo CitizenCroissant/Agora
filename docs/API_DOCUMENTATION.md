@@ -327,6 +327,66 @@ Retrieve voting record for a deputy by acteur_ref (e.g. PA842279).
 
 ---
 
+### Get Departements List
+
+Retrieve list of départements (from `deputies.departement`) with deputy count for deputies currently in mandate. Used by "Mon député" / "Trouver mon député" to let users choose their département.
+
+**Endpoint**: `GET /departements`
+
+**Success Response** (200):
+
+```json
+{
+  "departements": [
+    { "name": "Paris", "deputy_count": 18 },
+    { "name": "Yvelines", "deputy_count": 12 }
+  ]
+}
+```
+
+Only départements that have at least one deputy in the database are returned. Counts include only deputies with no `date_fin_mandat` or with `date_fin_mandat` in the future.
+
+---
+
+### Get Deputies by Departement
+
+Retrieve list of deputies for a given département (exact match on `deputies.departement`). Used by "Mon député" to show representatives for the user's location.
+
+**Endpoint**: `GET /deputies`
+
+**Query Parameters**:
+
+- `departement` (required): Department name as stored in the database (e.g. `Paris`, `Yvelines`, `Hauts-de-Seine`). Use the list from `GET /departements` for valid values.
+
+**Example Request**:
+
+```
+GET /api/deputies?departement=Paris
+```
+
+**Success Response** (200):
+
+```json
+{
+  "deputies": [
+    {
+      "acteur_ref": "PA842279",
+      "civil_nom": "Dupont",
+      "civil_prenom": "Marie",
+      "groupe_politique": "RE",
+      "circonscription": "Paris - 5e circonscription",
+      "departement": "Paris",
+      "date_fin_mandat": null,
+      "..."
+    }
+  ]
+}
+```
+
+**Error Response** (400): Missing or empty `departement` query parameter.
+
+---
+
 ### Get Political Groups List
 
 Retrieve list of political groups (groupes politiques) with slug, label and deputy count. Derived from deputies with non-null `groupe_politique`.

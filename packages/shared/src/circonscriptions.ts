@@ -110,6 +110,11 @@ const DEPARTEMENTS: Record<string, string> = {
   "976": "Mayotte",
 };
 
+/** All French department names (métropole + DOM-TOM), sorted for display. Use for "Mon député" selector. */
+export const ALL_DEPARTEMENT_NAMES: string[] = Object.values(DEPARTEMENTS).sort(
+  (a, b) => a.localeCompare(b, "fr")
+);
+
 /**
  * Parse refCirconscription ID (e.g. "7505", "PO7500501", "2A01", "9711") into department + num
  * Returns null if unparseable
@@ -173,7 +178,7 @@ function parseRefCirconscription(ref: string): {
  * Use when storing or grouping by official ref. Preserves leading zeros (returns string).
  */
 export function circonscriptionRefCanonical(
-  ref: string | null | undefined,
+  ref: string | null | undefined
 ): string | null {
   if (!ref || typeof ref !== "string") return null;
   const parsed = parseRefCirconscription(ref.trim());
@@ -197,7 +202,7 @@ function parseCirconscriptionName(name: string): {
   if (!raw) return null;
   // Match longest department name first to avoid "Eure" matching "Eure-et-Loir"
   const deptNames = Object.keys(CODES_BY_NAME).sort(
-    (a, b) => b.length - a.length,
+    (a, b) => b.length - a.length
   );
   for (const deptName of deptNames) {
     const prefix = deptName + " - ";
@@ -219,7 +224,7 @@ function parseCirconscriptionName(name: string): {
  * Stable for both ref (e.g. "1801", "PO7500501") and display name (e.g. "Cher - 1e circonscription").
  */
 export function circonscriptionId(
-  value: string | null | undefined,
+  value: string | null | undefined
 ): string | null {
   if (!value || typeof value !== "string") return null;
   const s = value.trim();
@@ -240,7 +245,7 @@ export function circonscriptionId(
  * Return possible circonscription labels in DB for a canonical id (for .in("circonscription", labels)).
  */
 export function getCirconscriptionLabelsForId(
-  id: string | null | undefined,
+  id: string | null | undefined
 ): string[] {
   if (!id || typeof id !== "string") return [];
   const parsed = parseRefCirconscription(id.trim());
@@ -250,7 +255,7 @@ export function getCirconscriptionLabelsForId(
   const num = parsed.num;
   const labels: string[] = [];
   labels.push(
-    `${deptName} - ${num === 1 ? "1ère" : num + "e"} circonscription`,
+    `${deptName} - ${num === 1 ? "1ère" : num + "e"} circonscription`
   );
   labels.push(`${deptName} - ${num}e circonscription`);
   if (num !== 1) {
@@ -264,7 +269,7 @@ export function getCirconscriptionLabelsForId(
  * Returns the name (e.g. "Paris - 5e circonscription") or null if unparseable.
  */
 export function resolveCirconscriptionName(
-  ref: string | null | undefined,
+  ref: string | null | undefined
 ): string | null {
   if (!ref || typeof ref !== "string") return null;
   const parsed = parseRefCirconscription(ref);
@@ -282,7 +287,7 @@ export function resolveCirconscriptionName(
  * IDs are typically short alphanumeric: "7505", "PO7500501", "2A01", "9711"
  */
 export function looksLikeCirconscriptionId(
-  value: string | null | undefined,
+  value: string | null | undefined
 ): boolean {
   if (!value || typeof value !== "string") return false;
   const s = value.trim();
@@ -298,7 +303,7 @@ export function looksLikeCirconscriptionId(
  * Get display name for circonscription: resolve ID to name if needed, else return as-is.
  */
 export function getCirconscriptionDisplayName(
-  value: string | null | undefined,
+  value: string | null | undefined
 ): string | null {
   if (!value || typeof value !== "string") return null;
   const s = value.trim();
@@ -316,7 +321,7 @@ export function getCirconscriptionDisplayName(
 function normalizeOrdinalForSlug(name: string): string {
   return name.replace(
     /(\d+)(?:ère|ere|ème|eme|er|e)\s/gi,
-    (_, num) => `${num}e `,
+    (_, num) => `${num}e `
   );
 }
 
@@ -335,7 +340,7 @@ export function circonscriptionSlug(value: string | null | undefined): string {
  * Use when comparing request slug to circonscriptionSlug(deputy).
  */
 export function normalizeCirconscriptionSlugForMatch(
-  slug: string | null | undefined,
+  slug: string | null | undefined
 ): string {
   const s = String(slug ?? "")
     .trim()
@@ -351,7 +356,7 @@ export function normalizeCirconscriptionSlugForMatch(
  * Handles common variants like "Paris - 13e" and "Paris - 13ème".
  */
 export function getCirconscriptionLabelsForSlug(
-  slug: string | null | undefined,
+  slug: string | null | undefined
 ): string[] {
   const s = normalizeCirconscriptionSlugForMatch(slug ?? "");
   if (!s) return [];

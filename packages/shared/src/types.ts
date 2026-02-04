@@ -223,6 +223,21 @@ export interface CirconscriptionsListResponse {
   circonscriptions: CirconscriptionSummary[];
 }
 
+/** Department (département) summary for "Mon député" selector */
+export interface DepartementSummary {
+  name: string;
+  deputy_count: number;
+}
+
+export interface DepartementsListResponse {
+  departements: DepartementSummary[];
+}
+
+/** List of deputies (e.g. by departement or circonscription) */
+export interface DeputiesListResponse {
+  deputies: Deputy[];
+}
+
 /** GeoJSON geometry for map overlay (Polygon or MultiPolygon) */
 export type CirconscriptionGeometry =
   | { type: "Polygon"; coordinates: number[][][] }

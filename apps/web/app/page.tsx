@@ -74,6 +74,9 @@ export default function Home() {
             <Link href="/groupes" className={styles.navLink}>
               Groupes politiques
             </Link>
+            <Link href="/mon-depute" className={styles.navLink}>
+              Mon député
+            </Link>
             <Link href="/circonscriptions" className={styles.navLink}>
               Circonscriptions
             </Link>
@@ -218,7 +221,7 @@ export default function Home() {
                 <p className={styles.sourceDate}>
                   Dernière mise à jour :{" "}
                   {new Date(agenda.source.last_updated_at).toLocaleString(
-                    "fr-FR",
+                    "fr-FR"
                   )}
                 </p>
               </div>

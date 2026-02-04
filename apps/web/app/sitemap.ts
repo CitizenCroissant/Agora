@@ -30,6 +30,7 @@ const STATIC_DESCRIPTION_PAGES: {
   { path: "/votes", changeFrequency: "daily", priority: 0.7 },
   { path: "/votes/upcoming", changeFrequency: "daily", priority: 0.7 },
   { path: "/groupes", changeFrequency: "weekly", priority: 0.7 },
+  { path: "/mon-depute", changeFrequency: "weekly", priority: 0.8 },
   { path: "/circonscriptions", changeFrequency: "weekly", priority: 0.7 },
   { path: "/timeline", changeFrequency: "daily", priority: 0.7 },
   { path: "/search", changeFrequency: "weekly", priority: 0.6 },
@@ -43,6 +44,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency,
       priority,
-    }),
+    })
   );
 }

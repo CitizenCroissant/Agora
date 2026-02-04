@@ -16,6 +16,8 @@ import {
   CirconscriptionsListResponse,
   CirconscriptionDetail,
   CirconscriptionsGeoJSONResponse,
+  DepartementsListResponse,
+  DeputiesListResponse,
   SearchResponse,
   SearchType,
   ApiError,
@@ -38,7 +40,7 @@ async function parseJsonOrThrow<T>(response: Response): Promise<T> {
       throw new Error(API_NOT_JSON_MESSAGE);
     }
     throw new Error(
-      `Réponse non-JSON (Content-Type: ${contentType}). ${API_NOT_JSON_MESSAGE}`,
+      `Réponse non-JSON (Content-Type: ${contentType}). ${API_NOT_JSON_MESSAGE}`
     );
   }
   return response.json() as Promise<T>;
@@ -51,7 +53,7 @@ export class ApiClient {
     // Ensure baseUrl is a string
     if (typeof baseUrl !== "string") {
       throw new Error(
-        `ApiClient: baseUrl must be a string, got ${typeof baseUrl}`,
+        `ApiClient: baseUrl must be a string, got ${typeof baseUrl}`
       );
     }
     this.baseUrl = baseUrl.replace(/\/$/, ""); // Remove trailing slash
@@ -76,7 +78,7 @@ export class ApiClient {
    */
   async getAgendaRange(from: string, to: string): Promise<AgendaRangeResponse> {
     const response = await fetch(
-      `${this.baseUrl}/agenda/range?from=${from}&to=${to}`,
+      `${this.baseUrl}/agenda/range?from=${from}&to=${to}`
     );
 
     if (!response.ok) {
@@ -106,7 +108,7 @@ export class ApiClient {
    */
   async getScrutins(from: string, to: string): Promise<ScrutinsResponse> {
     const response = await fetch(
-      `${this.baseUrl}/scrutins?from=${from}&to=${to}`,
+      `${this.baseUrl}/scrutins?from=${from}&to=${to}`
     );
 
     if (!response.ok) {
@@ -168,7 +170,7 @@ export class ApiClient {
     const response = await fetch(`${this.baseUrl}/groups`);
 
     const data = await parseJsonOrThrow<PoliticalGroupsListResponse | ApiError>(
-      response,
+      response
     );
 
     if (!response.ok) {
@@ -187,7 +189,7 @@ export class ApiClient {
     const response = await fetch(`${this.baseUrl}/groups/${encoded}`);
 
     const data = await parseJsonOrThrow<PoliticalGroupDetail | ApiError>(
-      response,
+      response
     );
 
     if (!response.ok) {
@@ -236,7 +238,7 @@ export class ApiClient {
     const response = await fetch(`${this.baseUrl}/circonscriptions/${encoded}`);
 
     const data = await parseJsonOrThrow<CirconscriptionDetail | ApiError>(
-      response,
+      response
     );
 
     if (!response.ok) {
@@ -245,6 +247,47 @@ export class ApiClient {
     }
 
     return data as CirconscriptionDetail;
+  }
+
+  /**
+   * Fetch list of départements with deputy count (current mandate) for "Mon député" selector
+   */
+  async getDepartements(): Promise<DepartementsListResponse> {
+    const response = await fetch(`${this.baseUrl}/departements`);
+
+    const data = await parseJsonOrThrow<DepartementsListResponse | ApiError>(
+      response
+    );
+
+    if (!response.ok) {
+      const error = data as ApiError;
+      throw new Error(error.message ?? "Failed to fetch departements");
+    }
+
+    return data as DepartementsListResponse;
+  }
+
+  /**
+   * Fetch deputies by département name (e.g. "Paris", "Yvelines")
+   */
+  async getDeputiesByDepartement(
+    departement: string
+  ): Promise<DeputiesListResponse> {
+    const params = new URLSearchParams({ departement: departement.trim() });
+    const response = await fetch(
+      `${this.baseUrl}/deputies?${params.toString()}`
+    );
+
+    const data = await parseJsonOrThrow<DeputiesListResponse | ApiError>(
+      response
+    );
+
+    if (!response.ok) {
+      const error = data as ApiError;
+      throw new Error(error.message ?? "Failed to fetch deputies");
+    }
+
+    return data as DeputiesListResponse;
   }
 
   /**
