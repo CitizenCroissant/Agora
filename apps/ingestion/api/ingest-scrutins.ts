@@ -15,18 +15,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
+  // Check authorization
+  // Accept either CRON_SECRET (from Vercel cron jobs) or INGESTION_SECRET (for manual calls)
   const authHeader = req.headers.authorization;
-  const secret = process.env.INGESTION_SECRET;
+  const cronSecret = process.env.CRON_SECRET;
+  const ingestionSecret = process.env.INGESTION_SECRET;
 
-  if (!secret) {
-    console.error("INGESTION_SECRET not configured");
+  if (!cronSecret && !ingestionSecret) {
+    console.error("CRON_SECRET or INGESTION_SECRET must be configured");
     return res.status(500).json({
       error: "ConfigurationError",
       message: "Ingestion endpoint not properly configured",
     });
   }
 
-  if (!authHeader || authHeader !== `Bearer ${secret}`) {
+  // Verify the Authorization header matches either secret
+  const isValidAuth =
+    authHeader &&
+    ((cronSecret && authHeader === `Bearer ${cronSecret}`) ||
+      (ingestionSecret && authHeader === `Bearer ${ingestionSecret}`));
+
+  if (!isValidAuth) {
     return res.status(401).json({
       error: "Unauthorized",
       message: "Invalid or missing authorization",
