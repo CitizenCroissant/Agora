@@ -16,7 +16,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // Check authorization
-  // Accept either CRON_SECRET (from Vercel cron jobs) or INGESTION_SECRET (for manual calls)
+  // Vercel cron jobs send CRON_SECRET directly in Authorization header (not Bearer format)
+  // Manual calls can use Bearer INGESTION_SECRET format
   const authHeader = req.headers.authorization;
   const cronSecret = process.env.CRON_SECRET;
   const ingestionSecret = process.env.INGESTION_SECRET;
@@ -30,9 +31,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // Verify the Authorization header matches either secret
+  // Vercel cron: Authorization: <CRON_SECRET>
+  // Manual: Authorization: Bearer <INGESTION_SECRET>
   const isValidAuth =
     authHeader &&
-    ((cronSecret && authHeader === `Bearer ${cronSecret}`) ||
+    ((cronSecret && authHeader === cronSecret) ||
       (ingestionSecret && authHeader === `Bearer ${ingestionSecret}`));
 
   if (!isValidAuth) {

@@ -66,11 +66,11 @@ export class ApiClient {
     const response = await fetch(`${this.baseUrl}/agenda?date=${date}`);
 
     if (!response.ok) {
-      const error: ApiError = await response.json();
+      const error = (await response.json()) as ApiError;
       throw new Error(error.message || "Failed to fetch agenda");
     }
 
-    return response.json();
+    return (await response.json()) as AgendaResponse;
   }
 
   /**
@@ -82,11 +82,11 @@ export class ApiClient {
     );
 
     if (!response.ok) {
-      const error: ApiError = await response.json();
+      const error = (await response.json()) as ApiError;
       throw new Error(error.message || "Failed to fetch agenda range");
     }
 
-    return response.json();
+    return (await response.json()) as AgendaRangeResponse;
   }
 
   /**
@@ -96,11 +96,11 @@ export class ApiClient {
     const response = await fetch(`${this.baseUrl}/sittings/${id}`);
 
     if (!response.ok) {
-      const error: ApiError = await response.json();
+      const error = (await response.json()) as ApiError;
       throw new Error(error.message || "Failed to fetch sitting");
     }
 
-    return response.json();
+    return (await response.json()) as SittingDetailResponse;
   }
 
   /**
@@ -112,11 +112,11 @@ export class ApiClient {
     );
 
     if (!response.ok) {
-      const error: ApiError = await response.json();
+      const error = (await response.json()) as ApiError;
       throw new Error(error.message || "Failed to fetch scrutins");
     }
 
-    return response.json();
+    return (await response.json()) as ScrutinsResponse;
   }
 
   /**
@@ -126,11 +126,11 @@ export class ApiClient {
     const response = await fetch(`${this.baseUrl}/scrutins/${id}`);
 
     if (!response.ok) {
-      const error: ApiError = await response.json();
+      const error = (await response.json()) as ApiError;
       throw new Error(error.message || "Failed to fetch scrutin");
     }
 
-    return response.json();
+    return (await response.json()) as ScrutinDetailResponse;
   }
 
   /**
@@ -141,11 +141,11 @@ export class ApiClient {
     const response = await fetch(`${this.baseUrl}/deputy/${encoded}`);
 
     if (!response.ok) {
-      const error: ApiError = await response.json();
+      const error = (await response.json()) as ApiError;
       throw new Error(error.message || "Failed to fetch deputy");
     }
 
-    return response.json();
+    return (await response.json()) as Deputy;
   }
 
   /**
@@ -156,11 +156,11 @@ export class ApiClient {
     const response = await fetch(`${this.baseUrl}/deputies/${encoded}/votes`);
 
     if (!response.ok) {
-      const error: ApiError = await response.json();
+      const error = (await response.json()) as ApiError;
       throw new Error(error.message || "Failed to fetch deputy votes");
     }
 
-    return response.json();
+    return (await response.json()) as DeputyVotesResponse;
   }
 
   /**
@@ -227,7 +227,7 @@ export class ApiClient {
     if (!response.ok) {
       throw new Error("Failed to fetch circonscriptions GeoJSON");
     }
-    return response.json();
+    return (await response.json()) as CirconscriptionsGeoJSONResponse;
   }
 
   /**
@@ -301,11 +301,11 @@ export class ApiClient {
     const response = await fetch(`${this.baseUrl}/search?${params.toString()}`);
 
     if (!response.ok) {
-      const error: ApiError = await response.json();
+      const error = (await response.json()) as ApiError;
       throw new Error(error.message || "Search failed");
     }
 
-    return response.json();
+    return (await response.json()) as SearchResponse;
   }
 }
 
