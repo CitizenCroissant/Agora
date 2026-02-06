@@ -56,7 +56,7 @@ app.get("/api/scrutins/:id", adaptHandler(scrutinsIdHandler.default));
 app.get("/api/deputy/:acteurRef", adaptHandler(deputyHandler.default));
 app.get(
   "/api/deputies/:acteurRef/votes",
-  adaptHandler(deputiesVotesHandler.default),
+  adaptHandler(deputiesVotesHandler.default)
 );
 app.get("/api/groups", adaptHandler(groupsIndexHandler.default));
 app.get("/api/groups/:slug", adaptHandler(groupsSlugHandler.default));
@@ -67,9 +67,14 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`\n🚀 API Server running on http://localhost:${PORT}`);
+// Start server - bind to all interfaces (0.0.0.0) to allow external access
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`\n🚀 API Server running on http://0.0.0.0:${PORT}`);
+  // Note: Access from device requires host IP (check VS Code Ports panel or use tunnel mode)
+  console.log(`   Accessible from host at http://localhost:${PORT}`);
+  console.log(
+    `   For device access, use your machine's LAN IP (check VS Code Ports panel)`
+  );
   console.log(`\nAvailable endpoints:`);
   console.log(`  GET /api/agenda?date=YYYY-MM-DD`);
   console.log(`  GET /api/agenda/range?from=YYYY-MM-DD&to=YYYY-MM-DD`);

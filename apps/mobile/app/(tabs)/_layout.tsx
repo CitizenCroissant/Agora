@@ -1,5 +1,6 @@
 import React from "react";
 import { Tabs } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function TabLayout() {
   return (
@@ -22,6 +23,9 @@ export default function TabLayout() {
           title: "Aujourd'hui",
           tabBarLabel: "Aujourd'hui",
           headerTitle: "Agora",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="today" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
@@ -30,6 +34,9 @@ export default function TabLayout() {
           title: "Mon député",
           tabBarLabel: "Mon député",
           headerTitle: "Mon député",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
@@ -38,6 +45,9 @@ export default function TabLayout() {
           title: "Calendrier",
           tabBarLabel: "Calendrier",
           headerTitle: "Calendrier",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="calendar" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
@@ -46,6 +56,9 @@ export default function TabLayout() {
           title: "Scrutins",
           tabBarLabel: "Scrutins",
           headerTitle: "Scrutins",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="checkmark-circle" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
@@ -54,6 +67,9 @@ export default function TabLayout() {
           title: "Groupes",
           tabBarLabel: "Groupes",
           headerTitle: "Groupes politiques",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="people" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
@@ -62,6 +78,9 @@ export default function TabLayout() {
           title: "Circonscriptions",
           tabBarLabel: "Circonscriptions",
           headerTitle: "Circonscriptions",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="map" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
@@ -70,6 +89,9 @@ export default function TabLayout() {
           title: "À propos",
           tabBarLabel: "À propos",
           headerTitle: "À propos",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="information-circle" size={size} color={color} />
+          ),
         }}
       />
     </Tabs>

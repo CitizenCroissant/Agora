@@ -88,3 +88,8 @@ To add the foreign key from `deputies.ref_circonscription` to `circonscriptions(
 ALTER TABLE deputies ADD CONSTRAINT fk_deputies_ref_circonscription
     FOREIGN KEY (ref_circonscription) REFERENCES circonscriptions(id) ON DELETE SET NULL;
 ```
+
+To add the **push_tokens** table (for mobile push notifications):
+
+1. In the Supabase SQL Editor, run the contents of `migrations/push_tokens.sql`.
+2. Ensure the API has `CRON_SECRET` (or `PUSH_NOTIFY_SECRET`) set in Vercel for the `/api/cron/notify-scrutins` endpoint.

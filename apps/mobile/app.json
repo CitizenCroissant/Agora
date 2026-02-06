@@ -21,15 +21,32 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0055a4"
       },
-      "package": "com.agora.app"
+      "package": "com.agora.app",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "scheme": "agora",
-    "plugins": ["expo-router"],
+    "plugins": [
+      "expo-router",
+      "expo-dev-client",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#0055a4",
+          "sounds": []
+        }
+      ],
+      "@react-native-community/datetimepicker"
+    ],
     "extra": {
-      "apiUrl": null
+      "apiUrl": "http://localhost:3001/api",
+      "router": {},
+      "eas": {
+        "projectId": "2ea8b6bc-7bec-4d5e-8332-161246c93249"
+      }
     }
   }
 }

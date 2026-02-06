@@ -21,12 +21,7 @@ import {
   TextInput,
 } from "react-native";
 
-// Only load on native; package throws "not supported on web" if required on web
-const DateTimePicker =
-  Platform.OS !== "web"
-    ? // eslint-disable-next-line @typescript-eslint/no-require-imports
-      require("@react-native-community/datetimepicker").default
-    : null;
+// DateTimePicker will be loaded lazily in the component to avoid module loading issues
 
 function dateToYyyyMmDd(d: Date): string {
   const y = d.getFullYear();
@@ -118,15 +113,24 @@ export function DatePickerModal({
               />
             </View>
           ) : (
-            DateTimePicker && (
-              <DateTimePicker
-                value={pickerDate}
-                mode="date"
-                display={Platform.OS === "ios" ? "spinner" : "default"}
-                onChange={onPickerChange}
-                locale="fr-FR"
-              />
-            )
+            (() => {
+              try {
+                const DateTimePicker =
+                  // eslint-disable-next-line @typescript-eslint/no-require-imports
+                  require("@react-native-community/datetimepicker").default;
+                return (
+                  <DateTimePicker
+                    value={pickerDate}
+                    mode="date"
+                    display={Platform.OS === "ios" ? "spinner" : "default"}
+                    onChange={onPickerChange}
+                    locale="fr-FR"
+                  />
+                );
+              } catch {
+                return null;
+              }
+            })()
           )}
         </View>
       </View>
@@ -178,3 +182,6 @@ const styles = StyleSheet.create({
     ...(Platform.OS === "web" && { width: "100%" as const }),
   },
 });
+
+// Default export for Expo Router compatibility (component is used as named export)
+export default DatePickerModal;

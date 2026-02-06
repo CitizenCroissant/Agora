@@ -20,7 +20,7 @@ app.use(express.json());
 // CORS middleware
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.header("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type");
   if (req.method === "OPTIONS") {
     return res.sendStatus(200);
@@ -68,6 +68,8 @@ async function setupRoutes() {
   );
   const circonscriptionsIdHandler = await import("./api/circonscriptions/[id]");
   const searchHandler = await import("./api/search");
+  const pushRegisterHandler = await import("./api/push/register");
+  const notifyScrutinsHandler = await import("./api/cron/notify-scrutins");
 
   app.get("/api/agenda", adaptHandler(agendaHandler.default));
   app.get("/api/agenda/range", adaptHandler(rangeHandler.default));
@@ -96,15 +98,30 @@ async function setupRoutes() {
     adaptHandler(circonscriptionsIdHandler.default)
   );
   app.get("/api/search", adaptHandler(searchHandler.default));
+  app.post("/api/push/register", adaptHandler(pushRegisterHandler.default));
+  app.delete("/api/push/register", adaptHandler(pushRegisterHandler.default));
+  app.get(
+    "/api/cron/notify-scrutins",
+    adaptHandler(notifyScrutinsHandler.default)
+  );
+  app.post(
+    "/api/cron/notify-scrutins",
+    adaptHandler(notifyScrutinsHandler.default)
+  );
 
   // Health check
   app.get("/health", (req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
   });
 
-  // Start server
-  app.listen(PORT, () => {
-    console.log(`\n🚀 API Server running on http://localhost:${PORT}`);
+  // Start server - bind to all interfaces (0.0.0.0) to allow external access
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`\n🚀 API Server running on http://0.0.0.0:${PORT}`);
+    // Note: Access from device requires host IP (check VS Code Ports panel or use tunnel mode)
+    console.log(`   Accessible from host at http://localhost:${PORT}`);
+    console.log(
+      `   For device access, use your machine's LAN IP (check VS Code Ports panel)`
+    );
     console.log(`\nAvailable endpoints:`);
     console.log(`  GET /api/agenda?date=YYYY-MM-DD`);
     console.log(`  GET /api/agenda/range?from=YYYY-MM-DD&to=YYYY-MM-DD`);
@@ -121,6 +138,13 @@ async function setupRoutes() {
     console.log(`  GET /api/circonscriptions/geojson`);
     console.log(`  GET /api/circonscriptions/:id`);
     console.log(`  GET /api/search?q=...&type=scrutins|deputies|groups|all`);
+    console.log(
+      `  POST /api/push/register (body: expo_push_token, topic?, deputy_acteur_ref?)`
+    );
+    console.log(`  DELETE /api/push/register (body: expo_push_token)`);
+    console.log(
+      `  GET/POST /api/cron/notify-scrutins (Authorization: Bearer CRON_SECRET)`
+    );
     console.log(`  GET /health\n`);
   });
 }

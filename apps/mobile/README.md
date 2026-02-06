@@ -1,87 +1,112 @@
-# Mobile App
+# Agora Mobile App
 
-React Native/Expo mobile application for Agora.
+React Native mobile app built with Expo Router.
 
-## Features
+## Development
 
-- **Today Tab**: Current day's agenda with date navigation
-- **Timeline Tab**: Scrollable calendar view
-- **About Tab**: Information about the project
-- **Sitting Details**: Full agenda details for each sitting
+### Prerequisites
 
-## Tech Stack
+- Node.js 22+
+- Expo CLI (`npm install -g expo-cli`)
+- EAS CLI for builds (`npm install -g eas-cli`)
+- Android device or emulator for testing
 
-- React Native 0.76
-- Expo 52
-- Expo Router 4 (file-based routing)
-- TypeScript
-- Shared package for API client and types
+### Running Locally
 
-## Setup
-
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-2. Configure API URL:
-   - The API URL is configured in `config.ts`
-   - For development: it automatically uses `http://localhost:3000/api` for web and your local IP for mobile
-   - To customize, edit `config.ts` or add `apiUrl` to `app.json` under `expo.extra`
-   - For production: set the API URL in your build configuration
-
-3. Start development server:
-   ```bash
-   npm start
-   ```
-
-4. Run on device or simulator:
-   ```bash
-   # iOS
-   npm run ios
-
-   # Android
-   npm run android
-
-   # Web (for testing)
-   npm run web
-   ```
-
-## Project Structure
-
-- `app/` - Expo Router pages
-  - `(tabs)/` - Tab navigation screens
-    - `index.tsx` - Today tab
-    - `timeline.tsx` - Calendar tab
-    - `about.tsx` - About tab
-  - `sitting/[id].tsx` - Sitting detail screen
-  - `_layout.tsx` - Root layout
-
-## Assets
-
-The app requires the following asset files:
-- `assets/icon.png` - App icon (1024x1024)
-- `assets/adaptive-icon.png` - Android adaptive icon (1024x1024)
-- `assets/splash.png` - Splash screen (1242x2436)
-- `assets/favicon.png` - Web favicon (48x48)
-
-## Building
-
-For production builds:
+#### Option 1: Tunnel Mode (Recommended - Works Everywhere)
 
 ```bash
-# iOS
-eas build --platform ios
-
-# Android
-eas build --platform android
+cd apps/mobile
+npm run dev
 ```
 
-Requires an Expo account and EAS CLI setup.
+This starts Expo in tunnel mode, which works even if your device is on a different network. No login required for anonymous mode.
 
-## Design
+- **Expo dev server**: Uses Expo's tunnel (works from any network)
+- **API server**: Must be configured in `app.json` extra.apiUrl (see below)
 
-Uses French government color scheme:
-- Primary: #0055a4 (French blue)
-- Secondary: #ef4135 (French red)
-- Clean, mobile-optimized interface
+#### Option 2: LAN Mode (Faster, but May Require Login)
+
+```bash
+cd apps/mobile
+npm run dev:lan
+```
+
+**Note**: LAN mode may prompt for Expo login in non-interactive terminals. To avoid this:
+
+- Use tunnel mode (`npm run dev`) instead, or
+- Login once: `npx expo login` (then LAN mode won't prompt)
+
+This starts Expo in LAN mode, which auto-detects your machine's IP address:
+
+- **Expo dev server**: Your machine's LAN IP (auto-detected)
+- **API server**: Must be configured in `app.json` extra.apiUrl (see below)
+
+**To set API URL for device access:**
+
+1. Find your machine's LAN IP:
+
+   - **VS Code**: Check the Ports panel - it shows the forwarded address
+   - **macOS/Linux**: Run `ifconfig` or `ip addr` and look for your network interface
+   - **Windows**: Run `ipconfig` and look for IPv4 Address
+
+2. Add to `app.json`:
+
+```json
+{
+  "expo": {
+    "extra": {
+      "apiUrl": "http://YOUR_LAN_IP:3001/api"
+    }
+  }
+}
+```
+
+### Configuration
+
+#### API URL
+
+The app needs to know where to find the API server. Configure it in `app.json`:
+
+```json
+{
+  "expo": {
+    "extra": {
+      "apiUrl": "https://your-api-domain.com/api"
+    }
+  }
+}
+```
+
+3. **Default fallback**: `http://localhost:3001/api` (only works for web)
+
+### Building for Production
+
+See [DEVELOPMENT_BUILD.md](./DEVELOPMENT_BUILD.md) for instructions on creating development builds with push notifications.
+
+### Troubleshooting
+
+#### QR code points to wrong URL (e.g. in devcontainer)
+
+When running inside a **Docker/devcontainer**, the QR code may show the container’s IP, so Expo Go on your device can’t connect.
+
+- **Use tunnel mode**: Run `npm run dev` (default) so the QR code uses a tunnel URL. See [docs/EXPO_DOCKER_NETWORKING.md](../../docs/EXPO_DOCKER_NETWORKING.md).
+- **Or use LAN with host IP**: Set `REACT_NATIVE_PACKAGER_HOSTNAME` to your host machine’s LAN IP (e.g. in `apps/mobile/.env`), then run `npm run dev:lan`.
+
+#### Device Can't Connect to Dev Server
+
+1. **Use tunnel mode**: `npm run dev` (uses tunnel mode by default)
+2. **Check VS Code Ports panel**: Make sure port 8081 is forwarded and accessible (for LAN mode)
+3. **Check firewall**: Ensure ports 8081 and 3001 are not blocked
+
+#### Device Can't Connect to API
+
+1. **Configure API URL**: Set `app.json` extra.apiUrl with your LAN IP (see Configuration section)
+2. **Check API server**: Make sure the API is running and bound to `0.0.0.0` (not just `localhost`)
+3. **Use tunnel mode**: Tunnel mode works for Expo dev server, but API still needs LAN IP configured
+
+#### Finding Your LAN IP
+
+- **VS Code**: Check the Ports panel - it shows the forwarded address
+- **macOS/Linux**: Run `ifconfig` or `ip addr` and look for your network interface
+- **Windows**: Run `ipconfig` and look for IPv4 Address

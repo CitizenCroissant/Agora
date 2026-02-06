@@ -230,7 +230,7 @@ export default function MonDeputeTabScreen() {
                           )
                         }
                       >
-                        <Text style={styles.deputyName}>
+                        <Text style={styles.deputyNameSmall}>
                           {d.civil_prenom} {d.civil_nom}
                         </Text>
                         <Text style={styles.deputyCardArrow}>→</Text>
@@ -349,8 +349,11 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   deptArrow: {
-    fontSize: 18,
+    fontSize: 20,
     color: "#999",
+    fontWeight: "300",
+    lineHeight: 20,
+    marginLeft: 8,
   },
   circoLink: {
     marginTop: 20,
@@ -385,6 +388,12 @@ const styles = StyleSheet.create({
     color: "#0055a4",
     marginBottom: 4,
   },
+  deputyNameSmall: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#0055a4",
+    flex: 1,
+  },
   deputyMeta: {
     fontSize: 14,
     color: "#666",
@@ -415,6 +424,7 @@ const styles = StyleSheet.create({
   deputyCardSmall: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     backgroundColor: "#fff",
     padding: 14,
     borderRadius: 8,
@@ -423,8 +433,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   deputyCardArrow: {
-    fontSize: 18,
+    fontSize: 20,
     color: "#999",
+    fontWeight: "300",
+    lineHeight: 20,
+    marginLeft: "auto",
   },
   empty: {
     fontSize: 15,

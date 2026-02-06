@@ -197,3 +197,19 @@ CREATE TABLE political_groups_metadata (
 CREATE TRIGGER update_political_groups_metadata_updated_at
     BEFORE UPDATE ON political_groups_metadata
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Table: push_tokens
+-- Expo push tokens for mobile notifications (new scrutins, optional "my deputy" voted)
+CREATE TABLE push_tokens (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    expo_push_token TEXT UNIQUE NOT NULL,
+    topic TEXT NOT NULL DEFAULT 'all' CHECK (topic IN ('all', 'my_deputy')),
+    deputy_acteur_ref TEXT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_push_tokens_topic_deputy ON push_tokens(topic, deputy_acteur_ref);
+
+CREATE TRIGGER update_push_tokens_updated_at BEFORE UPDATE ON push_tokens
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

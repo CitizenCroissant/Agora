@@ -1,7 +1,7 @@
 {
   "name": "Agora Development",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22",
-  
+
   "features": {
     "ghcr.io/devcontainers/features/git:1": {},
     "ghcr.io/devcontainers/features/github-cli:1": {}
@@ -36,7 +36,8 @@
         "task.autoDetect": "on",
         "task.quickOpen.history": 10,
         "task.quickOpen.detail": true,
-        "task.allowAutomaticTasks": "on"
+        "task.allowAutomaticTasks": "on",
+        "remote.localPortHost": "allInterfaces"
       }
     }
   },
@@ -53,9 +54,12 @@
     },
     "8081": {
       "label": "Expo Dev Server",
-      "onAutoForward": "notify"
+      "onAutoForward": "notify",
+      "protocol": "http"
     }
   },
+
+  "runArgs": ["-p", "8081:8081", "-p", "3001:3001"],
 
   "postCreateCommand": "npm install && npm run build -- --filter=@agora/shared",
 

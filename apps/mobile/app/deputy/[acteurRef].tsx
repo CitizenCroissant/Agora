@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -8,11 +8,22 @@ import {
   StyleSheet,
   Linking,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useRouter } from "expo-router";
 import type { Deputy } from "@agora/shared";
 import { formatDate, slugify } from "@agora/shared";
 import { apiClient } from "@/lib/api";
+import { Config } from "@/config";
+import {
+  registerPushToken,
+  isPushSupported,
+  FAVORITE_DEPUTY_KEY,
+} from "@/lib/notifications";
+
+const PUSH_ENABLED_KEY = "@agora_push_enabled";
+const PUSH_TOKEN_KEY = "@agora_push_token";
+const PUSH_TOPIC_KEY = "@agora_push_topic";
 
 function computeAge(dateNaissance: string | null): number | null {
   if (!dateNaissance) return null;
@@ -57,6 +68,23 @@ export default function DeputyDetailScreen() {
     : "";
   const age = deputy ? computeAge(deputy.date_naissance) : null;
 
+  const setAsFavoriteForNotifications = useCallback(async () => {
+    if (!deputy?.acteur_ref) return;
+    await AsyncStorage.setItem(FAVORITE_DEPUTY_KEY, deputy.acteur_ref);
+    await AsyncStorage.setItem(PUSH_TOPIC_KEY, "my_deputy");
+    if (isPushSupported()) {
+      const token = await AsyncStorage.getItem(PUSH_TOKEN_KEY);
+      const enabled = await AsyncStorage.getItem(PUSH_ENABLED_KEY);
+      if (token && enabled === "true") {
+        await registerPushToken(token, {
+          apiUrl: Config.API_URL,
+          topic: "my_deputy",
+          deputyActeurRef: deputy.acteur_ref,
+        });
+      }
+    }
+  }, [deputy?.acteur_ref]);
+
   return (
     <>
       <Stack.Screen
@@ -89,8 +117,8 @@ export default function DeputyDetailScreen() {
                   onPress={() =>
                     router.push(
                       `/groupes/${encodeURIComponent(
-                        slugify(deputy.groupe_politique ?? ""),
-                      )}`,
+                        slugify(deputy.groupe_politique ?? "")
+                      )}`
                     )
                   }
                 >
@@ -140,8 +168,8 @@ export default function DeputyDetailScreen() {
                       onPress={() =>
                         router.push(
                           `/circonscriptions/${encodeURIComponent(
-                            deputy.circonscription_ref ?? "",
-                          )}`,
+                            deputy.circonscription_ref ?? ""
+                          )}`
                         )
                       }
                     >
@@ -187,8 +215,8 @@ export default function DeputyDetailScreen() {
                     onPress={() =>
                       router.push(
                         `/groupes/${encodeURIComponent(
-                          slugify(deputy.groupe_politique ?? ""),
-                        )}`,
+                          slugify(deputy.groupe_politique ?? "")
+                        )}`
                       )
                     }
                   >
@@ -206,12 +234,28 @@ export default function DeputyDetailScreen() {
               )}
             </View>
 
+            {isPushSupported() && (
+              <View style={styles.section}>
+                <TouchableOpacity
+                  style={styles.notifyButton}
+                  onPress={setAsFavoriteForNotifications}
+                >
+                  <Text style={styles.notifyButtonText}>
+                    Recevoir les notifications pour ce député
+                  </Text>
+                  <Text style={styles.notifyButtonSubtext}>
+                    Vous serez alerté lorsqu&apos;il vote sur un scrutin
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
             <View style={styles.actions}>
               <TouchableOpacity
                 style={styles.actionButton}
                 onPress={() =>
                   router.push(
-                    `/votes/deputy/${encodeURIComponent(deputy.acteur_ref)}`,
+                    `/votes/deputy/${encodeURIComponent(deputy.acteur_ref)}`
                   )
                 }
               >
@@ -325,5 +369,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#0055a4",
     fontWeight: "500",
+  },
+  notifyButton: {
+    backgroundColor: "rgba(0, 85, 164, 0.08)",
+    padding: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#0055a4",
+  },
+  notifyButtonText: {
+    fontSize: 16,
+    color: "#0055a4",
+    fontWeight: "600",
+  },
+  notifyButtonSubtext: {
+    fontSize: 12,
+    color: "#666",
+    marginTop: 4,
   },
 });
