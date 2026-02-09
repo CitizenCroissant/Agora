@@ -8,6 +8,11 @@
     "packages/*",
     "apps/*"
   ],
+  "overrides": {
+    "vite": "^7.0.0",
+    "path-to-regexp": "6.3.0",
+    "undici": "6.23.0"
+  },
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
@@ -21,11 +26,11 @@
     "@eslint/js": "^9.39.2",
     "@typescript-eslint/eslint-plugin": "^8.46.4",
     "@typescript-eslint/parser": "^8.46.4",
-    "@vitest/coverage-v8": "^2.1.8",
+    "@vitest/coverage-v8": "^4.0.0",
     "eslint": "^9.17.0",
     "turbo": "^2.3.3",
     "typescript": "^5.7.2",
-    "vercel": "^50.4.8",
-    "vitest": "^2.1.8"
+    "vercel": "^50.13.2",
+    "vitest": "^4.0.0"
   }
 }

@@ -6,12 +6,7 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { supabase } from "../supabase";
 import { ApiError, handleError } from "../errors";
-import {
-  DbSitting,
-  DbAgendaItem,
-  DbSourceMetadata,
-  DbScrutin,
-} from "../types";
+import { DbSitting, DbAgendaItem, DbSourceMetadata, DbScrutin } from "../types";
 import { SittingDetailResponse } from "@agora/shared";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -33,9 +28,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    // Support both Vercel (query) and Express (params) routing
+    // pathParams: set by route.ts (dev + serverless); query/params: Vercel/Express
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const id = (req.query.id || (req as any).params?.id) as string;
+    const rawId =
+      (req as any).pathParams?.id ?? req.query?.id ?? (req as any).params?.id;
+    const id = Array.isArray(rawId) ? rawId[0] : rawId;
 
     if (!id || typeof id !== "string") {
       throw new ApiError(400, "Sitting ID is required", "BadRequest");

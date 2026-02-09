@@ -26,7 +26,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const acteurRef = (req.query.acteurRef ??
+    const acteurRef = ((req as any).pathParams?.acteurRef ??
+      req.query?.acteurRef ??
       (req as { params?: { acteurRef?: string } }).params?.acteurRef) as
       | string
       | undefined;

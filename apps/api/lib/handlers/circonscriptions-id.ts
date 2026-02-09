@@ -73,7 +73,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const id = (req.query.id ?? (req as any).params?.id) as string;
+    const id = ((req as any).pathParams?.id ??
+      req.query?.id ??
+      (req as any).params?.id) as string;
 
     if (!id || typeof id !== "string") {
       throw new ApiError(400, "id is required", "BadRequest");

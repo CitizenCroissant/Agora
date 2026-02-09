@@ -33,7 +33,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const slug = (req.query.slug ?? (req as any).params?.slug) as string;
+    const slug = ((req as any).pathParams?.slug ??
+      req.query?.slug ??
+      (req as any).params?.slug) as string;
 
     if (!slug || typeof slug !== "string") {
       throw new ApiError(400, "slug is required", "BadRequest");

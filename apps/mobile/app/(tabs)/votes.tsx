@@ -248,6 +248,20 @@ export default function VotesTabScreen() {
                       <Text style={styles.scrutinTitle} numberOfLines={3}>
                         {scrutin.titre}
                       </Text>
+                      {scrutin.tags && scrutin.tags.length > 0 && (
+                        <View style={styles.tagsContainer}>
+                          {scrutin.tags.slice(0, 3).map((tag) => (
+                            <View key={tag.id} style={styles.tag}>
+                              <Text style={styles.tagText}>{tag.label}</Text>
+                            </View>
+                          ))}
+                          {scrutin.tags.length > 3 && (
+                            <Text style={styles.moreTags}>
+                              +{scrutin.tags.length - 3}
+                            </Text>
+                          )}
+                        </View>
+                      )}
                       <View style={styles.syntheseRow}>
                         <Text style={styles.syntheseText}>
                           Pour {scrutin.synthese_pour} · Contre{" "}
@@ -473,6 +487,28 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#333",
     marginBottom: 8,
+  },
+  tagsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 6,
+    marginBottom: 8,
+  },
+  tag: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    backgroundColor: "rgba(0, 85, 164, 0.1)",
+    borderRadius: 12,
+  },
+  tagText: {
+    fontSize: 11,
+    fontWeight: "500",
+    color: "#0055a4",
+  },
+  moreTags: {
+    fontSize: 11,
+    color: "#666",
+    alignSelf: "center",
   },
   syntheseRow: {
     paddingTop: 8,

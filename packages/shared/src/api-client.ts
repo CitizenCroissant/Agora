@@ -105,11 +105,18 @@ export class ApiClient {
 
   /**
    * Fetch scrutins (roll-call votes) for a date range
+   * @param tag Optional tag slug to filter by
    */
-  async getScrutins(from: string, to: string): Promise<ScrutinsResponse> {
-    const response = await fetch(
-      `${this.baseUrl}/scrutins?from=${from}&to=${to}`
-    );
+  async getScrutins(
+    from: string,
+    to: string,
+    tag?: string
+  ): Promise<ScrutinsResponse> {
+    const params = new URLSearchParams({ from, to });
+    if (tag) {
+      params.append("tag", tag);
+    }
+    const response = await fetch(`${this.baseUrl}/scrutins?${params.toString()}`);
 
     if (!response.ok) {
       const error = (await response.json()) as ApiError;

@@ -9,6 +9,8 @@
     "ingest:scrutins": "ts-node src/ingest-scrutins-cli.ts",
     "ingest:deputies": "ts-node src/ingest-deputies-cli.ts",
     "ingest:circonscriptions": "ts-node src/ingest-circonscriptions-cli.ts",
+    "tag:all-scrutins": "ts-node src/tag-all-scrutins-cli.ts",
+    "tag:single-scrutin": "ts-node src/tag-single-scrutin-cli.ts",
     "lint": "eslint . && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -17,7 +19,7 @@
   "dependencies": {
     "@agora/shared": "*",
     "@supabase/supabase-js": "^2.48.1",
-    "dotenv": "^16.4.7",
+    "dotenv": "^16.6.1",
     "node-fetch": "^3.3.2",
     "unzipper": "^0.12.3"
   },

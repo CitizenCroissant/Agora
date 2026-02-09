@@ -70,6 +70,18 @@ export interface SittingDetailResponse extends SittingWithItems {
 }
 
 /**
+ * Thematic tag types
+ */
+
+export interface ThematicTag {
+  id: string;
+  slug: string;
+  label: string;
+  description?: string | null;
+  color?: string | null;
+}
+
+/**
  * Scrutin (roll-call vote) types
  */
 
@@ -89,6 +101,7 @@ export interface Scrutin {
   synthese_abstentions: number;
   synthese_non_votants: number;
   official_url: string | null;
+  tags?: ThematicTag[];
 }
 
 export type ScrutinVotePosition =
@@ -125,6 +138,7 @@ export interface ScrutinsResponse {
 
 export interface ScrutinDetailResponse extends Scrutin {
   votes?: ScrutinVoteWithName[];
+  tags?: ThematicTag[];
 }
 
 /** Single vote record for deputy voting record */

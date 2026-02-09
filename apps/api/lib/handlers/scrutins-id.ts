@@ -6,7 +6,7 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { supabase } from "../supabase";
 import { ApiError, handleError } from "../errors";
-import { DbScrutin, DbScrutinVote } from "../types";
+import { DbScrutin, DbScrutinVote, DbThematicTag } from "../types";
 import { ScrutinDetailResponse } from "@agora/shared";
 
 const UUID_REGEX =
@@ -35,7 +35,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const id = (req.query.id || (req as any).params?.id) as string;
+    const id = ((req as any).pathParams?.id ??
+      req.query?.id ??
+      (req as any).params?.id) as string;
 
     if (!id || typeof id !== "string") {
       throw new ApiError(400, "Scrutin ID is required", "BadRequest");
@@ -94,6 +96,35 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       );
     }
 
+    // Fetch tags for this scrutin
+    const { data: scrutinTags, error: tagsError } = await supabase
+      .from("scrutin_thematic_tags")
+      .select("tag_id")
+      .eq("scrutin_id", scrutin.id);
+
+    let tags: Array<{ id: string; slug: string; label: string }> = [];
+
+    if (tagsError) {
+      console.error(`[${scrutin.id}] Error fetching tags:`, tagsError);
+    } else if (scrutinTags && scrutinTags.length > 0) {
+      // Fetch tag details separately
+      const tagIds = scrutinTags.map((st) => st.tag_id);
+      const { data: tagDetails, error: tagDetailsError } = await supabase
+        .from("thematic_tags")
+        .select("id, slug, label")
+        .in("id", tagIds);
+
+      if (tagDetailsError) {
+        console.error(`[${scrutin.id}] Error fetching tag details:`, tagDetailsError);
+      } else if (tagDetails) {
+        tags = tagDetails.map((tag) => ({
+          id: tag.id,
+          slug: tag.slug,
+          label: tag.label,
+        }));
+      }
+    }
+
     const dbScrutin = scrutin as DbScrutin;
     const response: ScrutinDetailResponse = {
       id: dbScrutin.id,
@@ -118,6 +149,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         position: v.position as "pour" | "contre" | "abstention" | "non_votant",
         acteur_nom: acteurNomMap.get(v.acteur_ref) ?? null,
       })),
+      tags: tags || [],
     };
 
     res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate");

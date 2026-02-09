@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "ts-node dev-server.ts",
+    "dev": "nodemon --exec \"ts-node dev-server.ts\" --ext ts --watch api --watch lib --watch dev-server.ts",
     "dev:vercel": "vercel dev",
     "build": "tsc",
     "lint": "eslint . && tsc --noEmit",
@@ -14,16 +14,18 @@
   "dependencies": {
     "@agora/shared": "*",
     "@supabase/supabase-js": "^2.48.1",
-    "expo-server-sdk": "^4.0.0"
+    "expo-server-sdk": "^4.0.0",
+    "dotenv": "^16.6.1"
   },
   "devDependencies": {
+    "nodemon": "^3.1.9",
     "@types/express": "^5.0.6",
     "@types/node": "^22.10.2",
-    "@vercel/node": "^5.3.21",
+    "@vercel/node": "^5.5.33",
     "dotenv": "^16.4.7",
     "express": "^5.2.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2",
-    "vercel": "^50.4.8"
+    "vercel": "^50.13.2"
   }
 }

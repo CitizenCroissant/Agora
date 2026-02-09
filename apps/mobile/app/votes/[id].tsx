@@ -102,6 +102,22 @@ export default function ScrutinDetailScreen() {
               <Text style={styles.date}>
                 {formatDate(scrutin.date_scrutin)} · Scrutin n°{scrutin.numero}
               </Text>
+              {scrutin.tags && scrutin.tags.length > 0 && (
+                <View style={styles.tagsSection}>
+                  <Text style={styles.tagsTitle}>Thèmes</Text>
+                  <View style={styles.tagsContainer}>
+                    {scrutin.tags.map((tag) => (
+                      <TouchableOpacity
+                        key={tag.id}
+                        style={styles.tag}
+                        onPress={() => router.push(`/votes?tag=${encodeURIComponent(tag.slug)}`)}
+                      >
+                        <Text style={styles.tagText}>{tag.label}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              )}
             </View>
 
             <View style={styles.synthese}>
@@ -255,6 +271,39 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#0055a4",
     marginBottom: 8,
+  },
+  tagsSection: {
+    marginTop: 16,
+    marginBottom: 16,
+    padding: 12,
+    backgroundColor: "#f5f5f5",
+    borderRadius: 8,
+  },
+  tagsTitle: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#666",
+    marginBottom: 8,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  tagsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  tag: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: "rgba(0, 85, 164, 0.1)",
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "transparent",
+  },
+  tagText: {
+    fontSize: 13,
+    fontWeight: "500",
+    color: "#0055a4",
   },
   date: {
     fontSize: 14,

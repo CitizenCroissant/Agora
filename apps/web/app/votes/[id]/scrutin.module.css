@@ -78,6 +78,48 @@
   line-height: 1.4;
 }
 
+.tagsSection {
+  margin: var(--spacing-md) 0;
+  padding: var(--spacing-md);
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius);
+}
+
+.tagsTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  margin: 0 0 var(--spacing-xs) 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.tag {
+  display: inline-block;
+  padding: 8px 14px;
+  background: rgba(0, 85, 164, 0.1);
+  color: var(--color-primary);
+  border-radius: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.tag:hover {
+  background: rgba(0, 85, 164, 0.2);
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+}
+
 .date {
   font-size: 1rem;
   color: var(--color-text-light);

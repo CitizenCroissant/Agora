@@ -7,6 +7,7 @@ import { supabase } from "./supabase";
 import { scrutinsClient } from "./scrutins-client";
 import { transformScrutin, extractScrutinVotes } from "./scrutins-transform";
 import { AssembleeScrutin } from "./scrutins-types";
+import { tagScrutin } from "./tag-scrutins";
 
 export interface IngestScrutinsOptions {
   fromDate?: string;
@@ -112,6 +113,17 @@ export async function ingestScrutins(options: IngestScrutinsOptions = {}) {
       } else {
         votesInserted += voteRows.length;
       }
+    }
+
+    // Tag scrutin with thematic tags
+    try {
+      await tagScrutin(scrutin.id, row.titre, raw.objet?.libelle ?? null);
+    } catch (tagError) {
+      // Non-critical: log but don't fail ingestion
+      console.error(
+        `Error tagging scrutin ${scrutin.id}:`,
+        tagError instanceof Error ? tagError.message : tagError,
+      );
     }
   }
 

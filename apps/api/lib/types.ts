@@ -66,3 +66,22 @@ export interface DbScrutinVote {
   position: string;
   created_at: string;
 }
+
+export interface DbThematicTag {
+  id: string;
+  slug: string;
+  label: string;
+  description: string | null;
+  color: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DbScrutinThematicTag {
+  id: string;
+  scrutin_id: string;
+  tag_id: string;
+  confidence: number;
+  source: string;
+  created_at: string;
+}

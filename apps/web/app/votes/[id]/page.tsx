@@ -98,6 +98,23 @@ export default function ScrutinPage() {
                     {formatDate(scrutin.date_scrutin)} · Scrutin n°
                     {scrutin.numero}
                   </p>
+                  {scrutin.tags && scrutin.tags.length > 0 && (
+                    <div className={styles.tagsSection}>
+                      <h3 className={styles.tagsTitle}>Thèmes</h3>
+                      <div className={styles.tags}>
+                        {scrutin.tags.map((tag) => (
+                          <Link
+                            key={tag.id}
+                            href={`/votes?tag=${encodeURIComponent(tag.slug)}`}
+                            className={styles.tag}
+                            title={`Filtrer par ${tag.label}`}
+                          >
+                            {tag.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 

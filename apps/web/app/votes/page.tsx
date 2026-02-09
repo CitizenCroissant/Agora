@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { ScrutinsResponse, Scrutin } from "@agora/shared";
 import {
   getTodayDate,
@@ -21,6 +22,26 @@ import styles from "./votes.module.css";
 type ViewMode = "week" | "month";
 type SortFilter = "all" | "adopté" | "rejeté";
 
+// Available thematic tags (could be fetched from API in the future)
+const THEMATIC_TAGS = [
+  { slug: "sante", label: "Santé" },
+  { slug: "economie", label: "Économie" },
+  { slug: "education", label: "Éducation" },
+  { slug: "environnement", label: "Environnement" },
+  { slug: "travail", label: "Travail" },
+  { slug: "logement", label: "Logement" },
+  { slug: "justice", label: "Justice" },
+  { slug: "agriculture", label: "Agriculture" },
+  { slug: "transport", label: "Transports" },
+  { slug: "culture", label: "Culture" },
+  { slug: "interieur", label: "Intérieur" },
+  { slug: "europe", label: "Europe" },
+  { slug: "action-publique", label: "Action publique" },
+  { slug: "amenagement", label: "Aménagement" },
+  { slug: "autonomie", label: "Autonomie" },
+  { slug: "commerce", label: "Commerce" },
+];
+
 function groupScrutinsByDate(scrutins: Scrutin[]): Map<string, Scrutin[]> {
   const map = new Map<string, Scrutin[]>();
   for (const s of scrutins) {
@@ -32,17 +53,30 @@ function groupScrutinsByDate(scrutins: Scrutin[]): Map<string, Scrutin[]> {
 }
 
 export default function VotesPage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const tagFromUrl = searchParams.get("tag");
+
   const [data, setData] = useState<ScrutinsResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("week");
   const [sortFilter, setSortFilter] = useState<SortFilter>("all");
+  const [selectedTag, setSelectedTag] = useState<string | null>(tagFromUrl);
   const [currentDate, setCurrentDate] = useState<string>(getTodayDate());
   const [dateInput, setDateInput] = useState<string>(getTodayDate());
 
+  // Sync selectedTag with URL parameter
+  useEffect(() => {
+    const tag = searchParams.get("tag");
+    if (tag !== selectedTag) {
+      setSelectedTag(tag);
+    }
+  }, [searchParams, selectedTag]);
+
   useEffect(() => {
     loadScrutins();
-  }, [viewMode, currentDate]);
+  }, [viewMode, currentDate, selectedTag]);
 
   const loadScrutins = async () => {
     setLoading(true);
@@ -56,7 +90,7 @@ export default function VotesPage() {
         viewMode === "week"
           ? getWeekEnd(currentDate)
           : getMonthEnd(currentDate);
-      const result = await apiClient.getScrutins(from, to);
+      const result = await apiClient.getScrutins(from, to, selectedTag || undefined);
       setData(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load scrutins");
@@ -178,6 +212,48 @@ export default function VotesPage() {
             </div>
 
             <div className={styles.rightControls}>
+              <div className={styles.tagFilter}>
+                <select
+                  className={styles.tagSelect}
+                  value={selectedTag || ""}
+                  onChange={(e) => {
+                    const newTag = e.target.value || null;
+                    setSelectedTag(newTag);
+                    // Update URL without page reload
+                    const params = new URLSearchParams(searchParams.toString());
+                    if (newTag) {
+                      params.set("tag", newTag);
+                    } else {
+                      params.delete("tag");
+                    }
+                    router.push(`/votes?${params.toString()}`, { scroll: false });
+                  }}
+                  aria-label="Filtrer par thème"
+                >
+                  <option value="">Tous les thèmes</option>
+                  {THEMATIC_TAGS.map((tag) => (
+                    <option key={tag.slug} value={tag.slug}>
+                      {tag.label}
+                    </option>
+                  ))}
+                </select>
+                {selectedTag && (
+                  <button
+                    type="button"
+                    className={styles.clearTagButton}
+                    onClick={() => {
+                      setSelectedTag(null);
+                      const params = new URLSearchParams(searchParams.toString());
+                      params.delete("tag");
+                      router.push(`/votes?${params.toString()}`, { scroll: false });
+                    }}
+                    aria-label="Effacer le filtre"
+                    title="Effacer le filtre"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
               <div className={styles.sortFilterToggle}>
                 <button
                   type="button"
@@ -300,6 +376,19 @@ export default function VotesPage() {
                             <h3 className={styles.scrutinTitle}>
                               {scrutin.titre}
                             </h3>
+                            {scrutin.tags && scrutin.tags.length > 0 && (
+                              <div className={styles.scrutinTags}>
+                                {scrutin.tags.map((tag) => (
+                                  <span
+                                    key={tag.id}
+                                    className={styles.tag}
+                                    title={tag.label}
+                                  >
+                                    {tag.label}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
                             <p className={styles.scrutinCounts}>
                               Pour: {scrutin.synthese_pour} · Contre:{" "}
                               {scrutin.synthese_contre}
