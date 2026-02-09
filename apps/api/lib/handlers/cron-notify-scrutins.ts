@@ -6,7 +6,7 @@
 
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { Expo } from "expo-server-sdk";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "../supabase";
 
 const secret = process.env.CRON_SECRET ?? process.env.PUSH_NOTIFY_SECRET ?? "";
 

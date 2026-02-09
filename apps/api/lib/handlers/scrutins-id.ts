@@ -4,9 +4,9 @@
  */
 
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { supabase } from "../../lib/supabase";
-import { ApiError, handleError } from "../../lib/errors";
-import { DbScrutin, DbScrutinVote } from "../../lib/types";
+import { supabase } from "../supabase";
+import { ApiError, handleError } from "../errors";
+import { DbScrutin, DbScrutinVote } from "../types";
 import { ScrutinDetailResponse } from "@agora/shared";
 
 const UUID_REGEX =

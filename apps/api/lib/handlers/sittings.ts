@@ -4,14 +4,14 @@
  */
 
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { supabase } from "../../lib/supabase";
-import { ApiError, handleError } from "../../lib/errors";
+import { supabase } from "../supabase";
+import { ApiError, handleError } from "../errors";
 import {
   DbSitting,
   DbAgendaItem,
   DbSourceMetadata,
   DbScrutin,
-} from "../../lib/types";
+} from "../types";
 import { SittingDetailResponse } from "@agora/shared";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {

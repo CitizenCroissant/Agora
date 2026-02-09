@@ -1,12 +1,11 @@
 /**
  * GET /api/scrutins?from=YYYY-MM-DD&to=YYYY-MM-DD
- * Returns scrutins (roll-call votes) for a date range
  */
 
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { supabase } from "../../lib/supabase";
-import { ApiError, handleError, validateDateFormat } from "../../lib/errors";
-import { DbScrutin } from "../../lib/types";
+import { supabase } from "../supabase";
+import { ApiError, handleError, validateDateFormat } from "../errors";
+import { DbScrutin } from "../types";
 import { ScrutinsResponse } from "@agora/shared";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -14,10 +13,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
+  if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "GET") {
     return res.status(405).json({
       error: "MethodNotAllowed",
@@ -28,29 +24,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const { from, to } = req.query;
-
     if (!from || typeof from !== "string") {
       throw new ApiError(400, "From date parameter is required", "BadRequest");
     }
-
     if (!to || typeof to !== "string") {
       throw new ApiError(400, "To date parameter is required", "BadRequest");
     }
-
     if (!validateDateFormat(from) || !validateDateFormat(to)) {
-      throw new ApiError(
-        400,
-        "Invalid date format. Use YYYY-MM-DD",
-        "BadRequest",
-      );
+      throw new ApiError(400, "Invalid date format. Use YYYY-MM-DD", "BadRequest");
     }
-
     if (new Date(from) > new Date(to)) {
-      throw new ApiError(
-        400,
-        "From date must be before or equal to to date",
-        "BadRequest",
-      );
+      throw new ApiError(400, "From date must be before or equal to to date", "BadRequest");
     }
 
     const { data: scrutins, error } = await supabase

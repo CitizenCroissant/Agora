@@ -34,13 +34,23 @@ The API will be available at `http://localhost:3000/api`
 
 ## Deployment
 
-This API is designed to be deployed on Vercel:
+Deploy with the Vercel CLI from the API app directory:
 
-```bash
-vercel deploy
-```
+1. **Log in** (once per machine):
+   ```bash
+   npx vercel login
+   ```
+   Or use a token: `vercel --token YOUR_VERCEL_TOKEN`
 
-Make sure to set environment variables in your Vercel project settings.
+2. **Deploy** from the repo root or from `apps/api`:
+   ```bash
+   cd apps/api
+   npx vercel          # preview deployment
+   npx vercel --prod   # production deployment
+   ```
+   If the project is not linked, the CLI will prompt to link to an existing Vercel project or create one.
+
+3. Set **environment variables** in the Vercel project (Dashboard → Project → Settings → Environment Variables): `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, and optionally `CRON_SECRET` for the notify-scrutins cron.
 
 ## CORS
 

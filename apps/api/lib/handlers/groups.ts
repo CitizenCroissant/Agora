@@ -4,8 +4,8 @@
  */
 
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { supabase } from "../../lib/supabase";
-import { ApiError, handleError } from "../../lib/errors";
+import { supabase } from "../supabase";
+import { ApiError, handleError } from "../errors";
 import { slugify, isCurrentlySitting } from "@agora/shared";
 import type { PoliticalGroupSummary } from "@agora/shared";
 

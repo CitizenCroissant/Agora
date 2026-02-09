@@ -4,9 +4,9 @@
  */
 
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { supabase } from '../../lib/supabase';
-import { ApiError, handleError, validateDateFormat } from '../../lib/errors';
-import { DbSitting, DbAgendaItem, DbSourceMetadata } from '../../lib/types';
+import { supabase } from '../supabase';
+import { ApiError, handleError, validateDateFormat } from '../errors';
+import { DbSitting, DbAgendaItem, DbSourceMetadata } from '../types';
 import { AgendaRangeResponse, AgendaResponse, SittingWithItems } from '@agora/shared';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {

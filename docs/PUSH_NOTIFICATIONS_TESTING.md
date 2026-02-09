@@ -62,14 +62,14 @@ You should see the notification on the device. Tapping it should open the app (y
 
 ## 6. End-to-end checklist
 
-| Step | Action |
-|------|--------|
-| 1 | API running; device and API on same network (or tunnel). |
-| 2 | In app: About → Notifications ON; grant permission. |
-| 3 | Confirm token in Supabase `push_tokens` or in app logs. |
-| 4 | Run cron script above (or wait for Vercel cron) **and** have at least one scrutin with `created_at` in last 24h. |
-| 5 | Or use Expo Push Tool with your token for an immediate test. |
-| 6 | Tap the notification → app opens on `/votes` or scrutin detail. |
+| Step | Action                                                                                                           |
+| ---- | ---------------------------------------------------------------------------------------------------------------- |
+| 1    | API running; device and API on same network (or tunnel).                                                         |
+| 2    | In app: About → Notifications ON; grant permission.                                                              |
+| 3    | Confirm token in Supabase `push_tokens` or in app logs.                                                          |
+| 4    | Run cron script above (or wait for Vercel cron) **and** have at least one scrutin with `created_at` in last 24h. |
+| 5    | Or use Expo Push Tool with your token for an immediate test.                                                     |
+| 6    | Tap the notification → app opens on `/votes` or scrutin detail.                                                  |
 
 ## Troubleshooting
 

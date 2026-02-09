@@ -5,8 +5,8 @@
  */
 
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { supabase } from "../../lib/supabase";
-import { ApiError, handleError } from "../../lib/errors";
+import { supabase } from "../supabase";
+import { ApiError, handleError } from "../errors";
 
 /** Minimal GeoJSON geometry type for Feature geometry property */
 type GeoJSONGeometry = object;

@@ -20,6 +20,36 @@ Cache-Control: s-maxage=300, stale-while-revalidate
 
 ## Endpoints
 
+### Ingestion status (data freshness)
+
+Check whether agenda data is up to date (for verifying ingestion cron and Supabase).
+
+**Endpoint**: `GET /ingestion-status`
+
+**Example Request**:
+
+```
+GET /api/ingestion-status
+```
+
+**Success Response** (200):
+
+```json
+{
+  "ok": true,
+  "agenda": {
+    "latest_sitting_date": "2026-02-09",
+    "last_synced_at": "2026-02-09T02:00:00.000Z",
+    "is_fresh": true
+  },
+  "checked_at": "2026-02-09T14:00:00.000Z"
+}
+```
+
+- `is_fresh`: `true` if `last_synced_at` is within the last 36 hours. Use this to verify the daily ingestion cron has run.
+
+---
+
 ### Get Agenda for Date
 
 Retrieve all sittings and agenda items for a specific date.

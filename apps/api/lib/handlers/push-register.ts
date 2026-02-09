@@ -4,8 +4,8 @@
  */
 
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { supabase } from "../../lib/supabase";
-import { ApiError, handleError } from "../../lib/errors";
+import { supabase } from "../supabase";
+import { ApiError, handleError } from "../errors";
 
 const EXPO_TOKEN_PREFIX = "ExponentPushToken[";
 const EXPO_TOKEN_SUFFIX = "]";

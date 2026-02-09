@@ -2,15 +2,16 @@
   "buildCommand": "cd ../.. && npm run build -- --filter=@agora/api",
   "outputDirectory": ".",
   "functions": {
-    "api/**/*.ts": {
+    "api/route.ts": {
       "memory": 1024,
-      "maxDuration": 10
+      "maxDuration": 60
     }
   },
+  "rewrites": [
+    { "source": "/api", "destination": "/api/route" },
+    { "source": "/api/:path*", "destination": "/api/route" }
+  ],
   "crons": [
-    {
-      "path": "/api/cron/notify-scrutins",
-      "schedule": "0 3 * * *"
-    }
+    { "path": "/api/cron/notify-scrutins", "schedule": "0 3 * * *" }
   ]
 }
