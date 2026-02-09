@@ -4,14 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "vercel dev",
-    "build": "tsc",
+    "build": "node ../../node_modules/typescript/bin/tsc",
     "ingest": "ts-node src/ingest.ts",
     "ingest:scrutins": "ts-node src/ingest-scrutins-cli.ts",
     "ingest:deputies": "ts-node src/ingest-deputies-cli.ts",
     "ingest:circonscriptions": "ts-node src/ingest-circonscriptions-cli.ts",
     "tag:all-scrutins": "ts-node src/tag-all-scrutins-cli.ts",
     "tag:single-scrutin": "ts-node src/tag-single-scrutin-cli.ts",
-    "lint": "eslint . && tsc --noEmit",
+    "lint": "eslint . && node ../../node_modules/typescript/bin/tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"

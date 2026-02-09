@@ -8,14 +8,23 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 type Handler = (req: VercelRequest, res: VercelResponse) => Promise<unknown>;
 
 function getPathFromUrl(req: VercelRequest): string {
+  // Vercel rewrite /api/:path* -> /api/route adds path as query param (path=agenda)
+  const q = req.query?.path;
+  if (typeof q === "string" && q) return q;
+  if (Array.isArray(q) && q.length > 0 && typeof q[0] === "string") return q[0];
+
   const url = req.url || "";
   const pathname = url.startsWith("http")
     ? new URL(url).pathname
     : url.split("?")[0];
   const base = "/api";
   if (pathname === base || pathname === `${base}/`) return "";
-  if (pathname.startsWith(`${base}/`)) return pathname.slice(base.length + 1);
-  // Dev server may pass path relative to /api (e.g. /agenda)
+  if (pathname.startsWith(`${base}/`)) {
+    const afterApi = pathname.slice(base.length + 1);
+    if (afterApi.startsWith("route/")) return afterApi.slice(6);
+    if (afterApi === "route") return "";
+    return afterApi;
+  }
   if (pathname.startsWith("/")) return pathname.slice(1);
   return pathname;
 }

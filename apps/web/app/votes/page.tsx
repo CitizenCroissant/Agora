@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ScrutinsResponse, Scrutin } from "@agora/shared";
 import {
@@ -52,7 +52,7 @@ function groupScrutinsByDate(scrutins: Scrutin[]): Map<string, Scrutin[]> {
   return map;
 }
 
-export default function VotesPage() {
+function VotesPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const tagFromUrl = searchParams.get("tag");
@@ -413,5 +413,13 @@ export default function VotesPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function VotesPage() {
+  return (
+    <Suspense fallback={<div className={styles.page}><div className={styles.loading}>Chargement...</div></div>}>
+      <VotesPageContent />
+    </Suspense>
   );
 }

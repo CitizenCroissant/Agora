@@ -8,10 +8,38 @@
     }
   },
   "rewrites": [
-    { "source": "/api", "destination": "/api/route" },
-    { "source": "/api/:path*", "destination": "/api/route" }
+    {
+      "source": "/api",
+      "destination": "/api/route"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "/api/route"
+    }
   ],
   "crons": [
-    { "path": "/api/cron/notify-scrutins", "schedule": "0 3 * * *" }
+    {
+      "path": "/api/cron/notify-scrutins",
+      "schedule": "0 3 * * *"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
+    }
   ]
 }

@@ -6,7 +6,7 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 import { supabase } from '../supabase';
 import { ApiError, handleError, validateDateFormat } from '../errors';
 import { DbSitting, DbAgendaItem, DbSourceMetadata } from '../types';
-import { AgendaResponse, SittingWithItems } from '@agora/shared';
+import { SittingWithItems } from '@agora/shared';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');

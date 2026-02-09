@@ -97,53 +97,53 @@ Agora/
 
 ## Turbo Monorepo Usage
 
-### Run Commands from Root
+This repo uses **Turborepo** as intended: one install at root, all builds/lint/test/run via Turbo from the root. Turbo runs tasks in dependency order, caches outputs, and parallelizes where possible.
+
+### Install (root only)
 
 ```bash
-# Development
-npm run dev                  # All apps (can be overwhelming)
-npm run dev -- --filter=api  # Just API
-npm run dev -- --filter=web  # Just web app
-
-# Building
-npm run build                # All packages (respects dependencies)
-npm run build -- --filter=shared  # Just shared package
-
-# Testing
-npm run test                 # All tests
-npm run test:watch           # Watch mode
-npm run test:coverage        # With coverage
-
-# Linting
-npm run lint                 # All packages
-npm run lint -- --filter=web # Specific package
-
-# Utilities
-npm run clean                # Remove build artifacts
+npm install   # or npm ci in CI
 ```
 
-### Dependency Chain
+Do not install inside `apps/*` or `packages/*`; the root install satisfies the whole workspace.
 
-**IMPORTANT**: `packages/shared` MUST be built before apps can use it.
+### Run tasks from root
 
-```
-packages/shared (build first)
-    ↓
-apps/* (depend on @agora/shared)
-```
-
-Turbo handles this automatically via `"dependsOn": ["^build"]`.
-
-### Traditional Commands (Alternative)
+All common workflows go through the root `package.json` scripts, which call `turbo run <task>`:
 
 ```bash
-# Run in specific package
-npm run dev -w apps/web
-npm run build -w packages/shared
+# Development (use --filter to run one or more apps)
+npm run dev                              # All apps (can be overwhelming)
+npm run dev -- --filter=@agora/api        # API only
+npm run dev -- --filter=@agora/web        # Web only
+npm run dev -- --filter=@agora/api --filter=@agora/web
 
-# Or cd into directory
-cd apps/api && npm run dev
+# Build (dependency order and caching handled by Turbo)
+npm run build                            # All packages
+npm run build -- --filter=@agora/shared   # Shared only
+npm run build -- --filter=@agora/web...   # Web and its dependencies
+
+# Lint (builds dependencies first via dependsOn: ["^build", "^lint"])
+npm run lint
+npm run lint -- --filter=@agora/web
+
+# Test
+npm run test
+npm run test -- --filter=@agora/shared
+npm run test:watch
+npm run test:coverage
+
+# Clean
+npm run clean
 ```
+
+### Dependency order
+
+Turbo runs dependency tasks first via `dependsOn: ["^build"]` (and `^lint` for lint). So `npm run build` builds `@agora/shared` before any app; `npm run lint` does the same. No need to “build shared first” manually.
+
+### Scoping from a package directory
+
+From a package directory, `turbo run build` (or `npx turbo run build`) is automatically scoped to that package and its dependencies. So `cd apps/web && npx turbo run build` runs build for web and its deps only.
 
 ## Common Tasks
 
@@ -152,17 +152,15 @@ cd apps/api && npm run dev
 ```bash
 # First time setup
 npm install
-npm run build -- --filter=shared  # Build shared package
-npm run dev -- --filter=api --filter=web  # Start API + Web
+npm run dev -- --filter=@agora/api --filter=@agora/web   # Turbo builds shared first, then runs dev
 ```
 
 ### 2. Making Changes to Shared Package
 
 ```bash
 # Edit packages/shared/src/*
-cd packages/shared
-npm run build  # Or npm run dev for watch mode
-# Now apps will see the changes
+npm run build -- --filter=@agora/shared   # From repo root; or cd packages/shared && npm run build
+# Apps that depend on shared will use the new build on their next build
 ```
 
 ### 3. Adding a New API Endpoint
@@ -193,7 +191,7 @@ npm run ingest -- --dry-run                # Test without writing
 
 ```bash
 npm run test                    # All packages
-npm run test -- --filter=shared # Specific package
+npm run test -- --filter=@agora/shared  # Specific package
 npm run test:watch              # Watch mode (TDD)
 npm run test:coverage           # Coverage report
 ```
@@ -300,12 +298,8 @@ npm run test:coverage     # Coverage report
 
 ## Gotchas & Important Notes
 
-### 1. Build Shared First!
-Always build `packages/shared` before running apps:
-```bash
-cd packages/shared && npm run build
-```
-Or use: `npm run build -- --filter=shared`
+### 1. Shared package and build order
+When you run `npm run build` or `npm run dev` from the root, Turbo builds `@agora/shared` first (via `dependsOn: ["^build"]`). If you run a single app’s script from inside its directory without going through Turbo, build shared first: `npm run build -- --filter=@agora/shared`.
 
 ### 2. Port Conflicts
 - API runs on port 3000 (or 3001)
@@ -319,7 +313,7 @@ Or use: `npm run build -- --filter=shared`
 
 ### 4. API Must Be Running
 Web and mobile apps need the API running to fetch data.
-Start API first: `npm run dev -- --filter=api`
+Start API first: `npm run dev -- --filter=@agora/api`
 
 ### 5. Date Formats
 - Always use `YYYY-MM-DD` format
@@ -418,22 +412,22 @@ After modifying `database/schema.sql`:
 # Development
 npm run dev                           # All apps
 npm run dev -- --filter=api          # Just API
-npm run dev -- --filter=web          # Just web
+npm run dev -- --filter=@agora/web    # Just web
 
 # Building
 npm run build                         # Everything
-npm run build -- --filter=shared     # Just shared
+npm run build -- --filter=@agora/shared  # Just shared
 npm run build -- --force             # Ignore cache
 
 # Testing
 npm run test                          # All tests
-npm run test -- --filter=shared      # One package
+npm run test -- --filter=@agora/shared  # One package
 npm run test:watch                    # TDD mode
 npm run test:coverage                 # Coverage
 
 # Linting
 npm run lint                          # All packages
-npm run lint -- --filter=web         # One package
+npm run lint -- --filter=@agora/web   # One package
 
 # Utilities
 npm run clean                         # Clean builds

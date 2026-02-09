@@ -23,9 +23,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
-      - name: Build shared package
-        run: npm run build -- --filter=@agora/shared
-      
       - name: Lint packages
         run: npm run lint
 
