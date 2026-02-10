@@ -20,6 +20,8 @@ const LIMIT_SCRUTINS = 20;
 const LIMIT_DEPUTIES = 20;
 const LIMIT_GROUPS = 10;
 
+const VALID_GROUP_POSITIONS = ["pour", "contre", "abstention"] as const;
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
@@ -61,6 +63,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const pattern = `%${q}%`;
+    const groupSlug = typeof req.query.group === "string" ? req.query.group.trim() : null;
+    const groupPosition =
+      typeof req.query.group_position === "string" &&
+      VALID_GROUP_POSITIONS.includes(req.query.group_position as (typeof VALID_GROUP_POSITIONS)[number])
+        ? (req.query.group_position as (typeof VALID_GROUP_POSITIONS)[number])
+        : null;
+
     const response: SearchResponse = {
       q,
       scrutins: [],
@@ -81,7 +90,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         throw new ApiError(500, "Search failed", "DatabaseError");
       }
 
-      response.scrutins = (scrutins || []).map((row: DbScrutin) => ({
+      let scrutinsList = (scrutins || []).map((row: DbScrutin) => ({
         id: row.id,
         official_id: row.official_id,
         sitting_id: row.sitting_id,
@@ -98,6 +107,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         synthese_non_votants: row.synthese_non_votants,
         official_url: row.official_url,
       }));
+
+      if (groupSlug && scrutinsList.length > 0) {
+        const { data: groupRows, error: groupError } = await supabase
+          .from("deputies")
+          .select("groupe_politique")
+          .not("groupe_politique", "is", null)
+          .limit(10000);
+
+        if (!groupError) {
+          const groupePolitique = (groupRows ?? [])
+            .map((r) => (r.groupe_politique ?? "").trim())
+            .filter(Boolean)
+            .find((label) => slugify(label) === groupSlug);
+
+          if (groupePolitique) {
+            const { data: filteredIds, error: rpcError } = await supabase.rpc(
+              "filter_scrutin_ids_by_group",
+              {
+                p_scrutin_ids: scrutinsList.map((s) => s.id),
+                p_groupe_politique: groupePolitique,
+                p_position: groupPosition,
+              }
+            );
+
+            if (!rpcError && filteredIds?.length) {
+              const idSet = new Set((filteredIds as { id: string }[]).map((r) => r.id));
+              scrutinsList = scrutinsList.filter((s) => idSet.has(s.id));
+            } else {
+              scrutinsList = [];
+            }
+          } else {
+            scrutinsList = [];
+          }
+        }
+      }
+
+      response.scrutins = scrutinsList;
     }
 
     if (type === "deputies" || type === "all") {

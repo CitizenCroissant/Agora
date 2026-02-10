@@ -5,6 +5,45 @@
 import { supabase } from "./supabase";
 import { getTagKeywords } from "./tag-keywords";
 
+type ThematicTag = {
+  id: string;
+  slug: string;
+};
+
+// Simple in-memory cache to avoid re-fetching all tags for every scrutin.
+let cachedTags: ThematicTag[] | null = null;
+let cachedTagsFetchedAt: number | null = null;
+const TAG_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+async function getThematicTags(): Promise<ThematicTag[] | null> {
+  const now = Date.now();
+  if (
+    cachedTags &&
+    cachedTagsFetchedAt &&
+    now - cachedTagsFetchedAt < TAG_CACHE_TTL_MS
+  ) {
+    return cachedTags;
+  }
+
+  const { data: tags, error: tagsError } = await supabase
+    .from("thematic_tags")
+    .select("id, slug");
+
+  if (tagsError) {
+    console.error("Error fetching thematic tags:", tagsError);
+    return null;
+  }
+
+  if (!tags || tags.length === 0) {
+    console.warn("No thematic tags found in database. Run migration first.");
+    return null;
+  }
+
+  cachedTags = tags as ThematicTag[];
+  cachedTagsFetchedAt = now;
+  return cachedTags;
+}
+
 /**
  * Tag a scrutin based on its title and object description
  */
@@ -13,6 +52,11 @@ export async function tagScrutin(
   titre: string,
   objetLibelle?: string | null,
 ): Promise<void> {
+  const tags = await getThematicTags();
+  if (!tags || tags.length === 0) {
+    return;
+  }
+
   // Combine text sources for analysis
   const textToAnalyze = [titre, objetLibelle]
     .filter(Boolean)
@@ -20,21 +64,6 @@ export async function tagScrutin(
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, ""); // Remove accents for better matching
-
-  // Get all tags from database
-  const { data: tags, error: tagsError } = await supabase
-    .from("thematic_tags")
-    .select("id, slug");
-
-  if (tagsError) {
-    console.error("Error fetching thematic tags:", tagsError);
-    return;
-  }
-
-  if (!tags || tags.length === 0) {
-    console.warn("No thematic tags found in database. Run migration first.");
-    return;
-  }
 
   // Match keywords for each tag
   const tagsToInsert: Array<{
@@ -59,7 +88,8 @@ export async function tagScrutin(
       // Longer/more specific keywords get higher weight
       const weightedMatches = matches.reduce((sum, keyword) => {
         // Longer keywords are more specific and get higher weight
-        const weight = keyword.length > 10 ? 1.5 : keyword.length > 5 ? 1.2 : 1.0;
+        const weight =
+          keyword.length > 10 ? 1.5 : keyword.length > 5 ? 1.2 : 1.0;
         return sum + weight;
       }, 0);
 

@@ -6,7 +6,7 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { supabase } from "../supabase";
 import { ApiError, handleError } from "../errors";
-import { DbScrutin, DbScrutinVote } from "../types";
+import { DbScrutin, DbScrutinVote, DbBill } from "../types";
 import { ScrutinDetailResponse } from "@agora/shared";
 
 const UUID_REGEX =
@@ -77,20 +77,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       ...new Set((votes || []).map((v: DbScrutinVote) => v.acteur_ref)),
     ];
     const acteurNomMap = new Map<string, string>();
+    const acteurGroupMap = new Map<string, string | null>();
     if (acteurRefs.length > 0) {
       const { data: deputies } = await supabase
         .from("deputies")
-        .select("acteur_ref, civil_nom, civil_prenom")
+        .select("acteur_ref, civil_nom, civil_prenom, groupe_politique")
         .in("acteur_ref", acteurRefs);
       (deputies || []).forEach(
         (d: {
           acteur_ref: string;
           civil_nom: string;
           civil_prenom: string;
+          groupe_politique: string | null;
         }) => {
           acteurNomMap.set(
             d.acteur_ref,
             `${d.civil_prenom} ${d.civil_nom}`.trim(),
+          );
+          acteurGroupMap.set(
+            d.acteur_ref,
+            d.groupe_politique ? d.groupe_politique.trim() : null,
           );
         },
       );
@@ -126,6 +132,59 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const dbScrutin = scrutin as DbScrutin;
+
+    // Compute per-political-group vote breakdown for this scrutin
+    const groupVoteMap = new Map<
+      string,
+      {
+        pour: number;
+        contre: number;
+        abstention: number;
+        non_votant: number;
+        total: number;
+      }
+    >();
+
+    for (const v of votes || []) {
+      const groupLabel = acteurGroupMap.get(v.acteur_ref);
+      if (!groupLabel) continue;
+      if (!groupVoteMap.has(groupLabel)) {
+        groupVoteMap.set(groupLabel, {
+          pour: 0,
+          contre: 0,
+          abstention: 0,
+          non_votant: 0,
+          total: 0,
+        });
+      }
+      const stats = groupVoteMap.get(groupLabel)!;
+      stats.total += 1;
+      if (v.position === "pour") stats.pour += 1;
+      else if (v.position === "contre") stats.contre += 1;
+      else if (v.position === "abstention") stats.abstention += 1;
+      else if (v.position === "non_votant") stats.non_votant += 1;
+    }
+
+    const groupVotes = Array.from(groupVoteMap.entries())
+      .map(([label, stats]) => {
+        const denom = stats.total || 1;
+        const pct = (count: number) =>
+          Math.round((count * 10000) / denom) / 100; // 2 decimal places
+        return {
+          groupe_politique: label,
+          total: stats.total,
+          pour: stats.pour,
+          contre: stats.contre,
+          abstention: stats.abstention,
+          non_votant: stats.non_votant,
+          pour_pct: pct(stats.pour),
+          contre_pct: pct(stats.contre),
+          abstention_pct: pct(stats.abstention),
+          non_votant_pct: pct(stats.non_votant),
+        };
+      })
+      // Sort by total descending to show largest groups first
+      .sort((a, b) => b.total - a.total);
     const response: ScrutinDetailResponse = {
       id: dbScrutin.id,
       official_id: dbScrutin.official_id,
@@ -150,7 +209,42 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         acteur_nom: acteurNomMap.get(v.acteur_ref) ?? null,
       })),
       tags: tags || [],
+      group_votes: groupVotes,
     };
+
+    // Optional linked bill (dossier législatif) for this scrutin.
+    const { data: billLinks, error: billLinksError } = await supabase
+      .from("bill_scrutins")
+      .select("bill_id")
+      .eq("scrutin_id", dbScrutin.id)
+      .limit(1);
+
+    if (billLinksError) {
+      console.error(
+        "Error fetching bill_scrutins for scrutin",
+        dbScrutin.id,
+        billLinksError,
+      );
+    } else if (billLinks && billLinks.length > 0) {
+      const billId = (billLinks[0] as { bill_id: string }).bill_id;
+      const { data: billRow, error: billError } = await supabase
+        .from("bills")
+        .select("id, official_id, title, short_title")
+        .eq("id", billId)
+        .maybeSingle();
+      if (billError) {
+        console.error("Error fetching bill", billId, billError);
+      } else if (billRow) {
+        const bill = billRow as DbBill;
+        (response as unknown as { bill?: ScrutinDetailResponse["bill"] }).bill =
+          {
+            id: bill.id,
+            official_id: bill.official_id,
+            title: bill.title,
+            short_title: bill.short_title,
+          };
+      }
+    }
 
     res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate");
     return res.status(200).json(response);

@@ -1,11 +1,10 @@
 /**
  * Client for Assemblée nationale open data API
- * 
+ *
  * Data source: http://data.assemblee-nationale.fr/static/openData/repository/17/vp/reunions/Agenda.json.zip
  * This ZIP archive contains JSON files for all meetings (public sessions and commissions).
  */
 
-import fetch from 'node-fetch';
 import { Readable } from 'stream';
 import unzipper from 'unzipper';
 import { AssembleeReunionWrapper, AssembleeReunion, AssembleeSeance, AssembleePointOdj } from './types';
@@ -76,7 +75,9 @@ export class AssembleeClient {
     }
 
     console.log('Downloading agenda data from Assemblée nationale...');
-    const response = await fetch(AGENDA_ZIP_URL);
+    // Use the global fetch provided by the Node.js runtime (Node 18+ / Vercel),
+    // avoiding the ESM-only `node-fetch` in a CommonJS context.
+    const response = await (globalThis as any).fetch(AGENDA_ZIP_URL);
     
     if (!response.ok) {
       throw new Error(`Failed to download agenda: ${response.statusText}`);

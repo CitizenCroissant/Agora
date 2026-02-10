@@ -97,6 +97,11 @@ export default async function handler(
     routeHandler = m.default;
     matched = true;
   }
+  if (path === "bills" && method === "GET") {
+    const m = await import("../lib/handlers/bills");
+    routeHandler = m.default;
+    matched = true;
+  }
   if (path === "circonscriptions" && method === "GET") {
     const m = await import("../lib/handlers/circonscriptions");
     routeHandler = m.default;
@@ -143,6 +148,18 @@ export default async function handler(
   ) {
     withParams(req, { id: segments[1] });
     const m = await import("../lib/handlers/scrutins-id");
+    routeHandler = m.default;
+    matched = true;
+  }
+  // Dynamic: bills/:id
+  if (
+    !matched &&
+    segments[0] === "bills" &&
+    segments.length === 2 &&
+    method === "GET"
+  ) {
+    withParams(req, { id: segments[1] });
+    const m = await import("../lib/handlers/bills-id");
     routeHandler = m.default;
     matched = true;
   }

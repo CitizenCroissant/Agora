@@ -31,19 +31,30 @@ export async function ingestDeputies(options: IngestDeputiesOptions = {}) {
     return { deputies: 0 };
   }
 
+  // Upsert in batches to avoid one Supabase request per deputy,
+  // which is too slow and can exceed the serverless timeout.
+  const BATCH_SIZE = 500;
   let upserted = 0;
-  for (const row of rows) {
-    const { error } = await supabase.from("deputies").upsert(row, {
+
+  for (let i = 0; i < rows.length; i += BATCH_SIZE) {
+    const batch = rows.slice(i, i + BATCH_SIZE);
+    const { error } = await supabase.from("deputies").upsert(batch, {
       onConflict: "acteur_ref",
       ignoreDuplicates: false,
     });
+
     if (error) {
-      console.error("Error upserting deputy", row.acteur_ref, error);
-    } else {
-      upserted++;
+      console.error(
+        `Error upserting deputies batch ${i}-${i + batch.length - 1}`,
+        error,
+      );
+      // Continue with next batches even if one fails
+      continue;
     }
+
+    upserted += batch.length;
   }
 
-  console.log(`Deputies: ${upserted} upserted`);
+  console.log(`Deputies: ${upserted} upserted (out of ${rows.length})`);
   return { deputies: upserted };
 }

@@ -5,7 +5,6 @@
  * Data derived from Ministère de l'Intérieur + INSEE (Open Licence 2.0).
  */
 
-import fetch from "node-fetch";
 
 /** p10 = very simplified GeoJSON (~5.4 MB); p20 = simplified (~10 MB) */
 const GEOJSON_P10_URL =
@@ -81,7 +80,8 @@ export async function fetchCirconscriptionsFromSource(): Promise<
   console.log(
     "Fetching circonscriptions from data.gouv.fr (official GeoJSON)...",
   );
-  const response = await fetch(GEOJSON_P10_URL);
+  // Use the global fetch provided by the Node.js runtime, avoiding ESM-only node-fetch.
+  const response = await (globalThis as any).fetch(GEOJSON_P10_URL);
   if (!response.ok) {
     throw new Error(
       `Failed to fetch GeoJSON: ${response.status} ${response.statusText}`,

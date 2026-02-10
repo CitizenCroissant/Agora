@@ -1,12 +1,14 @@
 /**
- * GET /api/scrutins?from=YYYY-MM-DD&to=YYYY-MM-DD
+ * GET /api/scrutins?from=YYYY-MM-DD&to=YYYY-MM-DD&group=slug&group_position=pour|contre|abstention
  */
 
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { supabase } from "../supabase";
 import { ApiError, handleError, validateDateFormat } from "../errors";
 import { DbScrutin } from "../types";
-import { ScrutinsResponse } from "@agora/shared";
+import { ScrutinsResponse, slugify } from "@agora/shared";
+
+const VALID_GROUP_POSITIONS = ["pour", "contre", "abstention"] as const;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -23,7 +25,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { from, to } = req.query;
+    const { from, to, group, group_position } = req.query;
     if (!from || typeof from !== "string") {
       throw new ApiError(400, "From date parameter is required", "BadRequest");
     }
@@ -37,13 +39,80 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       throw new ApiError(400, "From date must be before or equal to to date", "BadRequest");
     }
 
-    const { data: scrutins, error } = await supabase
+    const groupSlug = typeof group === "string" ? group.trim() : null;
+    const position =
+      typeof group_position === "string" && VALID_GROUP_POSITIONS.includes(group_position as (typeof VALID_GROUP_POSITIONS)[number])
+        ? (group_position as (typeof VALID_GROUP_POSITIONS)[number])
+        : null;
+
+    let scrutinIds: string[] | null = null;
+    if (groupSlug) {
+      const { data: groupRows, error: groupError } = await supabase
+        .from("deputies")
+        .select("groupe_politique")
+        .not("groupe_politique", "is", null)
+        .limit(10000);
+
+      if (groupError) {
+        console.error("Supabase deputies error:", groupError);
+        throw new ApiError(500, "Failed to resolve group", "DatabaseError");
+      }
+
+      const groupePolitique = (groupRows ?? [])
+        .map((r) => (r.groupe_politique ?? "").trim())
+        .filter(Boolean)
+        .find((label) => slugify(label) === groupSlug);
+
+      if (!groupePolitique) {
+        return res.status(200).json({
+          from,
+          to,
+          scrutins: [],
+          source: {
+            label: "Assemblée nationale - Scrutins",
+            last_updated_at: undefined,
+          },
+        });
+      }
+
+      const { data: idRows, error: rpcError } = await supabase.rpc("get_scrutin_ids_by_group", {
+        p_from: from,
+        p_to: to,
+        p_groupe_politique: groupePolitique,
+        p_position: position,
+      });
+
+      if (rpcError) {
+        console.error("get_scrutin_ids_by_group RPC error:", rpcError);
+        throw new ApiError(500, "Failed to filter scrutins by group", "DatabaseError");
+      }
+
+      const idsFromRpc = (idRows ?? []).map((row: { id: string }) => row.id).filter(Boolean);
+      scrutinIds = idsFromRpc;
+      if (idsFromRpc.length === 0) {
+        return res.status(200).json({
+          from,
+          to,
+          scrutins: [],
+          source: { label: "Assemblée nationale - Scrutins", last_updated_at: undefined },
+        });
+      }
+    }
+
+    let query = supabase
       .from("scrutins")
       .select("*")
       .gte("date_scrutin", from)
       .lte("date_scrutin", to)
       .order("date_scrutin", { ascending: false })
       .order("numero", { ascending: false });
+
+    const ids = scrutinIds;
+    if (ids && ids.length > 0) {
+      query = query.in("id", ids);
+    }
+
+    const { data: scrutins, error } = await query;
 
     if (error) {
       console.error("Supabase error:", error);

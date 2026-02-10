@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { ScrutinDetailResponse } from "@agora/shared";
+import { ScrutinDetailResponse, slugify } from "@agora/shared";
 import { formatDate } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./scrutin.module.css";
+import { GlossaryTooltip } from "@/components/GlossaryTooltip";
 
 const POSITION_LABELS: Record<string, string> = {
   pour: "Pour",
@@ -53,6 +54,15 @@ export default function ScrutinPage() {
       {} as Record<string, typeof scrutin.votes>,
     ) ?? {};
 
+  // Optional linked bill (dossier législatif) when available.
+  // Cast via any so this file remains compatible even if some compiled type definitions lag behind.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const linkedBill = (scrutin as any)?.bill as
+    | ScrutinDetailResponse["bill"]
+    | undefined;
+
+  const hasGroupVotes = Array.isArray(scrutin?.group_votes) && scrutin.group_votes.length > 0;
+
   return (
     <div className={styles.page}>
       <header className={styles.header}>
@@ -90,8 +100,16 @@ export default function ScrutinPage() {
                   </span>
                   {scrutin.type_vote_libelle && (
                     <span className={styles.typeVote}>
-                      {scrutin.type_vote_libelle}
+                      <GlossaryTooltip term={scrutin.type_vote_libelle} />
                     </span>
+                  )}
+                  {linkedBill && (
+                    <div className={styles.billLink}>
+                      <Link href={`/bills/${linkedBill.id}`}>
+                        Texte concerné :{" "}
+                        {linkedBill.short_title || linkedBill.title} →
+                      </Link>
+                    </div>
                   )}
                   <h1 className={styles.title}>{scrutin.titre}</h1>
                   <p className={styles.date}>
@@ -147,6 +165,53 @@ export default function ScrutinPage() {
                   </div>
                 </div>
               </div>
+
+              {hasGroupVotes && (
+                <section className={styles.groupVotesSection}>
+                  <h2>Comment chaque groupe a voté</h2>
+                  <p className={styles.groupVotesHint}>
+                    Répartition des votes par groupe politique, à partir des votes nominatifs.
+                  </p>
+                  <div className={styles.groupVotesTableWrapper}>
+                    <table className={styles.groupVotesTable}>
+                      <thead>
+                        <tr>
+                          <th>Groupe</th>
+                          <th>Pour</th>
+                          <th>Contre</th>
+                          <th>Abstention</th>
+                          <th>Non votants</th>
+                          <th>Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {scrutin.group_votes!.map((g) => {
+                          const slug = slugify(g.groupe_politique);
+                          const formatCell = (count: number, pct: number) =>
+                            count === 0 ? "—" : `${count} (${pct.toFixed(1)} %)`;
+                          return (
+                            <tr key={g.groupe_politique}>
+                              <td>
+                                <Link
+                                  href={`/groupes/${encodeURIComponent(slug)}`}
+                                  className={styles.groupLink}
+                                >
+                                  {g.groupe_politique}
+                                </Link>
+                              </td>
+                              <td>{formatCell(g.pour, g.pour_pct)}</td>
+                              <td>{formatCell(g.contre, g.contre_pct)}</td>
+                              <td>{formatCell(g.abstention, g.abstention_pct)}</td>
+                              <td>{formatCell(g.non_votant, g.non_votant_pct)}</td>
+                              <td>{g.total}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              )}
 
               {scrutin.sitting_id && (
                 <div className={styles.sittingLink}>

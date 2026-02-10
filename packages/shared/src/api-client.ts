@@ -21,6 +21,8 @@ import {
   SearchResponse,
   SearchType,
   ApiError,
+  BillSummary,
+  BillDetailResponse,
 } from "./types";
 
 const API_NOT_JSON_MESSAGE =
@@ -106,15 +108,25 @@ export class ApiClient {
   /**
    * Fetch scrutins (roll-call votes) for a date range
    * @param tag Optional tag slug to filter by
+   * @param group Optional political group slug (e.g. "rn", "lfi") to filter scrutins
+   * @param group_position Optional majority position of the group: "pour" | "contre" | "abstention"
    */
   async getScrutins(
     from: string,
     to: string,
-    tag?: string
+    tag?: string,
+    group?: string,
+    group_position?: "pour" | "contre" | "abstention"
   ): Promise<ScrutinsResponse> {
     const params = new URLSearchParams({ from, to });
     if (tag) {
       params.append("tag", tag);
+    }
+    if (group) {
+      params.set("group", group);
+    }
+    if (group_position) {
+      params.set("group_position", group_position);
     }
     const response = await fetch(`${this.baseUrl}/scrutins?${params.toString()}`);
 
@@ -300,10 +312,23 @@ export class ApiClient {
   /**
    * Search scrutins, deputies, and/or groups by query string
    */
-  async search(q: string, type: SearchType = "all"): Promise<SearchResponse> {
+  async search(
+    q: string,
+    type: SearchType = "all",
+    options?: {
+      group?: string;
+      group_position?: "pour" | "contre" | "abstention";
+    }
+  ): Promise<SearchResponse> {
     const params = new URLSearchParams({ q: q.trim() });
     if (type !== "all") {
       params.set("type", type);
+    }
+    if (options?.group) {
+      params.set("group", options.group);
+    }
+    if (options?.group_position) {
+      params.set("group_position", options.group_position);
     }
     const response = await fetch(`${this.baseUrl}/search?${params.toString()}`);
 
@@ -313,6 +338,58 @@ export class ApiClient {
     }
 
     return (await response.json()) as SearchResponse;
+  }
+
+  /**
+   * Fetch list of bills (legislative texts) with basic summary information
+   */
+  async getBills(params?: {
+    q?: string;
+    type?: string;
+  }): Promise<BillSummary[]> {
+    const searchParams = new URLSearchParams();
+    if (params?.q) {
+      searchParams.set("q", params.q.trim());
+    }
+    if (params?.type) {
+      searchParams.set("type", params.type.trim());
+    }
+    const query = searchParams.toString();
+    const url =
+      query.length > 0
+        ? `${this.baseUrl}/bills?${query}`
+        : `${this.baseUrl}/bills`;
+
+    const response = await fetch(url);
+    const data = await parseJsonOrThrow<{ bills: BillSummary[] } | ApiError>(
+      response
+    );
+
+    if (!response.ok) {
+      const error = data as ApiError;
+      throw new Error(error.message || "Failed to fetch bills");
+    }
+
+    return (data as { bills: BillSummary[] }).bills;
+  }
+
+  /**
+   * Fetch detailed bill information by UUID or official_id
+   */
+  async getBill(id: string): Promise<BillDetailResponse> {
+    const encoded = encodeURIComponent(id);
+    const response = await fetch(`${this.baseUrl}/bills/${encoded}`);
+
+    const data = await parseJsonOrThrow<BillDetailResponse | ApiError>(
+      response
+    );
+
+    if (!response.ok) {
+      const error = data as ApiError;
+      throw new Error(error.message || "Failed to fetch bill");
+    }
+
+    return data as BillDetailResponse;
   }
 }
 

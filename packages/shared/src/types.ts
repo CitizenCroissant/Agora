@@ -63,6 +63,32 @@ export interface AgendaRangeResponse {
   agendas: AgendaResponse[];
 }
 
+/**
+ * Legislative text / bill (dossier législatif)
+ */
+export interface Bill {
+  id: string;
+  official_id: string;
+  title: string;
+  short_title?: string | null;
+  type?: string | null;
+  origin?: string | null;
+  official_url?: string | null;
+}
+
+export interface BillSummary extends Bill {
+  /** Date of the most recent related scrutin (YYYY-MM-DD) */
+  latest_scrutin_date?: string | null;
+  /** Number of related scrutins when available */
+  scrutins_count?: number | null;
+}
+
+export interface BillDetailResponse extends Bill {
+  scrutins: Scrutin[];
+  /** Optional sittings where this bill appears on the agenda */
+  sittings?: SittingWithItems[];
+}
+
 export interface SittingDetailResponse extends SittingWithItems {
   source_metadata: SourceMetadata;
   /** Scrutins (votes) held during this sitting */
@@ -122,6 +148,24 @@ export interface ScrutinVoteWithName extends ScrutinVote {
   acteur_nom?: string | null;
 }
 
+/** Per-political-group breakdown for a single scrutin */
+export interface ScrutinGroupVoteSummary {
+  /** Label of the political group (e.g. "RN", "SOC") */
+  groupe_politique: string;
+  /** Total number of deputies from this group in the vote */
+  total: number;
+  /** Raw counts by position */
+  pour: number;
+  contre: number;
+  abstention: number;
+  non_votant: number;
+  /** Percentages by position (0-100, rounded) */
+  pour_pct: number;
+  contre_pct: number;
+  abstention_pct: number;
+  non_votant_pct: number;
+}
+
 export interface ScrutinWithVotes extends Scrutin {
   votes?: ScrutinVote[];
 }
@@ -139,6 +183,17 @@ export interface ScrutinsResponse {
 export interface ScrutinDetailResponse extends Scrutin {
   votes?: ScrutinVoteWithName[];
   tags?: ThematicTag[];
+  /** Optional per-political-group vote breakdown */
+  group_votes?: ScrutinGroupVoteSummary[];
+  /**
+   * Optional linked legislative text (bill / dossier législatif) when available.
+   */
+  bill?: {
+    id: string;
+    official_id: string;
+    title: string;
+    short_title?: string | null;
+  } | null;
 }
 
 /** Single vote record for deputy voting record */

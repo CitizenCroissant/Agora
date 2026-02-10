@@ -117,6 +117,37 @@ CREATE INDEX idx_scrutins_sitting_id ON scrutins(sitting_id);
 CREATE TRIGGER update_scrutins_updated_at BEFORE UPDATE ON scrutins
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+-- Table: bills
+-- Legislative texts (dossiers) linked to agenda items and scrutins
+CREATE TABLE bills (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    official_id TEXT UNIQUE NOT NULL,
+    title TEXT NOT NULL,
+    short_title TEXT,
+    type TEXT,
+    origin TEXT,
+    official_url TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_bills_official_id ON bills(official_id);
+
+CREATE TRIGGER update_bills_updated_at BEFORE UPDATE ON bills
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Table: bill_scrutins
+-- Link table between bills and scrutins (one bill can have many scrutins)
+CREATE TABLE bill_scrutins (
+    bill_id UUID NOT NULL REFERENCES bills(id) ON DELETE CASCADE,
+    scrutin_id UUID NOT NULL REFERENCES scrutins(id) ON DELETE CASCADE,
+    role TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (bill_id, scrutin_id)
+);
+
+CREATE INDEX idx_bill_scrutins_scrutin_id ON bill_scrutins(scrutin_id);
+
 -- Table: scrutin_votes
 -- Per-deputy vote position for each scrutin (for deputy voting record)
 CREATE TABLE scrutin_votes (

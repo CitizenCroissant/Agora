@@ -3,13 +3,14 @@
  * Fetches data from Assemblée nationale and upserts into Supabase
  */
 
-import { supabase } from './supabase';
-import { assembleeClient } from './assemblee-client';
+import { supabase } from "./supabase";
+import { assembleeClient } from "./assemblee-client";
 import {
   transformSeance,
   transformAgendaItems,
   createSourceMetadata,
-} from './transform';
+} from "./transform";
+import { ingestDossiers } from "./ingest-dossiers";
 
 export interface IngestOptions {
   date?: string;
@@ -19,7 +20,7 @@ export interface IngestOptions {
 }
 
 export async function ingest(options: IngestOptions = {}) {
-  console.log('Starting ingestion...', options);
+  console.log("Starting ingestion...", options);
 
   try {
     // Determine dates to fetch
@@ -38,7 +39,7 @@ export async function ingest(options: IngestOptions = {}) {
 
       for (const seance of seances) {
         if (options.dryRun) {
-          console.log('Dry run - would upsert:', {
+          console.log("Dry run - would upsert:", {
             official_id: seance.uid,
             date: seance.dateSeance,
             items: seance.pointsOdj?.length || 0,
@@ -50,7 +51,7 @@ export async function ingest(options: IngestOptions = {}) {
         const sittingData = transformSeance(seance);
 
         const { data: sitting, error: sittingError } = await supabase
-          .from('sittings')
+          .from("sittings")
           .upsert(sittingData, {
             onConflict: 'official_id',
             ignoreDuplicates: false,
@@ -68,7 +69,7 @@ export async function ingest(options: IngestOptions = {}) {
 
         // Delete existing agenda items for this sitting (to handle updates)
         await supabase
-          .from('agenda_items')
+          .from("agenda_items")
           .delete()
           .eq('sitting_id', sitting.id);
 
@@ -76,7 +77,7 @@ export async function ingest(options: IngestOptions = {}) {
         const agendaItemsData = transformAgendaItems(seance, sitting.id);
         if (agendaItemsData.length > 0) {
           const { error: itemsError } = await supabase
-            .from('agenda_items')
+            .from("agenda_items")
             .insert(agendaItemsData);
 
           if (itemsError) {
@@ -97,22 +98,30 @@ export async function ingest(options: IngestOptions = {}) {
           );
 
         if (metadataError) {
-          console.error('Error upserting source metadata:', metadataError);
+          console.error("Error upserting source metadata:", metadataError);
         }
       }
     }
 
-    console.log('Ingestion complete!');
+    console.log("Ingestion complete!");
     console.log(`Total sittings: ${totalSittings}`);
     console.log(`Total agenda items: ${totalItems}`);
+
+    // Ingest legislative dossiers (bills) from the official dataset.
+    const dossiersResult = await ingestDossiers({
+      dryRun: options.dryRun ?? false,
+    });
+
+    console.log("Dossiers ingestion summary:", dossiersResult);
 
     return {
       success: true,
       totalSittings,
       totalItems,
+      totalDossiers: dossiersResult.totalDossiers,
     };
   } catch (error) {
-    console.error('Ingestion failed:', error);
+    console.error("Ingestion failed:", error);
     throw error;
   }
 }
@@ -164,22 +173,22 @@ if (require.main === module) {
   const options: IngestOptions = {};
 
   for (let i = 0; i < args.length; i++) {
-    if (args[i] === '--date' && args[i + 1]) {
+    if (args[i] === "--date" && args[i + 1]) {
       options.date = args[i + 1];
       i++;
-    } else if (args[i] === '--from' && args[i + 1]) {
+    } else if (args[i] === "--from" && args[i + 1]) {
       options.fromDate = args[i + 1];
       i++;
-    } else if (args[i] === '--to' && args[i + 1]) {
+    } else if (args[i] === "--to" && args[i + 1]) {
       options.toDate = args[i + 1];
       i++;
-    } else if (args[i] === '--dry-run') {
+    } else if (args[i] === "--dry-run") {
       options.dryRun = true;
     }
   }
 
   ingest(options).catch((error) => {
-    console.error('Fatal error:', error);
+    console.error("Fatal error:", error);
     process.exit(1);
   });
 }

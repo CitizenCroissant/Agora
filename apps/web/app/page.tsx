@@ -6,6 +6,7 @@ import { getTodayDate, formatDate, addDays, subtractDays } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./page.module.css";
+import { PageHelp } from "@/components/PageHelp";
 
 export default function Home() {
   const [currentDate, setCurrentDate] = useState<string>(getTodayDate());
@@ -71,6 +72,9 @@ export default function Home() {
             <Link href="/votes" className={styles.navLink}>
               Scrutins
             </Link>
+            <Link href="/bills" className={styles.navLink}>
+              Textes
+            </Link>
             <Link href="/groupes" className={styles.navLink}>
               Groupes politiques
             </Link>
@@ -92,6 +96,15 @@ export default function Home() {
 
       <main className={styles.main}>
         <div className="container">
+          <PageHelp
+            title="Comment lire cette page ?"
+            points={[
+              "Chaque carte correspond à une séance publique ou réunion de l’Assemblée nationale.",
+              "Utilisez les flèches ou le calendrier pour naviguer dans les jours passés et à venir.",
+              "Dans chaque carte, l’« Ordre du jour » liste les principaux points qui seront examinés.",
+            ]}
+          />
+
           <div className={styles.controlBar}>
             <div className={styles.leftControls}>
               <button

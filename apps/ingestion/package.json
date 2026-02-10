@@ -6,6 +6,7 @@
     "dev": "vercel dev",
     "build": "node ../../node_modules/typescript/bin/tsc",
     "ingest": "ts-node src/ingest.ts",
+    "ingest:dossiers": "ts-node src/ingest-dossiers.ts",
     "ingest:scrutins": "ts-node src/ingest-scrutins-cli.ts",
     "ingest:deputies": "ts-node src/ingest-deputies-cli.ts",
     "ingest:circonscriptions": "ts-node src/ingest-circonscriptions-cli.ts",

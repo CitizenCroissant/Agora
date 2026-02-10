@@ -7,6 +7,7 @@ import { formatDate } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./sitting.module.css";
+import { PageHelp } from "@/components/PageHelp";
 
 export default function SittingPage() {
   const params = useParams();
@@ -48,6 +49,15 @@ export default function SittingPage() {
 
       <main className={styles.main}>
         <div className="container">
+          <PageHelp
+            title="Comment lire cette page ?"
+            points={[
+              "La description présente le contexte général de la séance (type, lieu, horaires).",
+              "La section « Scrutins de cette séance » liste les votes formels tenus pendant cette séance.",
+              "L’« Ordre du jour » détaille les points examinés, avec leur numéro, catégorie et éventuelle référence.",
+            ]}
+          />
+
           {loading && (
             <div className={styles.loading}>Chargement des détails...</div>
           )}

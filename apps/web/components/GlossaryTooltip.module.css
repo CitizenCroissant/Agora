@@ -1,0 +1,49 @@
+.tooltipWrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+}
+
+.term {
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.6);
+  cursor: help;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.popover {
+  position: absolute;
+  z-index: 20;
+  top: 120%;
+  left: 0;
+  min-width: 220px;
+  max-width: 280px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #e5e7eb;
+  font-size: 0.8rem;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.35);
+}
+
+.popoverTitle {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.popoverText {
+  margin: 0;
+}
+

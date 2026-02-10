@@ -44,11 +44,71 @@ async function resolveSittingId(raw: AssembleeScrutin): Promise<string | null> {
 function getDefaultDateRange(): { from: string; to: string } {
   const to = new Date();
   const from = new Date(to);
-  from.setDate(from.getDate() - 30);
+  // Default: last 7 days.
+  // This is used by the scheduled cron job and is intentionally small enough
+  // to keep the serverless function well under the execution timeout, while
+  // still providing a safety window if a previous run failed.
+  from.setDate(from.getDate() - 7);
   return {
     from: from.toISOString().split("T")[0],
     to: to.toISOString().split("T")[0],
   };
+}
+
+/**
+ * Very simple slug generator for grouping scrutins by underlying text.
+ * Keeps it local to ingestion to avoid extra dependencies.
+ */
+function slugify(input: string): string {
+  return input
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/**
+ * Try to extract a canonical bill title from the scrutin title / objet.
+ * Heuristic: keep from "proposition de loi", "projet de loi" or "résolution"
+ * onward, and strip trailing lecture/parenthesis info.
+ */
+function extractBillTitle(raw: AssembleeScrutin): string | null {
+  const source = raw.objet?.libelle ?? raw.titre ?? null;
+  if (!source) return null;
+
+  const patterns = [
+    /proposition de loi.*$/i,
+    /projet de loi.*$/i,
+    /résolution.*$/i,
+  ];
+
+  let matchText: string | null = null;
+  for (const re of patterns) {
+    const m = source.match(re);
+    if (m) {
+      matchText = m[0];
+      break;
+    }
+  }
+
+  const base = matchText ?? source;
+  // Remove trailing parenthetical like "(première lecture)."
+  const cleaned = base.replace(/\s*\([^)]*lecture[^)]*\)\.?$/i, "").trim();
+  return cleaned || null;
+}
+
+/**
+ * Compute a stable internal key + human title for the bill this scrutin belongs to.
+ */
+function getBillKey(
+  raw: AssembleeScrutin,
+): { key: string; title: string } | null {
+  const title = extractBillTitle(raw);
+  if (!title) return null;
+  const key = slugify(title);
+  if (!key) return null;
+  return { key, title };
 }
 
 export async function ingestScrutins(options: IngestScrutinsOptions = {}) {
@@ -58,7 +118,8 @@ export async function ingestScrutins(options: IngestScrutinsOptions = {}) {
   if (fromDate && toDate) {
     rawList = await scrutinsClient.fetchScrutinsByDateRange(fromDate, toDate);
   } else {
-    // Default: last 30 days (for cron; avoids processing full archive)
+    // Default: last 7 days (for cron; avoids processing full archive and
+    // keeps runtime within the serverless max duration).
     const { from, to } = getDefaultDateRange();
     rawList = await scrutinsClient.fetchScrutinsByDateRange(from, to);
   }
@@ -96,6 +157,63 @@ export async function ingestScrutins(options: IngestScrutinsOptions = {}) {
     }
 
     inserted++;
+
+    // Link scrutin to its bill (text) when we can infer a stable key from the title
+    const billKey = getBillKey(raw);
+    if (billKey) {
+      const shortTitle = raw.titre ?? row.titre ?? null;
+
+      const { data: bill, error: billError } = await supabase
+        .from("bills")
+        .upsert(
+          {
+            official_id: billKey.key,
+            title: billKey.title,
+            short_title: shortTitle,
+            // type, origin, official_url can be enriched later from other datasets
+            type: null,
+            origin: null,
+            official_url: null,
+          },
+          {
+            onConflict: "official_id",
+            ignoreDuplicates: false,
+          },
+        )
+        .select()
+        .maybeSingle();
+
+      if (billError) {
+        console.error(
+          "Error upserting bill for scrutin",
+          raw.uid,
+          billKey.key,
+          billError,
+        );
+      } else if (bill?.id) {
+        const { error: linkError } = await supabase.from("bill_scrutins")
+          .upsert(
+            {
+              bill_id: bill.id,
+              scrutin_id: scrutin.id,
+              role: null,
+            },
+            {
+              onConflict: "bill_id,scrutin_id",
+              ignoreDuplicates: false,
+            },
+          );
+
+        if (linkError) {
+          console.error(
+            "Error linking bill to scrutin",
+            bill.id,
+            scrutin.id,
+            linkError,
+          );
+        }
+      }
+    }
 
     // Replace scrutin_votes for this scrutin
     await supabase.from("scrutin_votes").delete().eq("scrutin_id", scrutin.id);

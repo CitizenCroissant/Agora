@@ -3,7 +3,6 @@
  * Fetches Scrutins.json.zip and parses scrutin JSON files
  */
 
-import fetch from "node-fetch";
 import { Readable } from "stream";
 import unzipper from "unzipper";
 import { ScrutinWrapper, AssembleeScrutin } from "./scrutins-types";
@@ -29,7 +28,8 @@ export class ScrutinsClient {
     }
 
     console.log("Downloading scrutins from Assemblée nationale...");
-    const response = await fetch(SCRUTINS_ZIP_URL);
+    // Use the global fetch provided by the Node.js runtime, avoiding ESM-only node-fetch.
+    const response = await (globalThis as any).fetch(SCRUTINS_ZIP_URL);
 
     if (!response.ok) {
       throw new Error(`Failed to download scrutins: ${response.statusText}`);

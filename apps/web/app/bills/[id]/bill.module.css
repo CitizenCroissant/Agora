@@ -1,0 +1,151 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background: var(--color-primary);
+  color: white;
+  padding: var(--spacing-lg) 0;
+}
+
+.backLink {
+  display: inline-block;
+  margin-bottom: var(--spacing-sm);
+  color: white;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+}
+
+.backLink:hover {
+  opacity: 1;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-xs);
+}
+
+.subtitle {
+  font-size: 1.05rem;
+  opacity: 0.9;
+}
+
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: var(--spacing-sm);
+}
+
+.pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-size: 0.8rem;
+}
+
+.main {
+  flex: 1;
+  padding: var(--spacing-xl) 0;
+}
+
+.section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+}
+
+.scrutinsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.scrutinItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--spacing-md);
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: var(--color-background);
+  transition: box-shadow 0.2s, border-color 0.2s, transform 0.1s;
+}
+
+.scrutinItem:hover {
+  box-shadow: var(--shadow);
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+}
+
+.scrutinHeader {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scrutinTitle {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.badgeAdopte,
+.badgeRejete {
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+}
+
+.badgeAdopte {
+  background: #15803d;
+}
+
+.badgeRejete {
+  background: #b91c1c;
+}
+
+.scrutinMeta {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+}
+
+.sourceLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.9rem;
+}
+
+.loading,
+.error,
+.empty {
+  padding: var(--spacing-xl);
+  text-align: center;
+  color: var(--color-text-light);
+}
+
+.error {
+  color: var(--color-secondary);
+}
+
+.footer {
+  background: var(--color-background-alt);
+  border-top: 1px solid var(--color-border);
+  padding: var(--spacing-lg) 0;
+  text-align: center;
+  color: var(--color-text-light);
+  font-size: 0.875rem;
+}
+

@@ -4,7 +4,6 @@
  * to cover both current and former deputies who appear in scrutin votes.
  */
 
-import fetch from "node-fetch";
 import { Readable } from "stream";
 import unzipper from "unzipper";
 import { AssembleeActeur, AssembleeOrgane } from "./deputies-types";
@@ -47,7 +46,8 @@ export class DeputiesClient {
     }
 
     console.log("Downloading deputies from Assemblée nationale...");
-    const response = await fetch(AMO_DEPUTIES_ZIP_URL);
+    // Use the global fetch provided by the Node.js runtime, avoiding ESM-only node-fetch.
+    const response = await (globalThis as any).fetch(AMO_DEPUTIES_ZIP_URL);
 
     if (!response.ok) {
       throw new Error(`Failed to download deputies: ${response.statusText}`);

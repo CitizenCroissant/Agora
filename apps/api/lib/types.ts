@@ -59,6 +59,25 @@ export interface DbScrutin {
   updated_at: string;
 }
 
+export interface DbBill {
+  id: string;
+  official_id: string;
+  title: string;
+  short_title: string | null;
+  type: string | null;
+  origin: string | null;
+  official_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DbBillScrutin {
+  bill_id: string;
+  scrutin_id: string;
+  role: string | null;
+  created_at: string;
+}
+
 export interface DbScrutinVote {
   id: string;
   scrutin_id: string;

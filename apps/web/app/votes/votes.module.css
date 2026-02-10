@@ -61,8 +61,8 @@
 
 .controlBar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: stretch;
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-xl);
   padding: var(--spacing-md) var(--spacing-lg);
@@ -70,6 +70,20 @@
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(0, 85, 164, 0.1);
+}
+
+.controlBarTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.controlBarBottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  align-items: center;
 }
 
 .leftControls {
@@ -137,6 +151,71 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
+}
+
+.topRightControls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.searchForm {
+  flex: 1;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: #f9fafb;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.searchInput::placeholder {
+  color: var(--color-text-light);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  background: white;
+  box-shadow: 0 0 0 2px rgba(0, 85, 164, 0.15);
+}
+
+.filtersRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.typeFilter {
+  min-width: 180px;
+}
+
+.typeSelect {
+  width: 100%;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.typeSelect:hover {
+  border-color: var(--color-text-light);
+  background: var(--color-background-alt);
+}
+
+.typeSelect:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .datePickerWrapper {
@@ -212,6 +291,17 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
+}
+
+.groupFilter {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-width: 0;
+}
+
+.groupFilter .typeSelect {
+  min-width: 140px;
 }
 
 .tagSelect {
@@ -446,7 +536,31 @@
 
 @media (max-width: 768px) {
   .controlBar {
+    padding: var(--spacing-md);
+  }
+
+  .controlBarTop {
     flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+
+  .centerControls {
+    justify-content: flex-start;
+  }
+
+  .topRightControls {
+    justify-content: space-between;
+  }
+
+  .controlBarBottom {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filtersRow {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .dateHeader {

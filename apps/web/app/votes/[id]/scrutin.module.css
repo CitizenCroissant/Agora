@@ -71,6 +71,20 @@
   color: var(--color-text-light);
 }
 
+.billLink {
+  margin-top: var(--spacing-sm);
+  font-size: 0.9rem;
+}
+
+.billLink a {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.billLink a:hover {
+  text-decoration: underline;
+}
+
 .title {
   font-size: 1.5rem;
   color: var(--color-text);
@@ -171,6 +185,65 @@
 }
 
 .sittingLink a:hover {
+  text-decoration: underline;
+}
+
+.groupVotesSection {
+  margin-bottom: var(--spacing-xl);
+}
+
+.groupVotesSection h2 {
+  font-size: 1.25rem;
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-text);
+}
+
+.groupVotesHint {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-sm);
+}
+
+.groupVotesTableWrapper {
+  overflow-x: auto;
+}
+
+.groupVotesTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.groupVotesTable th,
+.groupVotesTable td {
+  padding: 10px 12px;
+  text-align: right;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.groupVotesTable th:first-child,
+.groupVotesTable td:first-child {
+  text-align: left;
+}
+
+.groupVotesTable thead {
+  background: rgba(0, 85, 164, 0.06);
+}
+
+.groupVotesTable tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.01);
+}
+
+.groupLink {
+  color: var(--color-primary);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.groupLink:hover {
   text-decoration: underline;
 }
 
