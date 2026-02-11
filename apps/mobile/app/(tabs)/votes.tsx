@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { DatePickerModal } from "@/app/components/DatePickerModal";
 import type { Scrutin, ScrutinsResponse } from "@agora/shared";
 import {
@@ -38,6 +38,7 @@ function groupScrutinsByDate(scrutins: Scrutin[]): Map<string, Scrutin[]> {
 
 export default function VotesTabScreen() {
   const router = useRouter();
+  const searchParams = useLocalSearchParams<{ date?: string; tag?: string }>();
   const [data, setData] = useState<ScrutinsResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,6 +48,15 @@ export default function VotesTabScreen() {
   const [pickerDate, setPickerDate] = useState<Date>(
     () => new Date(getTodayDate() + "T12:00:00"),
   );
+
+  // Sync with URL ?date= for deep links (e.g. from timeline "Voir les scrutins")
+  useEffect(() => {
+    const dateParam = searchParams.date;
+    if (dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
+      setCurrentDate(dateParam);
+      setPickerDate(new Date(dateParam + "T12:00:00"));
+    }
+  }, [searchParams.date]);
 
   const loadScrutins = useCallback(async () => {
     setLoading(true);

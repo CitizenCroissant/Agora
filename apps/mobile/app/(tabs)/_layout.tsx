@@ -29,13 +29,13 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="mon-depute"
+        name="votes"
         options={{
-          title: "Mon député",
-          tabBarLabel: "Mon député",
-          headerTitle: "Mon député",
+          title: "Scrutins",
+          tabBarLabel: "Scrutins",
+          headerTitle: "Scrutins",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person" size={size} color={color} />
+            <Ionicons name="checkmark-circle" size={size} color={color} />
           ),
         }}
       />
@@ -51,35 +51,13 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="votes"
+        name="explorer"
         options={{
-          title: "Scrutins",
-          tabBarLabel: "Scrutins",
-          headerTitle: "Scrutins",
+          title: "Explorer",
+          tabBarLabel: "Explorer",
+          headerTitle: "Explorer",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="checkmark-circle" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="groupes"
-        options={{
-          title: "Groupes",
-          tabBarLabel: "Groupes",
-          headerTitle: "Groupes politiques",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="people" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="circonscriptions"
-        options={{
-          title: "Circonscriptions",
-          tabBarLabel: "Circonscriptions",
-          headerTitle: "Circonscriptions",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="map" size={size} color={color} />
+            <Ionicons name="compass" size={size} color={color} />
           ),
         }}
       />
@@ -92,6 +70,30 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="information-circle" size={size} color={color} />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="mon-depute"
+        options={{
+          title: "Mon député",
+          headerTitle: "Mon député",
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="groupes"
+        options={{
+          title: "Groupes",
+          headerTitle: "Groupes politiques",
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="circonscriptions"
+        options={{
+          title: "Circonscriptions",
+          headerTitle: "Circonscriptions",
+          href: null,
         }}
       />
     </Tabs>

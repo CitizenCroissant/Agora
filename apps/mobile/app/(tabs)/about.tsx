@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Switch,
 } from "react-native";
+import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Config } from "../../config";
 import {
@@ -25,6 +26,7 @@ const PUSH_TOKEN_KEY = "@agora_push_token";
 const PUSH_TOPIC_KEY = "@agora_push_topic";
 
 export default function AboutScreen() {
+  const router = useRouter();
   const [pushEnabled, setPushEnabled] = useState(false);
   const [pushTopic, setPushTopic] = useState<PushTopic>("all");
   const [favoriteDeputyRef, setFavoriteDeputyRef] = useState<string | null>(
@@ -222,6 +224,15 @@ export default function AboutScreen() {
           onPress={() => openLink("https://www.assemblee-nationale.fr")}
         >
           <Text style={styles.linkText}>assemblee-nationale.fr →</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.link, { marginTop: 12 }]}
+          onPress={() => router.push("/sources")}
+        >
+          <Text style={styles.linkText}>
+            Sources, méthodologie et glossaire →
+          </Text>
         </TouchableOpacity>
       </View>
 

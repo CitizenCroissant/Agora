@@ -64,6 +64,15 @@ export default function TodayScreen() {
         <Text style={styles.dateTitle}>{formatDate(currentDate)}</Text>
       </View>
 
+      <TouchableOpacity
+        style={styles.voteCta}
+        onPress={() => router.push(`/votes?date=${getTodayDate()}`)}
+      >
+        <Text style={styles.voteCtaText}>
+          Comprendre les votes d&apos;aujourd&apos;hui →
+        </Text>
+      </TouchableOpacity>
+
       <ScrollView style={styles.content}>
         {loading && (
           <View style={styles.centerContent}>
@@ -195,6 +204,22 @@ const styles = StyleSheet.create({
     color: '#333',
     textAlign: 'center',
     textTransform: 'capitalize',
+  },
+  voteCta: {
+    marginHorizontal: 16,
+    marginTop: 12,
+    marginBottom: 8,
+    padding: 12,
+    backgroundColor: 'rgba(0, 85, 164, 0.08)',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 85, 164, 0.2)',
+  },
+  voteCtaText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#0055a4',
+    textAlign: 'center',
   },
   content: {
     flex: 1,

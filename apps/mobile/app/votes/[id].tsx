@@ -118,6 +118,14 @@ export default function ScrutinDetailScreen() {
                   </View>
                 </View>
               )}
+              <TouchableOpacity
+                style={styles.sourcesLink}
+                onPress={() => router.push("/sources")}
+              >
+                <Text style={styles.sourcesLinkText}>
+                  Comment lire un scrutin ? (Sources)
+                </Text>
+              </TouchableOpacity>
             </View>
 
             <View style={styles.synthese}>
@@ -309,6 +317,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
     textTransform: "capitalize",
+  },
+  sourcesLink: {
+    marginTop: 12,
+  },
+  sourcesLinkText: {
+    fontSize: 14,
+    color: "#0055a4",
+    fontWeight: "500",
   },
   sectionTitle: {
     fontSize: 18,

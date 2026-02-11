@@ -61,6 +61,13 @@ export default function RootLayout() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="sources"
+          options={{
+            title: "Sources",
+            headerBackTitle: "Retour",
+          }}
+        />
       </Stack>
     </>
   );

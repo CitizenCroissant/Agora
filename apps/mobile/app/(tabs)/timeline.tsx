@@ -220,6 +220,16 @@ export default function TimelineScreen() {
                       {isToday && (
                         <Text style={styles.todayBadge}>Aujourd&apos;hui</Text>
                       )}
+                      <TouchableOpacity
+                        style={styles.dateLink}
+                        onPress={() =>
+                          router.push(`/votes?date=${agenda.date}`)
+                        }
+                      >
+                        <Text style={styles.dateLinkText}>
+                          Voir les scrutins →
+                        </Text>
+                      </TouchableOpacity>
                     </View>
 
                     {agenda.sittings.length === 0 ? (
@@ -426,9 +436,19 @@ const styles = StyleSheet.create({
   },
   dateHeader: {
     flexDirection: "row",
+    flexWrap: "wrap",
     alignItems: "center",
     marginBottom: 12,
     paddingRight: 16,
+    gap: 8,
+  },
+  dateLink: {
+    marginLeft: "auto",
+  },
+  dateLinkText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#0055a4",
   },
   dateText: {
     fontSize: 18,
