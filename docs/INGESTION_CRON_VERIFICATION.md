@@ -8,9 +8,17 @@ The ingestion app (`apps/ingestion`) defines these crons in `vercel.json`:
 
 | Path | Schedule (UTC) | Description |
 |------|----------------|-------------|
-| `/api/ingest` | `0 2 * * *` (daily 02:00) | Agenda: sittings + agenda items (today + next 7 days) |
+| `/api/ingest` | `0 2 * * *` (daily 02:00) | **Agenda + bills**: sittings & agenda items (today + next 7 days) **and** legislative dossiers (bills) from the official dataset |
 | `/api/ingest-scrutins` | `15 2 * * *` (daily 02:15) | Scrutins (votes) – last 30 days |
 | `/api/ingest-deputies` | `0 3 1 * *` (1st of month 03:00) | Deputies (acteurs) |
+
+**Note about bills ingestion (dossiers législatifs):**
+
+- There is **no separate cron path** just for bills.
+- Bills are ingested as part of the main `/api/ingest` job, which calls `ingest()` in `apps/ingestion/src/ingest.ts`.
+- Inside `ingest()`, after fetching/upserting sittings and agenda items, it calls `ingestDossiers()` to upsert legislative dossiers into the `bills` table (and related links).
+- This runs **before** `/api/ingest-scrutins` at 02:15, so the `bills` table is up to date when the scrutins ingestion (and bill–scrutin linking) runs.
+- **Legislature:** Dossier ingestion supports a `legislature` parameter: `"17"`, `"16"`, `"15"`, `"14"`, or `"all"`. The **cron job does not send a body**, so it uses the default **`"17"`** (current legislature). For a one-off backfill of all legislatures, trigger manually with `{"legislature": "all"}` (or CLI `--legislature all`). **`"all"`** fetches every legislature in `LEGISLATURES_WITH_DOSSIERS` in `dossiers-client.ts` (currently **14, 15, 16, 17**). Legislatures **14 and 15** use a different URL pattern (Roman-numeral filename: `Dossiers_Legislatifs_XIV.json.zip`, `_XV.json.zip`); **16 and 17** use `Dossiers_Legislatifs.json.zip`. Legislatures **0–13** do not have this dataset at the open data repository. If a legislature’s ZIP fails, that legislature is skipped and the rest continue.
 
 ## 2. Check that crons have run in Vercel
 
@@ -85,6 +93,12 @@ curl -X POST "https://YOUR_INGESTION_APP.vercel.app/api/ingest" \
   -H "Authorization: Bearer YOUR_INGESTION_SECRET" \
   -H "Content-Type: application/json" \
   -d '{"date": "2026-02-09"}'
+
+# Optional: ingest bills for all legislatures (17 + 16); cron uses default "17"
+curl -X POST "https://YOUR_INGESTION_APP.vercel.app/api/ingest" \
+  -H "Authorization: Bearer YOUR_INGESTION_SECRET" \
+  -H "Content-Type: application/json" \
+  -d '{"legislature": "all"}'
 ```
 
 Use the same base URL and `INGESTION_SECRET` for `/api/ingest-scrutins` and `/api/ingest-deputies` as needed.

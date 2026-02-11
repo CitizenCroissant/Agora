@@ -168,7 +168,7 @@ npm run ingest -- --dry-run
 - About Tab - Information
 - Sitting Detail - Full agenda
 
-**Navigation**: Expo Router (file-based)
+**Navigation**: Expo Router (file-based). Five main tabs: Aujourd'hui, Scrutins, Calendrier, Explorer (Mon député, Groupes, Circonscriptions), À propos. Detail screens (sitting, scrutin, deputy, group, circonscription, sources) are stack screens reachable from lists or deep links.
 
 **Architecture**:
 
@@ -176,6 +176,24 @@ npm run ingest -- --dry-run
 - Same API client as web
 - Platform-specific styling
 - Deep linking ready
+
+### Navigation and user journeys
+
+Navigation is designed so that **all application pages are reachable within a few taps or clicks** from an entry screen (home or a primary tab). Priority is given to the “understand the votes” journey.
+
+**Web**
+
+- **Shared shell**: Every page shows the same header (main nav) and footer. The header includes: Aujourd'hui, Calendrier, Scrutins, Prochains votes, Votes par député, Textes, Groupes politiques, Mon député, Circonscriptions, Recherche, À propos, Sources.
+- **Vote journeys**: From home, “Comprendre les votes d'aujourd'hui” links to `/votes?date=<today>`. From the timeline, each day has “Voir les scrutins” → `/votes?date=...`. From a sitting, “Scrutins de cette séance” links to each scrutin. From a scrutin detail, “Comment lire un scrutin ? (Sources)” links to `/sources`.
+- **Reachability**: List pages (votes, bills, groupes, circonscriptions, mon-depute) are in the nav; detail pages are reached from those lists or from cross-links (e.g. scrutin → bill, deputy → votes).
+
+**Mobile**
+
+- **Tabs**: Aujourd'hui, Scrutins, Calendrier, Explorer, À propos. Explorer is a hub to Mon député, Groupes, Circonscriptions (tabs hidden from the bar but reachable from Explorer).
+- **Vote journeys**: Today tab has “Comprendre les votes d'aujourd'hui” → `/votes?date=<today>`. Timeline has “Voir les scrutins” per day → `/votes?date=...`. Scrutin detail has “Comment lire un scrutin ? (Sources)” → `/sources`. The Scrutins tab respects `?date=` and `?tag=` in the URL for deep links.
+- **Reachability**: Sources screen (`/sources`) is linked from the À propos tab. All other screens are reachable from tabs or from list/detail navigation.
+
+See `docs/NAVIGATION.md` for a route-by-route reachability summary.
 
 ## Data Flow
 
