@@ -6,6 +6,12 @@
 
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { ingest } from "../src/ingest";
+import {
+  logStart,
+  logSuccess,
+  logError,
+  detectTrigger,
+} from "../src/ingestion-logger";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
@@ -45,23 +51,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
+  // Log start
+  const triggeredBy = detectTrigger(authHeader);
+  const logEntry = await logStart("ingest", triggeredBy);
+
   try {
-    // Parse options from request body
-    const { date, fromDate, toDate, dryRun } = req.body || {};
+    // Parse options from request body (cron sends no body → defaults: legislature "17")
+    const { date, fromDate, toDate, dryRun, legislature } = req.body || {};
 
     const result = await ingest({
       date,
       fromDate,
       toDate,
       dryRun: dryRun || false,
+      legislature: legislature ?? "17",
     });
+
+    // Log success
+    if (logEntry) {
+      await logSuccess(logEntry.id, result as unknown as Record<string, unknown>);
+    }
 
     return res.status(200).json(result);
   } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
     console.error("Ingestion error:", error);
+
+    // Log error
+    if (logEntry) {
+      await logError(logEntry.id, message);
+    }
+
     return res.status(500).json({
       error: "IngestionError",
-      message: error instanceof Error ? error.message : "Unknown error",
+      message,
     });
   }
 }

@@ -47,6 +47,10 @@ npm run ingest -- --from 2026-01-20 --to 2026-01-27
 
 # Dry run (no database writes)
 npm run ingest -- --dry-run
+
+# Ingest bills for a specific legislature or all (default: 17; cron uses 17)
+npm run ingest -- --legislature 17
+npm run ingest -- --legislature all
 ```
 
 ### Serverless Endpoints
@@ -63,7 +67,8 @@ Authorization: Bearer YOUR_INGESTION_SECRET
   "date": "2026-01-25",      // optional
   "fromDate": "2026-01-20",  // optional
   "toDate": "2026-01-27",    // optional
-  "dryRun": false            // optional
+  "dryRun": false,           // optional
+  "legislature": "17"        // optional: "17", "16", "15", "14", or "all"; default "17" (cron uses this)
 }
 ```
 

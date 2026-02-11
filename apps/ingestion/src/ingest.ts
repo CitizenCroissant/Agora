@@ -17,6 +17,8 @@ export interface IngestOptions {
   fromDate?: string;
   toDate?: string;
   dryRun?: boolean;
+  /** Legislature for dossiers (bills): "17", "16", or "all". Default "17" (used by cron). */
+  legislature?: string;
 }
 
 export async function ingest(options: IngestOptions = {}) {
@@ -110,6 +112,7 @@ export async function ingest(options: IngestOptions = {}) {
     // Ingest legislative dossiers (bills) from the official dataset.
     const dossiersResult = await ingestDossiers({
       dryRun: options.dryRun ?? false,
+      legislature: options.legislature ?? "17",
     });
 
     console.log("Dossiers ingestion summary:", dossiersResult);
@@ -184,6 +187,9 @@ if (require.main === module) {
       i++;
     } else if (args[i] === "--dry-run") {
       options.dryRun = true;
+    } else if (args[i] === "--legislature" && args[i + 1]) {
+      options.legislature = args[i + 1];
+      i++;
     }
   }
 

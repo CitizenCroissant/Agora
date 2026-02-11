@@ -13,6 +13,8 @@ import { AssembleeDossierParlementaire } from "./dossiers-types";
 
 export interface IngestDossiersOptions {
   dryRun?: boolean;
+  /** Legislature to ingest: "17", "16", or "all". Default "17" (cron uses this). */
+  legislature?: string;
 }
 
 function inferTypeAndOrigin(dossier: AssembleeDossierParlementaire): {
@@ -41,20 +43,25 @@ function inferTypeAndOrigin(dossier: AssembleeDossierParlementaire): {
 function buildOfficialUrl(dossier: AssembleeDossierParlementaire): string | null {
   const chemin = dossier.titreDossier?.titreChemin;
   if (!chemin) return null;
-  // Official dossiers listing is under /dyn/17/dossiers; individual dossier URLs
-  // follow /dyn/17/dossiers/<titreChemin>.
-  return `https://www.assemblee-nationale.fr/dyn/17/dossiers/${chemin}`;
+  const leg = dossier.legislature ?? "17";
+  return `https://www.assemblee-nationale.fr/dyn/${leg}/dossiers/${chemin}`;
 }
 
 export async function ingestDossiers(
   options: IngestDossiersOptions = {},
 ): Promise<{ totalDossiers: number }> {
-  console.log("Starting dossiers ingestion...", options);
+  const legislature = options.legislature ?? "17";
+  console.log("Starting dossiers ingestion...", { ...options, legislature });
 
-  const all = await dossiersClient.fetchAllDossiers();
-  const dossiers = all.filter((d) => d.legislature === "17");
+  const all = await dossiersClient.fetchAllDossiers(legislature);
+  const dossiers =
+    legislature === "all"
+      ? all
+      : all.filter((d) => String(d.legislature ?? "") === legislature);
 
-  console.log(`Found ${dossiers.length} dossier(s) for legislature 17`);
+  console.log(
+    `Found ${dossiers.length} dossier(s) for legislature ${legislature}`,
+  );
 
   let upserted = 0;
 
@@ -111,9 +118,12 @@ if (require.main === module) {
   const args = process.argv.slice(2);
   const options: IngestDossiersOptions = {};
 
-  for (const arg of args) {
-    if (arg === "--dry-run") {
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--dry-run") {
       options.dryRun = true;
+    } else if (args[i] === "--legislature" && args[i + 1]) {
+      options.legislature = args[i + 1];
+      i++;
     }
   }
 
