@@ -8,6 +8,7 @@ import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./sitting.module.css";
 import { PageHelp } from "@/components/PageHelp";
+import { Breadcrumb } from "@/components/Breadcrumb";
 
 export default function SittingPage() {
   const params = useParams();
@@ -38,17 +39,8 @@ export default function SittingPage() {
   };
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className="container">
-          <Link href="/" className={styles.backLink}>
-            ← Retour à l'agenda
-          </Link>
-        </div>
-      </header>
-
-      <main className={styles.main}>
-        <div className="container">
+    <div className="container">
+      <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: sitting?.title || "Séance" }]} />
           <PageHelp
             title="Comment lire cette page ?"
             points={[
@@ -196,14 +188,6 @@ export default function SittingPage() {
                 )}
             </>
           )}
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <div className="container">
-          <p>Agora - Données officielles de l'Assemblée nationale</p>
-        </div>
-      </footer>
     </div>
   );
 }

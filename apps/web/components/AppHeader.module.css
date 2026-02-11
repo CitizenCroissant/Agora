@@ -1,0 +1,138 @@
+.wrapper {
+  background: var(--color-primary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm) var(--spacing-lg);
+  padding: var(--spacing-sm) 0;
+}
+
+/* Brand: name + tagline stacked */
+.brand {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: white;
+  margin-right: auto;
+  line-height: 1.2;
+}
+
+.brand:hover {
+  opacity: 0.9;
+}
+
+.brandName {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.brandTagline {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  font-weight: 400;
+}
+
+/* Nav row */
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-xs) var(--spacing-md);
+}
+
+/* Shared style for all nav items (links and buttons) */
+.navItem {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 6px 10px;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: normal;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+  -webkit-appearance: none;
+  appearance: none;
+  text-decoration: none;
+}
+
+.navItem:hover {
+  color: white;
+}
+
+.navItemActive {
+  color: white;
+  border-bottom-color: white;
+}
+
+.menuSection {
+  position: relative;
+}
+
+.caret {
+  font-size: 0.6em;
+  line-height: 1;
+  color: currentColor;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 200px;
+  background: var(--color-background);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border);
+  z-index: 10;
+  padding: var(--spacing-xs) 0;
+}
+
+.dropdownItem {
+  display: block;
+  padding: var(--spacing-xs) var(--spacing-md);
+  color: var(--color-text);
+  font-size: 0.9375rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.dropdownItem:hover {
+  background: var(--color-background-alt);
+  color: var(--color-primary);
+}
+
+@media (max-width: 768px) {
+  .bar {
+    gap: var(--spacing-xs);
+  }
+
+  .brandName {
+    font-size: 1.25rem;
+  }
+
+  .nav {
+    gap: var(--spacing-xs);
+  }
+
+  .dropdown {
+    position: static;
+    margin-top: 4px;
+    width: 100%;
+  }
+}

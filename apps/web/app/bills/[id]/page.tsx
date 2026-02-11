@@ -8,6 +8,7 @@ import { formatDate } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import styles from "./bill.module.css";
 import { PageHelp } from "@/components/PageHelp";
+import { Breadcrumb } from "@/components/Breadcrumb";
 
 export default function BillPage() {
   const params = useParams();
@@ -40,36 +41,8 @@ export default function BillPage() {
   };
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className="container">
-          <Link href="/bills" className={styles.backLink}>
-            ← Retour aux textes
-          </Link>
-          {bill && (
-            <>
-              <h1 className={styles.title}>
-                {bill.short_title || bill.title}
-              </h1>
-              <p className={styles.subtitle}>{bill.title}</p>
-              <div className={styles.metaRow}>
-                {bill.type && <span className={styles.pill}>{bill.type}</span>}
-                {bill.origin && (
-                  <span className={styles.pill}>{bill.origin}</span>
-                )}
-                {bill.official_id && (
-                  <span className={styles.pill}>
-                    Référence {bill.official_id}
-                  </span>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-      </header>
-
-      <main className={styles.main}>
-        <div className="container">
+    <div className="container">
+      <Breadcrumb items={[{ label: "Textes", href: "/bills" }, { label: bill?.short_title || bill?.title || "Texte" }]} />
           <PageHelp
             title="Comment lire cette page ?"
             points={[
@@ -146,14 +119,6 @@ export default function BillPage() {
               </section>
             </>
           )}
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <div className="container">
-          <p>Agora - Données officielles de l&apos;Assemblée nationale</p>
-        </div>
-      </footer>
     </div>
   );
 }

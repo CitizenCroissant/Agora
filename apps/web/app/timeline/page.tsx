@@ -18,6 +18,7 @@ import {
 import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./timeline.module.css";
+import { Breadcrumb } from "@/components/Breadcrumb";
 
 type ViewMode = "week" | "month";
 
@@ -101,21 +102,8 @@ export default function TimelinePage() {
   };
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className="container">
-          <Link href="/" className={styles.backLink}>
-            ← Retour
-          </Link>
-          <h1 className={styles.title}>Calendrier</h1>
-          <p className={styles.subtitle}>
-            Vue d'ensemble de l'agenda parlementaire
-          </p>
-        </div>
-      </header>
-
-      <main className={styles.main}>
-        <div className="container">
+    <div className="container">
+      <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Calendrier" }]} />
           <div className={styles.controlBar}>
             <div className={styles.leftControls}>
               <button
@@ -205,12 +193,20 @@ export default function TimelinePage() {
                         {isToday && (
                           <span className={styles.todayBadge}>Aujourd'hui</span>
                         )}
-                        <Link
-                          href={`/?date=${agenda.date}`}
-                          className={styles.viewDay}
-                        >
-                          Voir cette journée →
-                        </Link>
+                        <div className={styles.dateHeaderLinks}>
+                          <Link
+                            href={`/?date=${agenda.date}`}
+                            className={styles.viewDay}
+                          >
+                            Voir cette journée →
+                          </Link>
+                          <Link
+                            href={`/votes?date=${agenda.date}`}
+                            className={styles.viewDay}
+                          >
+                            Voir les scrutins →
+                          </Link>
+                        </div>
                       </div>
 
                       {agenda.sittings.length === 0 ? (
@@ -266,14 +262,6 @@ export default function TimelinePage() {
               )}
             </div>
           )}
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <div className="container">
-          <p>Agora - Données officielles de l'Assemblée nationale</p>
-        </div>
-      </footer>
     </div>
   );
 }

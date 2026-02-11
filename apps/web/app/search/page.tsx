@@ -6,6 +6,7 @@ import { formatDate } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./search.module.css";
+import { Breadcrumb } from "@/components/Breadcrumb";
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
@@ -56,21 +57,8 @@ export default function SearchPage() {
   const emptyAfterSearch = searched && !loading && results && !hasResults;
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className="container">
-          <Link href="/" className={styles.backLink}>
-            ← Retour à l&apos;accueil
-          </Link>
-          <h1 className={styles.title}>Recherche</h1>
-          <p className={styles.subtitle}>
-            Scrutins, députés et groupes politiques
-          </p>
-        </div>
-      </header>
-
-      <main className={styles.main}>
-        <div className="container">
+    <div className="container">
+      <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Recherche" }]} />
           <form onSubmit={handleSubmit} className={styles.searchForm}>
             <input
               type="search"
@@ -181,14 +169,6 @@ export default function SearchPage() {
               )}
             </div>
           )}
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <div className="container">
-          <p>Agora - Données officielles de l&apos;Assemblée nationale</p>
-        </div>
-      </footer>
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { formatDate } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "../deputy.module.css";
+import { Breadcrumb } from "@/components/Breadcrumb";
 
 const POSITION_LABELS: Record<string, string> = {
   pour: "Pour",
@@ -48,91 +49,67 @@ export default function DeputyVotesByRefPage() {
   const displayName = data?.acteur_nom ?? data?.acteur_ref ?? acteurRef;
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className="container">
-          <Link href="/votes" className={styles.backLink}>
-            ← Retour aux scrutins
-          </Link>
-          <h1 className={styles.title}>Votes du député</h1>
-          <p className={styles.subtitle}>
-            {displayName}
-            {data?.acteur_nom && (
-              <span className={styles.acteurRefHint}> ({data.acteur_ref})</span>
-            )}
-          </p>
+    <div className="container">
+      <Breadcrumb items={[{ label: "Scrutins", href: "/votes" }, { label: "Vote par député", href: "/votes/deputy" }, { label: displayName || "Député" }]} />
+      {loading && (
+        <div className={styles.loading}>Chargement des votes...</div>
+      )}
+
+      {error && (
+        <div className={styles.error}>
+          <p>Erreur : {error}</p>
         </div>
-      </header>
+      )}
 
-      <main className={styles.main}>
-        <div className="container">
-          {loading && (
-            <div className={styles.loading}>Chargement des votes...</div>
-          )}
-
-          {error && (
-            <div className={styles.error}>
-              <p>Erreur : {error}</p>
-            </div>
-          )}
-
-          {!loading && !error && data && (
-            <div className={styles.result}>
-              <div className={styles.resultHeader}>
-                <h2 className={styles.resultTitle}>
-                  Historique des votes pour {displayName}
-                </h2>
-                <Link
-                  href={`/deputy/${encodeURIComponent(data.acteur_ref)}`}
-                  className={styles.profileLink}
-                >
-                  Voir la fiche député →
-                </Link>
-              </div>
-              {data.votes.length === 0 ? (
-                <p className={styles.empty}>
-                  Aucun vote enregistré pour cet identifiant.
-                </p>
-              ) : (
-                <ul className={styles.voteList}>
-                  {data.votes.map((v: DeputyVoteRecord) => (
-                    <li key={v.scrutin_id} className={styles.voteItem}>
-                      <span
-                        className={
-                          v.position === "pour"
-                            ? styles.badgePour
-                            : v.position === "contre"
-                              ? styles.badgeContre
-                              : v.position === "abstention"
-                                ? styles.badgeAbstention
-                                : styles.badgeNonVotant
-                        }
-                      >
-                        {POSITION_LABELS[v.position]}
-                      </span>
-                      <span className={styles.voteDate}>
-                        {formatDate(v.date_scrutin)}
-                      </span>
-                      <Link
-                        href={`/votes/${v.scrutin_id}`}
-                        className={styles.voteTitre}
-                      >
-                        {v.scrutin_titre}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+      {!loading && !error && data && (
+        <div className={styles.result}>
+          <div className={styles.resultHeader}>
+            <h2 className={styles.resultTitle}>
+              Historique des votes pour {displayName}
+            </h2>
+            <Link
+              href={`/deputy/${encodeURIComponent(data.acteur_ref)}`}
+              className={styles.profileLink}
+            >
+              Voir la fiche député →
+            </Link>
+          </div>
+          {data.votes.length === 0 ? (
+            <p className={styles.empty}>
+              Aucun vote enregistré pour cet identifiant.
+            </p>
+          ) : (
+            <ul className={styles.voteList}>
+              {data.votes.map((v: DeputyVoteRecord) => (
+                <li key={v.scrutin_id} className={styles.voteItem}>
+                  <span
+                    className={
+                      v.position === "pour"
+                        ? styles.badgePour
+                        : v.position === "contre"
+                          ? styles.badgeContre
+                          : v.position === "abstention"
+                            ? styles.badgeAbstention
+                            : styles.badgeNonVotant
+                    }
+                  >
+                    {POSITION_LABELS[v.position]}
+                  </span>
+                  <span className={styles.voteDate}>
+                    {formatDate(v.date_scrutin)}
+                  </span>
+                  <Link
+                    href={`/votes/${v.scrutin_id}`}
+                    className={styles.voteTitre}
+                  >
+                    {v.scrutin_titre}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           )}
         </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <div className="container">
-          <p>Agora - Données officielles de l&apos;Assemblée nationale</p>
-        </div>
-      </footer>
+      )}
     </div>
   );
 }

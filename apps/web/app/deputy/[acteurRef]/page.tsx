@@ -12,6 +12,7 @@ import {
 import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./deputy.module.css";
+import { Breadcrumb } from "@/components/Breadcrumb";
 
 function computeAge(dateNaissance: string | null): number | null {
   if (!dateNaissance) return null;
@@ -58,17 +59,8 @@ export default function DeputyPage() {
   const age = deputy ? computeAge(deputy.date_naissance) : null;
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className="container">
-          <Link href="/votes" className={styles.backLink}>
-            ← Retour aux scrutins
-          </Link>
-        </div>
-      </header>
-
-      <main className={styles.main}>
-        <div className="container">
+    <div className="container">
+      <Breadcrumb items={[{ label: "Mon député", href: "/mon-depute" }, { label: displayName || "Député" }]} />
           {loading && (
             <div className={styles.loading}>Chargement du député...</div>
           )}
@@ -241,14 +233,6 @@ export default function DeputyPage() {
               </div>
             </>
           )}
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <div className="container">
-          <p>Agora - Données officielles de l&apos;Assemblée nationale</p>
-        </div>
-      </footer>
     </div>
   );
 }

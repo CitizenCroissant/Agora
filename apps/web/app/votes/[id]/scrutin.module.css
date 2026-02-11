@@ -9,6 +9,13 @@
   padding: var(--spacing-md) 0;
 }
 
+.headerLinks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
 .backLink {
   color: white;
   opacity: 0.9;
@@ -16,6 +23,17 @@
 }
 
 .backLink:hover {
+  opacity: 1;
+}
+
+.sourcesLink {
+  color: white;
+  opacity: 0.9;
+  font-size: 0.875rem;
+  transition: opacity 0.2s;
+}
+
+.sourcesLink:hover {
   opacity: 1;
 }
 

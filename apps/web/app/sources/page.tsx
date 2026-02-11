@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import styles from './sources.module.css'
+import { Breadcrumb } from "@/components/Breadcrumb"
 
 export const metadata: Metadata = {
   title: 'Sources de données | Agora - Agenda de l\'Assemblée nationale',
@@ -16,18 +16,8 @@ export const metadata: Metadata = {
 
 export default function SourcesPage() {
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className="container">
-          <Link href="/" className={styles.backLink}>
-            ← Retour
-          </Link>
-          <h1 className={styles.title}>Sources de données</h1>
-        </div>
-      </header>
-
-      <main className={styles.main}>
-        <div className="container">
+    <div className="container">
+      <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Sources de données" }]} />
           <section className={styles.section}>
             <h2>Données officielles</h2>
             <p>
@@ -135,14 +125,6 @@ export default function SourcesPage() {
               </div>
             </div>
           </section>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <div className="container">
-          <p>Agora - Données officielles de l'Assemblée nationale</p>
-        </div>
-      </footer>
     </div>
   )
 }

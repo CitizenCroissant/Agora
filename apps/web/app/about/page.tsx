@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import styles from './about.module.css'
+import { Breadcrumb } from "@/components/Breadcrumb"
 
 export const metadata: Metadata = {
   title: 'À propos | Agora - Agenda de l\'Assemblée nationale',
@@ -16,18 +17,8 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className="container">
-          <Link href="/" className={styles.backLink}>
-            ← Retour
-          </Link>
-          <h1 className={styles.title}>À propos</h1>
-        </div>
-      </header>
-
-      <main className={styles.main}>
-        <div className="container">
+    <div className="container">
+      <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "À propos" }]} />
           <section className={styles.section}>
             <h2>Notre mission</h2>
             <p>
@@ -117,14 +108,6 @@ export default function AboutPage() {
               Consulter nos sources de données
             </Link>
           </div>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <div className="container">
-          <p>Agora - Données officielles de l'Assemblée nationale</p>
-        </div>
-      </footer>
     </div>
   )
 }

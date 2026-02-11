@@ -20,6 +20,7 @@ import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./votes.module.css";
 import { PageHelp } from "@/components/PageHelp";
+import { Breadcrumb } from "@/components/Breadcrumb";
 
 type GroupPosition = "pour" | "contre" | "abstention";
 
@@ -89,7 +90,7 @@ function VotesPageContent() {
     apiClient.getPoliticalGroups().then((r) => setPoliticalGroups(r.groups)).catch(() => {});
   }, []);
 
-  // Keep state in sync with URL (e.g. back/forward, shared link)
+  // Keep state in sync with URL (e.g. back/forward, shared link, ?date=)
   useEffect(() => {
     setSelectedTag(searchParams.get("tag"));
     setGroupSlug(searchParams.get("group"));
@@ -97,6 +98,11 @@ function VotesPageContent() {
     setGroupPosition(
       pos && ["pour", "contre", "abstention"].includes(pos) ? (pos as GroupPosition) : ""
     );
+    const dateParam = searchParams.get("date");
+    if (dateParam && dateParam.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      setCurrentDate(dateParam);
+      setDateInput(dateParam);
+    }
   }, [searchParams]);
 
   useEffect(() => {
@@ -218,32 +224,8 @@ function VotesPageContent() {
   );
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className="container">
-          <Link href="/" className={styles.backLink}>
-            ← Retour
-          </Link>
-          <h1 className={styles.title}>Scrutins</h1>
-          <p className={styles.subtitle}>
-            Votes en séance publique à l&apos;Assemblée nationale
-          </p>
-          <div className={styles.headerLinks}>
-            <Link href="/votes/upcoming" className={styles.upcomingLink}>
-              Prochains votes →
-            </Link>
-            <Link href="/votes/deputy" className={styles.deputyLink}>
-              Vote d&apos;un député →
-            </Link>
-            <Link href="/groupes" className={styles.deputyLink}>
-              Groupes politiques →
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      <main className={styles.main}>
-        <div className="container">
+    <div className="container">
+      <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Scrutins" }]} />
           <PageHelp
             title="Comment lire cette page ?"
             points={[
@@ -252,6 +234,8 @@ function VotesPageContent() {
               "Les filtres permettent de restreindre la période, le type de vote, le résultat (adopté ou rejeté) et les thèmes.",
               "Filtre avancé : choisissez un groupe politique pour n'afficher que les scrutins où ce groupe a voté, et optionnellement où sa position majoritaire est « pour », « contre » ou « abstention ».",
             ]}
+            collapsible
+            defaultClosed
           />
 
           <div className={styles.controlBar}>
@@ -572,21 +556,13 @@ function VotesPageContent() {
               )}
             </div>
           )}
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <div className="container">
-          <p>Agora - Données officielles de l&apos;Assemblée nationale</p>
-        </div>
-      </footer>
     </div>
   );
 }
 
 export default function VotesPage() {
   return (
-    <Suspense fallback={<div className={styles.page}><div className={styles.loading}>Chargement...</div></div>}>
+    <Suspense fallback={<div className={styles.loading}>Chargement...</div>}>
       <VotesPageContent />
     </Suspense>
   );

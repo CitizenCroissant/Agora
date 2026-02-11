@@ -7,6 +7,7 @@ import { isCurrentlySitting, formatDate } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./group.module.css";
+import { Breadcrumb } from "@/components/Breadcrumb";
 
 const POSITION_LABELS: Record<string, string> = {
   majoritaire: "Majorité présidentielle",
@@ -50,23 +51,8 @@ export default function GroupPage() {
   };
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className="container">
-          <Link href="/groupes" className={styles.backLink}>
-            ← Retour aux groupes politiques
-          </Link>
-          <h1 className={styles.title}>
-            {group ? group.label : loading ? "…" : slug || "Groupe"}
-          </h1>
-          <p className={styles.subtitle}>
-            Groupe politique de l&apos;Assemblée nationale
-          </p>
-        </div>
-      </header>
-
-      <main className={styles.main}>
-        <div className="container">
+    <div className="container">
+      <Breadcrumb items={[{ label: "Groupes", href: "/groupes" }, { label: group?.label || "Groupe" }]} />
           {loading && (
             <div className={styles.loading}>Chargement du groupe...</div>
           )}
@@ -333,14 +319,6 @@ export default function GroupPage() {
                 </>
               );
             })()}
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <div className="container">
-          <p>Agora - Données officielles de l&apos;Assemblée nationale</p>
-        </div>
-      </footer>
     </div>
   );
 }

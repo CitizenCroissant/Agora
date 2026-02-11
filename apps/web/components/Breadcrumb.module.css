@@ -1,0 +1,34 @@
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  padding: var(--spacing-sm) 0;
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.link {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.current {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.separator {
+  color: var(--color-text-light);
+  opacity: 0.5;
+}

@@ -11,6 +11,7 @@ import {
 import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./upcoming.module.css";
+import { Breadcrumb } from "@/components/Breadcrumb";
 
 const DAYS_AHEAD = 14;
 
@@ -76,97 +77,76 @@ export default function UpcomingVotesPage() {
   }
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className="container">
-          <Link href="/votes" className={styles.backLink}>
-            ← Retour aux scrutins
-          </Link>
-          <h1 className={styles.title}>Prochains votes</h1>
-          <p className={styles.subtitle}>
-            Séances à venir avec des points susceptibles de donner lieu à un
-            vote
-          </p>
+    <div className="container">
+      <Breadcrumb items={[{ label: "Scrutins", href: "/votes" }, { label: "Prochains votes" }]} />
+
+      {loading && <div className={styles.loading}>Chargement...</div>}
+
+      {error && (
+        <div className={styles.error}>
+          <p>Erreur: {error}</p>
         </div>
-      </header>
+      )}
 
-      <main className={styles.main}>
-        <div className="container">
-          {loading && <div className={styles.loading}>Chargement...</div>}
-
-          {error && (
-            <div className={styles.error}>
-              <p>Erreur: {error}</p>
+      {!loading && !error && (
+        <div className={styles.content}>
+          {sittingsWithVotes.length === 0 ? (
+            <div className={styles.empty}>
+              <p>
+                Aucune séance avec point de vote identifié pour les{" "}
+                {DAYS_AHEAD} prochains jours.
+              </p>
+              <p className={styles.emptyHint}>
+                Consultez le <Link href="/timeline">calendrier</Link> pour
+                voir toutes les séances.
+              </p>
             </div>
-          )}
-
-          {!loading && !error && (
-            <div className={styles.content}>
-              {sittingsWithVotes.length === 0 ? (
-                <div className={styles.empty}>
-                  <p>
-                    Aucune séance avec point de vote identifié pour les{" "}
-                    {DAYS_AHEAD} prochains jours.
-                  </p>
-                  <p className={styles.emptyHint}>
-                    Consultez le <Link href="/timeline">calendrier</Link> pour
-                    voir toutes les séances.
-                  </p>
-                </div>
-              ) : (
-                <div className={styles.sittings}>
-                  {sittingsWithVotes.map(({ date, sitting, voteLikeItems }) => (
-                    <div key={`${date}-${sitting.id}`} className={styles.card}>
-                      <div className={styles.cardHeader}>
-                        <h2 className={styles.date}>
-                          {formatDate(date)}
-                          {date === today && (
-                            <span className={styles.todayBadge}>
-                              Aujourd&apos;hui
-                            </span>
-                          )}
-                        </h2>
-                        <Link
-                          href={`/sitting/${sitting.id}`}
-                          className={styles.sittingTitle}
-                        >
-                          {sitting.title}
-                        </Link>
-                        {sitting.time_range && (
-                          <span className={styles.timeRange}>
-                            {sitting.time_range}
+          ) : (
+            <div className={styles.sittings}>
+              {sittingsWithVotes.map(({ date, sitting, voteLikeItems }) => (
+                <div key={`${date}-${sitting.id}`} className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    <h2 className={styles.date}>
+                      {formatDate(date)}
+                      {date === today && (
+                        <span className={styles.todayBadge}>
+                          Aujourd&apos;hui
+                        </span>
+                      )}
+                    </h2>
+                    <Link
+                      href={`/sitting/${sitting.id}`}
+                      className={styles.sittingTitle}
+                    >
+                      {sitting.title}
+                    </Link>
+                    {sitting.time_range && (
+                      <span className={styles.timeRange}>
+                        {sitting.time_range}
+                      </span>
+                    )}
+                  </div>
+                  <ul className={styles.voteItems}>
+                    {voteLikeItems.map((item) => (
+                      <li key={item.id} className={styles.voteItem}>
+                        <span className={styles.voteBadge}>Vote</span>
+                        <span className={styles.voteItemTitle}>
+                          {item.title}
+                        </span>
+                        {item.category && (
+                          <span className={styles.voteCategory}>
+                            {item.category}
                           </span>
                         )}
-                      </div>
-                      <ul className={styles.voteItems}>
-                        {voteLikeItems.map((item) => (
-                          <li key={item.id} className={styles.voteItem}>
-                            <span className={styles.voteBadge}>Vote</span>
-                            <span className={styles.voteItemTitle}>
-                              {item.title}
-                            </span>
-                            {item.category && (
-                              <span className={styles.voteCategory}>
-                                {item.category}
-                              </span>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              )}
+              ))}
             </div>
           )}
         </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <div className="container">
-          <p>Agora - Données officielles de l&apos;Assemblée nationale</p>
-        </div>
-      </footer>
+      )}
     </div>
   );
 }

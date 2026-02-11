@@ -8,6 +8,7 @@ import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./scrutin.module.css";
 import { GlossaryTooltip } from "@/components/GlossaryTooltip";
+import { Breadcrumb } from "@/components/Breadcrumb";
 
 const POSITION_LABELS: Record<string, string> = {
   pour: "Pour",
@@ -64,17 +65,13 @@ export default function ScrutinPage() {
   const hasGroupVotes = Array.isArray(scrutin?.group_votes) && scrutin.group_votes.length > 0;
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className="container">
-          <Link href="/votes" className={styles.backLink}>
-            ← Retour aux scrutins
-          </Link>
-        </div>
-      </header>
-
-      <main className={styles.main}>
-        <div className="container">
+    <div className="container">
+      <Breadcrumb
+            items={[
+              { label: "Scrutins", href: "/votes" },
+              { label: scrutin?.titre?.slice(0, 50) || "Scrutin" },
+            ]}
+          />
           {loading && (
             <div className={styles.loading}>Chargement du scrutin...</div>
           )}
@@ -267,14 +264,6 @@ export default function ScrutinPage() {
               )}
             </>
           )}
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <div className="container">
-          <p>Agora - Données officielles de l&apos;Assemblée nationale</p>
-        </div>
-      </footer>
     </div>
   );
 }

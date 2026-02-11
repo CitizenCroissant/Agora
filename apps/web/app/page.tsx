@@ -52,50 +52,7 @@ export default function Home() {
   };
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className="container">
-          <h1 className={styles.title}>Agora</h1>
-          <p className={styles.subtitle}>Agenda de l'Assemblée nationale</p>
-        </div>
-      </header>
-
-      <nav className={styles.nav}>
-        <div className="container">
-          <div className={styles.navLinks}>
-            <Link href="/" className={styles.navLink}>
-              Aujourd'hui
-            </Link>
-            <Link href="/timeline" className={styles.navLink}>
-              Calendrier
-            </Link>
-            <Link href="/votes" className={styles.navLink}>
-              Scrutins
-            </Link>
-            <Link href="/bills" className={styles.navLink}>
-              Textes
-            </Link>
-            <Link href="/groupes" className={styles.navLink}>
-              Groupes politiques
-            </Link>
-            <Link href="/mon-depute" className={styles.navLink}>
-              Mon député
-            </Link>
-            <Link href="/circonscriptions" className={styles.navLink}>
-              Circonscriptions
-            </Link>
-            <Link href="/search" className={styles.navLink}>
-              Recherche
-            </Link>
-            <Link href="/about" className={styles.navLink}>
-              À propos
-            </Link>
-          </div>
-        </div>
-      </nav>
-
-      <main className={styles.main}>
-        <div className="container">
+    <div className="container">
           <PageHelp
             title="Comment lire cette page ?"
             points={[
@@ -104,6 +61,13 @@ export default function Home() {
               "Dans chaque carte, l’« Ordre du jour » liste les principaux points qui seront examinés.",
             ]}
           />
+
+          <Link
+            href={`/votes?date=${getTodayDate()}`}
+            className={styles.voteCta}
+          >
+            Comprendre les votes d&apos;aujourd&apos;hui →
+          </Link>
 
           <div className={styles.controlBar}>
             <div className={styles.leftControls}>
@@ -240,18 +204,6 @@ export default function Home() {
               </div>
             </>
           )}
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <div className="container">
-          <p>Agora - Données officielles de l'Assemblée nationale</p>
-          <p>
-            <Link href="/about">En savoir plus</Link> |{" "}
-            <Link href="/sources">Sources</Link>
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }

@@ -260,6 +260,13 @@
   font-weight: 500;
 }
 
+.dateHeaderLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
 .viewDay {
   color: var(--color-primary);
   font-size: 0.938rem;

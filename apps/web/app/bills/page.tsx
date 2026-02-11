@@ -6,6 +6,7 @@ import { BillSummary, formatDate } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import styles from "./bills.module.css";
 import { PageHelp } from "@/components/PageHelp";
+import { Breadcrumb } from "@/components/Breadcrumb";
 
 export default function BillsPage() {
   const [bills, setBills] = useState<BillSummary[]>([]);
@@ -111,19 +112,8 @@ export default function BillsPage() {
   };
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className="container">
-          <h1 className={styles.title}>Textes législatifs</h1>
-          <p className={styles.subtitle}>
-            Projets et propositions de loi liés aux scrutins de l&apos;Assemblée
-            nationale.
-          </p>
-        </div>
-      </header>
-
-      <main className={styles.main}>
-        <div className="container">
+    <div className="container">
+      <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Textes législatifs" }]} />
           <PageHelp
             title="Comment lire cette page ?"
             points={[
@@ -300,8 +290,6 @@ export default function BillsPage() {
               )}
             </>
           )}
-        </div>
-      </main>
     </div>
   );
 }

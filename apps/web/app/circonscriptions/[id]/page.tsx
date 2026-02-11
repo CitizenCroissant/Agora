@@ -7,6 +7,7 @@ import { apiClient } from "@/lib/api";
 import { isCurrentlySitting } from "@agora/shared";
 import Link from "next/link";
 import styles from "./circonscription.module.css";
+import { Breadcrumb } from "@/components/Breadcrumb";
 
 export default function CirconscriptionPage() {
   const params = useParams();
@@ -46,27 +47,8 @@ export default function CirconscriptionPage() {
   }
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className="container">
-          <Link href="/circonscriptions" className={styles.backLink}>
-            ← Retour aux circonscriptions
-          </Link>
-          <h1 className={styles.title}>
-            {circonscription
-              ? circonscription.label
-              : loading
-                ? "…"
-                : id || "Circonscription"}
-          </h1>
-          <p className={styles.subtitle}>
-            Circonscription électorale de l&apos;Assemblée nationale
-          </p>
-        </div>
-      </header>
-
-      <main className={styles.main}>
-        <div className="container">
+    <div className="container">
+      <Breadcrumb items={[{ label: "Circonscriptions", href: "/circonscriptions" }, { label: "Détail" }]} />
           {loading && (
             <div className={styles.loading}>
               Chargement de la circonscription...
@@ -203,14 +185,6 @@ export default function CirconscriptionPage() {
               })()}
             </>
           )}
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <div className="container">
-          <p>Agora - Données officielles de l&apos;Assemblée nationale</p>
-        </div>
-      </footer>
     </div>
   );
 }

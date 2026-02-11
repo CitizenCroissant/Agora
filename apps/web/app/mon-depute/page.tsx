@@ -10,6 +10,7 @@ import { apiClient } from "@/lib/api";
 import { isCurrentlySitting } from "@agora/shared";
 import Link from "next/link";
 import styles from "./mon-depute.module.css";
+import { Breadcrumb } from "@/components/Breadcrumb";
 
 /** Normalize for search: lowercase, strip accents */
 function normalizeForSearch(s: string): string {
@@ -104,22 +105,8 @@ export default function MonDeputePage() {
   );
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className="container">
-          <Link href="/" className={styles.backLink}>
-            ← Retour à l&apos;accueil
-          </Link>
-          <h1 className={styles.title}>Trouver mon député</h1>
-          <p className={styles.subtitle}>
-            Choisissez votre département pour voir les députés de votre
-            circonscription
-          </p>
-        </div>
-      </header>
-
-      <main className={styles.main}>
-        <div className="container">
+    <div className="container">
+      <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Trouver mon député" }]} />
           {loadingDepts && (
             <div className={styles.loading}>Chargement des départements...</div>
           )}
@@ -355,14 +342,6 @@ export default function MonDeputePage() {
               l&apos;ingestion des députés a été effectuée.
             </p>
           )}
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <div className="container">
-          <p>Agora - Données officielles de l&apos;Assemblée nationale</p>
-        </div>
-      </footer>
     </div>
   );
 }
