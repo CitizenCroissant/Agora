@@ -17,7 +17,7 @@ export interface IngestOptions {
   fromDate?: string;
   toDate?: string;
   dryRun?: boolean;
-  /** Legislature for dossiers (bills): "17", "16", or "all". Default "17" (used by cron). */
+  /** Legislature: "14"-"17" or "all". Applies to both sittings and dossiers. Default "17". */
   legislature?: string;
 }
 
@@ -36,68 +36,89 @@ export async function ingest(options: IngestOptions = {}) {
       console.log(`Processing date: ${date}`);
 
       // Fetch seances from Assemblée API
-      const seances = await assembleeClient.fetchSeances(date);
+      const seances = await assembleeClient.fetchSeances(date, options.legislature ?? "17");
       console.log(`Found ${seances.length} seance(s)`);
 
-      for (const seance of seances) {
-        if (options.dryRun) {
+      if (seances.length === 0) continue;
+
+      if (options.dryRun) {
+        for (const seance of seances) {
           console.log("Dry run - would upsert:", {
             official_id: seance.uid,
             date: seance.dateSeance,
             items: seance.pointsOdj?.length || 0,
           });
-          continue;
         }
+        continue;
+      }
 
-        // Transform and upsert sitting
-        const sittingData = transformSeance(seance);
+      // Batch upsert all sittings for this date
+      const sittingsData = seances.map((s) => transformSeance(s));
 
-        const { data: sitting, error: sittingError } = await supabase
-          .from("sittings")
-          .upsert(sittingData, {
-            onConflict: 'official_id',
-            ignoreDuplicates: false,
-          })
-          .select()
-          .single();
+      const { data: sittings, error: sittingsError } = await supabase
+        .from("sittings")
+        .upsert(sittingsData, {
+          onConflict: "official_id",
+          ignoreDuplicates: false,
+        })
+        .select();
 
-        if (sittingError) {
-          console.error('Error upserting sitting:', sittingError);
-          continue;
-        }
+      if (sittingsError || !sittings) {
+        console.error("Error upserting sittings:", sittingsError);
+        continue;
+      }
 
-        console.log(`Upserted sitting: ${sitting.id}`);
-        totalSittings++;
+      console.log(`Upserted ${sittings.length} sitting(s)`);
+      totalSittings += sittings.length;
 
-        // Delete existing agenda items for this sitting (to handle updates)
-        await supabase
+      // Build a map from official_id → sitting UUID
+      const sittingMap = new Map<string, string>();
+      for (const sitting of sittings) {
+        sittingMap.set(sitting.official_id, sitting.id);
+      }
+
+      // Batch delete existing agenda items for all sittings of this date
+      const sittingIds = sittings.map((s) => s.id);
+      const { error: deleteError } = await supabase
+        .from("agenda_items")
+        .delete()
+        .in("sitting_id", sittingIds);
+
+      if (deleteError) {
+        console.error("Error deleting agenda items:", deleteError);
+      }
+
+      // Collect all agenda items and source metadata for this date
+      const allAgendaItems: ReturnType<typeof transformAgendaItems> = [];
+      const allMetadata: ReturnType<typeof createSourceMetadata>[] = [];
+
+      for (const seance of seances) {
+        const sittingId = sittingMap.get(seance.uid);
+        if (!sittingId) continue;
+
+        allAgendaItems.push(...transformAgendaItems(seance, sittingId));
+        allMetadata.push(createSourceMetadata(seance, sittingId));
+      }
+
+      // Batch insert all agenda items for this date
+      if (allAgendaItems.length > 0) {
+        const { error: itemsError } = await supabase
           .from("agenda_items")
-          .delete()
-          .eq('sitting_id', sitting.id);
+          .insert(allAgendaItems);
 
-        // Insert agenda items
-        const agendaItemsData = transformAgendaItems(seance, sitting.id);
-        if (agendaItemsData.length > 0) {
-          const { error: itemsError } = await supabase
-            .from("agenda_items")
-            .insert(agendaItemsData);
-
-          if (itemsError) {
-            console.error('Error inserting agenda items:', itemsError);
-          } else {
-            console.log(`Inserted ${agendaItemsData.length} agenda item(s)`);
-            totalItems += agendaItemsData.length;
-          }
+        if (itemsError) {
+          console.error("Error inserting agenda items:", itemsError);
+        } else {
+          console.log(`Inserted ${allAgendaItems.length} agenda item(s)`);
+          totalItems += allAgendaItems.length;
         }
+      }
 
-        // Upsert source metadata
-        const metadataData = createSourceMetadata(seance, sitting.id);
+      // Batch upsert source metadata for this date
+      if (allMetadata.length > 0) {
         const { error: metadataError } = await supabase
-          .from('source_metadata')
-          .upsert(
-            { ...metadataData, id: undefined },
-            { onConflict: 'sitting_id' }
-          );
+          .from("source_metadata")
+          .upsert(allMetadata, { onConflict: "sitting_id" });
 
         if (metadataError) {
           console.error("Error upserting source metadata:", metadataError);

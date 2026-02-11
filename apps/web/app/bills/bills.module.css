@@ -162,6 +162,76 @@
   font-weight: 500;
 }
 
+.billTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+}
+
+.tag {
+  display: inline-block;
+  padding: 4px 10px;
+  background: rgba(0, 85, 164, 0.1);
+  color: var(--color-primary);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tagFilter {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.tagSelect {
+  padding: 8px 14px;
+  border: 1px solid var(--color-border);
+  background: white;
+  color: var(--color-text);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 160px;
+}
+
+.tagSelect:hover {
+  border-color: var(--color-text-light);
+  background: var(--color-background-alt);
+}
+
+.tagSelect:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.clearTagButton {
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  background: white;
+  color: var(--color-text);
+  border-radius: 8px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clearTagButton:hover {
+  background: var(--color-background-alt);
+  border-color: var(--color-secondary);
+  color: var(--color-secondary);
+}
+
 .meta {
   font-size: 0.8rem;
   color: var(--color-text-light);

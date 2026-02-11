@@ -64,6 +64,17 @@ export async function ingestDossiers(
   );
 
   let upserted = 0;
+  const BATCH_SIZE = 500;
+
+  // Transform all dossiers into bill rows
+  const rows: {
+    official_id: string;
+    title: string;
+    short_title: string;
+    type: string | null;
+    origin: string | null;
+    official_url: string | null;
+  }[] = [];
 
   for (const dossier of dossiers) {
     const uid = dossier.uid;
@@ -86,25 +97,32 @@ export async function ingestDossiers(
       continue;
     }
 
-    const { error } = await supabase.from("bills").upsert(
-      {
-        official_id: uid,
-        title,
-        short_title: shortTitle,
-        type,
-        origin,
-        official_url: officialUrl,
-      },
-      {
-        onConflict: "official_id",
-        ignoreDuplicates: false,
-      },
-    );
+    rows.push({
+      official_id: uid,
+      title,
+      short_title: shortTitle,
+      type,
+      origin,
+      official_url: officialUrl,
+    });
+  }
+
+  // Batch upsert in chunks
+  for (let i = 0; i < rows.length; i += BATCH_SIZE) {
+    const chunk = rows.slice(i, i + BATCH_SIZE);
+    const batchNum = Math.floor(i / BATCH_SIZE) + 1;
+    const totalBatches = Math.ceil(rows.length / BATCH_SIZE);
+
+    const { error } = await supabase.from("bills").upsert(chunk, {
+      onConflict: "official_id",
+      ignoreDuplicates: false,
+    });
 
     if (error) {
-      console.error("Error upserting bill (dossier)", uid, error);
+      console.error(`Error upserting bills batch ${batchNum}/${totalBatches}:`, error);
     } else {
-      upserted++;
+      upserted += chunk.length;
+      console.log(`Upserted bills batch ${batchNum}/${totalBatches} (${chunk.length} rows)`);
     }
   }
 

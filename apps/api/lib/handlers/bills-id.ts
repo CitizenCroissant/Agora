@@ -7,7 +7,7 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { supabase } from "../supabase";
 import { ApiError, handleError } from "../errors";
-import type { BillDetailResponse, Scrutin } from "@agora/shared";
+import type { BillDetailResponse, Scrutin, ThematicTag } from "@agora/shared";
 import type { DbBill, DbBillScrutin, DbScrutin } from "../types";
 
 const UUID_REGEX =
@@ -115,6 +115,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }));
     }
 
+    // Fetch tags for this bill
+    const { data: billTags, error: tagsError } = await supabase
+      .from("bill_thematic_tags")
+      .select("tag_id")
+      .eq("bill_id", bill.id);
+
+    let tags: ThematicTag[] = [];
+
+    if (tagsError) {
+      console.error(`[${bill.id}] Error fetching bill tags:`, tagsError);
+    } else if (billTags && billTags.length > 0) {
+      const tagIds = billTags.map((bt: { tag_id: string }) => bt.tag_id);
+      const { data: tagDetails, error: tagDetailsError } = await supabase
+        .from("thematic_tags")
+        .select("id, slug, label")
+        .in("id", tagIds);
+
+      if (tagDetailsError) {
+        console.error(`[${bill.id}] Error fetching tag details:`, tagDetailsError);
+      } else if (tagDetails) {
+        tags = tagDetails.map((tag: { id: string; slug: string; label: string }) => ({
+          id: tag.id,
+          slug: tag.slug,
+          label: tag.label,
+        }));
+      }
+    }
+
     const response: BillDetailResponse = {
       id: bill.id,
       official_id: bill.official_id,
@@ -123,6 +151,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       type: bill.type ?? undefined,
       origin: bill.origin ?? undefined,
       official_url: bill.official_url ?? undefined,
+      tags,
       scrutins,
       // sittings can be derived client-side from scrutins.sitting_id if needed
     };

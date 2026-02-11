@@ -2,7 +2,7 @@
   "expo": {
     "name": "Agora",
     "slug": "agora",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -14,7 +14,15 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.agora.app"
+      "bundleIdentifier": "com.agora.app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSCalendarsUsageDescription": "Agora can add parliamentary sittings to your calendar.",
+        "CFBundleAllowMixedLocalizations": true
+      },
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -22,7 +30,13 @@
         "backgroundColor": "#0055a4"
       },
       "package": "com.agora.app",
-      "googleServicesFile": "./google-services.json"
+      "versionCode": 1,
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "NOTIFICATIONS",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -41,12 +55,22 @@
       ],
       "@react-native-community/datetimepicker"
     ],
+    "locales": {
+      "fr": "./locales/fr.json"
+    },
     "extra": {
       "apiUrl": "http://localhost:3001/api",
       "router": {},
       "eas": {
         "projectId": "2ea8b6bc-7bec-4d5e-8332-161246c93249"
       }
+    },
+    "owner": "citizencroissant",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/2ea8b6bc-7bec-4d5e-8332-161246c93249"
     }
   }
 }

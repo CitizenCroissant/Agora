@@ -74,6 +74,7 @@ export interface Bill {
   type?: string | null;
   origin?: string | null;
   official_url?: string | null;
+  tags?: ThematicTag[];
 }
 
 export interface BillSummary extends Bill {

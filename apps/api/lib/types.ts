@@ -104,3 +104,12 @@ export interface DbScrutinThematicTag {
   source: string;
   created_at: string;
 }
+
+export interface DbBillThematicTag {
+  id: string;
+  bill_id: string;
+  tag_id: string;
+  confidence: number;
+  source: string;
+  created_at: string;
+}

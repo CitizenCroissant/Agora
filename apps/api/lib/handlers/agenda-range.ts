@@ -3,26 +3,30 @@
  * Returns agenda for a date range
  */
 
-import { VercelRequest, VercelResponse } from '@vercel/node';
-import { supabase } from '../supabase';
-import { ApiError, handleError, validateDateFormat } from '../errors';
-import { DbSitting, DbAgendaItem, DbSourceMetadata } from '../types';
-import { AgendaRangeResponse, AgendaResponse, SittingWithItems } from '@agora/shared';
+import { VercelRequest, VercelResponse } from "@vercel/node";
+import { supabase, getLastIngestionDate } from "../supabase";
+import { ApiError, handleError, validateDateFormat } from "../errors";
+import { DbSitting, DbAgendaItem, DbSourceMetadata } from "../types";
+import {
+  AgendaRangeResponse,
+  AgendaResponse,
+  SittingWithItems,
+} from "@agora/shared";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Enable CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
-  if (req.method !== 'GET') {
+  if (req.method !== "GET") {
     return res.status(405).json({
-      error: 'MethodNotAllowed',
-      message: 'Only GET requests are allowed',
+      error: "MethodNotAllowed",
+      message: "Only GET requests are allowed",
       status: 405,
     });
   }
@@ -30,42 +34,42 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const { from, to } = req.query;
 
-    if (!from || typeof from !== 'string') {
-      throw new ApiError(400, 'From date parameter is required', 'BadRequest');
+    if (!from || typeof from !== "string") {
+      throw new ApiError(400, "From date parameter is required", "BadRequest");
     }
 
-    if (!to || typeof to !== 'string') {
-      throw new ApiError(400, 'To date parameter is required', 'BadRequest');
+    if (!to || typeof to !== "string") {
+      throw new ApiError(400, "To date parameter is required", "BadRequest");
     }
 
     if (!validateDateFormat(from) || !validateDateFormat(to)) {
       throw new ApiError(
         400,
-        'Invalid date format. Use YYYY-MM-DD',
-        'BadRequest'
+        "Invalid date format. Use YYYY-MM-DD",
+        "BadRequest",
       );
     }
 
     if (new Date(from) > new Date(to)) {
       throw new ApiError(
         400,
-        'From date must be before or equal to to date',
-        'BadRequest'
+        "From date must be before or equal to to date",
+        "BadRequest",
       );
     }
 
     // Fetch sittings for the date range
     const { data: sittings, error: sittingsError } = await supabase
-      .from('sittings')
-      .select('*')
-      .gte('date', from)
-      .lte('date', to)
-      .order('date', { ascending: true })
-      .order('start_time', { ascending: true, nullsFirst: false });
+      .from("sittings")
+      .select("*")
+      .gte("date", from)
+      .lte("date", to)
+      .order("date", { ascending: true })
+      .order("start_time", { ascending: true, nullsFirst: false });
 
     if (sittingsError) {
-      console.error('Supabase error:', sittingsError);
-      throw new ApiError(500, 'Failed to fetch sittings', 'DatabaseError');
+      console.error("Supabase error:", sittingsError);
+      throw new ApiError(500, "Failed to fetch sittings", "DatabaseError");
     }
 
     if (!sittings || sittings.length === 0) {
@@ -80,24 +84,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Fetch agenda items for all sittings
     const sittingIds = sittings.map((s: DbSitting) => s.id);
     const { data: agendaItems, error: itemsError } = await supabase
-      .from('agenda_items')
-      .select('*')
-      .in('sitting_id', sittingIds)
-      .order('scheduled_time', { ascending: true, nullsFirst: false });
+      .from("agenda_items")
+      .select("*")
+      .in("sitting_id", sittingIds)
+      .order("scheduled_time", { ascending: true, nullsFirst: false });
 
     if (itemsError) {
-      console.error('Supabase error:', itemsError);
-      throw new ApiError(500, 'Failed to fetch agenda items', 'DatabaseError');
+      console.error("Supabase error:", itemsError);
+      throw new ApiError(500, "Failed to fetch agenda items", "DatabaseError");
     }
 
     // Fetch source metadata
     const { data: sourceMetadata, error: metadataError } = await supabase
-      .from('source_metadata')
-      .select('*')
-      .in('sitting_id', sittingIds);
+      .from("source_metadata")
+      .select("*")
+      .in("sitting_id", sittingIds);
 
     if (metadataError) {
-      console.error('Supabase error:', metadataError);
+      console.error("Supabase error:", metadataError);
       // Non-critical error, continue without metadata
     }
 
@@ -110,7 +114,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         acc[sitting.date].push(sitting);
         return acc;
       },
-      {}
+      {},
     );
 
     // Group agenda items by sitting
@@ -122,7 +126,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         acc[item.sitting_id].push(item);
         return acc;
       },
-      {}
+      {},
     );
 
     // Group source metadata by sitting
@@ -131,8 +135,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         acc[meta.sitting_id] = meta;
         return acc;
       },
-      {}
+      {},
     );
+
+    // Fallback date: last known ingestion (fetched once, used if per-sitting metadata is missing)
+    const fallbackLastSync = await getLastIngestionDate();
 
     // Build response for each date
     const agendas: AgendaResponse[] = Object.keys(sittingsByDate)
@@ -146,8 +153,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               sitting.start_time && sitting.end_time
                 ? `${sitting.start_time.substring(0, 5)} - ${sitting.end_time.substring(0, 5)}`
                 : sitting.start_time
-                ? sitting.start_time.substring(0, 5)
-                : undefined;
+                  ? sitting.start_time.substring(0, 5)
+                  : undefined;
 
             return {
               id: sitting.id,
@@ -171,26 +178,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 official_url: item.official_url || undefined,
               })),
             };
-          }
+          },
         );
 
         // Get latest sync time for this date
         const dateMetadata = dateSittings
           .map((s: DbSitting) => metadataBySitting[s.id])
           .filter(Boolean);
-        const lastUpdated =
-          dateMetadata.length > 0
-            ? Math.max(
-                ...dateMetadata.map((m: DbSourceMetadata) => new Date(m.last_synced_at).getTime())
-              )
-            : Date.now();
+        let lastUpdatedIso: string;
+        if (dateMetadata.length > 0) {
+          const lastUpdated = Math.max(
+            ...dateMetadata.map((m: DbSourceMetadata) =>
+              new Date(m.last_synced_at).getTime(),
+            ),
+          );
+          lastUpdatedIso = new Date(lastUpdated).toISOString();
+        } else {
+          lastUpdatedIso = fallbackLastSync ?? new Date().toISOString();
+        }
 
         return {
           date,
           sittings: sittingsWithItems,
           source: {
-            label: 'Données officielles de l\'Assemblée nationale',
-            last_updated_at: new Date(lastUpdated).toISOString(),
+            label: "Données officielles de l'Assemblée nationale",
+            last_updated_at: lastUpdatedIso,
           },
         };
       });
@@ -202,7 +214,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     };
 
     // Set cache headers (cache for 5 minutes)
-    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate');
+    res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate");
 
     return res.status(200).json(response);
   } catch (error) {

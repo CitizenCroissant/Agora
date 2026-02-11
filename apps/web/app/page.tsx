@@ -133,75 +133,77 @@ export default function Home() {
                   <p>Aucune séance prévue pour cette date.</p>
                 </div>
               ) : (
-                <div className={styles.sittings}>
-                  {agenda.sittings.map((sitting) => (
-                    <Link
-                      key={sitting.id}
-                      href={`/sitting/${sitting.id}`}
-                      className={styles.sittingCard}
-                    >
-                      <div className={styles.sittingHeader}>
-                        <h3>{sitting.title}</h3>
-                        {sitting.time_range && (
-                          <span className={styles.timeRange}>
-                            {sitting.time_range}
-                          </span>
-                        )}
-                      </div>
-
-                      {sitting.location && (
-                        <p className={styles.location}>📍 {sitting.location}</p>
-                      )}
-
-                      <p className={styles.description}>
-                        {sitting.description}
-                      </p>
-
-                      {sitting.agenda_items.length > 0 && (
-                        <div className={styles.agendaItems}>
-                          <h4>Ordre du jour ({sitting.agenda_items.length})</h4>
-                          <ul>
-                            {sitting.agenda_items.slice(0, 3).map((item) => (
-                              <li key={item.id}>
-                                {item.scheduled_time && (
-                                  <span className={styles.itemTime}>
-                                    {item.scheduled_time.substring(0, 5)}
-                                  </span>
-                                )}
-                                {item.title}
-                              </li>
-                            ))}
-                            {sitting.agenda_items.length > 3 && (
-                              <li className={styles.moreItems}>
-                                ... et {sitting.agenda_items.length - 3}{" "}
-                                autre(s)
-                              </li>
-                            )}
-                          </ul>
+                <>
+                  <div className={styles.sittings}>
+                    {agenda.sittings.map((sitting) => (
+                      <Link
+                        key={sitting.id}
+                        href={`/sitting/${sitting.id}`}
+                        className={styles.sittingCard}
+                      >
+                        <div className={styles.sittingHeader}>
+                          <h3>{sitting.title}</h3>
+                          {sitting.time_range && (
+                            <span className={styles.timeRange}>
+                              {sitting.time_range}
+                            </span>
+                          )}
                         </div>
+
+                        {sitting.location && (
+                          <p className={styles.location}>📍 {sitting.location}</p>
+                        )}
+
+                        <p className={styles.description}>
+                          {sitting.description}
+                        </p>
+
+                        {sitting.agenda_items.length > 0 && (
+                          <div className={styles.agendaItems}>
+                            <h4>Ordre du jour ({sitting.agenda_items.length})</h4>
+                            <ul>
+                              {sitting.agenda_items.slice(0, 3).map((item) => (
+                                <li key={item.id}>
+                                  {item.scheduled_time && (
+                                    <span className={styles.itemTime}>
+                                      {item.scheduled_time.substring(0, 5)}
+                                    </span>
+                                  )}
+                                  {item.title}
+                                </li>
+                              ))}
+                              {sitting.agenda_items.length > 3 && (
+                                <li className={styles.moreItems}>
+                                  ... et {sitting.agenda_items.length - 3}{" "}
+                                  autre(s)
+                                </li>
+                              )}
+                            </ul>
+                          </div>
+                        )}
+
+                        <div className={styles.sittingFooter}>
+                          <span className={styles.viewDetails}>
+                            Voir les détails →
+                          </span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+
+                  <div className={styles.source}>
+                    <p>
+                      <strong>{agenda.source.label}</strong>
+                    </p>
+                    <p className={styles.sourceDate}>
+                      Dernière mise à jour :{" "}
+                      {new Date(agenda.source.last_updated_at).toLocaleString(
+                        "fr-FR"
                       )}
-
-                      <div className={styles.sittingFooter}>
-                        <span className={styles.viewDetails}>
-                          Voir les détails →
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+                    </p>
+                  </div>
+                </>
               )}
-
-              <div className={styles.source}>
-                <p>
-                  <strong>{agenda.source.label}</strong>
-                </p>
-                <p className={styles.sourceDate}>
-                  Dernière mise à jour :{" "}
-                  {new Date(agenda.source.last_updated_at).toLocaleString(
-                    "fr-FR"
-                  )}
-                </p>
-              </div>
             </>
           )}
     </div>

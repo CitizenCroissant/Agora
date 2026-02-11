@@ -346,6 +346,8 @@ export class ApiClient {
   async getBills(params?: {
     q?: string;
     type?: string;
+    tag?: string;
+    has_votes?: boolean;
   }): Promise<BillSummary[]> {
     const searchParams = new URLSearchParams();
     if (params?.q) {
@@ -353,6 +355,12 @@ export class ApiClient {
     }
     if (params?.type) {
       searchParams.set("type", params.type.trim());
+    }
+    if (params?.tag) {
+      searchParams.set("tag", params.tag.trim());
+    }
+    if (params?.has_votes) {
+      searchParams.set("has_votes", "true");
     }
     const query = searchParams.toString();
     const url =

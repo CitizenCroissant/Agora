@@ -1,53 +1,99 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { BillSummary, formatDate } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import styles from "./bills.module.css";
 import { PageHelp } from "@/components/PageHelp";
 import { Breadcrumb } from "@/components/Breadcrumb";
 
+// Available thematic tags (could be fetched from API in the future)
+const THEMATIC_TAGS = [
+  { slug: "sante", label: "Santé" },
+  { slug: "economie", label: "Économie" },
+  { slug: "education", label: "Éducation" },
+  { slug: "environnement", label: "Environnement" },
+  { slug: "justice", label: "Justice" },
+  { slug: "interieur", label: "Intérieur" },
+  { slug: "europe", label: "Europe" },
+  { slug: "culture", label: "Culture" },
+  { slug: "travail", label: "Travail" },
+  { slug: "transport", label: "Transports" },
+  { slug: "logement", label: "Logement" },
+  { slug: "agriculture", label: "Agriculture" },
+  { slug: "autonomie", label: "Autonomie" },
+  { slug: "commerce", label: "Commerce" },
+  { slug: "amenagement", label: "Aménagement" },
+  { slug: "action-publique", label: "Action publique" },
+];
+
 export default function BillsPage() {
+  const searchParams = useSearchParams();
+  const initialTag = searchParams.get("tag");
+
   const [bills, setBills] = useState<BillSummary[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState<string>("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [onlyWithVotes, setOnlyWithVotes] = useState<boolean>(false);
+  const [selectedTag, setSelectedTag] = useState<string | null>(initialTag);
 
+  const loadBills = useCallback(
+    async (options?: { search?: string; hasVotes?: boolean; tag?: string | null }) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const params: { q?: string; tag?: string } = {};
+        const search = options?.search;
+        if (search && search.trim().length >= 2) {
+          params.q = search.trim();
+        }
+        const tagParam = options?.tag !== undefined ? options.tag : selectedTag;
+        if (tagParam) {
+          params.tag = tagParam;
+        }
+        const results = await apiClient.getBills(
+          Object.keys(params).length > 0 ? params : undefined,
+        );
+        setBills(results);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "Impossible de charger les textes",
+        );
+        setBills([]);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [selectedTag],
+  );
+
+  // Re-fetch from API whenever the votes toggle or tag changes
+  useEffect(() => {
+    void loadBills({ search: query, hasVotes: onlyWithVotes });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onlyWithVotes, selectedTag]);
+
+  // Initial load
   useEffect(() => {
     void loadBills();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const loadBills = async (search?: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const results = await apiClient.getBills(
-        search && search.trim().length >= 2 ? { q: search.trim() } : undefined,
-      );
-      setBills(results);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Impossible de charger les textes",
-      );
-      setBills([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    void loadBills(query);
+    void loadBills({ search: query, hasVotes: onlyWithVotes });
   };
 
   const resetFilters = () => {
     setQuery("");
     setTypeFilter("all");
     setOnlyWithVotes(false);
-    void loadBills();
+    setSelectedTag(null);
+    void loadBills({ tag: null });
   };
 
   const availableTypes = useMemo(
@@ -65,32 +111,40 @@ export default function BillsPage() {
   const filteredBills = useMemo(
     () =>
       bills.filter((bill) => {
-        if (onlyWithVotes && (!bill.scrutins_count || bill.scrutins_count <= 0)) {
-          return false;
-        }
         if (typeFilter !== "all" && bill.type !== typeFilter) {
           return false;
         }
         return true;
       }),
-    [bills, onlyWithVotes, typeFilter],
+    [bills, typeFilter],
   );
 
   const billsWithVotes = useMemo(
-    () => filteredBills.filter((b) => b.scrutins_count && b.scrutins_count > 0),
+    () =>
+      filteredBills
+        .filter((b) => b.scrutins_count && b.scrutins_count > 0)
+        .sort((a, b) => {
+          // Sort by latest scrutin date descending (most recent vote first)
+          const da = a.latest_scrutin_date ?? "";
+          const db = b.latest_scrutin_date ?? "";
+          if (da !== db) return db.localeCompare(da);
+          // Tie-break: more scrutins first
+          return (b.scrutins_count ?? 0) - (a.scrutins_count ?? 0);
+        }),
     [filteredBills],
   );
 
   const billsWithoutVotes = useMemo(
-    () => filteredBills.filter((b) => !b.scrutins_count || b.scrutins_count <= 0),
+    () =>
+      filteredBills
+        .filter((b) => !b.scrutins_count || b.scrutins_count <= 0),
     [filteredBills],
   );
 
-  const totalBills = bills.length;
-  const totalWithVotes = bills.filter(
-    (b) => b.scrutins_count && b.scrutins_count > 0,
-  ).length;
-  const latestScrutinDate = bills
+  // Stats derived from the current (filtered) result set
+  const totalDisplayed = filteredBills.length;
+  const totalWithVotes = billsWithVotes.length;
+  const latestScrutinDate = filteredBills
     .map((b) => b.latest_scrutin_date)
     .filter((d): d is string => typeof d === "string")
     .sort()
@@ -119,7 +173,7 @@ export default function BillsPage() {
             points={[
               "Chaque carte correspond à un texte législatif (projet ou proposition de loi).",
               "Vous pouvez filtrer la liste en recherchant par mots-clés dans le titre du texte.",
-              "Le filtre “Avec votes uniquement” permet d’afficher seulement les textes qui ont donné lieu à au moins un scrutin.",
+              "Le filtre « Avec votes uniquement » permet d'afficher seulement les textes qui ont donné lieu à au moins un scrutin.",
             ]}
           />
 
@@ -162,16 +216,48 @@ export default function BillsPage() {
             >
               {onlyWithVotes ? "Avec votes uniquement" : "Inclure les textes sans vote"}
             </button>
+
+            <div className={styles.tagFilter}>
+              <select
+                className={styles.tagSelect}
+                value={selectedTag || ""}
+                onChange={(e) => {
+                  const newTag = e.target.value || null;
+                  setSelectedTag(newTag);
+                }}
+                aria-label="Filtrer par thème"
+              >
+                <option value="">Tous les thèmes</option>
+                {THEMATIC_TAGS.map((tag) => (
+                  <option key={tag.slug} value={tag.slug}>
+                    {tag.label}
+                  </option>
+                ))}
+              </select>
+              {selectedTag && (
+                <button
+                  type="button"
+                  className={styles.clearTagButton}
+                  onClick={() => setSelectedTag(null)}
+                  aria-label="Effacer le filtre thématique"
+                  title="Effacer le filtre thématique"
+                >
+                  ×
+                </button>
+              )}
+            </div>
           </section>
 
-          {!loading && !error && totalBills > 0 && (
+          {!loading && !error && totalDisplayed > 0 && (
             <section className={styles.statsBar} aria-label="Statistiques des textes">
               <span>
-                <strong>{totalBills}</strong> texte(s)
+                <strong>{totalDisplayed}</strong> texte(s)
               </span>
-              <span>
-                <strong>{totalWithVotes}</strong> avec au moins un scrutin
-              </span>
+              {totalWithVotes > 0 && (
+                <span>
+                  <strong>{totalWithVotes}</strong> avec au moins un scrutin
+                </span>
+              )}
               {latestScrutinDate && (
                 <span>
                   Dernier scrutin le <strong>{formatDate(latestScrutinDate)}</strong>
@@ -238,6 +324,15 @@ export default function BillsPage() {
                               </span>
                             )}
                           </div>
+                          {bill.tags && bill.tags.length > 0 && (
+                            <div className={styles.billTags}>
+                              {bill.tags.map((tag) => (
+                                <span key={tag.id} className={styles.tag} title={tag.label}>
+                                  {tag.label}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                           <p className={styles.meta}>
                             {bill.latest_scrutin_date ? (
                               <>
@@ -279,6 +374,15 @@ export default function BillsPage() {
                               </span>
                             )}
                           </div>
+                          {bill.tags && bill.tags.length > 0 && (
+                            <div className={styles.billTags}>
+                              {bill.tags.map((tag) => (
+                                <span key={tag.id} className={styles.tag} title={tag.label}>
+                                  {tag.label}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                           <p className={styles.meta}>
                             Aucun scrutin associé pour le moment
                           </p>
@@ -293,4 +397,3 @@ export default function BillsPage() {
     </div>
   );
 }
-

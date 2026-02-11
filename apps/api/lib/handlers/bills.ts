@@ -6,7 +6,7 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { supabase } from "../supabase";
 import { ApiError, handleError } from "../errors";
-import type { BillSummary } from "@agora/shared";
+import type { BillSummary, ThematicTag } from "@agora/shared";
 import type { DbBill, DbBillScrutin, DbScrutin } from "../types";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -30,6 +30,48 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const q = typeof req.query.q === "string" ? req.query.q.trim() : undefined;
     const type =
       typeof req.query.type === "string" ? req.query.type.trim() : undefined;
+    const tag =
+      typeof req.query.tag === "string" ? req.query.tag.trim() : undefined;
+    const hasVotes = req.query.has_votes === "true";
+
+    // If filtering by tag, first get the bill IDs that have this tag
+    let tagFilteredBillIds: string[] | null = null;
+    if (tag) {
+      // First resolve the tag slug to a tag id
+      const { data: tagRow, error: tagError } = await supabase
+        .from("thematic_tags")
+        .select("id")
+        .eq("slug", tag)
+        .maybeSingle();
+
+      if (tagError) {
+        throw new ApiError(500, "Failed to fetch tag", "DatabaseError");
+      }
+
+      if (!tagRow) {
+        // Unknown tag slug → no results
+        res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate");
+        return res.status(200).json({ bills: [] });
+      }
+
+      const { data: billTagRows, error: billTagError } = await supabase
+        .from("bill_thematic_tags")
+        .select("bill_id")
+        .eq("tag_id", tagRow.id);
+
+      if (billTagError) {
+        throw new ApiError(500, "Failed to fetch bill tags", "DatabaseError");
+      }
+
+      tagFilteredBillIds = (billTagRows ?? []).map(
+        (bt: { bill_id: string }) => bt.bill_id,
+      );
+
+      if (tagFilteredBillIds.length === 0) {
+        res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate");
+        return res.status(200).json({ bills: [] });
+      }
+    }
 
     let query = supabase.from("bills").select("*") as any;
 
@@ -42,9 +84,51 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       query = query.eq("type", type);
     }
 
+    if (tagFilteredBillIds) {
+      query = query.in("id", tagFilteredBillIds);
+    }
+
+    // When has_votes is requested, only return bills that have at least one scrutin link
+    if (hasVotes) {
+      const { data: linkedBillIds, error: linkedError } = await supabase
+        .from("bill_scrutins")
+        .select("bill_id");
+
+      if (linkedError) {
+        throw new ApiError(500, "Failed to fetch bill-scrutin links", "DatabaseError");
+      }
+
+      const uniqueBillIds = [
+        ...new Set((linkedBillIds ?? []).map((r: { bill_id: string }) => r.bill_id)),
+      ];
+
+      if (uniqueBillIds.length === 0) {
+        res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate");
+        return res.status(200).json({ bills: [] });
+      }
+
+      // Intersect with any existing tag filter
+      if (tagFilteredBillIds) {
+        const voteSet = new Set(uniqueBillIds);
+        const intersected = tagFilteredBillIds.filter((id) => voteSet.has(id));
+        if (intersected.length === 0) {
+          res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate");
+          return res.status(200).json({ bills: [] });
+        }
+        query = supabase.from("bills").select("*") as any;
+        if (q && q.length >= 2) query = query.ilike("title", `%${q}%`);
+        if (type) query = query.eq("type", type);
+        query = query.in("id", intersected);
+      } else {
+        query = query.in("id", uniqueBillIds);
+      }
+    }
+
+    // Order by official_id descending: the sequential number in the ID
+    // (e.g. DLR5L17N53735) correlates with the dossier creation date.
     const { data: billRows, error: billError } = await (query as any)
-      .order("updated_at", { ascending: false })
-      .limit(50);
+      .order("official_id", { ascending: false })
+      .limit(200);
 
     if (billError) {
       throw new ApiError(500, "Failed to fetch bills", "DatabaseError");

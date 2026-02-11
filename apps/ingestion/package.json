@@ -12,6 +12,8 @@
     "ingest:circonscriptions": "ts-node src/ingest-circonscriptions-cli.ts",
     "tag:all-scrutins": "ts-node src/tag-all-scrutins-cli.ts",
     "tag:single-scrutin": "ts-node src/tag-single-scrutin-cli.ts",
+    "tag:all-bills": "ts-node src/tag-all-bills-cli.ts",
+    "tag:single-bill": "ts-node src/tag-single-bill-cli.ts",
     "lint": "eslint . && node ../../node_modules/typescript/bin/tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",

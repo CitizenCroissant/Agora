@@ -63,3 +63,6 @@ web-build/
 # But we keep the service account key private
 **/GoogleService-Info.plist
 **/*firebase-adminsdk*.json
+
+# Play Store service account key (used by EAS Submit)
+**/play-store-service-account.json
