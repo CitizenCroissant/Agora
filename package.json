@@ -15,6 +15,8 @@
   },
   "scripts": {
     "dev": "turbo run dev",
+    "dev:web": "turbo run dev --filter=@agora/shared --filter=@agora/web",
+    "dev:api": "turbo run dev --filter=@agora/shared --filter=@agora/api",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "test": "turbo run test",

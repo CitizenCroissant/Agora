@@ -7,7 +7,11 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { supabase } from "../supabase";
 import { ApiError, handleError } from "../errors";
-import { isCurrentlySitting, ALL_DEPARTEMENT_NAMES } from "@agora/shared";
+import {
+  isCurrentlySitting,
+  ALL_DEPARTEMENT_NAMES,
+  getCanonicalDepartementName,
+} from "@agora/shared";
 import type {
   DepartementSummary,
   DepartementsListResponse,
@@ -31,21 +35,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { data: deputyRows, error } = await supabase
-      .from("deputies")
-      .select("departement, date_fin_mandat")
-      .not("departement", "is", null);
+    // Supabase returns at most 1000 rows per query; fetch in chunks to count all deputies.
+    const PAGE_SIZE = 1000;
+    const deputyRows: { departement: string | null; date_fin_mandat: string | null }[] = [];
+    let offset = 0;
+    while (true) {
+      const { data: page, error } = await supabase
+        .from("deputies")
+        .select("departement, date_fin_mandat")
+        .not("departement", "is", null)
+        .range(offset, offset + PAGE_SIZE - 1);
 
-    if (error) {
-      throw new ApiError(500, "Failed to fetch departements", "DatabaseError");
+      if (error) {
+        throw new ApiError(500, "Failed to fetch departements", "DatabaseError");
+      }
+      if (!page?.length) break;
+      deputyRows.push(...page);
+      if (page.length < PAGE_SIZE) break;
+      offset += PAGE_SIZE;
     }
 
     const countByName = new Map<string, number>();
-    for (const row of deputyRows ?? []) {
-      const name = (row.departement ?? "").trim();
-      if (!name) continue;
+    for (const row of deputyRows) {
+      const canonicalName = getCanonicalDepartementName(row.departement);
+      if (!canonicalName) continue;
       if (isCurrentlySitting(row.date_fin_mandat ?? null)) {
-        countByName.set(name, (countByName.get(name) ?? 0) + 1);
+        countByName.set(canonicalName, (countByName.get(canonicalName) ?? 0) + 1);
       }
     }
 

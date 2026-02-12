@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "nodemon --exec \"ts-node dev-server.ts\" --ext ts --watch api --watch lib --watch dev-server.ts",
+    "dev": "nodemon --exec \"ts-node dev-server.ts\" --ext ts --watch api --watch lib --watch dev-server.ts --watch ../../packages/shared/dist",
     "dev:vercel": "vercel dev",
     "build": "node ../../node_modules/typescript/bin/tsc",
     "lint": "eslint . && node ../../node_modules/typescript/bin/tsc --noEmit",

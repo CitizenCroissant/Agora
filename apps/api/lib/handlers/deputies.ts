@@ -7,7 +7,11 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { supabase } from "../supabase";
 import { ApiError, handleError } from "../errors";
-import { getCirconscriptionDisplayName } from "@agora/shared";
+import {
+  getCirconscriptionDisplayName,
+  getCanonicalDepartementName,
+  getDepartementQueryValues,
+} from "@agora/shared";
 import type { Deputy, DeputiesListResponse } from "@agora/shared";
 
 type DeputyRow = {
@@ -69,9 +73,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const departement = (req.query.departement as string | undefined)?.trim();
+    const departementParam = (req.query.departement as string | undefined)?.trim();
 
-    if (!departement) {
+    if (!departementParam) {
       throw new ApiError(
         400,
         "Query param 'departement' is required (e.g. ?departement=Paris)",
@@ -79,10 +83,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       );
     }
 
+    const canonicalName = getCanonicalDepartementName(departementParam);
+    const queryValues = canonicalName
+      ? getDepartementQueryValues(canonicalName)
+      : [departementParam];
+
     const { data: rows, error } = await supabase
       .from("deputies")
       .select("*")
-      .eq("departement", departement)
+      .in("departement", queryValues)
       .order("civil_nom", { ascending: true });
 
     if (error) {

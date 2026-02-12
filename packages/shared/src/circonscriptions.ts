@@ -115,6 +115,37 @@ export const ALL_DEPARTEMENT_NAMES: string[] = Object.values(DEPARTEMENTS).sort(
   (a, b) => a.localeCompare(b, "fr")
 );
 
+/** Lowercased code or name -> canonical name (for normalizing departement when counting/filtering) */
+const CANONICAL_DEPARTEMENT_BY_KEY: Map<string, string> = (() => {
+  const m = new Map<string, string>();
+  for (const [code, name] of Object.entries(DEPARTEMENTS)) {
+    m.set(code.toLowerCase(), name);
+    m.set(name.toLowerCase(), name);
+  }
+  return m;
+})();
+
+/**
+ * Normalize a raw department value (code like "01" or name like "Ain") to the canonical name.
+ * Used so list count and deputies-by-departement fetch agree (e.g. "01" and "Ain" both count under "Ain").
+ */
+export function getCanonicalDepartementName(raw: string | null | undefined): string | null {
+  const key = (raw ?? "").trim().toLowerCase();
+  if (!key) return null;
+  return CANONICAL_DEPARTEMENT_BY_KEY.get(key) ?? null;
+}
+
+/**
+ * Return possible DB values for a canonical department name (name and code) for use in .in() queries.
+ * Ensures list count and deputies list use the same set of rows.
+ */
+export function getDepartementQueryValues(canonicalName: string): string[] {
+  const name = (canonicalName ?? "").trim();
+  if (!name) return [];
+  const code = CODES_BY_NAME[name];
+  return code ? [name, code] : [name];
+}
+
 /**
  * Parse refCirconscription ID (e.g. "7505", "PO7500501", "2A01", "9711") into department + num
  * Returns null if unparseable

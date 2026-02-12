@@ -79,14 +79,17 @@ Agora/
 ### Domain Model
 
 **Sitting** (séance): A parliamentary session on a specific date
+
 - Has UUID, date, type (morning/afternoon/evening), hemicycle
 - Contains multiple agenda items
 
 **AgendaItem**: Individual item on a sitting's agenda
+
 - Belongs to a sitting
 - Has order, title, time, status
 
 **Source Metadata**: Tracks data provenance
+
 - Official URL, checksum for change detection
 
 ### Data Flow
@@ -244,6 +247,7 @@ tsc --noEmit                    # Type check without build
 ### Commits
 
 Use conventional commits:
+
 - `feat:` New feature
 - `fix:` Bug fix
 - `docs:` Documentation only
@@ -255,12 +259,14 @@ Use conventional commits:
 ## Environment Variables
 
 ### API (`apps/api/.env.local`)
+
 ```env
 SUPABASE_URL=https://xxx.supabase.co
 SUPABASE_SERVICE_KEY=eyJ...
 ```
 
 ### Ingestion (`apps/ingestion/.env.local`)
+
 ```env
 SUPABASE_URL=https://xxx.supabase.co
 SUPABASE_SERVICE_KEY=eyJ...
@@ -268,28 +274,33 @@ INGESTION_SECRET=your-secret-here
 ```
 
 ### Web (`apps/web/.env.local`)
+
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3001/api
 ```
 
 ### Mobile
+
 - Hardcoded in components (should be env vars - future improvement)
 - Points to deployed API or local IP for dev
 
 ## Testing Strategy
 
 ### What to Test
+
 - **Shared package**: Types, utilities, API client
 - **API**: Endpoint logic, error handling
 - **Web/Mobile**: Component rendering, user interactions
 
 ### Test Files
+
 - Co-located: `__tests__/` folder next to source
 - Naming: `*.test.ts` or `*.test.tsx`
 - Vitest: web, api, shared
 - Jest: mobile (React Native compatibility)
 
 ### Running Tests
+
 ```bash
 npm run test              # Run once
 npm run test:watch        # TDD mode
@@ -299,76 +310,102 @@ npm run test:coverage     # Coverage report
 ## Gotchas & Important Notes
 
 ### 1. Shared package and build order
+
 When you run `npm run build` or `npm run dev` from the root, Turbo builds `@agora/shared` first (via `dependsOn: ["^build"]`). If you run a single app’s script from inside its directory without going through Turbo, build shared first: `npm run build -- --filter=@agora/shared`.
 
+**Rebuilding shared when it changes during dev:** Run shared in watch mode alongside the app so `packages/shared/dist` stays up to date:
+
+- **Web:** `npm run dev:web` — runs `@agora/shared` (tsc --watch) and `@agora/web`; refresh the browser after editing shared.
+- **API:** `npm run dev:api` — runs `@agora/shared` (tsc --watch) and `@agora/api`; nodemon watches `packages/shared/dist` and restarts the API when shared is rebuilt.
+
 ### 2. Port Conflicts
+
 - API runs on port 3000 (or 3001)
 - Web runs on port 3000 (or next available)
 - Check which port is actually used in terminal output
 
 ### 3. Supabase Credentials
+
 - Use **service_role** key (not anon key) for server-side
 - Never commit `.env.local` files (gitignored)
 - Each app needs its own `.env.local`
 
 ### 4. API Must Be Running
+
 Web and mobile apps need the API running to fetch data.
 Start API first: `npm run dev -- --filter=@agora/api`
 
 ### 5. Date Formats
+
 - Always use `YYYY-MM-DD` format
 - Utilities in `packages/shared/src/utils.ts`
 - French locale for display: `formatDateLong()`
 
 ### 6. Turbo Caching
+
 Turbo caches build outputs. If things seem stale:
+
 ```bash
 npm run build -- --force  # Ignore cache
 npm run clean             # Clean all build artifacts
 ```
 
 ### 7. TypeScript Errors in Shared
+
 If apps can't find `@agora/shared` types:
+
 1. Check `packages/shared/dist/` exists
 2. Rebuild: `cd packages/shared && npm run build`
 3. Restart your IDE's TypeScript server
 
 ### 8. Mobile Dev Server
+
 For physical devices, update API_URL to your machine's IP:
+
 ```typescript
-const API_URL = 'http://192.168.1.xxx:3001/api'
+const API_URL = "http://192.168.1.xxx:3001/api";
 ```
+
 Localhost won't work on real devices.
 
 ### 9. Database Schema Changes
+
 After modifying `database/schema.sql`:
+
 1. Run in Supabase SQL Editor
 2. Or use migration tools (not set up yet)
 3. Update types in `packages/shared/src/types.ts`
 
+### 10. Supabase 1000-row limit
+
+**Supabase returns at most 1000 rows per query.** A larger `.limit(N)` does not override this. When you need to read a full table (e.g. to aggregate counts across all deputies), paginate with `.range(from, to)` in a loop (e.g. 0–999, 1000–1999, …) until a page has fewer than 1000 rows. See `apps/api/lib/handlers/departements.ts` for an example.
+
 ## File Locations Quick Reference
 
-| Need to... | File Location |
-|------------|---------------|
-| Add domain type | `packages/shared/src/types.ts` |
-| Add utility function | `packages/shared/src/utils.ts` |
-| Add API endpoint | `apps/api/api/your-name.ts` |
-| Add web page | `apps/web/app/your-page/page.tsx` |
-| Add mobile screen | `apps/mobile/app/your-screen.tsx` |
-| Modify DB schema | `database/schema.sql` |
-| Update API docs | `docs/API_DOCUMENTATION.md` |
-| Add test | `src/__tests__/your-file.test.ts` |
-| Configure linting | `.eslintrc.js` (root or app-specific) |
-| Configure Turbo | `turbo.json` |
+| Need to...                       | File Location                                                |
+| -------------------------------- | ------------------------------------------------------------ |
+| Add domain type                  | `packages/shared/src/types.ts`                               |
+| Add utility function             | `packages/shared/src/utils.ts`                               |
+| Add API endpoint                 | `apps/api/api/your-name.ts`                                  |
+| Add web page                     | `apps/web/app/your-page/page.tsx`                            |
+| Edit democracy education content | `apps/web/content/democratie.ts`, `apps/web/app/democratie/` |
+| Add mobile screen                | `apps/mobile/app/your-screen.tsx`                            |
+| Modify DB schema                 | `database/schema.sql`                                        |
+| Update API docs                  | `docs/API_DOCUMENTATION.md`                                  |
+| Add test                         | `src/__tests__/your-file.test.ts`                            |
+| Configure linting                | `.eslintrc.js` (root or app-specific)                        |
+| Configure Turbo                  | `turbo.json`                                                 |
 
 ## CI/CD
 
 ### GitHub Actions (`.github/workflows/ci.yml`)
+
 - Runs on: push, PR
 - Steps: Install → Build → Lint → Test
 - Must pass before merge
 
 ### Deployment
+
 - **API**: Deploy to Vercel (auto from main branch)
 - **Web**: Deploy to Vercel (auto from main branch)
 - **Ingestion**: Deploy to Vercel with cron
@@ -377,6 +414,7 @@ After modifying `database/schema.sql`:
 ## Data Sources
 
 **Official API**: `https://data.assemblee-nationale.fr/api/v1/`
+
 - Endpoint: `/agenda/` (date-based)
 - Documentation: Available at data.assemblee-nationale.fr
 - Rate limits: Unknown (seems generous)
@@ -385,6 +423,7 @@ After modifying `database/schema.sql`:
 ## Current Status
 
 ✅ **Working**:
+
 - All infrastructure and architecture
 - API with 3 endpoints
 - Web app (all pages)
@@ -395,11 +434,13 @@ After modifying `database/schema.sql`:
 - CI/CD pipeline
 
 🚧 **In Progress**:
+
 - Integration testing
 - Error boundaries
 - Loading states
 
 📋 **Future**:
+
 - Search functionality
 - Push notifications
 - User preferences
@@ -447,12 +488,14 @@ npm run ingest -- --dry-run
 ## When Helping Users
 
 ### Before Making Changes
+
 1. Read relevant files first
 2. Understand the monorepo structure
 3. Check if shared package needs rebuilding
 4. Verify types exist in correct location
 
 ### Making Changes
+
 1. Use existing patterns and conventions
 2. Update types if changing data structures
 3. Maintain TypeScript strictness
@@ -460,6 +503,7 @@ npm run ingest -- --dry-run
 5. Update documentation if needed
 
 ### After Changes
+
 1. Rebuild shared if modified
 2. Run tests: `npm run test`
 3. Run linter: `npm run lint`
@@ -467,6 +511,7 @@ npm run ingest -- --dry-run
 5. Test in actual browser/device
 
 ### Suggesting Improvements
+
 1. Consider impact on all packages
 2. Maintain backward compatibility
 3. Update relevant documentation
