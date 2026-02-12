@@ -5,12 +5,12 @@
 import {
   resolveCirconscriptionName,
   circonscriptionRefCanonical,
-  circonscriptionId,
+  circonscriptionId
 } from "@agora/shared";
 import {
   AssembleeMandat,
   AssembleeOrgane,
-  DeputyInsert,
+  DeputyInsert
 } from "./deputies-types";
 import { DeputyWithOrganes } from "./deputies-client";
 
@@ -33,7 +33,7 @@ const todayIso = () => new Date().toISOString().split("T")[0];
 
 function firstMandatDepute(
   mandats: AssembleeMandat[] | undefined,
-  _organesMap: Map<string, AssembleeOrgane>,
+  _organesMap: Map<string, AssembleeOrgane>
 ): {
   circonscription: string | null;
   ref_circonscription: string | null;
@@ -49,7 +49,7 @@ function firstMandatDepute(
       departement: null,
       dateDebut: null,
       dateFin: null,
-      groupeRef: null,
+      groupeRef: null
     };
   const mandatsList = toList(mandats);
   // Restrict to Assemblée nationale (député) mandats only, so we don't pick a
@@ -57,7 +57,7 @@ function firstMandatDepute(
   const assembleeMandats = mandatsList.filter(
     (m) =>
       m.typeOrgane === "ASSEMBLEE" &&
-      (m.election?.refCirconscription || m.election?.lieu),
+      (m.election?.refCirconscription || m.election?.lieu)
   );
   const deputeMandats =
     assembleeMandats.length > 0
@@ -68,7 +68,7 @@ function firstMandatDepute(
             m.election?.lieu ||
             (m.infosQualite?.libelleQualiteSex ?? "")
               .toLowerCase()
-              .includes("député"),
+              .includes("député")
         );
   const deputeMandatsList =
     deputeMandats.length > 0 ? deputeMandats : mandatsList;
@@ -91,7 +91,7 @@ function firstMandatDepute(
       departement: null,
       dateDebut: null,
       dateFin: null,
-      groupeRef: null,
+      groupeRef: null
     };
 
   function fromElection(election: AssembleeMandat["election"]): {
@@ -103,7 +103,7 @@ function firstMandatDepute(
       return {
         circonscription: null,
         refCirconscription: null,
-        departement: null,
+        departement: null
       };
     let c: string | null = null;
     let d: string | null = null;
@@ -140,12 +140,12 @@ function firstMandatDepute(
     return {
       circonscription: c,
       refCirconscription,
-      departement: d,
+      departement: d
     };
   }
 
   let { circonscription, refCirconscription, departement } = fromElection(
-    deputeMandat.election,
+    deputeMandat.election
   );
 
   // If primary mandat has no circonscription, take from any mandat that has it (e.g. current mandat may lack election data)
@@ -195,7 +195,7 @@ function firstMandatDepute(
     departement,
     dateDebut,
     dateFin,
-    groupeRef,
+    groupeRef
   };
 }
 
@@ -234,7 +234,7 @@ export function transformDeputy(item: DeputyWithOrganes): DeputyInsert | null {
     departement,
     dateDebut,
     dateFin,
-    groupeRef,
+    groupeRef
   } = firstMandatDepute(mandats, organesMap);
   const date_debut_mandat = dateDebut;
   const date_fin_mandat = dateFin;
@@ -264,6 +264,6 @@ export function transformDeputy(item: DeputyWithOrganes): DeputyInsert | null {
     date_debut_mandat,
     date_fin_mandat,
     legislature,
-    official_url,
+    official_url
   };
 }

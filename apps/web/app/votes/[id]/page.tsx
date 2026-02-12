@@ -14,7 +14,7 @@ const POSITION_LABELS: Record<string, string> = {
   pour: "Pour",
   contre: "Contre",
   abstention: "Abstention",
-  non_votant: "Non votant",
+  non_votant: "Non votant"
 };
 
 export default function ScrutinPage() {
@@ -52,7 +52,7 @@ export default function ScrutinPage() {
         acc[v.position].push(v);
         return acc;
       },
-      {} as Record<string, typeof scrutin.votes>,
+      {} as Record<string, typeof scrutin.votes>
     ) ?? {};
 
   // Optional linked bill (dossier législatif) when available.
@@ -69,7 +69,7 @@ export default function ScrutinPage() {
       <Breadcrumb
             items={[
               { label: "Scrutins", href: "/votes" },
-              { label: scrutin?.titre?.slice(0, 50) || "Scrutin" },
+              { label: scrutin?.titre?.slice(0, 50) || "Scrutin" }
             ]}
           />
           {loading && (

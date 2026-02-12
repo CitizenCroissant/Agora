@@ -29,7 +29,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({
       error: "MethodNotAllowed",
       message: "Only GET requests are allowed",
-      status: 405,
+      status: 405
     });
   }
 
@@ -74,7 +74,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // Enrich votes with deputy names from deputies table
     const acteurRefs = [
-      ...new Set((votes || []).map((v: DbScrutinVote) => v.acteur_ref)),
+      ...new Set((votes || []).map((v: DbScrutinVote) => v.acteur_ref))
     ];
     const acteurNomMap = new Map<string, string>();
     const acteurGroupMap = new Map<string, string | null>();
@@ -92,13 +92,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }) => {
           acteurNomMap.set(
             d.acteur_ref,
-            `${d.civil_prenom} ${d.civil_nom}`.trim(),
+            `${d.civil_prenom} ${d.civil_nom}`.trim()
           );
           acteurGroupMap.set(
             d.acteur_ref,
-            d.groupe_politique ? d.groupe_politique.trim() : null,
+            d.groupe_politique ? d.groupe_politique.trim() : null
           );
-        },
+        }
       );
     }
 
@@ -126,7 +126,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         tags = tagDetails.map((tag) => ({
           id: tag.id,
           slug: tag.slug,
-          label: tag.label,
+          label: tag.label
         }));
       }
     }
@@ -154,7 +154,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           contre: 0,
           abstention: 0,
           non_votant: 0,
-          total: 0,
+          total: 0
         });
       }
       const stats = groupVoteMap.get(groupLabel)!;
@@ -180,7 +180,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           pour_pct: pct(stats.pour),
           contre_pct: pct(stats.contre),
           abstention_pct: pct(stats.abstention),
-          non_votant_pct: pct(stats.non_votant),
+          non_votant_pct: pct(stats.non_votant)
         };
       })
       // Sort by total descending to show largest groups first
@@ -206,10 +206,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         scrutin_id: v.scrutin_id,
         acteur_ref: v.acteur_ref,
         position: v.position as "pour" | "contre" | "abstention" | "non_votant",
-        acteur_nom: acteurNomMap.get(v.acteur_ref) ?? null,
+        acteur_nom: acteurNomMap.get(v.acteur_ref) ?? null
       })),
       tags: tags || [],
-      group_votes: groupVotes,
+      group_votes: groupVotes
     };
 
     // Optional linked bill (dossier législatif) for this scrutin.
@@ -223,7 +223,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       console.error(
         "Error fetching bill_scrutins for scrutin",
         dbScrutin.id,
-        billLinksError,
+        billLinksError
       );
     } else if (billLinks && billLinks.length > 0) {
       const billId = (billLinks[0] as { bill_id: string }).bill_id;
@@ -241,7 +241,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             id: bill.id,
             official_id: bill.official_id,
             title: bill.title,
-            short_title: bill.short_title,
+            short_title: bill.short_title
           };
       }
     }

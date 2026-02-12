@@ -5,7 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  StyleSheet,
+  StyleSheet
 } from "react-native";
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useRouter } from "expo-router";
@@ -35,7 +35,7 @@ export default function CirconscriptionDetailScreen() {
       setCirconscription(data);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Circonscription introuvable",
+        err instanceof Error ? err.message : "Circonscription introuvable"
       );
       setCirconscription(null);
     } finally {
@@ -48,7 +48,7 @@ export default function CirconscriptionDetailScreen() {
       <Stack.Screen
         options={{
           headerTitle: circonscription?.label ?? "Circonscription",
-          headerBackTitle: "Retour",
+          headerBackTitle: "Retour"
         }}
       />
       <ScrollView style={styles.container}>
@@ -114,59 +114,59 @@ export default function CirconscriptionDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#fff"
   },
   centerContent: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 48,
+    padding: 48
   },
   loadingText: {
     marginTop: 16,
     color: "#666",
-    fontSize: 16,
+    fontSize: 16
   },
   errorContainer: {
     padding: 24,
-    alignItems: "center",
+    alignItems: "center"
   },
   errorText: {
     color: "#ef4135",
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: "500"
   },
   content: {
-    padding: 16,
+    padding: 16
   },
   deputyCount: {
     fontSize: 16,
     color: "#666",
-    marginBottom: 16,
+    marginBottom: 16
   },
   deputyList: {
-    gap: 12,
+    gap: 12
   },
   deputyCard: {
     backgroundColor: "#f5f5f5",
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#e0e0e0",
+    borderColor: "#e0e0e0"
   },
   deputyName: {
     fontSize: 16,
     fontWeight: "600",
     color: "#0055a4",
-    marginBottom: 4,
+    marginBottom: 4
   },
   deputyMeta: {
     fontSize: 14,
     color: "#666",
-    marginBottom: 8,
+    marginBottom: 8
   },
   deputyLink: {
     fontSize: 14,
     color: "#0055a4",
-    fontWeight: "500",
-  },
+    fontWeight: "500"
+  }
 });

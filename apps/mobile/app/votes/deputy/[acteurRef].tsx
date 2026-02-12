@@ -5,7 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  StyleSheet,
+  StyleSheet
 } from "react-native";
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useRouter } from "expo-router";
@@ -18,7 +18,7 @@ const POSITION_LABELS: Record<string, string> = {
   pour: "Pour",
   contre: "Contre",
   abstention: "Abstention",
-  non_votant: "Non votant",
+  non_votant: "Non votant"
 };
 
 export default function DeputyVotesScreen() {
@@ -42,7 +42,7 @@ export default function DeputyVotesScreen() {
       setData(result);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Impossible de charger les votes",
+        err instanceof Error ? err.message : "Impossible de charger les votes"
       );
       setData(null);
     } finally {
@@ -57,7 +57,7 @@ export default function DeputyVotesScreen() {
       <Stack.Screen
         options={{
           headerTitle: "Votes",
-          headerBackTitle: "Retour",
+          headerBackTitle: "Retour"
         }}
       />
       <ScrollView style={styles.container}>
@@ -102,7 +102,7 @@ export default function DeputyVotesScreen() {
                           v.position === "pour" && styles.badgePour,
                           v.position === "contre" && styles.badgeContre,
                           v.position === "abstention" && styles.badgeAbstention,
-                          v.position === "non_votant" && styles.badgeNonVotant,
+                          v.position === "non_votant" && styles.badgeNonVotant
                         ]}
                       >
                         <Text style={styles.positionText}>
@@ -131,104 +131,104 @@ export default function DeputyVotesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#fff"
   },
   centerContent: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 48,
+    padding: 48
   },
   loadingText: {
     marginTop: 16,
     color: "#666",
-    fontSize: 16,
+    fontSize: 16
   },
   errorContainer: {
     padding: 24,
-    alignItems: "center",
+    alignItems: "center"
   },
   errorText: {
     color: "#ef4135",
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: "500"
   },
   content: {
-    padding: 16,
+    padding: 16
   },
   header: {
     marginBottom: 20,
     paddingBottom: 16,
     borderBottomWidth: 2,
-    borderBottomColor: "#e0e0e0",
+    borderBottomColor: "#e0e0e0"
   },
   title: {
     fontSize: 22,
     fontWeight: "700",
     color: "#0055a4",
-    marginBottom: 4,
+    marginBottom: 4
   },
   acteurRef: {
     fontSize: 14,
-    color: "#666",
+    color: "#666"
   },
   emptyText: {
     fontSize: 16,
     color: "#666",
     textAlign: "center",
-    padding: 24,
+    padding: 24
   },
   voteList: {
-    gap: 12,
+    gap: 12
   },
   voteCard: {
     backgroundColor: "#f5f5f5",
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#e0e0e0",
+    borderColor: "#e0e0e0"
   },
   voteHeader: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 8,
-    gap: 8,
+    gap: 8
   },
   positionBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 6,
+    borderRadius: 6
   },
   badgePour: {
-    backgroundColor: "rgba(0, 128, 0, 0.15)",
+    backgroundColor: "rgba(0, 128, 0, 0.15)"
   },
   badgeContre: {
-    backgroundColor: "rgba(200, 0, 0, 0.15)",
+    backgroundColor: "rgba(200, 0, 0, 0.15)"
   },
   badgeAbstention: {
-    backgroundColor: "rgba(128, 128, 0, 0.15)",
+    backgroundColor: "rgba(128, 128, 0, 0.15)"
   },
   badgeNonVotant: {
-    backgroundColor: "rgba(128, 128, 128, 0.15)",
+    backgroundColor: "rgba(128, 128, 128, 0.15)"
   },
   positionText: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#333",
+    color: "#333"
   },
   voteDate: {
     fontSize: 12,
     color: "#666",
-    textTransform: "capitalize",
+    textTransform: "capitalize"
   },
   voteTitle: {
     fontSize: 16,
     fontWeight: "600",
     color: "#333",
-    marginBottom: 8,
+    marginBottom: 8
   },
   voteLink: {
     fontSize: 14,
     color: "#0055a4",
-    fontWeight: "500",
-  },
+    fontWeight: "500"
+  }
 });

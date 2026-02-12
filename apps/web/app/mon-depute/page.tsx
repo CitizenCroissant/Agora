@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type {
   DepartementSummary,
   Deputy,
-  DeputiesListResponse,
+  DeputiesListResponse
 } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import { isCurrentlySitting } from "@agora/shared";

@@ -9,20 +9,20 @@ const LINKS = [
     href: "/mon-depute",
     label: "Mon député",
     description: "Trouver et suivre votre député",
-    icon: "person" as const,
+    icon: "person" as const
   },
   {
     href: "/groupes",
     label: "Groupes politiques",
     description: "Voir les groupes et leurs positions",
-    icon: "people" as const,
+    icon: "people" as const
   },
   {
     href: "/circonscriptions",
     label: "Circonscriptions",
     description: "Carte et liste des circonscriptions",
-    icon: "map" as const,
-  },
+    icon: "map" as const
+  }
 ];
 
 export default function ExplorerScreen() {
@@ -56,12 +56,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: spacing.lg,
-    backgroundColor: colors.background,
+    backgroundColor: colors.background
   },
   intro: {
     fontSize: typography.fontSize.base,
     color: colors.textLight,
-    marginBottom: 20,
+    marginBottom: 20
   },
   card: {
     flexDirection: "row",
@@ -71,20 +71,20 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     marginBottom: spacing.md,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.border
   },
   cardText: {
     flex: 1,
-    marginLeft: spacing.lg,
+    marginLeft: spacing.lg
   },
   cardTitle: {
     fontSize: 17,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.text,
+    color: colors.text
   },
   cardDescription: {
     fontSize: typography.fontSize.md,
     color: colors.textLight,
-    marginTop: 2,
-  },
+    marginTop: 2
+  }
 });

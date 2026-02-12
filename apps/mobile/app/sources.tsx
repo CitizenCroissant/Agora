@@ -5,7 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   Linking,
-  TouchableOpacity,
+  TouchableOpacity
 } from "react-native";
 import { useRouter } from "expo-router";
 import { colors, spacing, radius, typography } from "@/theme";
@@ -92,50 +92,50 @@ export default function SourcesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.background
   },
   section: {
     padding: spacing.lg,
-    paddingBottom: spacing.sm,
+    paddingBottom: spacing.sm
   },
   h2: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.bold,
     color: colors.text,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.sm
   },
   h3: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
     color: colors.text,
-    marginBottom: 6,
+    marginBottom: 6
   },
   p: {
     fontSize: 15,
     color: colors.text,
     lineHeight: 22,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.sm
   },
   card: {
     backgroundColor: colors.backgroundAlt,
     padding: spacing.md,
     borderRadius: radius.md,
-    marginBottom: spacing.md,
+    marginBottom: spacing.md
   },
   link: {
     fontSize: 15,
     color: colors.primary,
-    fontWeight: typography.fontWeight.medium,
+    fontWeight: typography.fontWeight.medium
   },
   termTitle: {
     fontSize: 15,
     fontWeight: typography.fontWeight.semibold,
     color: colors.text,
     marginTop: spacing.md,
-    marginBottom: 2,
+    marginBottom: 2
   },
   footer: {
     padding: spacing.lg,
-    paddingBottom: spacing.xxl,
-  },
+    paddingBottom: spacing.xxl
+  }
 });

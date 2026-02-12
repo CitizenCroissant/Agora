@@ -16,7 +16,7 @@ const ACCENT_COLORS = [
   "#9b5de5",
   "#00b4d8",
   "#e63946",
-  "#f4a261",
+  "#f4a261"
 ];
 
 function accentForSlug(slug: string): string {
@@ -83,7 +83,7 @@ export default function GroupesPage() {
                         className={styles.groupCard}
                         style={
                           {
-                            "--group-accent": accentForSlug(g.slug),
+                            "--group-accent": accentForSlug(g.slug)
                           } as React.CSSProperties
                         }
                       >

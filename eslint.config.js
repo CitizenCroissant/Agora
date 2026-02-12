@@ -22,6 +22,7 @@ export default [
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       'no-undef': 'off', // TypeScript handles undefined variables better than ESLint
+      'comma-dangle': ['error', 'never'], // No trailing commas (codebase consistency)
     },
   },
   {

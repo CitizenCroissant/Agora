@@ -11,8 +11,8 @@ export const metadata: Metadata = {
     title: 'À propos | Agora - Agenda de l\'Assemblée nationale',
     description:
       'Agora rend l\'activité de l\'Assemblée nationale accessible et transparente.',
-    type: 'website',
-  },
+    type: 'website'
+  }
 }
 
 export default function AboutPage() {

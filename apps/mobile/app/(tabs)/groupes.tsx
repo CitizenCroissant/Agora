@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
-  TextInput,
+  TextInput
 } from "react-native";
 import { useRouter } from "expo-router";
 import type { PoliticalGroupSummary } from "@agora/shared";
@@ -43,7 +43,7 @@ export default function GroupesTabScreen() {
     if (!q) return groups;
     return groups.filter(
       (g) =>
-        g.label.toLowerCase().includes(q) || g.slug.toLowerCase().includes(q),
+        g.label.toLowerCase().includes(q) || g.slug.toLowerCase().includes(q)
     );
   }, [groups, filterText]);
 
@@ -119,11 +119,11 @@ export default function GroupesTabScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#f5f5f5"
   },
   filterBar: {
     padding: 16,
-    paddingBottom: 0,
+    paddingBottom: 0
   },
   filterInput: {
     paddingHorizontal: 12,
@@ -133,47 +133,47 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#e0e0e0",
     borderRadius: 8,
-    color: "#333",
+    color: "#333"
   },
   content: {
-    flex: 1,
+    flex: 1
   },
   centerContent: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 48,
+    padding: 48
   },
   loadingText: {
     marginTop: 16,
     color: "#666",
-    fontSize: 16,
+    fontSize: 16
   },
   errorContainer: {
     padding: 24,
-    alignItems: "center",
+    alignItems: "center"
   },
   errorText: {
     color: "#ef4135",
     fontSize: 16,
     fontWeight: "500",
-    marginBottom: 8,
+    marginBottom: 8
   },
   errorHint: {
     color: "#666",
     fontSize: 14,
-    textAlign: "center",
+    textAlign: "center"
   },
   emptyContainer: {
     padding: 48,
-    alignItems: "center",
+    alignItems: "center"
   },
   emptyText: {
     color: "#666",
     fontSize: 16,
-    textAlign: "center",
+    textAlign: "center"
   },
   list: {
-    padding: 16,
+    padding: 16
   },
   groupCard: {
     backgroundColor: "#fff",
@@ -186,22 +186,22 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
-    elevation: 2,
+    elevation: 2
   },
   groupLabel: {
     fontSize: 18,
     fontWeight: "600",
     color: "#0055a4",
-    marginBottom: 4,
+    marginBottom: 4
   },
   groupCount: {
     fontSize: 14,
     color: "#666",
-    marginBottom: 8,
+    marginBottom: 8
   },
   groupLink: {
     fontSize: 14,
     color: "#0055a4",
-    fontWeight: "500",
-  },
+    fontWeight: "500"
+  }
 });

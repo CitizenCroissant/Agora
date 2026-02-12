@@ -4,7 +4,7 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  StyleSheet,
+  StyleSheet
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { DatePickerModal } from "@/app/components/DatePickerModal";
@@ -22,7 +22,7 @@ import {
   addWeeks,
   addMonths,
   formatDateRange,
-  formatMonth,
+  formatMonth
 } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 
@@ -48,7 +48,7 @@ export default function VotesTabScreen() {
   const [currentDate, setCurrentDate] = useState<string>(getTodayDate());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [pickerDate, setPickerDate] = useState<Date>(
-    () => new Date(getTodayDate() + "T12:00:00"),
+    () => new Date(getTodayDate() + "T12:00:00")
   );
 
   // Sync with URL ?date= for deep links (e.g. from timeline "Voir les scrutins")
@@ -135,7 +135,7 @@ export default function VotesTabScreen() {
   const scrutins = useMemo(() => data?.scrutins ?? [], [data]);
   const byDate = groupScrutinsByDate(scrutins);
   const sortedDates = Array.from(byDate.keys()).sort((a, b) =>
-    b.localeCompare(a),
+    b.localeCompare(a)
   );
 
   return (
@@ -168,14 +168,14 @@ export default function VotesTabScreen() {
               <TouchableOpacity
                 style={[
                   styles.viewButton,
-                  viewMode === "week" && styles.viewButtonActive,
+                  viewMode === "week" && styles.viewButtonActive
                 ]}
                 onPress={() => setViewMode("week")}
               >
                 <Text
                   style={[
                     styles.viewButtonText,
-                    viewMode === "week" && styles.viewButtonTextActive,
+                    viewMode === "week" && styles.viewButtonTextActive
                   ]}
                 >
                   S
@@ -184,14 +184,14 @@ export default function VotesTabScreen() {
               <TouchableOpacity
                 style={[
                   styles.viewButton,
-                  viewMode === "month" && styles.viewButtonActive,
+                  viewMode === "month" && styles.viewButtonActive
                 ]}
                 onPress={() => setViewMode("month")}
               >
                 <Text
                   style={[
                     styles.viewButtonText,
-                    viewMode === "month" && styles.viewButtonTextActive,
+                    viewMode === "month" && styles.viewButtonTextActive
                   ]}
                 >
                   M
@@ -235,7 +235,7 @@ export default function VotesTabScreen() {
                             styles.badge,
                             scrutin.sort_code === "adopté"
                               ? styles.badgeAdopte
-                              : styles.badgeRejete,
+                              : styles.badgeRejete
                           ]}
                         >
                           <Text style={styles.badgeText}>
@@ -297,23 +297,23 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.primaryTint,
     padding: spacing.lg,
     paddingBottom: spacing.md,
-    ...shadows.sm,
+    ...shadows.sm
   },
   topRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: spacing.md,
+    marginBottom: spacing.md
   },
   navigationControls: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: 6
   },
   rightControls: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.sm,
+    gap: spacing.sm
   },
   dateButton: {
     paddingHorizontal: spacing.md,
@@ -326,18 +326,18 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: radius.md,
     backgroundColor: colors.background,
-    minWidth: 44,
+    minWidth: 44
   },
   dateButtonText: {
     fontSize: typography.fontSize.lg,
-    lineHeight: 20,
+    lineHeight: 20
   },
   viewToggle: {
     flexDirection: "row",
     backgroundColor: colors.backgroundAlt,
     borderRadius: radius.md,
     padding: 3,
-    gap: 2,
+    gap: 2
   },
   viewButton: {
     width: 32,
@@ -345,19 +345,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 6,
-    backgroundColor: "transparent",
+    backgroundColor: "transparent"
   },
   viewButtonActive: {
     backgroundColor: colors.background,
-    ...shadows.sm,
+    ...shadows.sm
   },
   viewButtonText: {
     fontSize: typography.fontSize.md,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textLight,
+    color: colors.textLight
   },
   viewButtonTextActive: {
-    color: colors.primary,
+    color: colors.primary
   },
   iconButton: {
     width: 36,
@@ -367,44 +367,44 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radius.md,
-    backgroundColor: colors.background,
+    backgroundColor: colors.background
   },
   iconButtonText: {
     fontSize: 28,
     fontWeight: "300",
-    color: colors.text,
+    color: colors.text
   },
   todayButton: {
     paddingHorizontal: 14,
     paddingVertical: spacing.sm,
     backgroundColor: colors.primary,
-    borderRadius: radius.md,
+    borderRadius: radius.md
   },
   todayButtonText: {
     fontSize: 13,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.background,
+    color: colors.background
   },
   periodTitle: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
     color: colors.text,
     textAlign: "center",
-    textTransform: "capitalize",
+    textTransform: "capitalize"
   },
   content: {
-    flex: 1,
+    flex: 1
   },
   dateSection: {
     marginHorizontal: spacing.lg,
-    marginTop: 20,
+    marginTop: 20
   },
   dateSectionTitle: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
     color: colors.primary,
     marginBottom: spacing.md,
-    textTransform: "capitalize",
+    textTransform: "capitalize"
   },
   scrutinCard: {
     backgroundColor: colors.background,
@@ -413,69 +413,69 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     marginBottom: spacing.md,
-    ...shadows.sm,
+    ...shadows.sm
   },
   scrutinHeader: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: spacing.sm,
-    gap: spacing.sm,
+    gap: spacing.sm
   },
   badge: {
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
-    borderRadius: 6,
+    borderRadius: 6
   },
   badgeAdopte: {
-    backgroundColor: colors.successBg,
+    backgroundColor: colors.successBg
   },
   badgeRejete: {
-    backgroundColor: colors.errorBg,
+    backgroundColor: colors.errorBg
   },
   badgeText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.text,
+    color: colors.text
   },
   scrutinNumero: {
     fontSize: typography.fontSize.sm,
-    color: colors.textLight,
+    color: colors.textLight
   },
   scrutinTitle: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
     color: colors.text,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.sm
   },
   tagsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 6,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.sm
   },
   tag: {
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     backgroundColor: colors.primaryTint,
-    borderRadius: radius.lg,
+    borderRadius: radius.lg
   },
   tagText: {
     fontSize: 11,
     fontWeight: typography.fontWeight.medium,
-    color: colors.primary,
+    color: colors.primary
   },
   moreTags: {
     fontSize: 11,
     color: colors.textLight,
-    alignSelf: "center",
+    alignSelf: "center"
   },
   syntheseRow: {
     paddingTop: spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: colors.borderLight,
+    borderTopColor: colors.borderLight
   },
   syntheseText: {
     fontSize: typography.fontSize.sm,
-    color: colors.textLight,
-  },
+    color: colors.textLight
+  }
 });

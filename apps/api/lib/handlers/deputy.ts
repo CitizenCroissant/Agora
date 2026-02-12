@@ -21,7 +21,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({
       error: "MethodNotAllowed",
       message: "Only GET requests are allowed",
-      status: 405,
+      status: 405
     });
   }
 
@@ -68,7 +68,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       date_debut_mandat: deputy.date_debut_mandat,
       date_fin_mandat: deputy.date_fin_mandat ?? null,
       legislature: deputy.legislature,
-      official_url: deputy.official_url,
+      official_url: deputy.official_url
     };
 
     res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");

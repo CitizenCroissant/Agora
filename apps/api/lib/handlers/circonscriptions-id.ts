@@ -9,7 +9,7 @@ import { ApiError, handleError } from "../errors";
 import {
   getCirconscriptionDisplayName,
   isCurrentlySitting,
-  getCirconscriptionLabelsForId,
+  getCirconscriptionLabelsForId
 } from "@agora/shared";
 import type { Deputy, CirconscriptionDetail } from "@agora/shared";
 
@@ -50,7 +50,7 @@ function toDeputy(d: DeputyRow): Deputy {
     date_debut_mandat: d.date_debut_mandat,
     date_fin_mandat: d.date_fin_mandat ?? null,
     legislature: d.legislature,
-    official_url: d.official_url,
+    official_url: d.official_url
   };
 }
 
@@ -67,7 +67,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({
       error: "MethodNotAllowed",
       message: "Only GET requests are allowed",
-      status: 405,
+      status: 405
     });
   }
 
@@ -122,7 +122,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Return all deputies (active + former), but deputy_count = active only (matches list)
     const allDeputies = matching.map(toDeputy);
     const activeCount = matching.filter((d) =>
-      isCurrentlySitting(d.date_fin_mandat ?? null),
+      isCurrentlySitting(d.date_fin_mandat ?? null)
     ).length;
 
     const label =
@@ -134,7 +134,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       id: normalizedId,
       label,
       deputy_count: activeCount,
-      deputies: allDeputies,
+      deputies: allDeputies
     };
 
     res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");

@@ -34,7 +34,7 @@ export default function CirconscriptionPage() {
       setCirconscription(data);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Circonscription introuvable",
+        err instanceof Error ? err.message : "Circonscription introuvable"
       );
       setCirconscription(null);
     } finally {

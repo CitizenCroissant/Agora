@@ -47,7 +47,7 @@ export default function BillPage() {
       setBill(data);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Impossible de charger le texte",
+        err instanceof Error ? err.message : "Impossible de charger le texte"
       );
       setBill(null);
     } finally {
@@ -61,7 +61,7 @@ export default function BillPage() {
     bill?.scrutins.reduce(
       (sum, s) =>
         sum + s.synthese_pour + s.synthese_contre + s.synthese_abstentions,
-      0,
+      0
     ) ?? 0;
 
   return (
@@ -69,7 +69,7 @@ export default function BillPage() {
       <Breadcrumb
         items={[
           { label: "Textes", href: "/bills" },
-          { label: bill?.short_title || bill?.title || "Texte" },
+          { label: bill?.short_title || bill?.title || "Texte" }
         ]}
       />
       <PageHelp
@@ -77,7 +77,7 @@ export default function BillPage() {
         points={[
           "Le bandeau en haut présente le titre officiel du texte et, lorsque disponible, son type (projet/proposition) et son origine.",
           "La section « Scrutins associés » liste les votes de l\u2019Assemblée nationale concernant ce texte.",
-          "Vous pouvez ouvrir chaque scrutin pour voir le détail des résultats et le vote des députés.",
+          "Vous pouvez ouvrir chaque scrutin pour voir le détail des résultats et le vote des députés."
         ]}
       />
 

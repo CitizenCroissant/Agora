@@ -30,7 +30,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({
       error: "MethodNotAllowed",
       message: "Only GET requests are allowed",
-      status: 405,
+      status: 405
     });
   }
 
@@ -72,13 +72,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       throw new ApiError(
         500,
         "Failed to fetch related scrutins",
-        "DatabaseError",
+        "DatabaseError"
       );
     }
 
     const linkRows: DbBillScrutin[] = (links ?? []) as DbBillScrutin[];
     const scrutinIds = [
-      ...new Set(linkRows.map((l) => l.scrutin_id)),
+      ...new Set(linkRows.map((l) => l.scrutin_id))
     ] as string[];
 
     let scrutins: Scrutin[] = [];
@@ -111,7 +111,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         synthese_non_votants: row.synthese_non_votants,
         official_url: row.official_url,
         // tags are not joined here; tag them via separate endpoint if needed
-        tags: [],
+        tags: []
       }));
     }
 
@@ -138,7 +138,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         tags = tagDetails.map((tag: { id: string; slug: string; label: string }) => ({
           id: tag.id,
           slug: tag.slug,
-          label: tag.label,
+          label: tag.label
         }));
       }
     }
@@ -152,7 +152,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       origin: bill.origin ?? undefined,
       official_url: bill.official_url ?? undefined,
       tags,
-      scrutins,
+      scrutins
       // sittings can be derived client-side from scrutins.sitting_id if needed
     };
 

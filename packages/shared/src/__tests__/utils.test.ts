@@ -16,7 +16,7 @@ import {
   addMonths,
   formatDateRange,
   formatMonth,
-  isVoteLikeAgendaItem,
+  isVoteLikeAgendaItem
 } from "../utils";
 
 describe("utils", () => {
@@ -101,7 +101,7 @@ describe("utils", () => {
       const result = getDateRange("2024-01-15", 3, 3);
       expect(result).toEqual({
         from: "2024-01-12",
-        to: "2024-01-18",
+        to: "2024-01-18"
       });
     });
 
@@ -109,7 +109,7 @@ describe("utils", () => {
       const result = getDateRange("2024-01-15", 7, 1);
       expect(result).toEqual({
         from: "2024-01-08",
-        to: "2024-01-16",
+        to: "2024-01-16"
       });
     });
   });
@@ -213,21 +213,21 @@ describe("utils", () => {
   describe("isVoteLikeAgendaItem", () => {
     it("returns true when title contains vote-related keyword", () => {
       expect(
-        isVoteLikeAgendaItem("Scrutin sur le projet de loi", null, null),
+        isVoteLikeAgendaItem("Scrutin sur le projet de loi", null, null)
       ).toBe(true);
       expect(isVoteLikeAgendaItem("Vote sur un amendement", null, null)).toBe(
-        true,
+        true
       );
       expect(isVoteLikeAgendaItem("Adoption du texte", null, null)).toBe(true);
     });
     it("returns true when category contains vote-related keyword", () => {
       expect(isVoteLikeAgendaItem("Point ODJ", null, "scrutin solennel")).toBe(
-        true,
+        true
       );
     });
     it("returns false when no vote-related keyword", () => {
       expect(
-        isVoteLikeAgendaItem("Questions au Gouvernement", null, "questions"),
+        isVoteLikeAgendaItem("Questions au Gouvernement", null, "questions")
       ).toBe(false);
     });
     it("handles empty or null inputs", () => {

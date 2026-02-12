@@ -8,6 +8,7 @@ export function AppFooter() {
         <p>Agora - Données officielles de l&apos;Assemblée nationale</p>
         <div className={styles.footerLinks}>
           <Link href="/about">En savoir plus</Link>
+          <Link href="/democratie">Comprendre la démocratie</Link>
           <Link href="/sources">Sources</Link>
           <Link href="/votes">Scrutins</Link>
           <Link href="/timeline">Calendrier</Link>

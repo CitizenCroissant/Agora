@@ -6,9 +6,10 @@ import {
   StyleSheet,
   Linking,
   TouchableOpacity,
-  Switch,
+  Switch
 } from "react-native";
 import { useRouter } from "expo-router";
+import Constants from "expo-constants";
 import { colors } from "@/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Config } from "../../config";
@@ -19,7 +20,7 @@ import {
   registerPushToken,
   unregisterPushToken,
   FAVORITE_DEPUTY_KEY,
-  type PushTopic,
+  type PushTopic
 } from "../../lib/notifications";
 
 const PUSH_ENABLED_KEY = "@agora_push_enabled";
@@ -42,7 +43,7 @@ export default function AboutScreen() {
         AsyncStorage.getItem(PUSH_ENABLED_KEY),
         AsyncStorage.getItem(PUSH_TOKEN_KEY),
         AsyncStorage.getItem(PUSH_TOPIC_KEY),
-        AsyncStorage.getItem(FAVORITE_DEPUTY_KEY),
+        AsyncStorage.getItem(FAVORITE_DEPUTY_KEY)
       ]);
       setPushEnabled(enabled === "true");
       setPushTopic((topic === "my_deputy" ? "my_deputy" : "all") as PushTopic);
@@ -61,7 +62,7 @@ export default function AboutScreen() {
       return registerPushToken(token, {
         apiUrl: Config.API_URL,
         topic,
-        deputyActeurRef: topic === "my_deputy" ? deputyRef : null,
+        deputyActeurRef: topic === "my_deputy" ? deputyRef : null
       });
     },
     []
@@ -100,7 +101,7 @@ export default function AboutScreen() {
           await AsyncStorage.multiSet([
             [PUSH_ENABLED_KEY, "true"],
             [PUSH_TOKEN_KEY, token],
-            [PUSH_TOPIC_KEY, topic],
+            [PUSH_TOPIC_KEY, topic]
           ]);
           setPushEnabled(true);
         } else {
@@ -111,7 +112,7 @@ export default function AboutScreen() {
           await AsyncStorage.multiRemove([
             PUSH_ENABLED_KEY,
             PUSH_TOKEN_KEY,
-            PUSH_TOPIC_KEY,
+            PUSH_TOPIC_KEY
           ]);
           setPushEnabled(false);
         }
@@ -148,6 +149,12 @@ export default function AboutScreen() {
   const openLink = (url: string) => {
     Linking.openURL(url);
   };
+
+  // Web app URL for "Comprendre la démocratie" – update for production (e.g. your Vercel web URL)
+  const democratieWebUrl =
+    Constants.expoConfig?.extra?.webAppUrl != null
+      ? `${Constants.expoConfig.extra.webAppUrl}/democratie`
+      : "https://agora.example.com/democratie";
 
   return (
     <ScrollView style={styles.container}>
@@ -207,6 +214,20 @@ export default function AboutScreen() {
       </View>
 
       <View style={styles.section}>
+        <Text style={styles.heading}>Comprendre la démocratie</Text>
+        <Text style={styles.paragraph}>
+          Découvrez comment les lois sont votées, le rôle de l&apos;Assemblée et
+          du Sénat, et comment participer en tant que citoyen.
+        </Text>
+        <TouchableOpacity
+          style={styles.link}
+          onPress={() => openLink(democratieWebUrl)}
+        >
+          <Text style={styles.linkText}>Comprendre la démocratie →</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.section}>
         <Text style={styles.heading}>Sources de données</Text>
         <Text style={styles.paragraph}>
           Toutes les informations proviennent directement des sources
@@ -248,7 +269,7 @@ export default function AboutScreen() {
             <Text
               style={[
                 styles.paragraph,
-                { marginTop: 8, fontStyle: "italic", color: "#666" },
+                { marginTop: 8, fontStyle: "italic", color: "#666" }
               ]}
             >
               {getPushSupportError() ??
@@ -261,7 +282,7 @@ export default function AboutScreen() {
             <Text
               style={[
                 styles.paragraph,
-                { fontFamily: "monospace", fontSize: 12, marginTop: 4 },
+                { fontFamily: "monospace", fontSize: 12, marginTop: 4 }
               ]}
             >
               eas build --platform android --profile development
@@ -295,7 +316,7 @@ export default function AboutScreen() {
                   <TouchableOpacity
                     style={[
                       styles.topicButton,
-                      pushTopic === "all" && styles.topicButtonActive,
+                      pushTopic === "all" && styles.topicButtonActive
                     ]}
                     onPress={() => handleTopicChange("all")}
                     disabled={pushLoading}
@@ -303,7 +324,7 @@ export default function AboutScreen() {
                     <Text
                       style={[
                         styles.topicButtonText,
-                        pushTopic === "all" && styles.topicButtonTextActive,
+                        pushTopic === "all" && styles.topicButtonTextActive
                       ]}
                     >
                       Tous les scrutins
@@ -312,7 +333,7 @@ export default function AboutScreen() {
                   <TouchableOpacity
                     style={[
                       styles.topicButton,
-                      pushTopic === "my_deputy" && styles.topicButtonActive,
+                      pushTopic === "my_deputy" && styles.topicButtonActive
                     ]}
                     onPress={() => handleTopicChange("my_deputy")}
                     disabled={pushLoading}
@@ -321,7 +342,7 @@ export default function AboutScreen() {
                       style={[
                         styles.topicButtonText,
                         pushTopic === "my_deputy" &&
-                          styles.topicButtonTextActive,
+                          styles.topicButtonTextActive
                       ]}
                     >
                       Uniquement mon député
@@ -360,28 +381,28 @@ export default function AboutScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.background
   },
   section: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
+    borderBottomColor: colors.borderLight
   },
   heading: {
     fontSize: 20,
     fontWeight: "600",
     color: colors.primary,
-    marginBottom: 12,
+    marginBottom: 12
   },
   paragraph: {
     fontSize: 16,
     lineHeight: 24,
     color: colors.text,
-    marginBottom: 12,
+    marginBottom: 12
   },
   step: {
     flexDirection: "row",
-    marginBottom: 16,
+    marginBottom: 16
   },
   stepNumber: {
     width: 40,
@@ -390,69 +411,69 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 12,
+    marginRight: 12
   },
   stepNumberText: {
     color: colors.background,
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: "600"
   },
   stepContent: {
-    flex: 1,
+    flex: 1
   },
   stepTitle: {
     fontSize: 16,
     fontWeight: "600",
-    marginBottom: 4,
+    marginBottom: 4
   },
   stepText: {
     fontSize: 14,
     lineHeight: 20,
-    color: colors.textLight,
+    color: colors.textLight
   },
   link: {
-    paddingVertical: 8,
+    paddingVertical: 8
   },
   linkText: {
     fontSize: 16,
     color: colors.primary,
-    fontWeight: "500",
+    fontWeight: "500"
   },
   footer: {
     padding: 24,
-    alignItems: "center",
+    alignItems: "center"
   },
   footerText: {
     fontSize: 12,
     color: colors.textMuted,
-    marginBottom: 4,
+    marginBottom: 4
   },
   pushRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 8,
+    marginTop: 8
   },
   pushLabel: {
     fontSize: 16,
-    color: colors.text,
+    color: colors.text
   },
   pushError: {
     fontSize: 14,
     color: colors.error,
-    marginTop: 8,
+    marginTop: 8
   },
   topicRow: {
-    marginTop: 16,
+    marginTop: 16
   },
   topicLabel: {
     fontSize: 14,
     color: colors.textLight,
-    marginBottom: 8,
+    marginBottom: 8
   },
   topicButtons: {
     flexDirection: "row",
-    gap: 8,
+    gap: 8
   },
   topicButton: {
     paddingVertical: 8,
@@ -460,23 +481,23 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: colors.background,
+    backgroundColor: colors.background
   },
   topicButtonActive: {
     borderColor: colors.primary,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primary
   },
   topicButtonText: {
     fontSize: 14,
-    color: colors.text,
+    color: colors.text
   },
   topicButtonTextActive: {
     color: colors.background,
-    fontWeight: "600",
+    fontWeight: "600"
   },
   topicHint: {
     fontSize: 12,
     color: colors.textLight,
-    marginTop: 8,
-  },
+    marginTop: 8
+  }
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ScrutinsResponse, Scrutin } from "@agora/shared";
 import type { PoliticalGroupSummary } from "@agora/shared";
@@ -14,7 +14,7 @@ import {
   addWeeks,
   addMonths,
   formatDateRange,
-  formatMonth,
+  formatMonth
 } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import Link from "next/link";
@@ -44,7 +44,7 @@ const THEMATIC_TAGS = [
   { slug: "action-publique", label: "Action publique" },
   { slug: "amenagement", label: "Aménagement" },
   { slug: "autonomie", label: "Autonomie" },
-  { slug: "commerce", label: "Commerce" },
+  { slug: "commerce", label: "Commerce" }
 ];
 
 function groupScrutinsByDate(scrutins: Scrutin[]): Map<string, Scrutin[]> {
@@ -67,7 +67,7 @@ function VotesPageContent() {
   const [data, setData] = useState<ScrutinsResponse | null>(null);
   const [searchResults, setSearchResults] = useState<Scrutin[] | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>(
-    searchParams.get("q") ?? "",
+    searchParams.get("q") ?? ""
   );
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [loading, setLoading] = useState<boolean>(true);
@@ -79,7 +79,7 @@ function VotesPageContent() {
   const [groupPosition, setGroupPosition] = useState<GroupPosition | "">(
     groupPositionFromUrl && ["pour", "contre", "abstention"].includes(groupPositionFromUrl)
       ? groupPositionFromUrl
-      : "",
+      : ""
   );
   const [politicalGroups, setPoliticalGroups] = useState<PoliticalGroupSummary[]>([]);
   const [currentDate, setCurrentDate] = useState<string>(getTodayDate());
@@ -105,11 +105,7 @@ function VotesPageContent() {
     }
   }, [searchParams]);
 
-  useEffect(() => {
-    loadScrutins();
-  }, [viewMode, currentDate, selectedTag, searchQuery, groupSlug, groupPosition]);
-
-  const loadScrutins = async () => {
+  const loadScrutins = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -119,7 +115,7 @@ function VotesPageContent() {
         // Keyword search mode using /search endpoint
         const searchResponse = await apiClient.search(trimmedQuery, "scrutins", {
           group: groupSlug || undefined,
-          group_position: groupPosition || undefined,
+          group_position: groupPosition || undefined
         });
         setSearchResults(searchResponse.scrutins);
         setData(null);
@@ -138,7 +134,7 @@ function VotesPageContent() {
           to,
           selectedTag || undefined,
           groupSlug || undefined,
-          groupPosition || undefined,
+          groupPosition || undefined
         );
         setData(result);
         setSearchResults(null);
@@ -150,7 +146,11 @@ function VotesPageContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [viewMode, currentDate, selectedTag, searchQuery, groupSlug, groupPosition]);
+
+  useEffect(() => {
+    void loadScrutins();
+  }, [loadScrutins]);
 
   const handlePrevious = () => {
     if (viewMode === "week") {
@@ -201,8 +201,8 @@ function VotesPageContent() {
     new Set(
       baseScrutins
         .map((s) => s.type_vote_libelle)
-        .filter((t): t is string => Boolean(t)),
-    ),
+        .filter((t): t is string => Boolean(t))
+    )
   );
 
   const filteredScrutins =
@@ -220,7 +220,7 @@ function VotesPageContent() {
       ? groupScrutinsByDate(filteredScrutins)
       : new Map<string, Scrutin[]>();
   const sortedDates = Array.from(byDate.keys()).sort((a, b) =>
-    b.localeCompare(a),
+    b.localeCompare(a)
   );
 
   return (
@@ -232,7 +232,7 @@ function VotesPageContent() {
               "Chaque carte correspond à un scrutin (vote public) sur un texte ou un article.",
               "Utilisez la barre de recherche pour retrouver un scrutin par mots-clés (objet, texte, etc.).",
               "Les filtres permettent de restreindre la période, le type de vote, le résultat (adopté ou rejeté) et les thèmes.",
-              "Filtre avancé : choisissez un groupe politique pour n'afficher que les scrutins où ce groupe a voté, et optionnellement où sa position majoritaire est « pour », « contre » ou « abstention ».",
+              "Filtre avancé : choisissez un groupe politique pour n'afficher que les scrutins où ce groupe a voté, et optionnellement où sa position majoritaire est « pour », « contre » ou « abstention »."
             ]}
             collapsible
             defaultClosed

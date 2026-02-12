@@ -12,13 +12,13 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 const POSITION_LABELS: Record<string, string> = {
   majoritaire: "Majorité présidentielle",
   opposition: "Opposition",
-  minoritaire: "Minorité",
+  minoritaire: "Minorité"
 };
 
 const ORIENTATION_LABELS: Record<string, string> = {
   gauche: "Gauche",
   centre: "Centre",
-  droite: "Droite",
+  droite: "Droite"
 };
 
 export default function GroupPage() {
@@ -192,7 +192,7 @@ export default function GroupPage() {
                                           e.preventDefault();
                                           e.stopPropagation();
                                           router.push(
-                                            `/circonscriptions/${encodeURIComponent(d.circonscription_ref ?? "")}`,
+                                            `/circonscriptions/${encodeURIComponent(d.circonscription_ref ?? "")}`
                                           );
                                         }}
                                         onKeyDown={(e) => {
@@ -203,7 +203,7 @@ export default function GroupPage() {
                                             e.preventDefault();
                                             e.stopPropagation();
                                             router.push(
-                                              `/circonscriptions/${encodeURIComponent(d.circonscription_ref ?? "")}`,
+                                              `/circonscriptions/${encodeURIComponent(d.circonscription_ref ?? "")}`
                                             );
                                           }
                                         }}
@@ -266,7 +266,7 @@ export default function GroupPage() {
                                           e.preventDefault();
                                           e.stopPropagation();
                                           router.push(
-                                            `/circonscriptions/${encodeURIComponent(d.circonscription_ref ?? "")}`,
+                                            `/circonscriptions/${encodeURIComponent(d.circonscription_ref ?? "")}`
                                           );
                                         }}
                                         onKeyDown={(e) => {
@@ -277,7 +277,7 @@ export default function GroupPage() {
                                             e.preventDefault();
                                             e.stopPropagation();
                                             router.push(
-                                              `/circonscriptions/${encodeURIComponent(d.circonscription_ref ?? "")}`,
+                                              `/circonscriptions/${encodeURIComponent(d.circonscription_ref ?? "")}`
                                             );
                                           }
                                         }}

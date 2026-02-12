@@ -15,7 +15,7 @@ export function getTagKeywords(tagSlug: string): string[] {
       "collectivités",
       "collectivites",
       "territorial",
-      "administration publique",
+      "administration publique"
     ],
     agriculture: [
       "agriculture",
@@ -29,7 +29,7 @@ export function getTagKeywords(tagSlug: string): string[] {
       "ruralite",
       "exploitation agricole",
       "PAC",
-      "politique agricole",
+      "politique agricole"
     ],
     amenagement: [
       "aménagement",
@@ -44,7 +44,7 @@ export function getTagKeywords(tagSlug: string): string[] {
       "region",
       "commune",
       "intercommunalité",
-      "intercommunalite",
+      "intercommunalite"
     ],
     autonomie: [
       "handicap",
@@ -56,7 +56,7 @@ export function getTagKeywords(tagSlug: string): string[] {
       "personnes handicapées",
       "personnes handicapees",
       "AAH",
-      "allocation",
+      "allocation"
     ],
     commerce: [
       "commerce",
@@ -68,7 +68,7 @@ export function getTagKeywords(tagSlug: string): string[] {
       "commerçant",
       "commercant",
       "artisan",
-      "entrepreneur",
+      "entrepreneur"
     ],
     culture: [
       "culture",
@@ -84,7 +84,7 @@ export function getTagKeywords(tagSlug: string): string[] {
       "édition",
       "edition",
       "média",
-      "media",
+      "media"
     ],
     economie: [
       "économie",
@@ -103,7 +103,7 @@ export function getTagKeywords(tagSlug: string): string[] {
       "souverainete industrielle",
       "PIB",
       "croissance",
-      "investissement",
+      "investissement"
     ],
     education: [
       "éducation",
@@ -122,7 +122,7 @@ export function getTagKeywords(tagSlug: string): string[] {
       "lycée",
       "lycee",
       "collège",
-      "college",
+      "college"
     ],
     europe: [
       "europe",
@@ -137,7 +137,7 @@ export function getTagKeywords(tagSlug: string): string[] {
       "relations internationales",
       "étranger",
       "etranger",
-      "international",
+      "international"
     ],
     interieur: [
       "sécurité",
@@ -151,7 +151,7 @@ export function getTagKeywords(tagSlug: string): string[] {
       "securite publique",
       "défense",
       "defense",
-      "terrorisme",
+      "terrorisme"
     ],
     justice: [
       "justice",
@@ -166,7 +166,7 @@ export function getTagKeywords(tagSlug: string): string[] {
       "procureur",
       "avocat",
       "loi",
-      "code",
+      "code"
     ],
     logement: [
       "logement",
@@ -180,7 +180,7 @@ export function getTagKeywords(tagSlug: string): string[] {
       "logement décent",
       "logement decent",
       "hébergement",
-      "hebergement",
+      "hebergement"
     ],
     sante: [
       "santé",
@@ -199,7 +199,7 @@ export function getTagKeywords(tagSlug: string): string[] {
       "pharmacie",
       "maladie",
       "santé mentale",
-      "sante mentale",
+      "sante mentale"
     ],
     environnement: [
       "environnement",
@@ -224,7 +224,7 @@ export function getTagKeywords(tagSlug: string): string[] {
       "pollution",
       "déchet",
       "dechet",
-      "eau",
+      "eau"
     ],
     transport: [
       "transport",
@@ -242,7 +242,7 @@ export function getTagKeywords(tagSlug: string): string[] {
       "metro",
       "véhicule",
       "vehicule",
-      "automobile",
+      "automobile"
     ],
     travail: [
       "travail",
@@ -260,8 +260,8 @@ export function getTagKeywords(tagSlug: string): string[] {
       "sécurité sociale",
       "securite sociale",
       "assurance chômage",
-      "assurance chomage",
-    ],
+      "assurance chomage"
+    ]
   };
 
   return keywords[tagSlug] || [];
@@ -287,6 +287,6 @@ export function getAllTagSlugs(): string[] {
     "sante",
     "environnement",
     "transport",
-    "travail",
+    "travail"
   ];
 }

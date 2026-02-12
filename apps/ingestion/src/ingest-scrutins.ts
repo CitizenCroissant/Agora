@@ -51,7 +51,7 @@ function getDefaultDateRange(): { from: string; to: string } {
   from.setDate(from.getDate() - 7);
   return {
     from: from.toISOString().split("T")[0],
-    to: to.toISOString().split("T")[0],
+    to: to.toISOString().split("T")[0]
   };
 }
 
@@ -80,7 +80,7 @@ function extractBillTitle(raw: AssembleeScrutin): string | null {
   const patterns = [
     /proposition de loi.*$/i,
     /projet de loi.*$/i,
-    /résolution.*$/i,
+    /résolution.*$/i
   ];
 
   let matchText: string | null = null;
@@ -102,7 +102,7 @@ function extractBillTitle(raw: AssembleeScrutin): string | null {
  * Compute a stable internal key + human title for the bill this scrutin belongs to.
  */
 function getBillKey(
-  raw: AssembleeScrutin,
+  raw: AssembleeScrutin
 ): { key: string; title: string } | null {
   const title = extractBillTitle(raw);
   if (!title) return null;
@@ -134,7 +134,7 @@ export async function ingestScrutins(options: IngestScrutinsOptions = {}) {
       console.log(
         "Dry run - would upsert scrutin:",
         raw.uid,
-        raw.titre?.slice(0, 50),
+        raw.titre?.slice(0, 50)
       );
       continue;
     }
@@ -146,7 +146,7 @@ export async function ingestScrutins(options: IngestScrutinsOptions = {}) {
       .from("scrutins")
       .upsert(row, {
         onConflict: "official_id",
-        ignoreDuplicates: false,
+        ignoreDuplicates: false
       })
       .select()
       .single();
@@ -173,12 +173,12 @@ export async function ingestScrutins(options: IngestScrutinsOptions = {}) {
             // type, origin, official_url can be enriched later from other datasets
             type: null,
             origin: null,
-            official_url: null,
+            official_url: null
           },
           {
             onConflict: "official_id",
-            ignoreDuplicates: false,
-          },
+            ignoreDuplicates: false
+          }
         )
         .select()
         .maybeSingle();
@@ -188,7 +188,7 @@ export async function ingestScrutins(options: IngestScrutinsOptions = {}) {
           "Error upserting bill for scrutin",
           raw.uid,
           billKey.key,
-          billError,
+          billError
         );
       } else if (bill?.id) {
         const { error: linkError } = await supabase.from("bill_scrutins")
@@ -196,12 +196,12 @@ export async function ingestScrutins(options: IngestScrutinsOptions = {}) {
             {
               bill_id: bill.id,
               scrutin_id: scrutin.id,
-              role: null,
+              role: null
             },
             {
               onConflict: "bill_id,scrutin_id",
-              ignoreDuplicates: false,
-            },
+              ignoreDuplicates: false
+            }
           );
 
         if (linkError) {
@@ -209,7 +209,7 @@ export async function ingestScrutins(options: IngestScrutinsOptions = {}) {
             "Error linking bill to scrutin",
             bill.id,
             scrutin.id,
-            linkError,
+            linkError
           );
         }
       }
@@ -226,7 +226,7 @@ export async function ingestScrutins(options: IngestScrutinsOptions = {}) {
         console.error(
           "Error inserting scrutin_votes for",
           scrutin.id,
-          votesError,
+          votesError
         );
       } else {
         votesInserted += voteRows.length;
@@ -240,13 +240,13 @@ export async function ingestScrutins(options: IngestScrutinsOptions = {}) {
       // Non-critical: log but don't fail ingestion
       console.error(
         `Error tagging scrutin ${scrutin.id}:`,
-        tagError instanceof Error ? tagError.message : tagError,
+        tagError instanceof Error ? tagError.message : tagError
       );
     }
   }
 
   console.log(
-    `Scrutins: ${inserted} upserted, ${votesInserted} vote rows inserted`,
+    `Scrutins: ${inserted} upserted, ${votesInserted} vote rows inserted`
   );
   return { scrutins: inserted, scrutinVotes: votesInserted };
 }

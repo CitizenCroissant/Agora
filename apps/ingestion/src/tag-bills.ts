@@ -80,7 +80,7 @@ export function matchBillTags(
   billId: string,
   title: string,
   shortTitle: string | null | undefined,
-  tags: ThematicTag[],
+  tags: ThematicTag[]
 ): BillTagRow[] {
   const textToAnalyze = normalise([title, shortTitle].filter(Boolean).join(" "));
 
@@ -101,7 +101,7 @@ export function matchBillTags(
         bill_id: billId,
         tag_id: tag.id,
         source: "auto",
-        confidence: Math.round(confidence * 100) / 100,
+        confidence: Math.round(confidence * 100) / 100
       });
     }
   }
@@ -116,7 +116,7 @@ export function matchBillTags(
 export async function tagBill(
   billId: string,
   title: string,
-  shortTitle?: string | null,
+  shortTitle?: string | null
 ): Promise<void> {
   const tags = await getThematicTags();
   if (!tags || tags.length === 0) return;

@@ -25,14 +25,14 @@ export interface IngestionLogEntry {
  */
 export async function logStart(
   jobName: JobName,
-  triggeredBy: TriggeredBy,
+  triggeredBy: TriggeredBy
 ): Promise<IngestionLogEntry | null> {
   const { data, error } = await supabase
     .from("ingestion_logs")
     .insert({
       job_name: jobName,
       triggered_by: triggeredBy,
-      status: "running",
+      status: "running"
     })
     .select("id, job_name, triggered_by, started_at")
     .single();
@@ -50,7 +50,7 @@ export async function logStart(
  */
 export async function logSuccess(
   logId: string,
-  details: Record<string, unknown>,
+  details: Record<string, unknown>
 ): Promise<void> {
   const now = new Date().toISOString();
 
@@ -71,7 +71,7 @@ export async function logSuccess(
       status: "success",
       finished_at: now,
       duration_ms: durationMs,
-      details,
+      details
     })
     .eq("id", logId);
 
@@ -86,7 +86,7 @@ export async function logSuccess(
 export async function logError(
   logId: string,
   errorMessage: string,
-  details?: Record<string, unknown>,
+  details?: Record<string, unknown>
 ): Promise<void> {
   const now = new Date().toISOString();
 
@@ -107,7 +107,7 @@ export async function logError(
       finished_at: now,
       duration_ms: durationMs,
       error_message: errorMessage,
-      details: details ?? null,
+      details: details ?? null
     })
     .eq("id", logId);
 

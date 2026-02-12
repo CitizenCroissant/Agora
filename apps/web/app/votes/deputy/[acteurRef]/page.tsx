@@ -13,7 +13,7 @@ const POSITION_LABELS: Record<string, string> = {
   pour: "Pour",
   contre: "Contre",
   abstention: "Abstention",
-  non_votant: "Non votant",
+  non_votant: "Non votant"
 };
 
 export default function DeputyVotesByRefPage() {
@@ -38,7 +38,7 @@ export default function DeputyVotesByRefPage() {
       setData(result);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Impossible de charger les votes",
+        err instanceof Error ? err.message : "Impossible de charger les votes"
       );
       setData(null);
     } finally {

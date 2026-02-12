@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AgendaRangeResponse } from "@agora/shared";
 import {
   getTodayDate,
@@ -13,7 +13,7 @@ import {
   addMonths,
   formatDateRange,
   formatMonth,
-  isVoteLikeAgendaItem,
+  isVoteLikeAgendaItem
 } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import Link from "next/link";
@@ -24,7 +24,7 @@ type ViewMode = "week" | "month";
 
 export default function TimelinePage() {
   const [agendaRange, setAgendaRange] = useState<AgendaRangeResponse | null>(
-    null,
+    null
   );
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,11 +32,7 @@ export default function TimelinePage() {
   const [currentDate, setCurrentDate] = useState<string>(getTodayDate());
   const [dateInput, setDateInput] = useState<string>(getTodayDate());
 
-  useEffect(() => {
-    loadTimeline();
-  }, [viewMode, currentDate]);
-
-  const loadTimeline = async () => {
+  const loadTimeline = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -59,7 +55,11 @@ export default function TimelinePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [viewMode, currentDate]);
+
+  useEffect(() => {
+    void loadTimeline();
+  }, [loadTimeline]);
 
   const handlePrevious = () => {
     if (viewMode === "week") {
@@ -222,8 +222,8 @@ export default function TimelinePage() {
                               isVoteLikeAgendaItem(
                                 item.title,
                                 item.description,
-                                item.category,
-                              ),
+                                item.category
+                              )
                             );
                             return (
                               <Link

@@ -21,7 +21,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({
       error: "MethodNotAllowed",
       message: "Only GET requests are allowed",
-      status: 405,
+      status: 405
     });
   }
 
@@ -60,7 +60,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const response: DeputyVotesResponse = {
         acteur_ref: acteurRef,
         acteur_nom: acteurNom,
-        votes: [],
+        votes: []
       };
       res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate");
       return res.status(200).json(response);
@@ -80,8 +80,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const scrutinsById = new Map(
       scrutins.map((s: { id: string; titre: string; date_scrutin: string }) => [
         s.id,
-        { titre: s.titre, date_scrutin: s.date_scrutin },
-      ]),
+        { titre: s.titre, date_scrutin: s.date_scrutin }
+      ])
     );
 
     const voteRecords = votes.map(
@@ -95,9 +95,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             | "pour"
             | "contre"
             | "abstention"
-            | "non_votant",
+            | "non_votant"
         };
-      },
+      }
     );
 
     // Sort by date descending
@@ -106,7 +106,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const response: DeputyVotesResponse = {
       acteur_ref: acteurRef,
       acteur_nom: acteurNom,
-      votes: voteRecords,
+      votes: voteRecords
     };
 
     res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate");

@@ -6,7 +6,7 @@ import {
   getTodayDate,
   formatDate,
   addDays,
-  isVoteLikeAgendaItem,
+  isVoteLikeAgendaItem
 } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import Link from "next/link";
@@ -17,13 +17,13 @@ const DAYS_AHEAD = 14;
 
 function filterVoteLikeItems(items: AgendaItem[]): AgendaItem[] {
   return items.filter((item) =>
-    isVoteLikeAgendaItem(item.title, item.description, item.category),
+    isVoteLikeAgendaItem(item.title, item.description, item.category)
   );
 }
 
 export default function UpcomingVotesPage() {
   const [agendaRange, setAgendaRange] = useState<AgendaRangeResponse | null>(
-    null,
+    null
   );
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +42,7 @@ export default function UpcomingVotesPage() {
       setAgendaRange(data);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to load upcoming agenda",
+        err instanceof Error ? err.message : "Failed to load upcoming agenda"
       );
       setAgendaRange(null);
     } finally {
@@ -67,9 +67,9 @@ export default function UpcomingVotesPage() {
             sitting: {
               id: sitting.id,
               title: sitting.title,
-              time_range: sitting.time_range,
+              time_range: sitting.time_range
             },
-            voteLikeItems,
+            voteLikeItems
           });
         }
       }

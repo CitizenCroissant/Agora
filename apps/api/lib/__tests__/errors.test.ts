@@ -29,7 +29,7 @@ describe('errors', () => {
     it('should handle ApiError correctly', () => {
       const mockRes = {
         status: vi.fn().mockReturnThis(),
-        json: vi.fn(),
+        json: vi.fn()
       };
 
       const error = new ApiError(404, 'Not Found', 'NotFound');
@@ -40,14 +40,14 @@ describe('errors', () => {
       expect(mockRes.json).toHaveBeenCalledWith({
         error: 'NotFound',
         message: 'Not Found',
-        status: 404,
+        status: 404
       });
     });
 
     it('should handle unknown errors as 500', () => {
       const mockRes = {
         status: vi.fn().mockReturnThis(),
-        json: vi.fn(),
+        json: vi.fn()
       };
 
       const error = new Error('Unknown error');
@@ -58,7 +58,7 @@ describe('errors', () => {
       expect(mockRes.json).toHaveBeenCalledWith({
         error: 'InternalServerError',
         message: 'An unexpected error occurred',
-        status: 500,
+        status: 500
       });
     });
   });

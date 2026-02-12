@@ -11,7 +11,7 @@ import type {
   Deputy,
   PoliticalGroupDetail,
   PoliticalOrientation,
-  PoliticalPosition,
+  PoliticalPosition
 } from "@agora/shared";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -27,7 +27,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({
       error: "MethodNotAllowed",
       message: "Only GET requests are allowed",
-      status: 405,
+      status: 405
     });
   }
 
@@ -57,7 +57,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { data: metaRowBySlug } = await supabase
       .from("political_groups_metadata")
       .select(
-        "label, date_debut, date_fin, position_politique, orientation, couleur_hex, president_name, legislature, official_url",
+        "label, date_debut, date_fin, position_politique, orientation, couleur_hex, president_name, legislature, official_url"
       )
       .eq("slug", slug)
       .maybeSingle();
@@ -78,8 +78,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         ...new Set(
           (allDeputies ?? [])
             .map((r) => (r.groupe_politique ?? "").trim())
-            .filter(Boolean),
-        ),
+            .filter(Boolean)
+        )
       ];
       const labelBySlug = new Map(labels.map((l) => [slugify(l), l]));
       label = labelBySlug.get(slug) ?? null;
@@ -115,7 +115,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       date_debut_mandat: d.date_debut_mandat,
       date_fin_mandat: d.date_fin_mandat ?? null,
       legislature: d.legislature,
-      official_url: d.official_url,
+      official_url: d.official_url
     }));
 
     // Optional metadata (already loaded above if we had a metadata row)
@@ -131,7 +131,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         color_hex: metaRow.couleur_hex ?? null,
         president_name: metaRow.president_name ?? null,
         legislature: metaRow.legislature ?? null,
-        official_url: metaRow.official_url ?? null,
+        official_url: metaRow.official_url ?? null
       };
     }
 
@@ -140,7 +140,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       label,
       deputy_count: deputies.length,
       deputies,
-      metadata: metadata ?? undefined,
+      metadata: metadata ?? undefined
     };
 
     res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");

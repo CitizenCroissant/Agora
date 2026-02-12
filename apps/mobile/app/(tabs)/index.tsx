@@ -148,16 +148,16 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.primaryTint,
     padding: spacing.lg,
     paddingBottom: spacing.md,
-    ...shadows.sm,
+    ...shadows.sm
   },
   topRow: {
-    marginBottom: spacing.md,
+    marginBottom: spacing.md
   },
   navigationControls: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   iconButton: {
     width: 36,
@@ -167,32 +167,32 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radius.md,
-    backgroundColor: colors.background,
+    backgroundColor: colors.background
   },
   iconButtonText: {
     fontSize: 28,
     fontWeight: '300',
     color: colors.text,
-    lineHeight: 32,
+    lineHeight: 32
   },
   todayButton: {
     paddingHorizontal: 14,
     paddingVertical: spacing.sm,
     backgroundColor: colors.primary,
     borderRadius: radius.md,
-    marginLeft: 6,
+    marginLeft: 6
   },
   todayButtonText: {
     fontSize: 13,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.background,
+    color: colors.background
   },
   dateTitle: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
     color: colors.text,
     textAlign: 'center',
-    textTransform: 'capitalize',
+    textTransform: 'capitalize'
   },
   voteCta: {
     marginHorizontal: spacing.lg,
@@ -202,16 +202,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primaryTintLight,
     borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: colors.primaryTintStrong,
+    borderColor: colors.primaryTintStrong
   },
   voteCtaText: {
     fontSize: 15,
     fontWeight: typography.fontWeight.semibold,
     color: colors.primary,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   content: {
-    flex: 1,
+    flex: 1
   },
   sittingCard: {
     backgroundColor: colors.background,
@@ -221,20 +221,20 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     borderWidth: 1,
     borderColor: colors.border,
-    ...shadows.md,
+    ...shadows.md
   },
   sittingHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: spacing.sm,
+    marginBottom: spacing.sm
   },
   sittingTitle: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.semibold,
     color: colors.primary,
     flex: 1,
-    marginRight: spacing.sm,
+    marginRight: spacing.sm
   },
   timeRange: {
     fontSize: typography.fontSize.sm,
@@ -242,42 +242,42 @@ const styles = StyleSheet.create({
     backgroundColor: colors.backgroundAlt,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
-    borderRadius: radius.sm,
+    borderRadius: radius.sm
   },
   location: {
     fontSize: typography.fontSize.md,
     color: colors.textLight,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.sm
   },
   description: {
     fontSize: typography.fontSize.md,
     lineHeight: 20,
     color: colors.text,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.sm
   },
   itemsCount: {
     paddingTop: spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: colors.borderLight,
+    borderTopColor: colors.borderLight
   },
   itemsCountText: {
     fontSize: typography.fontSize.sm,
-    color: colors.textLight,
+    color: colors.textLight
   },
   source: {
     margin: spacing.lg,
     padding: spacing.lg,
     backgroundColor: colors.backgroundAlt,
     borderRadius: radius.md,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   sourceLabel: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.semibold,
-    marginBottom: spacing.xs,
+    marginBottom: spacing.xs
   },
   sourceDate: {
     fontSize: typography.fontSize.xs,
-    color: colors.textLight,
-  },
+    color: colors.textLight
+  }
 })

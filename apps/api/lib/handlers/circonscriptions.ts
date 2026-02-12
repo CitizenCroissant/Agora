@@ -10,7 +10,7 @@ import { ApiError, handleError } from "../errors";
 import { getCirconscriptionLabelsForId } from "@agora/shared";
 import type {
   CirconscriptionSummary,
-  CirconscriptionsListResponse,
+  CirconscriptionsListResponse
 } from "@agora/shared";
 
 const todayIso = () => new Date().toISOString().split("T")[0];
@@ -28,7 +28,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({
       error: "MethodNotAllowed",
       message: "Only GET requests are allowed",
-      status: 405,
+      status: 405
     });
   }
 
@@ -43,7 +43,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       throw new ApiError(
         500,
         "Failed to fetch circonscriptions",
-        "DatabaseError",
+        "DatabaseError"
       );
     }
 
@@ -84,8 +84,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       (c) => ({
         id: c.id,
         label: c.label ?? c.id,
-        deputy_count: countById.get(c.id) ?? 0,
-      }),
+        deputy_count: countById.get(c.id) ?? 0
+      })
     );
 
     const response: CirconscriptionsListResponse = { circonscriptions };

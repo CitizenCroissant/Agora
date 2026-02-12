@@ -26,6 +26,7 @@ const STATIC_DESCRIPTION_PAGES: {
 }[] = [
   { path: "/", changeFrequency: "weekly", priority: 1 },
   { path: "/about", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/democratie", changeFrequency: "monthly", priority: 0.8 },
   { path: "/sources", changeFrequency: "monthly", priority: 0.8 },
   { path: "/votes", changeFrequency: "daily", priority: 0.7 },
   { path: "/votes/upcoming", changeFrequency: "daily", priority: 0.7 },
@@ -33,7 +34,7 @@ const STATIC_DESCRIPTION_PAGES: {
   { path: "/mon-depute", changeFrequency: "weekly", priority: 0.8 },
   { path: "/circonscriptions", changeFrequency: "weekly", priority: 0.7 },
   { path: "/timeline", changeFrequency: "daily", priority: 0.7 },
-  { path: "/search", changeFrequency: "weekly", priority: 0.6 },
+  { path: "/search", changeFrequency: "weekly", priority: 0.6 }
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -43,7 +44,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}${path}`,
       lastModified: new Date(),
       changeFrequency,
-      priority,
+      priority
     })
   );
 }

@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
-  Linking,
+  Linking
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams, Stack } from "expo-router";
@@ -18,7 +18,7 @@ import { Config } from "@/config";
 import {
   registerPushToken,
   isPushSupported,
-  FAVORITE_DEPUTY_KEY,
+  FAVORITE_DEPUTY_KEY
 } from "@/lib/notifications";
 import { colors } from "@/theme";
 
@@ -80,7 +80,7 @@ export default function DeputyDetailScreen() {
         await registerPushToken(token, {
           apiUrl: Config.API_URL,
           topic: "my_deputy",
-          deputyActeurRef: deputy.acteur_ref,
+          deputyActeurRef: deputy.acteur_ref
         });
       }
     }
@@ -91,7 +91,7 @@ export default function DeputyDetailScreen() {
       <Stack.Screen
         options={{
           headerTitle: displayName || "Député",
-          headerBackTitle: "Retour",
+          headerBackTitle: "Retour"
         }}
       />
       <ScrollView style={styles.container}>
@@ -285,107 +285,107 @@ export default function DeputyDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#fff"
   },
   centerContent: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 48,
+    padding: 48
   },
   loadingText: {
     marginTop: 16,
     color: "#666",
-    fontSize: 16,
+    fontSize: 16
   },
   errorContainer: {
     padding: 24,
-    alignItems: "center",
+    alignItems: "center"
   },
   errorText: {
     color: "#ef4135",
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: "500"
   },
   content: {
-    padding: 16,
+    padding: 16
   },
   header: {
     marginBottom: 20,
     paddingBottom: 16,
     borderBottomWidth: 2,
-    borderBottomColor: "#e0e0e0",
+    borderBottomColor: "#e0e0e0"
   },
   title: {
     fontSize: 24,
     fontWeight: "700",
     color: "#0055a4",
-    marginBottom: 8,
+    marginBottom: 8
   },
   badge: {
     alignSelf: "flex-start",
     backgroundColor: "rgba(0, 85, 164, 0.15)",
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 8,
+    borderRadius: 8
   },
   badgeText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#0055a4",
+    color: "#0055a4"
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 20
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
     color: "#0055a4",
-    marginBottom: 12,
+    marginBottom: 12
   },
   infoRow: {
-    marginBottom: 8,
+    marginBottom: 8
   },
   infoLabel: {
     fontSize: 12,
     color: "#666",
-    marginBottom: 2,
+    marginBottom: 2
   },
   infoValue: {
     fontSize: 16,
-    color: "#333",
+    color: "#333"
   },
   linkText: {
     fontSize: 16,
     color: "#0055a4",
-    fontWeight: "500",
+    fontWeight: "500"
   },
   actions: {
     marginTop: 16,
-    gap: 12,
+    gap: 12
   },
   actionButton: {
-    paddingVertical: 12,
+    paddingVertical: 12
   },
   actionText: {
     fontSize: 14,
     color: "#0055a4",
-    fontWeight: "500",
+    fontWeight: "500"
   },
   notifyButton: {
     backgroundColor: "rgba(0, 85, 164, 0.08)",
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#0055a4",
+    borderColor: "#0055a4"
   },
   notifyButtonText: {
     fontSize: 16,
     color: "#0055a4",
-    fontWeight: "600",
+    fontWeight: "600"
   },
   notifyButtonSubtext: {
     fontSize: 12,
     color: "#666",
-    marginTop: 4,
-  },
+    marginTop: 4
+  }
 });

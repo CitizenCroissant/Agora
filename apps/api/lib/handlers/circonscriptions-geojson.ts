@@ -35,7 +35,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({
       error: "MethodNotAllowed",
       message: "Only GET requests are allowed",
-      status: 405,
+      status: 405
     });
   }
 
@@ -50,7 +50,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       throw new ApiError(
         500,
         "Failed to fetch circonscriptions",
-        "DatabaseError",
+        "DatabaseError"
       );
     }
 
@@ -60,17 +60,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           typeof r.id === "string" &&
           typeof r.label === "string" &&
           r.geometry != null &&
-          typeof r.geometry === "object",
+          typeof r.geometry === "object"
       )
       .map((r) => ({
         type: "Feature" as const,
         properties: { id: r.id, label: r.label },
-        geometry: r.geometry as GeoJSONGeometry,
+        geometry: r.geometry as GeoJSONGeometry
       }));
 
     const collection: GeoJSONFeatureCollection = {
       type: "FeatureCollection",
-      features,
+      features
     };
 
     res.setHeader("Cache-Control", "s-maxage=86400, stale-while-revalidate");

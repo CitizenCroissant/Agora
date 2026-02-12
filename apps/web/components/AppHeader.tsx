@@ -10,7 +10,13 @@ type NavChild = {
   href: string;
 };
 
-type NavSectionId = "home" | "votes" | "calendar" | "explore" | "about";
+type NavSectionId =
+  | "home"
+  | "votes"
+  | "calendar"
+  | "explore"
+  | "comprendre"
+  | "about";
 
 type NavSection = {
   id: NavSectionId;
@@ -28,8 +34,8 @@ const NAV_SECTIONS: NavSection[] = [
     children: [
       { label: "Tous les scrutins", href: "/votes" },
       { label: "Prochains votes", href: "/votes/upcoming" },
-      { label: "Votes par député", href: "/votes/deputy" },
-    ],
+      { label: "Votes par député", href: "/votes/deputy" }
+    ]
   },
   { id: "calendar", label: "Calendrier", href: "/timeline" },
   {
@@ -41,15 +47,16 @@ const NAV_SECTIONS: NavSection[] = [
       { label: "Groupes politiques", href: "/groupes" },
       { label: "Mon député", href: "/mon-depute" },
       { label: "Circonscriptions", href: "/circonscriptions" },
-      { label: "Recherche", href: "/search" },
-    ],
+      { label: "Recherche", href: "/search" }
+    ]
   },
+  { id: "comprendre", label: "Comprendre", href: "/democratie" },
   {
     id: "about",
     label: "À propos",
     href: "/about",
-    children: [{ label: "Sources de données", href: "/sources" }],
-  },
+    children: [{ label: "Sources de données", href: "/sources" }]
+  }
 ] satisfies NavSection[];
 
 export function AppHeader() {
@@ -92,21 +99,25 @@ export function AppHeader() {
               const isActive =
                 pathname === section.href ||
                 !!section.children?.some((child) =>
-                  pathname.startsWith(child.href),
+                  pathname.startsWith(child.href)
                 );
 
               const itemClass = [
                 styles.navItem,
                 (hasChildren ? isActive || isOpen : isActive)
                   ? styles.navItemActive
-                  : "",
+                  : ""
               ]
                 .filter(Boolean)
                 .join(" ");
 
               if (!hasChildren) {
                 return (
-                  <Link key={section.id} href={section.href} className={itemClass}>
+                  <Link
+                    key={section.id}
+                    href={section.href}
+                    className={itemClass}
+                  >
                     {section.label}
                   </Link>
                 );

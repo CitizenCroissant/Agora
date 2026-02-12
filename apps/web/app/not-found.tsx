@@ -10,7 +10,7 @@ export default function NotFound() {
         alignItems: "center",
         justifyContent: "center",
         padding: "2rem",
-        fontFamily: "system-ui, sans-serif",
+        fontFamily: "system-ui, sans-serif"
       }}
     >
       <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>404</h1>
@@ -22,7 +22,7 @@ export default function NotFound() {
         style={{
           color: "#0055a4",
           fontWeight: 600,
-          textDecoration: "none",
+          textDecoration: "none"
         }}
       >
         ← Retour à l&apos;accueil

@@ -10,11 +10,11 @@ import { ApiError, handleError } from "../errors";
 import {
   isCurrentlySitting,
   ALL_DEPARTEMENT_NAMES,
-  getCanonicalDepartementName,
+  getCanonicalDepartementName
 } from "@agora/shared";
 import type {
   DepartementSummary,
-  DepartementsListResponse,
+  DepartementsListResponse
 } from "@agora/shared";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -30,7 +30,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({
       error: "MethodNotAllowed",
       message: "Only GET requests are allowed",
-      status: 405,
+      status: 405
     });
   }
 
@@ -67,7 +67,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const departements: DepartementSummary[] = ALL_DEPARTEMENT_NAMES.map(
       (name) => ({
         name,
-        deputy_count: countByName.get(name) ?? 0,
+        deputy_count: countByName.get(name) ?? 0
       })
     );
 

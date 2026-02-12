@@ -8,7 +8,7 @@
 
 import {
   ingestCirconscriptions,
-  IngestCirconscriptionsOptions,
+  IngestCirconscriptionsOptions
 } from "./ingest-circonscriptions";
 
 const args = process.argv.slice(2);

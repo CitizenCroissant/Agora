@@ -11,7 +11,7 @@ import {
   getScrutinThematicTags,
   matchScrutinTags,
   batchDeleteScrutinTags,
-  batchUpsertScrutinTags,
+  batchUpsertScrutinTags
 } from "./tag-scrutins";
 
 const PAGE_SIZE = 1000;
@@ -22,7 +22,7 @@ async function fetchAllScrutins(): Promise<
   const all: Array<{ id: string; titre: string; official_id: string }> = [];
 
   let offset = 0;
-  // eslint-disable-next-line no-constant-condition
+   
   while (true) {
     const { data, error } = await supabase
       .from("scrutins")
@@ -49,7 +49,7 @@ async function fetchAllScrutins(): Promise<
 async function fetchTaggedScrutinIds(): Promise<Set<string>> {
   const taggedIds = new Set<string>();
   let offset = 0;
-  // eslint-disable-next-line no-constant-condition
+   
   while (true) {
     const { data, error } = await supabase
       .from("scrutin_thematic_tags")
@@ -87,7 +87,7 @@ async function tagAllScrutins() {
     const taggedIds = await fetchTaggedScrutinIds();
     toTag = scrutins.filter((s) => !taggedIds.has(s.id));
     console.log(
-      `${taggedIds.size} already tagged, ${toTag.length} need tagging`,
+      `${taggedIds.size} already tagged, ${toTag.length} need tagging`
     );
   } else {
     console.log("--force: re-tagging all scrutins");
@@ -125,7 +125,7 @@ async function tagAllScrutins() {
   }
 
   console.log(
-    `  ${matched} scrutin(s) matched at least one tag (${allRows.length} tag links total)`,
+    `  ${matched} scrutin(s) matched at least one tag (${allRows.length} tag links total)`
   );
 
   if (allRows.length === 0) {
@@ -136,7 +136,7 @@ async function tagAllScrutins() {
   // 3. Batch delete existing tags for scrutins we're about to re-tag
   const idsToDelete = [...new Set(allRows.map((r) => r.scrutin_id))];
   console.log(
-    `\nBatch-deleting old tags for ${idsToDelete.length} scrutin(s)...`,
+    `\nBatch-deleting old tags for ${idsToDelete.length} scrutin(s)...`
   );
   await batchDeleteScrutinTags(idsToDelete);
 
@@ -146,10 +146,10 @@ async function tagAllScrutins() {
 
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
   console.log(
-    `\nDone in ${elapsed}s! ${inserted} tag link(s) written, ${errors} error(s).`,
+    `\nDone in ${elapsed}s! ${inserted} tag link(s) written, ${errors} error(s).`
   );
   console.log(
-    `${matched}/${toTag.length} scrutin(s) got at least one tag.`,
+    `${matched}/${toTag.length} scrutin(s) got at least one tag.`
   );
 }
 

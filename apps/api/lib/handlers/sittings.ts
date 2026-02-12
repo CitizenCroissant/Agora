@@ -23,13 +23,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({
       error: "MethodNotAllowed",
       message: "Only GET requests are allowed",
-      status: 405,
+      status: 405
     });
   }
 
   try {
     // pathParams: set by route.ts (dev + serverless); query/params: Vercel/Express
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const rawId =
       (req as any).pathParams?.id ?? req.query?.id ?? (req as any).params?.id;
     const id = Array.isArray(rawId) ? rawId[0] : rawId;
@@ -116,7 +116,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         description: item.description,
         category: item.category,
         reference_code: item.reference_code || undefined,
-        official_url: item.official_url || undefined,
+        official_url: item.official_url || undefined
       })),
       source_metadata: sourceMetadata
         ? {
@@ -125,14 +125,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             original_source_url: (sourceMetadata as DbSourceMetadata)
               .original_source_url,
             last_synced_at: (sourceMetadata as DbSourceMetadata).last_synced_at,
-            checksum: (sourceMetadata as DbSourceMetadata).checksum,
+            checksum: (sourceMetadata as DbSourceMetadata).checksum
           }
         : {
             id: "",
             sitting_id: id,
             original_source_url: "",
             last_synced_at: new Date().toISOString(),
-            checksum: "",
+            checksum: ""
           },
       scrutins: (scrutins || []).map((row: DbScrutin) => ({
         id: row.id,
@@ -149,8 +149,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         synthese_contre: row.synthese_contre,
         synthese_abstentions: row.synthese_abstentions,
         synthese_non_votants: row.synthese_non_votants,
-        official_url: row.official_url,
-      })),
+        official_url: row.official_url
+      }))
     };
 
     // Set cache headers (cache for 5 minutes)

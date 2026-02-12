@@ -1,0 +1,163 @@
+.intro {
+  margin-bottom: var(--spacing-xl);
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: var(--color-text);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.card {
+  display: block;
+  padding: var(--spacing-lg);
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+  transition:
+    box-shadow 0.2s,
+    border-color 0.2s;
+}
+
+.card:hover {
+  box-shadow: var(--shadow);
+  border-color: var(--color-primary);
+}
+
+.cardTitle {
+  font-size: 1.25rem;
+  margin: 0 0 var(--spacing-sm);
+  color: var(--color-primary);
+}
+
+.cardDescription {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--color-text-light);
+}
+
+.section {
+  margin-bottom: var(--spacing-xl);
+  scroll-margin-top: 1rem;
+}
+
+.section h2 {
+  font-size: 1.75rem;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.section p {
+  line-height: 1.8;
+  margin-bottom: var(--spacing-md);
+  font-size: 1.125rem;
+}
+
+.summaryBox {
+  padding: var(--spacing-md);
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius);
+  border-left: 4px solid var(--color-primary);
+  margin: var(--spacing-md) 0;
+}
+
+.summaryBox h3 {
+  font-size: 1rem;
+  margin: 0 0 var(--spacing-xs);
+  color: var(--color-text);
+}
+
+.summaryBox p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.contactDeputeBox {
+  padding: var(--spacing-md);
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius);
+  border-left: 4px solid var(--color-primary);
+  margin: var(--spacing-md) 0;
+}
+
+.contactDeputeBox h3 {
+  font-size: 1rem;
+  margin: 0 0 var(--spacing-xs);
+  color: var(--color-text);
+}
+
+.contactDeputeBox > p {
+  margin: 0 0 var(--spacing-sm);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.contactDeputeList {
+  margin: 0;
+}
+
+.contactDeputeItem {
+  margin-bottom: var(--spacing-sm);
+}
+
+.contactDeputeItem:last-child {
+  margin-bottom: 0;
+}
+
+.contactDeputeItem dt {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.contactDeputeItem dd {
+  margin: 0 0 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+.linkList {
+  list-style: none;
+  padding: 0;
+  margin: var(--spacing-md) 0 0;
+}
+
+.linkList li {
+  margin-bottom: var(--spacing-sm);
+}
+
+.linkList a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.linkList a:hover {
+  color: var(--color-primary-dark);
+}
+
+.linkList a[target="_blank"]::after {
+  content: " ↗";
+  font-size: 0.85em;
+}
+
+@media (max-width: 768px) {
+  .section h2 {
+    font-size: 1.5rem;
+  }
+
+  .section p {
+    font-size: 1rem;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}

@@ -115,6 +115,48 @@
   font-style: italic;
 }
 
+.contactSection {
+  margin-bottom: var(--spacing-xl);
+}
+
+.contactHeading {
+  font-size: 1.125rem;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.contactBlock {
+  background: var(--color-background-alt);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+}
+
+.contactRow {
+  margin: 0 0 var(--spacing-md);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.contactRow:last-child {
+  margin-bottom: 0;
+}
+
+.contactLink {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.contactLink:hover {
+  text-decoration: underline;
+}
+
+.contactHint {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;

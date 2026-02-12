@@ -80,10 +80,10 @@ export function matchScrutinTags(
   scrutinId: string,
   titre: string,
   objetLibelle: string | null | undefined,
-  tags: ThematicTag[],
+  tags: ThematicTag[]
 ): ScrutinTagRow[] {
   const textToAnalyze = normalise(
-    [titre, objetLibelle].filter(Boolean).join(" "),
+    [titre, objetLibelle].filter(Boolean).join(" ")
   );
 
   const rows: ScrutinTagRow[] = [];
@@ -103,7 +103,7 @@ export function matchScrutinTags(
         scrutin_id: scrutinId,
         tag_id: tag.id,
         source: "auto",
-        confidence: Math.round(confidence * 100) / 100,
+        confidence: Math.round(confidence * 100) / 100
       });
     }
   }
@@ -118,7 +118,7 @@ export function matchScrutinTags(
 export async function tagScrutin(
   scrutinId: string,
   titre: string,
-  objetLibelle?: string | null,
+  objetLibelle?: string | null
 ): Promise<void> {
   const tags = await getScrutinThematicTags();
   if (!tags || tags.length === 0) return;
@@ -150,7 +150,7 @@ const DELETE_CHUNK = 500;
  * Batch-delete existing scrutin_thematic_tags for a set of scrutin IDs.
  */
 export async function batchDeleteScrutinTags(
-  scrutinIds: string[],
+  scrutinIds: string[]
 ): Promise<void> {
   for (let i = 0; i < scrutinIds.length; i += DELETE_CHUNK) {
     const chunk = scrutinIds.slice(i, i + DELETE_CHUNK);
@@ -169,7 +169,7 @@ export async function batchDeleteScrutinTags(
  * so it's safe to re-run.
  */
 export async function batchUpsertScrutinTags(
-  rows: ScrutinTagRow[],
+  rows: ScrutinTagRow[]
 ): Promise<{ inserted: number; errors: number }> {
   let inserted = 0;
   let errors = 0;

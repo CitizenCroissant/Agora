@@ -4,7 +4,7 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  StyleSheet,
+  StyleSheet
 } from "react-native";
 import { useRouter } from "expo-router";
 import { DatePickerModal } from "@/app/components/DatePickerModal";
@@ -22,7 +22,7 @@ import {
   addWeeks,
   addMonths,
   formatDateRange,
-  formatMonth,
+  formatMonth
 } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 
@@ -31,7 +31,7 @@ type ViewMode = "week" | "month";
 export default function TimelineScreen() {
   const router = useRouter();
   const [agendaRange, setAgendaRange] = useState<AgendaRangeResponse | null>(
-    null,
+    null
   );
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +39,7 @@ export default function TimelineScreen() {
   const [currentDate, setCurrentDate] = useState<string>(getTodayDate());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [pickerDate, setPickerDate] = useState<Date>(
-    () => new Date(currentDate + "T12:00:00"),
+    () => new Date(currentDate + "T12:00:00")
   );
 
   useEffect(() => {
@@ -149,14 +149,14 @@ export default function TimelineScreen() {
               <TouchableOpacity
                 style={[
                   styles.viewButton,
-                  viewMode === "week" && styles.viewButtonActive,
+                  viewMode === "week" && styles.viewButtonActive
                 ]}
                 onPress={() => setViewMode("week")}
               >
                 <Text
                   style={[
                     styles.viewButtonText,
-                    viewMode === "week" && styles.viewButtonTextActive,
+                    viewMode === "week" && styles.viewButtonTextActive
                   ]}
                 >
                   S
@@ -165,14 +165,14 @@ export default function TimelineScreen() {
               <TouchableOpacity
                 style={[
                   styles.viewButton,
-                  viewMode === "month" && styles.viewButtonActive,
+                  viewMode === "month" && styles.viewButtonActive
                 ]}
                 onPress={() => setViewMode("month")}
               >
                 <Text
                   style={[
                     styles.viewButtonText,
-                    viewMode === "month" && styles.viewButtonTextActive,
+                    viewMode === "month" && styles.viewButtonTextActive
                   ]}
                 >
                   M
@@ -278,18 +278,18 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.primaryTint,
     padding: spacing.lg,
     paddingBottom: spacing.md,
-    ...shadows.sm,
+    ...shadows.sm
   },
   topRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: spacing.md,
+    marginBottom: spacing.md
   },
   navigationControls: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: 6
   },
   iconButton: {
     width: 36,
@@ -299,30 +299,30 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radius.md,
-    backgroundColor: colors.background,
+    backgroundColor: colors.background
   },
   iconButtonText: {
     fontSize: 28,
     fontWeight: "300",
     color: colors.text,
-    lineHeight: 32,
+    lineHeight: 32
   },
   todayButton: {
     paddingHorizontal: 14,
     paddingVertical: spacing.sm,
     backgroundColor: colors.primary,
     borderRadius: radius.md,
-    marginLeft: 6,
+    marginLeft: 6
   },
   todayButtonText: {
     fontSize: 13,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.background,
+    color: colors.background
   },
   rightControls: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.sm,
+    gap: spacing.sm
   },
   dateButton: {
     paddingHorizontal: spacing.md,
@@ -335,18 +335,18 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: radius.md,
     backgroundColor: colors.background,
-    minWidth: 44,
+    minWidth: 44
   },
   dateButtonText: {
     fontSize: typography.fontSize.lg,
-    lineHeight: 20,
+    lineHeight: 20
   },
   viewToggle: {
     flexDirection: "row",
     backgroundColor: colors.backgroundAlt,
     borderRadius: radius.md,
     padding: 3,
-    gap: 2,
+    gap: 2
   },
   viewButton: {
     width: 32,
@@ -354,38 +354,38 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 6,
-    backgroundColor: "transparent",
+    backgroundColor: "transparent"
   },
   viewButtonActive: {
     backgroundColor: colors.background,
-    ...shadows.sm,
+    ...shadows.sm
   },
   viewButtonText: {
     fontSize: typography.fontSize.md,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textLight,
+    color: colors.textLight
   },
   viewButtonTextActive: {
-    color: colors.primary,
+    color: colors.primary
   },
   periodLabel: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
     color: colors.text,
     textAlign: "center",
-    textTransform: "capitalize",
+    textTransform: "capitalize"
   },
   content: {
-    flex: 1,
+    flex: 1
   },
   dateSection: {
     marginBottom: spacing.xl,
     paddingLeft: 20,
     borderLeftWidth: 4,
-    borderLeftColor: colors.border,
+    borderLeftColor: colors.border
   },
   todaySection: {
-    borderLeftColor: colors.secondary,
+    borderLeftColor: colors.secondary
   },
   dateHeader: {
     flexDirection: "row",
@@ -393,21 +393,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: spacing.md,
     paddingRight: spacing.lg,
-    gap: spacing.sm,
+    gap: spacing.sm
   },
   dateLink: {
-    marginLeft: "auto",
+    marginLeft: "auto"
   },
   dateLinkText: {
     fontSize: typography.fontSize.md,
     fontWeight: typography.fontWeight.medium,
-    color: colors.primary,
+    color: colors.primary
   },
   dateText: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.semibold,
     textTransform: "capitalize",
-    flex: 1,
+    flex: 1
   },
   todayBadge: {
     backgroundColor: colors.secondary,
@@ -416,13 +416,13 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.medium,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
-    borderRadius: radius.sm,
+    borderRadius: radius.sm
   },
   noSittings: {
     fontSize: typography.fontSize.md,
     color: colors.textMuted,
     fontStyle: "italic",
-    marginBottom: spacing.md,
+    marginBottom: spacing.md
   },
   sittingCard: {
     backgroundColor: colors.background,
@@ -431,20 +431,20 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.border
   },
   sittingHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: spacing.xs,
+    marginBottom: spacing.xs
   },
   sittingTitle: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
     color: colors.primary,
     flex: 1,
-    marginRight: spacing.sm,
+    marginRight: spacing.sm
   },
   timeRange: {
     fontSize: typography.fontSize.sm,
@@ -452,10 +452,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.backgroundAlt,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
-    borderRadius: radius.sm,
+    borderRadius: radius.sm
   },
   itemCount: {
     fontSize: typography.fontSize.sm,
-    color: colors.textLight,
-  },
+    color: colors.textLight
+  }
 });

@@ -7,7 +7,7 @@ import {
   AssembleeSeance,
   SittingInsert,
   AgendaItemInsert,
-  SourceMetadataInsert,
+  SourceMetadataInsert
 } from './types';
 
 /**
@@ -22,7 +22,7 @@ export function transformSeance(seance: AssembleeSeance): SittingInsert {
     type: seance.typeSeance,
     title: seance.intitule || 'Séance',
     description: generateDescription(seance),
-    location: seance.lieuLibelle,
+    location: seance.lieuLibelle
   };
 }
 
@@ -46,7 +46,7 @@ export function transformAgendaItems(
     reference_code: point.texteRef,
     official_url: point.texteRef
       ? `https://www.assemblee-nationale.fr/dyn/${seance.legislature}/dossiers_/${point.texteRef}`
-      : undefined,
+      : undefined
   }));
 }
 
@@ -66,7 +66,7 @@ export function createSourceMetadata(
     sitting_id: sittingId,
     original_source_url: sourceUrl,
     last_synced_at: new Date().toISOString(),
-    checksum,
+    checksum
   };
 }
 

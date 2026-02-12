@@ -11,7 +11,7 @@ export function formatDate(dateString: string): string {
     weekday: "long",
     year: "numeric",
     month: "long",
-    day: "numeric",
+    day: "numeric"
   });
 }
 
@@ -69,11 +69,11 @@ export function isToday(dateString: string): boolean {
 export function getDateRange(
   centerDate: string,
   daysBefore: number,
-  daysAfter: number,
+  daysAfter: number
 ): { from: string; to: string } {
   return {
     from: subtractDays(centerDate, daysBefore),
-    to: addDays(centerDate, daysAfter),
+    to: addDays(centerDate, daysAfter)
   };
 }
 
@@ -140,13 +140,13 @@ export function formatDateRange(from: string, to: string): string {
 
   const fromFormatted = fromDate.toLocaleDateString("fr-FR", {
     day: "numeric",
-    month: "short",
+    month: "short"
   });
 
   const toFormatted = toDate.toLocaleDateString("fr-FR", {
     day: "numeric",
     month: "short",
-    year: "numeric",
+    year: "numeric"
   });
 
   return `${fromFormatted} - ${toFormatted}`;
@@ -159,7 +159,7 @@ export function formatMonth(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString("fr-FR", {
     month: "long",
-    year: "numeric",
+    year: "numeric"
   });
 }
 
@@ -174,7 +174,7 @@ const VOTE_LIKE_KEYWORDS = [
   "motion de censure",
   "question de confiance",
   "résolution",
-  "suffrages exprimés",
+  "suffrages exprimés"
 ];
 
 /**
@@ -204,7 +204,7 @@ export function isCurrentlySitting(dateFinMandat: string | null): boolean {
  */
 export function mandateStatusLabel(
   dateDebut: string | null,
-  dateFin: string | null,
+  dateFin: string | null
 ): string {
   if (!dateDebut && !dateFin) return "";
   if (isCurrentlySitting(dateFin)) return "Mandat actuel";
@@ -222,7 +222,7 @@ export function mandateStatusLabel(
 export function isVoteLikeAgendaItem(
   title?: string | null,
   description?: string | null,
-  category?: string | null,
+  category?: string | null
 ): boolean {
   const text = [title, description, category]
     .filter(Boolean)

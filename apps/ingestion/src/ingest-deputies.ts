@@ -19,7 +19,7 @@ export async function ingestDeputies(options: IngestDeputiesOptions = {}) {
   const rows = raw
     .map(transformDeputy)
     .filter(
-      (r): r is NonNullable<ReturnType<typeof transformDeputy>> => r != null,
+      (r): r is NonNullable<ReturnType<typeof transformDeputy>> => r != null
     );
 
   console.log(`Transformed ${rows.length} deputies`);
@@ -40,13 +40,13 @@ export async function ingestDeputies(options: IngestDeputiesOptions = {}) {
     const batch = rows.slice(i, i + BATCH_SIZE);
     const { error } = await supabase.from("deputies").upsert(batch, {
       onConflict: "acteur_ref",
-      ignoreDuplicates: false,
+      ignoreDuplicates: false
     });
 
     if (error) {
       console.error(
         `Error upserting deputies batch ${i}-${i + batch.length - 1}`,
-        error,
+        error
       );
       // Continue with next batches even if one fails
       continue;

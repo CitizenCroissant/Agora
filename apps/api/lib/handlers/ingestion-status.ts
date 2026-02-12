@@ -17,7 +17,7 @@ export default async function handler(
   if (req.method !== 'GET') {
     return res.status(405).json({
       error: 'MethodNotAllowed',
-      message: 'Only GET is allowed',
+      message: 'Only GET is allowed'
     });
   }
 
@@ -33,7 +33,7 @@ export default async function handler(
       console.error('Supabase error (sittings):', sittingError);
       return res.status(500).json({
         error: 'DatabaseError',
-        message: 'Failed to fetch latest sitting',
+        message: 'Failed to fetch latest sitting'
       });
     }
 
@@ -48,7 +48,7 @@ export default async function handler(
       console.error('Supabase error (source_metadata):', syncError);
       return res.status(500).json({
         error: 'DatabaseError',
-        message: 'Failed to fetch last sync time',
+        message: 'Failed to fetch last sync time'
       });
     }
 
@@ -66,15 +66,15 @@ export default async function handler(
       agenda: {
         latest_sitting_date: latestDate,
         last_synced_at: lastSyncedAt,
-        is_fresh: !!lastSyncedAt && syncedWithin36h,
+        is_fresh: !!lastSyncedAt && syncedWithin36h
       },
-      checked_at: new Date().toISOString(),
+      checked_at: new Date().toISOString()
     });
   } catch (error) {
     console.error('ingestion-status error:', error);
     return res.status(500).json({
       error: 'InternalError',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 }

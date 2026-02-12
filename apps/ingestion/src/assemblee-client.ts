@@ -19,7 +19,7 @@ export const LEGISLATURES_WITH_AGENDAS = ['14', '15', '16', '17'] as const;
 /** Roman-numeral suffix used in the ZIP filename for older legislatures. */
 const ROMAN_BY_LEG: Record<string, string> = {
   '14': 'XIV',
-  '15': 'XV',
+  '15': 'XV'
 };
 
 function zipUrlForLegislature(legislature: string): string {
@@ -207,7 +207,7 @@ export class AssembleeClient {
 
     this.cacheByLegislature.set(legislature, {
       reunions,
-      expiry: new Date(Date.now() + this.CACHE_DURATION_MS),
+      expiry: new Date(Date.now() + this.CACHE_DURATION_MS)
     });
 
     return reunions;
@@ -243,7 +243,7 @@ export class AssembleeClient {
           nature: p.typePointODJ,
           texteRef: typeof p.dossiersLegislatifsRefs?.dossierRef === 'string'
             ? p.dossiersLegislatifsRefs.dossierRef
-            : undefined,
+            : undefined
         }));
     }
 
@@ -257,7 +257,7 @@ export class AssembleeClient {
       intitule,
       organeRef: reunion.organeReuniRef,
       lieuLibelle: reunion.lieu?.libelleLong,
-      pointsOdj,
+      pointsOdj
     };
   }
 }

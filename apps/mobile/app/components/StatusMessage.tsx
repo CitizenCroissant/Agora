@@ -40,35 +40,35 @@ const styles = StyleSheet.create({
   loadingContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: spacing.xxxl,
+    padding: spacing.xxxl
   },
   loadingText: {
     marginTop: spacing.lg,
     color: colors.textLight,
-    fontSize: typography.fontSize.base,
+    fontSize: typography.fontSize.base
   },
   errorContainer: {
     padding: spacing.xl,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   errorText: {
     color: colors.secondary,
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.medium,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.sm
   },
   errorHint: {
     color: colors.textLight,
     fontSize: typography.fontSize.md,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   emptyContainer: {
     padding: spacing.xxxl,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   emptyText: {
     color: colors.textLight,
     fontSize: typography.fontSize.base,
-    textAlign: 'center',
-  },
+    textAlign: 'center'
+  }
 })

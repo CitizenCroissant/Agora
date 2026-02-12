@@ -52,7 +52,7 @@ export class ScrutinsClient {
             try {
               const content = await entry.buffer();
               const data: ScrutinWrapper = JSON.parse(
-                content.toString("utf-8"),
+                content.toString("utf-8")
               );
               if (data.scrutin) {
                 scrutins.push(data.scrutin);
@@ -79,7 +79,7 @@ export class ScrutinsClient {
    */
   async fetchScrutinsByDateRange(
     from: string,
-    to: string,
+    to: string
   ): Promise<AssembleeScrutin[]> {
     const all = await this.fetchAllScrutins();
     const fromDate = new Date(from);

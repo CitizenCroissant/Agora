@@ -22,7 +22,7 @@ export const supabase = createClient(
   {
     auth: {
       persistSession: false,
-      autoRefreshToken: false,
-    },
+      autoRefreshToken: false
+    }
   }
 );

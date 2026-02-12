@@ -12,7 +12,7 @@ import {
   getThematicTags,
   matchBillTags,
   batchDeleteBillTags,
-  batchUpsertBillTags,
+  batchUpsertBillTags
 } from "./tag-bills";
 
 const PAGE_SIZE = 1000;
@@ -28,7 +28,7 @@ async function fetchAllBills(): Promise<
   }> = [];
 
   let offset = 0;
-  // eslint-disable-next-line no-constant-condition
+   
   while (true) {
     const { data, error } = await supabase
       .from("bills")
@@ -55,7 +55,7 @@ async function fetchAllBills(): Promise<
 async function fetchTaggedBillIds(): Promise<Set<string>> {
   const taggedIds = new Set<string>();
   let offset = 0;
-  // eslint-disable-next-line no-constant-condition
+   
   while (true) {
     const { data, error } = await supabase
       .from("bill_thematic_tags")
@@ -93,7 +93,7 @@ async function tagAllBills() {
     const taggedIds = await fetchTaggedBillIds();
     billsToTag = bills.filter((b) => !taggedIds.has(b.id));
     console.log(
-      `${taggedIds.size} already tagged, ${billsToTag.length} need tagging`,
+      `${taggedIds.size} already tagged, ${billsToTag.length} need tagging`
     );
   } else {
     console.log("--force: re-tagging all bills");
@@ -131,7 +131,7 @@ async function tagAllBills() {
   }
 
   console.log(
-    `  ${matched} bill(s) matched at least one tag (${allRows.length} tag links total)`,
+    `  ${matched} bill(s) matched at least one tag (${allRows.length} tag links total)`
   );
 
   if (allRows.length === 0) {
@@ -150,10 +150,10 @@ async function tagAllBills() {
 
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
   console.log(
-    `\nDone in ${elapsed}s! ${inserted} tag link(s) written, ${errors} error(s).`,
+    `\nDone in ${elapsed}s! ${inserted} tag link(s) written, ${errors} error(s).`
   );
   console.log(
-    `${matched}/${billsToTag.length} bill(s) got at least one tag.`,
+    `${matched}/${billsToTag.length} bill(s) got at least one tag.`
   );
 }
 

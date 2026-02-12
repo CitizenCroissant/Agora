@@ -53,10 +53,10 @@ async function tagSingleBill() {
     console.log(`\nTags (${tags.length}):`);
     for (const t of tags) {
       const detail = (tagDetails || []).find(
-        (td: { id: string }) => td.id === t.tag_id,
+        (td: { id: string }) => td.id === t.tag_id
       );
       console.log(
-        `  - ${detail?.label ?? t.tag_id} (confidence: ${t.confidence}, source: ${t.source})`,
+        `  - ${detail?.label ?? t.tag_id} (confidence: ${t.confidence}, source: ${t.source})`
       );
     }
   } else {

@@ -6,7 +6,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   TouchableOpacity,
-  Linking,
+  Linking
 } from "react-native";
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useRouter } from "expo-router";
@@ -19,7 +19,7 @@ const POSITION_LABELS: Record<string, string> = {
   pour: "Pour",
   contre: "Contre",
   abstention: "Abstention",
-  non_votant: "Non votant",
+  non_votant: "Non votant"
 };
 
 export default function ScrutinDetailScreen() {
@@ -56,7 +56,7 @@ export default function ScrutinDetailScreen() {
         acc[v.position].push(v);
         return acc;
       },
-      {} as Record<string, typeof scrutin.votes>,
+      {} as Record<string, typeof scrutin.votes>
     ) ?? {};
 
   return (
@@ -64,7 +64,7 @@ export default function ScrutinDetailScreen() {
       <Stack.Screen
         options={{
           headerTitle: scrutin?.titre?.slice(0, 30) ?? "Scrutin",
-          headerBackTitle: "Retour",
+          headerBackTitle: "Retour"
         }}
       />
       <ScrollView style={styles.container}>
@@ -89,7 +89,7 @@ export default function ScrutinDetailScreen() {
                   styles.badge,
                   scrutin.sort_code === "adopté"
                     ? styles.badgeAdopte
-                    : styles.badgeRejete,
+                    : styles.badgeRejete
                 ]}
               >
                 <Text style={styles.badgeText}>
@@ -186,7 +186,7 @@ export default function ScrutinDetailScreen() {
                             style={styles.deputyRow}
                             onPress={() =>
                               router.push(
-                                `/deputy/${encodeURIComponent(v.acteur_ref)}`,
+                                `/deputy/${encodeURIComponent(v.acteur_ref)}`
                               )
                             }
                           >
@@ -197,7 +197,7 @@ export default function ScrutinDetailScreen() {
                         ))}
                       </View>
                     );
-                  },
+                  }
                 )}
               </View>
             )}
@@ -222,71 +222,71 @@ export default function ScrutinDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#fff"
   },
   centerContent: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 48,
+    padding: 48
   },
   loadingText: {
     marginTop: 16,
     color: "#666",
-    fontSize: 16,
+    fontSize: 16
   },
   errorContainer: {
     padding: 24,
-    alignItems: "center",
+    alignItems: "center"
   },
   errorText: {
     color: "#ef4135",
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: "500"
   },
   content: {
-    padding: 16,
+    padding: 16
   },
   header: {
     marginBottom: 20,
     paddingBottom: 16,
     borderBottomWidth: 2,
-    borderBottomColor: "#e0e0e0",
+    borderBottomColor: "#e0e0e0"
   },
   badge: {
     alignSelf: "flex-start",
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 8,
-    marginBottom: 8,
+    marginBottom: 8
   },
   badgeAdopte: {
-    backgroundColor: "rgba(0, 128, 0, 0.15)",
+    backgroundColor: "rgba(0, 128, 0, 0.15)"
   },
   badgeRejete: {
-    backgroundColor: "rgba(200, 0, 0, 0.15)",
+    backgroundColor: "rgba(200, 0, 0, 0.15)"
   },
   badgeText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#333",
+    color: "#333"
   },
   typeVote: {
     fontSize: 14,
     color: "#666",
-    marginBottom: 8,
+    marginBottom: 8
   },
   title: {
     fontSize: 22,
     fontWeight: "700",
     color: "#0055a4",
-    marginBottom: 8,
+    marginBottom: 8
   },
   tagsSection: {
     marginTop: 16,
     marginBottom: 16,
     padding: 12,
     backgroundColor: "#f5f5f5",
-    borderRadius: 8,
+    borderRadius: 8
   },
   tagsTitle: {
     fontSize: 12,
@@ -294,12 +294,12 @@ const styles = StyleSheet.create({
     color: "#666",
     marginBottom: 8,
     textTransform: "uppercase",
-    letterSpacing: 0.5,
+    letterSpacing: 0.5
   },
   tagsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
+    gap: 8
   },
   tag: {
     paddingHorizontal: 12,
@@ -307,93 +307,93 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 85, 164, 0.1)",
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "transparent",
+    borderColor: "transparent"
   },
   tagText: {
     fontSize: 13,
     fontWeight: "500",
-    color: "#0055a4",
+    color: "#0055a4"
   },
   date: {
     fontSize: 14,
     color: "#666",
-    textTransform: "capitalize",
+    textTransform: "capitalize"
   },
   sourcesLink: {
-    marginTop: 12,
+    marginTop: 12
   },
   sourcesLinkText: {
     fontSize: 14,
     color: "#0055a4",
-    fontWeight: "500",
+    fontWeight: "500"
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
     color: "#0055a4",
-    marginBottom: 12,
+    marginBottom: 12
   },
   synthese: {
-    marginBottom: 20,
+    marginBottom: 20
   },
   syntheseGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 12,
+    gap: 12
   },
   syntheseItem: {
     backgroundColor: "#f5f5f5",
     padding: 16,
     borderRadius: 8,
     minWidth: 70,
-    alignItems: "center",
+    alignItems: "center"
   },
   syntheseValue: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#0055a4",
+    color: "#0055a4"
   },
   syntheseLabel: {
     fontSize: 12,
     color: "#666",
-    marginTop: 4,
+    marginTop: 4
   },
   linkButton: {
-    marginBottom: 20,
+    marginBottom: 20
   },
   linkText: {
     fontSize: 14,
     color: "#0055a4",
-    fontWeight: "500",
+    fontWeight: "500"
   },
   votesSection: {
-    marginBottom: 20,
+    marginBottom: 20
   },
   positionBlock: {
-    marginBottom: 16,
+    marginBottom: 16
   },
   positionTitle: {
     fontSize: 16,
     fontWeight: "600",
     color: "#333",
-    marginBottom: 8,
+    marginBottom: 8
   },
   deputyRow: {
     paddingVertical: 6,
-    paddingLeft: 8,
+    paddingLeft: 8
   },
   deputyLink: {
     fontSize: 14,
     color: "#0055a4",
-    fontWeight: "500",
+    fontWeight: "500"
   },
   sourceButton: {
     marginTop: 16,
-    paddingVertical: 12,
+    paddingVertical: 12
   },
   sourceLink: {
     fontSize: 14,
     color: "#0055a4",
-    fontWeight: "500",
-  },
+    fontWeight: "500"
+  }
 });

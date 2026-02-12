@@ -37,7 +37,7 @@ function withParams(req: VercelRequest, params: Record<string, string>): void {
 
 export default async function handler(
   req: VercelRequest,
-  res: VercelResponse,
+  res: VercelResponse
 ): Promise<void> {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
@@ -217,7 +217,7 @@ export default async function handler(
   if (!matched || !routeHandler) {
     res.status(404).json({
       error: "NotFound",
-      message: `No route for ${method} /api/${path || ""}`,
+      message: `No route for ${method} /api/${path || ""}`
     });
     return;
   }
@@ -229,7 +229,7 @@ export default async function handler(
     if (!res.headersSent) {
       res.status(500).json({
         error: "InternalError",
-        message: err instanceof Error ? err.message : "Unknown error",
+        message: err instanceof Error ? err.message : "Unknown error"
       });
     }
   }

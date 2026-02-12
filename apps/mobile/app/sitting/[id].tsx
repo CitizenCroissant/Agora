@@ -6,7 +6,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   Linking,
-  TouchableOpacity,
+  TouchableOpacity
 } from "react-native";
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useRouter } from "expo-router";
@@ -47,7 +47,7 @@ export default function SittingDetailScreen() {
       <Stack.Screen
         options={{
           headerTitle: sitting?.title || "Détails",
-          headerBackTitle: "Retour",
+          headerBackTitle: "Retour"
         }}
       />
       <ScrollView style={styles.container}>
@@ -103,7 +103,7 @@ export default function SittingDetailScreen() {
                         styles.scrutinBadge,
                         scrutin.sort_code === "adopté"
                           ? styles.scrutinBadgeAdopte
-                          : styles.scrutinBadgeRejete,
+                          : styles.scrutinBadgeRejete
                       ]}
                     >
                       <Text style={styles.scrutinBadgeText}>
@@ -170,13 +170,13 @@ export default function SittingDetailScreen() {
                   <Text style={styles.sourceDate}>
                     Dernière synchronisation:{" "}
                     {new Date(
-                      sitting.source_metadata.last_synced_at,
+                      sitting.source_metadata.last_synced_at
                     ).toLocaleDateString("fr-FR")}
                   </Text>
                   <TouchableOpacity
                     onPress={() =>
                       Linking.openURL(
-                        sitting.source_metadata!.original_source_url,
+                        sitting.source_metadata!.original_source_url
                       )
                     }
                   >
@@ -196,86 +196,86 @@ export default function SittingDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#fff"
   },
   centerContent: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 48,
+    padding: 48
   },
   loadingText: {
     marginTop: 16,
     color: "#666",
-    fontSize: 16,
+    fontSize: 16
   },
   errorContainer: {
     padding: 24,
-    alignItems: "center",
+    alignItems: "center"
   },
   errorText: {
     color: "#ef4135",
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: "500"
   },
   content: {
-    padding: 16,
+    padding: 16
   },
   header: {
     marginBottom: 16,
     paddingBottom: 16,
     borderBottomWidth: 2,
-    borderBottomColor: "#e0e0e0",
+    borderBottomColor: "#e0e0e0"
   },
   title: {
     fontSize: 24,
     fontWeight: "700",
     color: "#0055a4",
-    marginBottom: 8,
+    marginBottom: 8
   },
   date: {
     fontSize: 16,
     color: "#666",
     textTransform: "capitalize",
-    marginBottom: 12,
+    marginBottom: 12
   },
   timeContainer: {
     backgroundColor: "#f5f5f5",
     padding: 12,
     borderRadius: 8,
-    alignItems: "center",
+    alignItems: "center"
   },
   timeLabel: {
     fontSize: 12,
     color: "#666",
-    marginBottom: 4,
+    marginBottom: 4
   },
   time: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#0055a4",
+    color: "#0055a4"
   },
   locationContainer: {
     backgroundColor: "#f5f5f5",
     padding: 12,
     borderRadius: 8,
-    marginBottom: 16,
+    marginBottom: 16
   },
   location: {
-    fontSize: 14,
+    fontSize: 14
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 24
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: "600",
     color: "#0055a4",
-    marginBottom: 12,
+    marginBottom: 12
   },
   description: {
     fontSize: 16,
     lineHeight: 24,
-    color: "#333",
+    color: "#333"
   },
   agendaItem: {
     backgroundColor: "#fff",
@@ -283,13 +283,13 @@ const styles = StyleSheet.create({
     borderColor: "#e0e0e0",
     borderRadius: 8,
     padding: 12,
-    marginBottom: 12,
+    marginBottom: 12
   },
   itemHeader: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 8,
-    flexWrap: "wrap",
+    flexWrap: "wrap"
   },
   itemNumber: {
     width: 28,
@@ -298,12 +298,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#0055a4",
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 8,
+    marginRight: 8
   },
   itemNumberText: {
     color: "#fff",
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: "600"
   },
   itemTime: {
     fontSize: 12,
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
-    marginRight: 8,
+    marginRight: 8
   },
   itemCategory: {
     fontSize: 10,
@@ -322,29 +322,29 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 4,
     textTransform: "uppercase",
-    fontWeight: "500",
+    fontWeight: "500"
   },
   itemTitle: {
     fontSize: 16,
     fontWeight: "600",
     marginBottom: 4,
-    color: "#333",
+    color: "#333"
   },
   itemDescription: {
     fontSize: 14,
     lineHeight: 20,
     color: "#666",
-    marginBottom: 4,
+    marginBottom: 4
   },
   itemReference: {
     fontSize: 12,
     color: "#999",
-    marginBottom: 4,
+    marginBottom: 4
   },
   itemLink: {
     fontSize: 14,
     color: "#0055a4",
-    fontWeight: "500",
+    fontWeight: "500"
   },
   sourceContainer: {
     backgroundColor: "#f5f5f5",
@@ -352,27 +352,27 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#e0e0e0",
-    marginTop: 16,
+    marginTop: 16
   },
   sourceTitle: {
     fontSize: 16,
     fontWeight: "600",
-    marginBottom: 8,
+    marginBottom: 8
   },
   sourceLabel: {
     fontSize: 14,
     fontWeight: "500",
-    marginBottom: 4,
+    marginBottom: 4
   },
   sourceDate: {
     fontSize: 12,
     color: "#666",
-    marginBottom: 8,
+    marginBottom: 8
   },
   sourceLink: {
     fontSize: 14,
     color: "#0055a4",
-    fontWeight: "500",
+    fontWeight: "500"
   },
   scrutinItem: {
     backgroundColor: "#f5f5f5",
@@ -380,35 +380,35 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#e0e0e0",
-    marginBottom: 12,
+    marginBottom: 12
   },
   scrutinBadge: {
     alignSelf: "flex-start",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
-    marginBottom: 8,
+    marginBottom: 8
   },
   scrutinBadgeAdopte: {
-    backgroundColor: "rgba(0, 128, 0, 0.15)",
+    backgroundColor: "rgba(0, 128, 0, 0.15)"
   },
   scrutinBadgeRejete: {
-    backgroundColor: "rgba(200, 0, 0, 0.15)",
+    backgroundColor: "rgba(200, 0, 0, 0.15)"
   },
   scrutinBadgeText: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#333",
+    color: "#333"
   },
   scrutinTitle: {
     fontSize: 16,
     fontWeight: "600",
     color: "#333",
-    marginBottom: 8,
+    marginBottom: 8
   },
   scrutinLink: {
     fontSize: 14,
     color: "#0055a4",
-    fontWeight: "500",
-  },
+    fontWeight: "500"
+  }
 });

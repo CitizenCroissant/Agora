@@ -92,7 +92,7 @@ async function simulateNewVote() {
       sound: "default" as const,
       title,
       body,
-      data: { screen: "votes", test: true },
+      data: { screen: "votes", test: true }
     }));
 
   if (messages.length === 0) {

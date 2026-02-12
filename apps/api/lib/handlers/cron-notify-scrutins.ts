@@ -31,7 +31,7 @@ export default async function handler(
     res.status(405).json({
       error: "MethodNotAllowed",
       message: "Only GET and POST are allowed",
-      status: 405,
+      status: 405
     });
     return;
   }
@@ -41,7 +41,7 @@ export default async function handler(
     res.status(401).json({
       error: "Unauthorized",
       message: "Missing or invalid authorization",
-      status: 401,
+      status: 401
     });
     return;
   }
@@ -59,7 +59,7 @@ export default async function handler(
       console.error("Supabase scrutins error:", scrutinsError);
       res.status(500).json({
         error: "DatabaseError",
-        message: "Failed to fetch scrutins",
+        message: "Failed to fetch scrutins"
       });
       return;
     }
@@ -69,7 +69,7 @@ export default async function handler(
       res.status(200).json({
         ok: true,
         message: "No new scrutins",
-        sent: 0,
+        sent: 0
       });
       return;
     }
@@ -83,7 +83,7 @@ export default async function handler(
       console.error("Supabase push_tokens error:", tokensError);
       res.status(500).json({
         error: "DatabaseError",
-        message: "Failed to fetch push tokens",
+        message: "Failed to fetch push tokens"
       });
       return;
     }
@@ -96,7 +96,7 @@ export default async function handler(
       res.status(200).json({
         ok: true,
         message: "No tokens to notify",
-        sent: 0,
+        sent: 0
       });
       return;
     }
@@ -114,7 +114,7 @@ export default async function handler(
         sound: "default" as const,
         title,
         body,
-        data: scrutinId ? { screen: "votes", scrutinId } : { screen: "votes" },
+        data: scrutinId ? { screen: "votes", scrutinId } : { screen: "votes" }
       }));
 
     let sent = 0;
@@ -128,13 +128,13 @@ export default async function handler(
       ok: true,
       message: "Notifications sent",
       sent,
-      tokens: pushTokens.length,
+      tokens: pushTokens.length
     });
   } catch (error) {
     console.error("notify-scrutins error:", error);
     res.status(500).json({
       error: "InternalServerError",
-      message: error instanceof Error ? error.message : "Unknown error",
+      message: error instanceof Error ? error.message : "Unknown error"
     });
   }
 }

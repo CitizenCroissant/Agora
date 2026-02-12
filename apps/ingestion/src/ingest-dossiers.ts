@@ -48,7 +48,7 @@ function buildOfficialUrl(dossier: AssembleeDossierParlementaire): string | null
 }
 
 export async function ingestDossiers(
-  options: IngestDossiersOptions = {},
+  options: IngestDossiersOptions = {}
 ): Promise<{ totalDossiers: number }> {
   const legislature = options.legislature ?? "17";
   console.log("Starting dossiers ingestion...", { ...options, legislature });
@@ -60,7 +60,7 @@ export async function ingestDossiers(
       : all.filter((d) => String(d.legislature ?? "") === legislature);
 
   console.log(
-    `Found ${dossiers.length} dossier(s) for legislature ${legislature}`,
+    `Found ${dossiers.length} dossier(s) for legislature ${legislature}`
   );
 
   let upserted = 0;
@@ -92,7 +92,7 @@ export async function ingestDossiers(
         official_id: uid,
         title,
         type,
-        origin,
+        origin
       });
       continue;
     }
@@ -103,7 +103,7 @@ export async function ingestDossiers(
       short_title: shortTitle,
       type,
       origin,
-      official_url: officialUrl,
+      official_url: officialUrl
     });
   }
 
@@ -115,7 +115,7 @@ export async function ingestDossiers(
 
     const { error } = await supabase.from("bills").upsert(chunk, {
       onConflict: "official_id",
-      ignoreDuplicates: false,
+      ignoreDuplicates: false
     });
 
     if (error) {

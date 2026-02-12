@@ -48,5 +48,5 @@ const getApiUrl = (): string => {
 };
 
 export const Config = {
-  API_URL: getApiUrl(),
+  API_URL: getApiUrl()
 } satisfies AppConfig;

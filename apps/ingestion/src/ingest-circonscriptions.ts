@@ -12,7 +12,7 @@ export interface IngestCirconscriptionsOptions {
 }
 
 export async function ingestCirconscriptions(
-  options: IngestCirconscriptionsOptions = {},
+  options: IngestCirconscriptionsOptions = {}
 ) {
   const { dryRun = false } = options;
 
@@ -32,7 +32,7 @@ export async function ingestCirconscriptions(
       .from("circonscriptions")
       .upsert(
         { id, label, geometry: geometry ?? null },
-        { onConflict: "id", ignoreDuplicates: false },
+        { onConflict: "id", ignoreDuplicates: false }
       );
     if (error) {
       console.error("Error upserting circonscription", id, error);

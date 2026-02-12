@@ -10,8 +10,8 @@ export const metadata: Metadata = {
     title: 'Sources de données | Agora',
     description:
       'Données officielles de l\'Assemblée nationale utilisées par Agora.',
-    type: 'website',
-  },
+    type: 'website'
+  }
 }
 
 export default function SourcesPage() {

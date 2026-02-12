@@ -7,7 +7,7 @@ import {
   AssembleeGroupeVote,
   AssembleeVotant,
   ScrutinInsert,
-  ScrutinVoteInsert,
+  ScrutinVoteInsert
 } from "./scrutins-types";
 
 const SCRUTIN_OFFICIAL_URL_BASE =
@@ -18,7 +18,7 @@ const SCRUTIN_OFFICIAL_URL_BASE =
  */
 export function transformScrutin(
   raw: AssembleeScrutin,
-  sittingId: string | null,
+  sittingId: string | null
 ): ScrutinInsert {
   const decompte = raw.syntheseVote?.decompte ?? {};
   const sortCode = (raw.sort?.code ?? "inconnu").toLowerCase();
@@ -41,7 +41,7 @@ export function transformScrutin(
     synthese_non_votants:
       parseInt(decompte.nonVotants ?? "0", 10) +
         parseInt(decompte.nonVotantsVolontaires ?? "0", 10) || 0,
-    official_url: `${SCRUTIN_OFFICIAL_URL_BASE}/${raw.numero ?? raw.uid}`,
+    official_url: `${SCRUTIN_OFFICIAL_URL_BASE}/${raw.numero ?? raw.uid}`
   };
 }
 
@@ -50,7 +50,7 @@ export function transformScrutin(
  */
 export function extractScrutinVotes(
   raw: AssembleeScrutin,
-  scrutinId: string,
+  scrutinId: string
 ): ScrutinVoteInsert[] {
   const votes: ScrutinVoteInsert[] = [];
   const seen = new Set<string>();
@@ -66,7 +66,7 @@ export function extractScrutinVotes(
 
     const add = (
       acteurRef: string,
-      position: ScrutinVoteInsert["position"],
+      position: ScrutinVoteInsert["position"]
     ) => {
       if (!acteurRef || seen.has(acteurRef)) return;
       seen.add(acteurRef);
@@ -74,18 +74,18 @@ export function extractScrutinVotes(
     };
 
     const toList = (
-      v: AssembleeVotant | AssembleeVotant[] | null | undefined,
+      v: AssembleeVotant | AssembleeVotant[] | null | undefined
     ) => (v == null ? [] : Array.isArray(v) ? v : [v]);
 
     toList(nominatif.pours?.votant).forEach((v) => add(v.acteurRef, "pour"));
     toList(nominatif.contres?.votant).forEach((v) =>
-      add(v.acteurRef, "contre"),
+      add(v.acteurRef, "contre")
     );
     toList(nominatif.abstentions?.votant).forEach((v) =>
-      add(v.acteurRef, "abstention"),
+      add(v.acteurRef, "abstention")
     );
     toList(nominatif.nonVotants?.votant).forEach((v) =>
-      add(v.acteurRef, "non_votant"),
+      add(v.acteurRef, "non_votant")
     );
   }
 

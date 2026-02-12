@@ -8,7 +8,7 @@ import { assembleeClient } from "./assemblee-client";
 import {
   transformSeance,
   transformAgendaItems,
-  createSourceMetadata,
+  createSourceMetadata
 } from "./transform";
 import { ingestDossiers } from "./ingest-dossiers";
 
@@ -46,7 +46,7 @@ export async function ingest(options: IngestOptions = {}) {
           console.log("Dry run - would upsert:", {
             official_id: seance.uid,
             date: seance.dateSeance,
-            items: seance.pointsOdj?.length || 0,
+            items: seance.pointsOdj?.length || 0
           });
         }
         continue;
@@ -59,7 +59,7 @@ export async function ingest(options: IngestOptions = {}) {
         .from("sittings")
         .upsert(sittingsData, {
           onConflict: "official_id",
-          ignoreDuplicates: false,
+          ignoreDuplicates: false
         })
         .select();
 
@@ -133,7 +133,7 @@ export async function ingest(options: IngestOptions = {}) {
     // Ingest legislative dossiers (bills) from the official dataset.
     const dossiersResult = await ingestDossiers({
       dryRun: options.dryRun ?? false,
-      legislature: options.legislature ?? "17",
+      legislature: options.legislature ?? "17"
     });
 
     console.log("Dossiers ingestion summary:", dossiersResult);
@@ -142,7 +142,7 @@ export async function ingest(options: IngestOptions = {}) {
       success: true,
       totalSittings,
       totalItems,
-      totalDossiers: dossiersResult.totalDossiers,
+      totalDossiers: dossiersResult.totalDossiers
     };
   } catch (error) {
     console.error("Ingestion failed:", error);

@@ -10,7 +10,7 @@ import { DbSitting, DbAgendaItem, DbSourceMetadata } from "../types";
 import {
   AgendaRangeResponse,
   AgendaResponse,
-  SittingWithItems,
+  SittingWithItems
 } from "@agora/shared";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -27,7 +27,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({
       error: "MethodNotAllowed",
       message: "Only GET requests are allowed",
-      status: 405,
+      status: 405
     });
   }
 
@@ -46,7 +46,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       throw new ApiError(
         400,
         "Invalid date format. Use YYYY-MM-DD",
-        "BadRequest",
+        "BadRequest"
       );
     }
 
@@ -54,7 +54,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       throw new ApiError(
         400,
         "From date must be before or equal to to date",
-        "BadRequest",
+        "BadRequest"
       );
     }
 
@@ -76,7 +76,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const response: AgendaRangeResponse = {
         from,
         to,
-        agendas: [],
+        agendas: []
       };
       return res.status(200).json(response);
     }
@@ -114,7 +114,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         acc[sitting.date].push(sitting);
         return acc;
       },
-      {},
+      {}
     );
 
     // Group agenda items by sitting
@@ -126,7 +126,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         acc[item.sitting_id].push(item);
         return acc;
       },
-      {},
+      {}
     );
 
     // Group source metadata by sitting
@@ -135,7 +135,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         acc[meta.sitting_id] = meta;
         return acc;
       },
-      {},
+      {}
     );
 
     // Fallback date: last known ingestion (fetched once, used if per-sitting metadata is missing)
@@ -175,10 +175,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 description: item.description,
                 category: item.category,
                 reference_code: item.reference_code || undefined,
-                official_url: item.official_url || undefined,
-              })),
+                official_url: item.official_url || undefined
+              }))
             };
-          },
+          }
         );
 
         // Get latest sync time for this date
@@ -189,8 +189,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (dateMetadata.length > 0) {
           const lastUpdated = Math.max(
             ...dateMetadata.map((m: DbSourceMetadata) =>
-              new Date(m.last_synced_at).getTime(),
-            ),
+              new Date(m.last_synced_at).getTime()
+            )
           );
           lastUpdatedIso = new Date(lastUpdated).toISOString();
         } else {
@@ -202,15 +202,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           sittings: sittingsWithItems,
           source: {
             label: "Données officielles de l'Assemblée nationale",
-            last_updated_at: lastUpdatedIso,
-          },
+            last_updated_at: lastUpdatedIso
+          }
         };
       });
 
     const response: AgendaRangeResponse = {
       from,
       to,
-      agendas,
+      agendas
     };
 
     // Set cache headers (cache for 5 minutes)

@@ -53,7 +53,7 @@ function buildLabel(nomDepartement: string, num: number): string {
  */
 function parseCode(
   codeCirconscription: string,
-  codeDepartement: string,
+  codeDepartement: string
 ): { id: string; num: number } | null {
   const code = String(codeCirconscription ?? "").trim();
   const dept = String(codeDepartement ?? "").trim();
@@ -78,13 +78,13 @@ export async function fetchCirconscriptionsFromSource(): Promise<
   CirconscriptionFromSource[]
 > {
   console.log(
-    "Fetching circonscriptions from data.gouv.fr (official GeoJSON)...",
+    "Fetching circonscriptions from data.gouv.fr (official GeoJSON)..."
   );
   // Use the global fetch provided by the Node.js runtime, avoiding ESM-only node-fetch.
   const response = await (globalThis as any).fetch(GEOJSON_P10_URL);
   if (!response.ok) {
     throw new Error(
-      `Failed to fetch GeoJSON: ${response.status} ${response.statusText}`,
+      `Failed to fetch GeoJSON: ${response.status} ${response.statusText}`
     );
   }
 
@@ -117,11 +117,11 @@ export async function fetchCirconscriptionsFromSource(): Promise<
   const list = Array.from(byId.entries()).map(([id, { label, geometry }]) => ({
     id,
     label,
-    geometry,
+    geometry
   }));
 
   console.log(
-    `Parsed ${list.length} circonscriptions from GeoJSON (${features.length} features)`,
+    `Parsed ${list.length} circonscriptions from GeoJSON (${features.length} features)`
   );
   return list;
 }

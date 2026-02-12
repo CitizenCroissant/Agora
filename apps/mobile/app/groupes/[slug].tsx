@@ -5,7 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  StyleSheet,
+  StyleSheet
 } from "react-native";
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useRouter } from "expo-router";
@@ -46,7 +46,7 @@ export default function GroupDetailScreen() {
       <Stack.Screen
         options={{
           headerTitle: group?.label ?? "Groupe",
-          headerBackTitle: "Retour",
+          headerBackTitle: "Retour"
         }}
       />
       <ScrollView style={styles.container}>
@@ -92,8 +92,8 @@ export default function GroupDetailScreen() {
                             e.stopPropagation();
                             router.push(
                               `/circonscriptions/${encodeURIComponent(
-                                d.circonscription_ref ?? "",
-                              )}`,
+                                d.circonscription_ref ?? ""
+                              )}`
                             );
                           }}
                           style={styles.deputyMetaTouchable}
@@ -162,34 +162,34 @@ export default function GroupDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#fff"
   },
   centerContent: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 48,
+    padding: 48
   },
   loadingText: {
     marginTop: 16,
     color: "#666",
-    fontSize: 16,
+    fontSize: 16
   },
   errorContainer: {
     padding: 24,
-    alignItems: "center",
+    alignItems: "center"
   },
   errorText: {
     color: "#ef4135",
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: "500"
   },
   content: {
-    padding: 16,
+    padding: 16
   },
   deputyCount: {
     fontSize: 16,
     color: "#666",
-    marginBottom: 16,
+    marginBottom: 16
   },
   sectionTitle: {
     fontSize: 14,
@@ -198,49 +198,49 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 0.5,
     marginTop: 20,
-    marginBottom: 12,
+    marginBottom: 12
   },
   empty: {
     fontSize: 16,
     color: "#666",
-    marginTop: 24,
+    marginTop: 24
   },
   deputyList: {
-    gap: 12,
+    gap: 12
   },
   deputyCard: {
     backgroundColor: "#f5f5f5",
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#e0e0e0",
+    borderColor: "#e0e0e0"
   },
   deputyName: {
     fontSize: 16,
     fontWeight: "600",
     color: "#0055a4",
-    marginBottom: 4,
+    marginBottom: 4
   },
   deputyMetaRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginBottom: 8,
+    marginBottom: 8
   },
   deputyMetaTouchable: {
-    alignSelf: "flex-start",
+    alignSelf: "flex-start"
   },
   deputyMeta: {
     fontSize: 14,
-    color: "#666",
+    color: "#666"
   },
   deputyMetaLink: {
     fontSize: 14,
     color: "#0055a4",
-    fontWeight: "500",
+    fontWeight: "500"
   },
   deputyLink: {
     fontSize: 14,
     color: "#0055a4",
-    fontWeight: "500",
-  },
+    fontWeight: "500"
+  }
 });

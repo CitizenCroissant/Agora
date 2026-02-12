@@ -20,7 +20,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({
       error: "MethodNotAllowed",
       message: "Only GET requests are allowed",
-      status: 405,
+      status: 405
     });
   }
 
@@ -70,8 +70,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           scrutins: [],
           source: {
             label: "Assemblée nationale - Scrutins",
-            last_updated_at: undefined,
-          },
+            last_updated_at: undefined
+          }
         });
       }
 
@@ -79,7 +79,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         p_from: from,
         p_to: to,
         p_groupe_politique: groupePolitique,
-        p_position: position,
+        p_position: position
       });
 
       if (rpcError) {
@@ -94,7 +94,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           from,
           to,
           scrutins: [],
-          source: { label: "Assemblée nationale - Scrutins", last_updated_at: undefined },
+          source: { label: "Assemblée nationale - Scrutins", last_updated_at: undefined }
         });
       }
     }
@@ -137,12 +137,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         synthese_contre: row.synthese_contre,
         synthese_abstentions: row.synthese_abstentions,
         synthese_non_votants: row.synthese_non_votants,
-        official_url: row.official_url,
+        official_url: row.official_url
       })),
       source: {
         label: "Assemblée nationale - Scrutins",
-        last_updated_at: scrutins?.[0]?.updated_at,
-      },
+        last_updated_at: scrutins?.[0]?.updated_at
+      }
     };
 
     res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate");

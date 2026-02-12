@@ -6,7 +6,7 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { supabase } from "../supabase";
 import { ApiError, handleError } from "../errors";
-import type { BillSummary, ThematicTag } from "@agora/shared";
+import type { BillSummary } from "@agora/shared";
 import type { DbBill, DbBillScrutin, DbScrutin } from "../types";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -22,7 +22,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({
       error: "MethodNotAllowed",
       message: "Only GET requests are allowed",
-      status: 405,
+      status: 405
     });
   }
 
@@ -64,7 +64,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       tagFilteredBillIds = (billTagRows ?? []).map(
-        (bt: { bill_id: string }) => bt.bill_id,
+        (bt: { bill_id: string }) => bt.bill_id
       );
 
       if (tagFilteredBillIds.length === 0) {
@@ -99,7 +99,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       const uniqueBillIds = [
-        ...new Set((linkedBillIds ?? []).map((r: { bill_id: string }) => r.bill_id)),
+        ...new Set((linkedBillIds ?? []).map((r: { bill_id: string }) => r.bill_id))
       ];
 
       if (uniqueBillIds.length === 0) {
@@ -152,13 +152,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       throw new ApiError(
         500,
         "Failed to fetch bill-scrutin links",
-        "DatabaseError",
+        "DatabaseError"
       );
     }
 
     const linkRows: DbBillScrutin[] = (links ?? []) as DbBillScrutin[];
     const scrutinIds = [
-      ...new Set(linkRows.map((l) => l.scrutin_id)),
+      ...new Set(linkRows.map((l) => l.scrutin_id))
     ] as string[];
 
     let scrutinsById = new Map<string, DbScrutin>();
@@ -175,8 +175,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       scrutinsById = new Map(
         (scrutins ?? []).map(
           (s: { id: string; date_scrutin: string }) =>
-            [s.id, s] as [string, DbScrutin],
-        ),
+            [s.id, s] as [string, DbScrutin]
+        )
       );
     }
 
@@ -202,7 +202,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       origin: b.origin ?? undefined,
       official_url: b.official_url ?? undefined,
       latest_scrutin_date: latestByBill.get(b.id) ?? null,
-      scrutins_count: countByBill.get(b.id) ?? 0,
+      scrutins_count: countByBill.get(b.id) ?? 0
     }));
 
     res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate");

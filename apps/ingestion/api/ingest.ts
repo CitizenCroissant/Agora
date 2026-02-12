@@ -10,7 +10,7 @@ import {
   logStart,
   logSuccess,
   logError,
-  detectTrigger,
+  detectTrigger
 } from "../src/ingestion-logger";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -23,7 +23,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.error("CRON_SECRET or INGESTION_SECRET must be configured");
     return res.status(500).json({
       error: "ConfigurationError",
-      message: "Ingestion endpoint not properly configured",
+      message: "Ingestion endpoint not properly configured"
     });
   }
 
@@ -37,7 +37,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!isValidAuth) {
     return res.status(401).json({
       error: "Unauthorized",
-      message: "Invalid or missing authorization",
+      message: "Invalid or missing authorization"
     });
   }
 
@@ -45,7 +45,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "GET" && req.method !== "POST") {
     return res.status(405).json({
       error: "MethodNotAllowed",
-      message: "Only GET (cron) or POST (manual) are allowed",
+      message: "Only GET (cron) or POST (manual) are allowed"
     });
   }
 
@@ -62,7 +62,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       fromDate,
       toDate,
       dryRun: dryRun || false,
-      legislature: legislature ?? "17",
+      legislature: legislature ?? "17"
     });
 
     // Log success
@@ -82,7 +82,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     return res.status(500).json({
       error: "IngestionError",
-      message,
+      message
     });
   }
 }

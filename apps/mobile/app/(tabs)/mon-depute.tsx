@@ -5,7 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  StyleSheet,
+  StyleSheet
 } from "react-native";
 import { useRouter } from "expo-router";
 import type { DepartementSummary, Deputy } from "@agora/shared";
@@ -268,66 +268,66 @@ export default function MonDeputeTabScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#f5f5f5"
   },
   backBar: {
     backgroundColor: "#fff",
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
+    borderBottomColor: "#e0e0e0"
   },
   backBarText: {
     fontSize: 15,
     color: "#0055a4",
-    fontWeight: "600",
+    fontWeight: "600"
   },
   content: {
-    flex: 1,
+    flex: 1
   },
   centerContent: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 48,
+    padding: 48
   },
   loadingText: {
     marginTop: 16,
     color: "#666",
-    fontSize: 16,
+    fontSize: 16
   },
   errorContainer: {
     padding: 24,
-    alignItems: "center",
+    alignItems: "center"
   },
   errorText: {
     color: "#ef4135",
     fontSize: 16,
     fontWeight: "500",
-    marginBottom: 8,
+    marginBottom: 8
   },
   errorHint: {
     color: "#666",
     fontSize: 14,
-    textAlign: "center",
+    textAlign: "center"
   },
   intro: {
-    padding: 16,
+    padding: 16
   },
   introText: {
     fontSize: 15,
     color: "#333",
     marginBottom: 16,
-    lineHeight: 22,
+    lineHeight: 22
   },
   deptListTitle: {
     fontSize: 14,
     fontWeight: "600",
     color: "#666",
     marginBottom: 12,
-    textTransform: "uppercase",
+    textTransform: "uppercase"
   },
   list: {
-    gap: 8,
+    gap: 8
   },
   deptCard: {
     flexDirection: "row",
@@ -336,44 +336,44 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#e0e0e0",
+    borderColor: "#e0e0e0"
   },
   deptName: {
     flex: 1,
     fontSize: 16,
     fontWeight: "600",
-    color: "#0055a4",
+    color: "#0055a4"
   },
   deptCount: {
     fontSize: 14,
     color: "#666",
-    marginRight: 8,
+    marginRight: 8
   },
   deptArrow: {
     fontSize: 20,
     color: "#999",
     fontWeight: "300",
     lineHeight: 20,
-    marginLeft: 8,
+    marginLeft: 8
   },
   circoLink: {
     marginTop: 20,
     paddingVertical: 12,
-    alignItems: "center",
+    alignItems: "center"
   },
   circoLinkText: {
     fontSize: 15,
     color: "#0055a4",
-    fontWeight: "500",
+    fontWeight: "500"
   },
   deputiesSection: {
     padding: 16,
-    paddingBottom: 32,
+    paddingBottom: 32
   },
   deputyCount: {
     fontSize: 15,
     color: "#666",
-    marginBottom: 16,
+    marginBottom: 16
   },
   deputyCard: {
     backgroundColor: "#fff",
@@ -381,38 +381,38 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#e0e0e0",
-    marginBottom: 12,
+    marginBottom: 12
   },
   deputyName: {
     fontSize: 16,
     fontWeight: "600",
     color: "#0055a4",
-    marginBottom: 4,
+    marginBottom: 4
   },
   deputyNameSmall: {
     fontSize: 16,
     fontWeight: "600",
     color: "#0055a4",
-    flex: 1,
+    flex: 1
   },
   deputyMeta: {
     fontSize: 14,
     color: "#666",
-    marginBottom: 4,
+    marginBottom: 4
   },
   deputyLinks: {
     marginTop: 12,
-    gap: 8,
+    gap: 8
   },
   primaryLink: {
     fontSize: 15,
     fontWeight: "600",
     color: "#0055a4",
-    marginBottom: 4,
+    marginBottom: 4
   },
   secondaryLink: {
     fontSize: 14,
-    color: "#666",
+    color: "#666"
   },
   sectionTitle: {
     fontSize: 14,
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
     color: "#666",
     marginTop: 24,
     marginBottom: 12,
-    textTransform: "uppercase",
+    textTransform: "uppercase"
   },
   deputyCardSmall: {
     flexDirection: "row",
@@ -431,28 +431,28 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#e0e0e0",
-    marginBottom: 8,
+    marginBottom: 8
   },
   deputyCardArrow: {
     fontSize: 20,
     color: "#999",
     fontWeight: "300",
     lineHeight: 20,
-    marginLeft: "auto",
+    marginLeft: "auto"
   },
   empty: {
     fontSize: 15,
     color: "#666",
     textAlign: "center",
-    marginTop: 24,
+    marginTop: 24
   },
   emptyContainer: {
     padding: 48,
-    alignItems: "center",
+    alignItems: "center"
   },
   emptyText: {
     color: "#666",
     fontSize: 16,
-    textAlign: "center",
-  },
+    textAlign: "center"
+  }
 });

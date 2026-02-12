@@ -10,12 +10,12 @@ export default function TabLayout() {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textLight,
         headerStyle: {
-          backgroundColor: colors.primary,
+          backgroundColor: colors.primary
         },
         headerTintColor: colors.background,
         headerTitleStyle: {
-          fontWeight: "bold",
-        },
+          fontWeight: "bold"
+        }
       }}
     >
       <Tabs.Screen
@@ -26,7 +26,7 @@ export default function TabLayout() {
           headerTitle: "Agora",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="today" size={size} color={color} />
-          ),
+          )
         }}
       />
       <Tabs.Screen
@@ -37,7 +37,7 @@ export default function TabLayout() {
           headerTitle: "Scrutins",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="checkmark-circle" size={size} color={color} />
-          ),
+          )
         }}
       />
       <Tabs.Screen
@@ -48,7 +48,7 @@ export default function TabLayout() {
           headerTitle: "Calendrier",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="calendar" size={size} color={color} />
-          ),
+          )
         }}
       />
       <Tabs.Screen
@@ -59,7 +59,7 @@ export default function TabLayout() {
           headerTitle: "Explorer",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="compass" size={size} color={color} />
-          ),
+          )
         }}
       />
       <Tabs.Screen
@@ -70,7 +70,7 @@ export default function TabLayout() {
           headerTitle: "À propos",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="information-circle" size={size} color={color} />
-          ),
+          )
         }}
       />
       <Tabs.Screen
@@ -78,7 +78,7 @@ export default function TabLayout() {
         options={{
           title: "Mon député",
           headerTitle: "Mon député",
-          href: null,
+          href: null
         }}
       />
       <Tabs.Screen
@@ -86,7 +86,7 @@ export default function TabLayout() {
         options={{
           title: "Groupes",
           headerTitle: "Groupes politiques",
-          href: null,
+          href: null
         }}
       />
       <Tabs.Screen
@@ -94,7 +94,7 @@ export default function TabLayout() {
         options={{
           title: "Circonscriptions",
           headerTitle: "Circonscriptions",
-          href: null,
+          href: null
         }}
       />
     </Tabs>

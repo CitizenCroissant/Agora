@@ -107,7 +107,7 @@ const DEPARTEMENTS: Record<string, string> = {
   "972": "Martinique",
   "973": "Guyane",
   "974": "La Réunion",
-  "976": "Mayotte",
+  "976": "Mayotte"
 };
 
 /** All French department names (métropole + DOM-TOM), sorted for display. Use for "Mon député" selector. */
@@ -243,7 +243,7 @@ function parseCirconscriptionName(name: string): {
     if (m && parseInt(m[1], 10) >= 1) {
       return {
         departement: CODES_BY_NAME[deptName],
-        num: parseInt(m[1], 10),
+        num: parseInt(m[1], 10)
       };
     }
   }

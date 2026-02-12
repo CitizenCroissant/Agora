@@ -1,0 +1,56 @@
+.figure {
+  margin: var(--spacing-lg) 0;
+  text-align: center;
+}
+
+.svg {
+  max-width: 220px;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+}
+
+.stepLink {
+  cursor: pointer;
+}
+
+.stepLink:hover .box,
+.stepLink:focus .box {
+  fill: var(--color-primary);
+}
+
+.stepLink:hover .label,
+.stepLink:focus .label {
+  fill: white;
+}
+
+.box {
+  fill: var(--color-background-alt);
+  stroke: var(--color-primary);
+  stroke-width: 2;
+  transition: fill 0.2s;
+}
+
+.label {
+  font-size: 11px;
+  fill: var(--color-text);
+  font-family: inherit;
+  pointer-events: none;
+  transition: fill 0.2s;
+}
+
+.caption {
+  margin-top: var(--spacing-sm);
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+}
+
+@media (max-width: 768px) {
+  .svg {
+    max-width: 180px;
+  }
+
+  .label {
+    font-size: 10px;
+  }
+}

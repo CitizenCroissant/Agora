@@ -58,7 +58,7 @@ export default function Home() {
             points={[
               "Chaque carte correspond à une séance publique ou réunion de l’Assemblée nationale.",
               "Utilisez les flèches ou le calendrier pour naviguer dans les jours passés et à venir.",
-              "Dans chaque carte, l’« Ordre du jour » liste les principaux points qui seront examinés.",
+              "Dans chaque carte, l’« Ordre du jour » liste les principaux points qui seront examinés."
             ]}
           />
 

@@ -26,7 +26,7 @@ const THEMATIC_TAGS = [
   { slug: "autonomie", label: "Autonomie" },
   { slug: "commerce", label: "Commerce" },
   { slug: "amenagement", label: "Aménagement" },
-  { slug: "action-publique", label: "Action publique" },
+  { slug: "action-publique", label: "Action publique" }
 ];
 
 export default function BillsPageClient() {
@@ -56,19 +56,19 @@ export default function BillsPageClient() {
           params.tag = tagParam;
         }
         const results = await apiClient.getBills(
-          Object.keys(params).length > 0 ? params : undefined,
+          Object.keys(params).length > 0 ? params : undefined
         );
         setBills(results);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Impossible de charger les textes",
+          err instanceof Error ? err.message : "Impossible de charger les textes"
         );
         setBills([]);
       } finally {
         setLoading(false);
       }
     },
-    [selectedTag],
+    [selectedTag]
   );
 
   // Re-fetch from API whenever the votes toggle or tag changes
@@ -102,10 +102,10 @@ export default function BillsPageClient() {
         new Set(
           bills
             .map((b) => b.type)
-            .filter((t): t is string => typeof t === "string" && t.length > 0),
-        ),
+            .filter((t): t is string => typeof t === "string" && t.length > 0)
+        )
       ),
-    [bills],
+    [bills]
   );
 
   const filteredBills = useMemo(
@@ -116,7 +116,7 @@ export default function BillsPageClient() {
         }
         return true;
       }),
-    [bills, typeFilter],
+    [bills, typeFilter]
   );
 
   const billsWithVotes = useMemo(
@@ -131,14 +131,14 @@ export default function BillsPageClient() {
           // Tie-break: more scrutins first
           return (b.scrutins_count ?? 0) - (a.scrutins_count ?? 0);
         }),
-    [filteredBills],
+    [filteredBills]
   );
 
   const billsWithoutVotes = useMemo(
     () =>
       filteredBills
         .filter((b) => !b.scrutins_count || b.scrutins_count <= 0),
-    [filteredBills],
+    [filteredBills]
   );
 
   // Stats derived from the current (filtered) result set
@@ -173,7 +173,7 @@ export default function BillsPageClient() {
         points={[
           "Chaque carte correspond à un texte législatif (projet ou proposition de loi).",
           "Vous pouvez filtrer la liste en recherchant par mots-clés dans le titre du texte.",
-          "Le filtre « Avec votes uniquement » permet d'afficher seulement les textes qui ont donné lieu à au moins un scrutin.",
+          "Le filtre « Avec votes uniquement » permet d'afficher seulement les textes qui ont donné lieu à au moins un scrutin."
         ]}
       />
 

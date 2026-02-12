@@ -40,7 +40,7 @@ export default async function handler(
     res.status(405).json({
       error: "MethodNotAllowed",
       message: "Only POST and DELETE requests are allowed",
-      status: 405,
+      status: 405
     });
     return;
   }
@@ -87,10 +87,10 @@ export default async function handler(
         expo_push_token,
         topic,
         deputy_acteur_ref,
-        updated_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       },
       {
-        onConflict: "expo_push_token",
+        onConflict: "expo_push_token"
       }
     );
 

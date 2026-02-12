@@ -11,7 +11,7 @@ async function main() {
   console.log(
     "Total deputies:",
     count,
-    countErr ? `(error: ${countErr.message})` : "",
+    countErr ? `(error: ${countErr.message})` : ""
   );
 
   // Check PA267042 specifically
@@ -23,7 +23,7 @@ async function main() {
   console.log(
     "\nPA267042:",
     deputy ?? "NOT FOUND",
-    error ? `(error: ${error.message})` : "",
+    error ? `(error: ${error.message})` : ""
   );
 
   // Sample acteur_refs that start with PA267
@@ -51,7 +51,7 @@ async function main() {
     "\nPA267042 in scrutin_votes:",
     voteCount ?? 0,
     "vote(s)",
-    votes ?? [],
+    votes ?? []
   );
 }
 

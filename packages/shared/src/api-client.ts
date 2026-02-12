@@ -22,7 +22,7 @@ import {
   SearchType,
   ApiError,
   BillSummary,
-  BillDetailResponse,
+  BillDetailResponse
 } from "./types";
 
 const API_NOT_JSON_MESSAGE =
@@ -128,7 +128,9 @@ export class ApiClient {
     if (group_position) {
       params.set("group_position", group_position);
     }
-    const response = await fetch(`${this.baseUrl}/scrutins?${params.toString()}`);
+    const response = await fetch(
+      `${this.baseUrl}/scrutins?${params.toString()}`
+    );
 
     if (!response.ok) {
       const error = (await response.json()) as ApiError;

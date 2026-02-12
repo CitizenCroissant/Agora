@@ -46,7 +46,7 @@ export default function SittingPage() {
             points={[
               "La description présente le contexte général de la séance (type, lieu, horaires).",
               "La section « Scrutins de cette séance » liste les votes formels tenus pendant cette séance.",
-              "L’« Ordre du jour » détaille les points examinés, avec leur numéro, catégorie et éventuelle référence.",
+              "L’« Ordre du jour » détaille les points examinés, avec leur numéro, catégorie et éventuelle référence."
             ]}
           />
 
@@ -173,7 +173,7 @@ export default function SittingPage() {
                     <p className={styles.sourceDate}>
                       Dernière synchronisation :{" "}
                       {new Date(
-                        sitting.source_metadata.last_synced_at,
+                        sitting.source_metadata.last_synced_at
                       ).toLocaleString("fr-FR")}
                     </p>
                     <a

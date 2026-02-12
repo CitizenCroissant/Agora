@@ -30,7 +30,7 @@ export default function DeputyVotesPage() {
       setDeputies(result.deputies);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Erreur lors de la recherche",
+        err instanceof Error ? err.message : "Erreur lors de la recherche"
       );
       setDeputies([]);
     } finally {
@@ -61,7 +61,7 @@ export default function DeputyVotesPage() {
       <Breadcrumb
         items={[
           { label: "Scrutins", href: "/votes" },
-          { label: "Vote d'un député" },
+          { label: "Vote d'un député" }
         ]}
       />
       <form onSubmit={handleSubmit} className={styles.form}>

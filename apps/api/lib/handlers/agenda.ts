@@ -18,7 +18,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({
       error: "MethodNotAllowed",
       message: "Only GET requests are allowed",
-      status: 405,
+      status: 405
     });
   }
 
@@ -31,7 +31,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       throw new ApiError(
         400,
         "Invalid date format. Use YYYY-MM-DD",
-        "BadRequest",
+        "BadRequest"
       );
     }
 
@@ -53,8 +53,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         sittings: [],
         source: {
           label: "Données officielles de l'Assemblée nationale",
-          last_updated_at: lastSync ?? new Date().toISOString(),
-        },
+          last_updated_at: lastSync ?? new Date().toISOString()
+        }
       });
     }
 
@@ -81,7 +81,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         acc[item.sitting_id].push(item);
         return acc;
       },
-      {},
+      {}
     );
 
     const sittingsWithItems: SittingWithItems[] = sittings.map(
@@ -112,18 +112,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             description: item.description,
             category: item.category,
             reference_code: item.reference_code || undefined,
-            official_url: item.official_url || undefined,
-          })),
+            official_url: item.official_url || undefined
+          }))
         };
-      },
+      }
     );
 
     let lastUpdatedIso: string;
     if (sourceMetadata && sourceMetadata.length > 0) {
       const lastUpdated = Math.max(
         ...sourceMetadata.map((m: DbSourceMetadata) =>
-          new Date(m.last_synced_at).getTime(),
-        ),
+          new Date(m.last_synced_at).getTime()
+        )
       );
       lastUpdatedIso = new Date(lastUpdated).toISOString();
     } else {
@@ -137,8 +137,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       sittings: sittingsWithItems,
       source: {
         label: "Données officielles de l'Assemblée nationale",
-        last_updated_at: lastUpdatedIso,
-      },
+        last_updated_at: lastUpdatedIso
+      }
     });
   } catch (error) {
     return handleError(res, error);

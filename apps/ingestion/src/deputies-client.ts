@@ -118,7 +118,7 @@ export class DeputiesClient {
 
     const result: DeputyWithOrganes[] = acteurs.map((acteur) => ({
       acteur,
-      organesMap,
+      organesMap
     }));
 
     console.log(`Loaded ${result.length} deputies from archive`);

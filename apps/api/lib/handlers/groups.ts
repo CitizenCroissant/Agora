@@ -22,7 +22,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({
       error: "MethodNotAllowed",
       message: "Only GET requests are allowed",
-      status: 405,
+      status: 405
     });
   }
 
@@ -50,7 +50,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       .map(([label, deputy_count]) => ({
         slug: slugify(label),
         label,
-        deputy_count,
+        deputy_count
       }))
       .sort((a, b) => b.deputy_count - a.deputy_count);
 

@@ -9,7 +9,7 @@ import {
   AssembleeDossierWrapper,
   AssembleeDossierParlementaire,
   DossiersXIVExport,
-  DossiersXIVDocument,
+  DossiersXIVDocument
 } from "./dossiers-types";
 
 /**
@@ -24,7 +24,7 @@ export const LEGISLATURES_WITH_DOSSIERS = ["14", "15", "16", "17"] as const;
 /** Roman numeral suffix for dossiers ZIP (14 and 15 use it; 16 and 17 use the default name). */
 const ROMAN_BY_LEG: Record<string, string> = {
   "14": "XIV",
-  "15": "XV",
+  "15": "XV"
 };
 
 function zipFilenameForLegislature(legislature: string): string {
@@ -44,7 +44,7 @@ function zipUrlForLegislature(legislature: string): string {
 /** Legislature 14 ZIP contains a single JSON file; parse it and return one dossier per unique dossierRef. */
 function parseXIVSingleJson(
   buffer: Buffer,
-  legislature: string,
+  legislature: string
 ): Promise<AssembleeDossierParlementaire[]> {
   let rawJson: string | null = null;
 
@@ -96,7 +96,7 @@ function parseXIVSingleJson(
               uid,
               legislature,
               titreDossier: { titre },
-              procedureParlementaire: libelle ? { libelle } : undefined,
+              procedureParlementaire: libelle ? { libelle } : undefined
             });
           }
           resolve(result);
@@ -118,7 +118,7 @@ export class DossiersClient {
    * Fetch all dossiers from the ZIP archive for one legislature.
    */
   async fetchDossiersForLegislature(
-    legislature: string,
+    legislature: string
   ): Promise<AssembleeDossierParlementaire[]> {
     const cached = this.cacheByLegislature.get(legislature);
     if (cached && new Date() < cached.expiry) {
@@ -127,13 +127,13 @@ export class DossiersClient {
 
     const url = zipUrlForLegislature(legislature);
     console.log(
-      `Downloading Dossiers_Legislatifs for legislature ${legislature}...`,
+      `Downloading Dossiers_Legislatifs for legislature ${legislature}...`
     );
     const response = await fetch(url);
 
     if (!response.ok) {
       throw new Error(
-        `Failed to download Dossiers_Legislatifs (legislature ${legislature}): ${response.status} ${response.statusText}`,
+        `Failed to download Dossiers_Legislatifs (legislature ${legislature}): ${response.status} ${response.statusText}`
       );
     }
 
@@ -158,7 +158,7 @@ export class DossiersClient {
               try {
                 const content = await entry.buffer();
                 const data: AssembleeDossierWrapper = JSON.parse(
-                  content.toString("utf-8"),
+                  content.toString("utf-8")
                 );
                 if (data.dossierParlementaire) {
                   dossiers.push(data.dossierParlementaire);
@@ -176,11 +176,11 @@ export class DossiersClient {
     }
 
     console.log(
-      `Loaded ${dossiers.length} dossiers from archive (legislature ${legislature})`,
+      `Loaded ${dossiers.length} dossiers from archive (legislature ${legislature})`
     );
     this.cacheByLegislature.set(legislature, {
       dossiers,
-      expiry: new Date(Date.now() + this.CACHE_DURATION_MS),
+      expiry: new Date(Date.now() + this.CACHE_DURATION_MS)
     });
     return dossiers;
   }
@@ -190,7 +190,7 @@ export class DossiersClient {
    * @param legislature - "17", "16", or "all" (uses LEGISLATURES_WITH_DOSSIERS)
    */
   async fetchAllDossiers(
-    legislature: string = "17",
+    legislature: string = "17"
   ): Promise<AssembleeDossierParlementaire[]> {
     if (legislature === "all") {
       const all: AssembleeDossierParlementaire[] = [];
@@ -200,7 +200,7 @@ export class DossiersClient {
           all.push(...dossiers);
         } catch (err) {
           console.warn(
-            `Skipping legislature ${leg} (${err instanceof Error ? err.message : err})`,
+            `Skipping legislature ${leg} (${err instanceof Error ? err.message : err})`
           );
         }
       }

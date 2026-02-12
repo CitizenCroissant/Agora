@@ -22,14 +22,14 @@ export function handleError(res: VercelResponse, error: unknown) {
     return res.status(error.status).json({
       error: error.error,
       message: error.message,
-      status: error.status,
+      status: error.status
     });
   }
 
   return res.status(500).json({
     error: 'InternalServerError',
     message: 'An unexpected error occurred',
-    status: 500,
+    status: 500
   });
 }
 

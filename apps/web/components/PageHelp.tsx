@@ -16,7 +16,7 @@ export function PageHelp({
   title,
   points,
   collapsible = false,
-  defaultClosed = true,
+  defaultClosed = true
 }: PageHelpProps) {
   const [open, setOpen] = useState(!defaultClosed);
 

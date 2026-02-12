@@ -21,7 +21,7 @@ async function main() {
       (d.acteur.uid &&
         typeof d.acteur.uid === "object" &&
         "#text" in d.acteur.uid &&
-        (d.acteur.uid as { "#text"?: string })["#text"] === acteurRef),
+        (d.acteur.uid as { "#text"?: string })["#text"] === acteurRef)
   );
 
   if (!item) {
@@ -35,16 +35,16 @@ async function main() {
   mandats.forEach((m, i) => {
     const el = m.election;
     console.log(
-      `  [${i}] typeOrgane=${m.typeOrgane} dateDebut=${m.dateDebut} dateFin=${m.dateFin}`,
+      `  [${i}] typeOrgane=${m.typeOrgane} dateDebut=${m.dateDebut} dateFin=${m.dateFin}`
     );
     console.log(
-      `      election.lieu=${el?.lieu ? JSON.stringify(el.lieu) : "null"}`,
+      `      election.lieu=${el?.lieu ? JSON.stringify(el.lieu) : "null"}`
     );
     console.log(
-      `      election.refCirconscription=${el?.refCirconscription ?? "null"}`,
+      `      election.refCirconscription=${el?.refCirconscription ?? "null"}`
     );
     console.log(
-      `      infosQualite=${m.infosQualite?.libelleQualiteSex ?? "null"}`,
+      `      infosQualite=${m.infosQualite?.libelleQualiteSex ?? "null"}`
     );
   });
 
@@ -58,11 +58,11 @@ async function main() {
         civil_prenom: transformed?.civil_prenom,
         circonscription: transformed?.circonscription,
         departement: transformed?.departement,
-        groupe_politique: transformed?.groupe_politique,
+        groupe_politique: transformed?.groupe_politique
       },
       null,
-      2,
-    ),
+      2
+    )
   );
 }
 

@@ -18,7 +18,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Platform,
-  TextInput,
+  TextInput
 } from "react-native";
 import { colors, spacing, radius, typography } from "@/theme";
 
@@ -47,7 +47,7 @@ export function DatePickerModal({
   onConfirm,
   onCancel,
   cancelLabel = "Annuler",
-  confirmLabel = "Choisir",
+  confirmLabel = "Choisir"
 }: DatePickerModalProps) {
   const [pickerDate, setPickerDate] = useState(value);
 
@@ -144,13 +144,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "center"
   },
   modal: {
     backgroundColor: colors.background,
     borderRadius: radius.lg,
     paddingBottom: Platform.OS === "ios" ? 0 : spacing.lg,
-    minWidth: 280,
+    minWidth: 280
   },
   header: {
     flexDirection: "row",
@@ -159,20 +159,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: colors.border
   },
   cancelText: {
     fontSize: typography.fontSize.base,
-    color: colors.textLight,
+    color: colors.textLight
   },
   confirmText: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.primary,
+    color: colors.primary
   },
   webInputWrapper: {
     padding: spacing.lg,
-    minHeight: 120,
+    minHeight: 120
   },
   webInput: {
     fontSize: typography.fontSize.base,
@@ -180,8 +180,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radius.md,
-    ...(Platform.OS === "web" && { width: "100%" as const }),
-  },
+    ...(Platform.OS === "web" && { width: "100%" as const })
+  }
 });
 
 // Default export for Expo Router compatibility (component is used as named export)

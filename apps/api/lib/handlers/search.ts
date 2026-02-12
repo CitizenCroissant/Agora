@@ -13,7 +13,7 @@ import {
   SearchResponse,
   SearchType,
   getCirconscriptionDisplayName,
-  slugify,
+  slugify
 } from "@agora/shared";
 
 const LIMIT_SCRUTINS = 20;
@@ -35,7 +35,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({
       error: "MethodNotAllowed",
       message: "Only GET requests are allowed",
-      status: 405,
+      status: 405
     });
   }
 
@@ -49,7 +49,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       throw new ApiError(
         400,
         "Query parameter 'q' is required and must be at least 2 characters",
-        "BadRequest",
+        "BadRequest"
       );
     }
 
@@ -58,7 +58,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       throw new ApiError(
         400,
         "Parameter 'type' must be one of: scrutins, deputies, groups, all",
-        "BadRequest",
+        "BadRequest"
       );
     }
 
@@ -74,7 +74,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       q,
       scrutins: [],
       deputies: [],
-      groups: [],
+      groups: []
     };
 
     if (type === "scrutins" || type === "all") {
@@ -105,7 +105,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         synthese_contre: row.synthese_contre,
         synthese_abstentions: row.synthese_abstentions,
         synthese_non_votants: row.synthese_non_votants,
-        official_url: row.official_url,
+        official_url: row.official_url
       }));
 
       if (groupSlug && scrutinsList.length > 0) {
@@ -127,7 +127,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               {
                 p_scrutin_ids: scrutinsList.map((s) => s.id),
                 p_groupe_politique: groupePolitique,
-                p_position: groupPosition,
+                p_position: groupPosition
               }
             );
 
@@ -181,7 +181,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         date_debut_mandat: row.date_debut_mandat,
         date_fin_mandat: row.date_fin_mandat ?? null,
         legislature: row.legislature,
-        official_url: row.official_url,
+        official_url: row.official_url
       }));
     }
 
@@ -208,7 +208,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .map(([label, deputy_count]) => ({
           slug: slugify(label),
           label,
-          deputy_count,
+          deputy_count
         }))
         .sort((a, b) => b.deputy_count - a.deputy_count)
         .slice(0, LIMIT_GROUPS);

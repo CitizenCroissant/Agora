@@ -50,8 +50,8 @@ export function setupNotificationHandler() {
         shouldPlaySound: false,
         shouldSetBadge: false,
         shouldShowBanner: true,
-        shouldShowList: true,
-      }),
+        shouldShowList: true
+      })
     });
   }
 }
@@ -69,7 +69,7 @@ export async function getExpoPushTokenAsync(): Promise<{
     return {
       token: null,
       error:
-        "expo-notifications non disponible. Utilisez un development build (pas Expo Go).",
+        "expo-notifications non disponible. Utilisez un development build (pas Expo Go)."
     };
   }
 
@@ -77,7 +77,7 @@ export async function getExpoPushTokenAsync(): Promise<{
     return {
       token: null,
       error:
-        "Les notifications push nécessitent un appareil physique (pas un simulateur).",
+        "Les notifications push nécessitent un appareil physique (pas un simulateur)."
     };
   }
 
@@ -94,7 +94,7 @@ export async function getExpoPushTokenAsync(): Promise<{
       return {
         token: null,
         error:
-          "Permission de notification refusée. Activez-la dans les paramètres de l'appareil.",
+          "Permission de notification refusée. Activez-la dans les paramètres de l'appareil."
       };
     }
 
@@ -106,12 +106,12 @@ export async function getExpoPushTokenAsync(): Promise<{
       return {
         token: null,
         error:
-          "projectId manquant. Exécutez 'eas build:configure' pour configurer le projet EAS.",
+          "projectId manquant. Exécutez 'eas build:configure' pour configurer le projet EAS."
       };
     }
 
     const tokenResult = await Notifs.getExpoPushTokenAsync({
-      projectId,
+      projectId
     });
     return { token: tokenResult?.data ?? null };
   } catch (error) {
@@ -120,7 +120,7 @@ export async function getExpoPushTokenAsync(): Promise<{
       error:
         error instanceof Error
           ? error.message
-          : "Erreur lors de la récupération du token.",
+          : "Erreur lors de la récupération du token."
     };
   }
 }
@@ -136,7 +136,7 @@ export async function registerPushToken(
   const url = `${apiUrl.replace(/\/$/, "")}/push/register`;
   const body: Record<string, string | null> = {
     expo_push_token: token,
-    topic,
+    topic
   };
   if (topic === "my_deputy" && deputyActeurRef) {
     body.deputy_acteur_ref = deputyActeurRef;
@@ -146,21 +146,21 @@ export async function registerPushToken(
     const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      body: JSON.stringify(body)
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
       return {
         ok: false,
         error:
-          (data as { message?: string }).message ?? "Échec de l'enregistrement",
+          (data as { message?: string }).message ?? "Échec de l'enregistrement"
       };
     }
     return { ok: true };
   } catch (e) {
     return {
       ok: false,
-      error: e instanceof Error ? e.message : "Erreur réseau",
+      error: e instanceof Error ? e.message : "Erreur réseau"
     };
   }
 }
@@ -177,7 +177,7 @@ export async function unregisterPushToken(
     const res = await fetch(url, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ expo_push_token: token }),
+      body: JSON.stringify({ expo_push_token: token })
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
@@ -185,14 +185,14 @@ export async function unregisterPushToken(
         ok: false,
         error:
           (data as { message?: string }).message ??
-          "Échec de la désinscription",
+          "Échec de la désinscription"
       };
     }
     return { ok: true };
   } catch (e) {
     return {
       ok: false,
-      error: e instanceof Error ? e.message : "Erreur réseau",
+      error: e instanceof Error ? e.message : "Erreur réseau"
     };
   }
 }

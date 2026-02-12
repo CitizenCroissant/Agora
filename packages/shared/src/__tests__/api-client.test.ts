@@ -26,13 +26,13 @@ describe('ApiClient', () => {
       const mockResponse = {
         date: '2024-01-15',
         sittings: [],
-        source: { label: 'Test', last_updated_at: '2024-01-15T10:00:00Z' },
+        source: { label: 'Test', last_updated_at: '2024-01-15T10:00:00Z' }
       };
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (global.fetch as any).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockResponse,
+        json: async () => mockResponse
       });
 
       const result = await client.getAgenda('2024-01-15');
@@ -50,8 +50,8 @@ describe('ApiClient', () => {
         json: async () => ({
           error: 'NotFound',
           message: 'Agenda not found',
-          status: 404,
-        }),
+          status: 404
+        })
       });
 
       await expect(client.getAgenda('2024-01-15')).rejects.toThrow(
@@ -65,13 +65,13 @@ describe('ApiClient', () => {
       const mockResponse = {
         from: '2024-01-15',
         to: '2024-01-20',
-        agendas: [],
+        agendas: []
       };
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (global.fetch as any).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockResponse,
+        json: async () => mockResponse
       });
 
       const result = await client.getAgendaRange('2024-01-15', '2024-01-20');
@@ -98,14 +98,14 @@ describe('ApiClient', () => {
           sitting_id: 'sit-123',
           original_source_url: 'https://example.com',
           last_synced_at: '2024-01-15T10:00:00Z',
-          checksum: 'abc123',
-        },
+          checksum: 'abc123'
+        }
       };
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (global.fetch as any).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockResponse,
+        json: async () => mockResponse
       });
 
       const result = await client.getSitting('sit-123');

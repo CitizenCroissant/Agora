@@ -10,7 +10,7 @@ import { ApiError, handleError } from "../errors";
 import {
   getCirconscriptionDisplayName,
   getCanonicalDepartementName,
-  getDepartementQueryValues,
+  getDepartementQueryValues
 } from "@agora/shared";
 import type { Deputy, DeputiesListResponse } from "@agora/shared";
 
@@ -51,7 +51,7 @@ function toDeputy(row: DeputyRow): Deputy {
     date_debut_mandat: row.date_debut_mandat,
     date_fin_mandat: row.date_fin_mandat ?? null,
     legislature: row.legislature,
-    official_url: row.official_url,
+    official_url: row.official_url
   };
 }
 
@@ -68,7 +68,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({
       error: "MethodNotAllowed",
       message: "Only GET requests are allowed",
-      status: 405,
+      status: 405
     });
   }
 

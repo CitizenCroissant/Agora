@@ -15,7 +15,7 @@ const ACCENT_COLORS = [
   "#9b5de5",
   "#00b4d8",
   "#e63946",
-  "#f4a261",
+  "#f4a261"
 ];
 
 function accentForId(id: string): string {
@@ -43,14 +43,14 @@ type DeptGroup = {
 
 function groupByDepartment(
   items: CirconscriptionSummary[],
-  searchQuery: string,
+  searchQuery: string
 ): DeptGroup[] {
   const q = searchQuery.trim().toLowerCase();
   const filtered = q
     ? items.filter(
         (c) =>
           c.label.toLowerCase().includes(q) ||
-          departmentFromLabel(c.label).toLowerCase().includes(q),
+          departmentFromLabel(c.label).toLowerCase().includes(q)
       )
     : items;
 
@@ -66,8 +66,8 @@ function groupByDepartment(
     .map(([departement, circonscriptions]) => ({
       departement,
       circonscriptions: circonscriptions.sort(
-        (a, b) => ordinalFromLabel(a.label) - ordinalFromLabel(b.label),
-      ),
+        (a, b) => ordinalFromLabel(a.label) - ordinalFromLabel(b.label)
+      )
     }))
     .sort((a, b) => a.departement.localeCompare(b.departement, "fr"));
 }
@@ -101,7 +101,7 @@ export default function CirconscriptionsPage() {
 
   const groups = useMemo(
     () => groupByDepartment(circonscriptions, searchQuery),
-    [circonscriptions, searchQuery],
+    [circonscriptions, searchQuery]
   );
 
   useEffect(() => {
@@ -180,7 +180,7 @@ export default function CirconscriptionsPage() {
                         •{" "}
                         {groups.reduce(
                           (n, g) => n + g.circonscriptions.length,
-                          0,
+                          0
                         )}{" "}
                         résultat(s)
                       </>
@@ -191,7 +191,7 @@ export default function CirconscriptionsPage() {
                       const isExpanded = expandedDepts.has(group.departement);
                       const totalDeputies = group.circonscriptions.reduce(
                         (n, c) => n + c.deputy_count,
-                        0,
+                        0
                       );
                       const groupId = `group-${idx}`;
                       const headerId = `header-${idx}`;
@@ -238,7 +238,7 @@ export default function CirconscriptionsPage() {
                                     className={styles.card}
                                     style={
                                       {
-                                        "--accent": accentForId(c.id),
+                                        "--accent": accentForId(c.id)
                                       } as React.CSSProperties
                                     }
                                   >
