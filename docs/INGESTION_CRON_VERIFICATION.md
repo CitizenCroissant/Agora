@@ -30,7 +30,12 @@ The ingestion app (`apps/ingestion`) defines these crons in `vercel.json`:
 Alternatively, in the project’s **Deployments** tab, open a deployment and check **Functions** / **Logs** for invocations at 02:00 / 02:15 / (monthly) 03:00 UTC.
 
 **Required env for crons:**  
-The ingestion project must have `CRON_SECRET` set in Vercel (Environment Variables). Vercel sends this in the `Authorization` header when invoking cron endpoints. Without it, the handlers return 401.
+The ingestion project must have `CRON_SECRET` set in Vercel (Environment Variables). Vercel sends it as `Authorization: Bearer <CRON_SECRET>` when invoking cron endpoints. Without it, the handlers return 401.
+
+**Why cron might not run on its own:**
+
+1. **HTTP method:** Vercel cron triggers use **GET**. The ingestion handlers accept both GET and POST when the request is authorized. If they previously required only POST, scheduled runs would have received 405 and never executed.
+2. **Deployment Protection:** If the ingestion project has Vercel Deployment Protection (e.g. Vercel Authentication) enabled, the cron request can be blocked (401) before it reaches the serverless function. To fix: disable protection for Production for this project, or use [Protection Bypass for Automation](https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation) and ensure the cron invocation can use it (e.g. external cron that calls the URL with the bypass query param).
 
 ## 3. Check that data is up to date in Supabase
 

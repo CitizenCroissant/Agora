@@ -14,16 +14,6 @@ import {
 } from "../src/ingestion-logger";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "MethodNotAllowed",
-      message: "Only POST requests are allowed",
-    });
-  }
-
-  // Check authorization
-  // Vercel cron jobs send CRON_SECRET directly in Authorization header (not Bearer format)
-  // Manual calls can use Bearer INGESTION_SECRET format
   const authHeader = req.headers.authorization;
   const cronSecret = process.env.CRON_SECRET;
   const ingestionSecret = process.env.INGESTION_SECRET;
@@ -36,18 +26,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  // Verify the Authorization header matches either secret
-  // Vercel cron: Authorization: <CRON_SECRET>
-  // Manual: Authorization: Bearer <INGESTION_SECRET>
   const isValidAuth =
     authHeader &&
-    ((cronSecret && authHeader === cronSecret) ||
+    ((cronSecret &&
+      (authHeader === cronSecret || authHeader === `Bearer ${cronSecret}`)) ||
       (ingestionSecret && authHeader === `Bearer ${ingestionSecret}`));
 
   if (!isValidAuth) {
     return res.status(401).json({
       error: "Unauthorized",
       message: "Invalid or missing authorization",
+    });
+  }
+
+  if (req.method !== "GET" && req.method !== "POST") {
+    return res.status(405).json({
+      error: "MethodNotAllowed",
+      message: "Only GET (cron) or POST (manual) are allowed",
     });
   }
 

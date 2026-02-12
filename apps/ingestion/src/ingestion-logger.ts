@@ -118,11 +118,15 @@ export async function logError(
 
 /**
  * Detect whether the call was made by Vercel cron or manually.
- * Vercel cron sends the CRON_SECRET directly (not as Bearer token).
+ * Vercel cron sends "Authorization: Bearer <CRON_SECRET>"; manual curl may use raw CRON_SECRET.
  */
 export function detectTrigger(authHeader: string | undefined): TriggeredBy {
   if (!authHeader) return "manual";
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && authHeader === cronSecret) return "cron";
+  if (
+    cronSecret &&
+    (authHeader === cronSecret || authHeader === `Bearer ${cronSecret}`)
+  )
+    return "cron";
   return "manual";
 }
