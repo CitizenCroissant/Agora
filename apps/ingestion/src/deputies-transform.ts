@@ -52,14 +52,24 @@ function firstMandatDepute(
       groupeRef: null,
     };
   const mandatsList = toList(mandats);
-  const deputeMandats = mandatsList.filter(
+  // Restrict to Assemblée nationale (député) mandats only, so we don't pick a
+  // current Sénat or other organe mandat (e.g. PA267075 is a former député, current sénateur).
+  const assembleeMandats = mandatsList.filter(
     (m) =>
-      m.election?.refCirconscription ||
-      m.election?.lieu ||
-      (m.infosQualite?.libelleQualiteSex ?? "")
-        .toLowerCase()
-        .includes("député"),
+      m.typeOrgane === "ASSEMBLEE" &&
+      (m.election?.refCirconscription || m.election?.lieu),
   );
+  const deputeMandats =
+    assembleeMandats.length > 0
+      ? assembleeMandats
+      : mandatsList.filter(
+          (m) =>
+            m.election?.refCirconscription ||
+            m.election?.lieu ||
+            (m.infosQualite?.libelleQualiteSex ?? "")
+              .toLowerCase()
+              .includes("député"),
+        );
   const deputeMandatsList =
     deputeMandats.length > 0 ? deputeMandats : mandatsList;
   const today = todayIso();
