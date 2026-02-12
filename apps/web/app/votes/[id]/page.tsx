@@ -73,11 +73,11 @@ export default function ScrutinPage() {
             ]}
           />
           {loading && (
-            <div className={styles.loading}>Chargement du scrutin...</div>
+            <div className="stateLoading">Chargement du scrutin...</div>
           )}
 
           {error && (
-            <div className={styles.error}>
+            <div className="stateError">
               <p>Erreur: {error}</p>
             </div>
           )}

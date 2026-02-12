@@ -62,7 +62,7 @@ export default function SearchPage() {
           <form onSubmit={handleSubmit} className={styles.searchForm}>
             <input
               type="search"
-              className={styles.searchInput}
+              className="searchInput"
               placeholder="Rechercher (min. 2 caractères)..."
               value={query}
               onChange={handleInputChange}
@@ -75,17 +75,17 @@ export default function SearchPage() {
           </form>
 
           {loading && (
-            <div className={styles.loading}>Recherche en cours...</div>
+            <div className="stateLoading">Recherche en cours...</div>
           )}
 
           {error && (
-            <div className={styles.error}>
+            <div className="stateError">
               <p>Erreur : {error}</p>
             </div>
           )}
 
           {emptyAfterSearch && (
-            <p className={styles.empty}>
+            <p className="stateEmpty">
               Aucun résultat pour &quot;{results.q}&quot;.
             </p>
           )}

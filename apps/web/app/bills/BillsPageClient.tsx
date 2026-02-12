@@ -177,11 +177,11 @@ export default function BillsPageClient() {
         ]}
       />
 
-      <section className={styles.controlBar}>
+      <section className="controlBar">
         <form className={styles.searchForm} onSubmit={handleSubmit}>
           <input
             type="search"
-            className={styles.searchInput}
+            className="searchInput"
             placeholder="Rechercher un texte (min. 2 caractères)"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -267,11 +267,11 @@ export default function BillsPageClient() {
       )}
 
       {loading && (
-        <div className={styles.loading}>Chargement des textes...</div>
+        <div className="stateLoading">Chargement des textes...</div>
       )}
 
       {error && !loading && (
-        <div className={styles.error}>
+        <div className="stateError">
           <p>Erreur: {error}</p>
         </div>
       )}
@@ -280,7 +280,7 @@ export default function BillsPageClient() {
         <>
           {filteredBills.length === 0 ? (
             <section className={styles.list}>
-              <div className={styles.empty}>
+              <div className="stateEmpty">
                 <p>Aucun texte trouvé pour ces critères.</p>
                 <button
                   type="button"

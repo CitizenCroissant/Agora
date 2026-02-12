@@ -50,13 +50,13 @@ export default function CirconscriptionPage() {
     <div className="container">
       <Breadcrumb items={[{ label: "Circonscriptions", href: "/circonscriptions" }, { label: "Détail" }]} />
           {loading && (
-            <div className={styles.loading}>
+            <div className="stateLoading">
               Chargement de la circonscription...
             </div>
           )}
 
           {error && (
-            <div className={styles.error}>
+            <div className="stateError">
               <p>Erreur : {error}</p>
               <p className={styles.errorHint}>
                 Cette circonscription n&apos;existe peut-être pas ou l&apos;API

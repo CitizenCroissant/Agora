@@ -92,13 +92,13 @@ export default function DeputyVotesPage() {
       </form>
 
       {error && (
-        <div className={styles.error}>
+        <div className="stateError">
           <p>Erreur : {error}</p>
         </div>
       )}
 
       {searched && !loading && deputies.length === 0 && !error && (
-        <p className={styles.empty}>
+        <p className="stateEmpty">
           Aucun député trouvé pour &laquo;&nbsp;{query.trim()}&nbsp;&raquo;.
         </p>
       )}

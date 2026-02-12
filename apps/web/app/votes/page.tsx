@@ -238,7 +238,7 @@ function VotesPageContent() {
             defaultClosed
           />
 
-          <div className={styles.controlBar}>
+          <div className={`controlBar ${styles.controlBar}`}>
             <div className={styles.controlBarTop}>
               <div className={styles.leftControls}>
                 <button
@@ -324,7 +324,7 @@ function VotesPageContent() {
               >
                 <input
                   type="search"
-                  className={styles.searchInput}
+                  className="searchInput"
                   placeholder="Rechercher un scrutin (min. 2 caractères)"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -467,11 +467,11 @@ function VotesPageContent() {
           </div>
 
           {loading && (
-            <div className={styles.loading}>Chargement des scrutins...</div>
+            <div className="stateLoading">Chargement des scrutins...</div>
           )}
 
           {error && (
-            <div className={styles.error}>
+            <div className="stateError">
               <p>Erreur: {error}</p>
             </div>
           )}
@@ -479,7 +479,7 @@ function VotesPageContent() {
           {!loading && !error && data && (
             <div className={styles.scrutinsList}>
               {sortedDates.length === 0 ? (
-                <div className={styles.empty}>
+                <div className="stateEmpty">
                   <p>Aucun scrutin pour cette période.</p>
                 </div>
               ) : (
@@ -562,7 +562,7 @@ function VotesPageContent() {
 
 export default function VotesPage() {
   return (
-    <Suspense fallback={<div className={styles.loading}>Chargement...</div>}>
+    <Suspense fallback={<div className="stateLoading">Chargement...</div>}>
       <VotesPageContent />
     </Suspense>
   );

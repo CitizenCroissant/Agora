@@ -129,13 +129,13 @@ export default function CirconscriptionsPage() {
     <div className="container">
       <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Circonscriptions" }]} />
           {loading && (
-            <div className={styles.loading}>
+            <div className="stateLoading">
               Chargement des circonscriptions...
             </div>
           )}
 
           {error && (
-            <div className={styles.error}>
+            <div className="stateError">
               <p>Erreur : {error}</p>
               <p className={styles.errorHint}>
                 Vérifiez que l&apos;API est disponible et que les députés ont
@@ -147,7 +147,7 @@ export default function CirconscriptionsPage() {
           {!loading && !error && (
             <>
               {circonscriptions.length === 0 ? (
-                <p className={styles.loading}>
+                <p className="stateEmpty">
                   Aucune circonscription trouvée. Réingérez les députés pour
                   remplir les circonscriptions.
                 </p>
@@ -159,7 +159,7 @@ export default function CirconscriptionsPage() {
                       placeholder="Rechercher un département ou une circonscription…"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className={styles.searchInput}
+                      className="searchInput"
                       aria-label="Rechercher"
                     />
                     <div className={styles.expandButtons}>

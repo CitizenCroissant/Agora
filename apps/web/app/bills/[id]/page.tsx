@@ -81,10 +81,10 @@ export default function BillPage() {
         ]}
       />
 
-      {loading && <div className={styles.loading}>Chargement du texte...</div>}
+      {loading && <div className="stateLoading">Chargement du texte...</div>}
 
       {error && !loading && (
-        <div className={styles.error}>
+        <div className="stateError">
           <p>Erreur: {error}</p>
         </div>
       )}

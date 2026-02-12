@@ -62,11 +62,11 @@ export default function DeputyPage() {
     <div className="container">
       <Breadcrumb items={[{ label: "Mon député", href: "/mon-depute" }, { label: displayName || "Député" }]} />
           {loading && (
-            <div className={styles.loading}>Chargement du député...</div>
+            <div className="stateLoading">Chargement du député...</div>
           )}
 
           {error && (
-            <div className={styles.error}>
+            <div className="stateError">
               <p>Erreur : {error}</p>
               <p className={styles.errorHint}>
                 Ce député n&apos;est peut-être pas encore dans notre base.

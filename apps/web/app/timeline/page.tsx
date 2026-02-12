@@ -104,7 +104,7 @@ export default function TimelinePage() {
   return (
     <div className="container">
       <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Calendrier" }]} />
-          <div className={styles.controlBar}>
+          <div className={`controlBar ${styles.controlBar}`}>
             <div className={styles.leftControls}>
               <button
                 className={styles.iconButton}
@@ -163,11 +163,11 @@ export default function TimelinePage() {
           </div>
 
           {loading && (
-            <div className={styles.loading}>Chargement du calendrier...</div>
+            <div className="stateLoading">Chargement du calendrier...</div>
           )}
 
           {error && (
-            <div className={styles.error}>
+            <div className="stateError">
               <p>Erreur: {error}</p>
             </div>
           )}
@@ -175,7 +175,7 @@ export default function TimelinePage() {
           {!loading && !error && agendaRange && (
             <div className={styles.timeline}>
               {agendaRange.agendas.length === 0 ? (
-                <div className={styles.empty}>
+                <div className="stateEmpty">
                   <p>Aucune séance prévue pour cette période.</p>
                 </div>
               ) : (

@@ -52,11 +52,11 @@ export default function DeputyVotesByRefPage() {
     <div className="container">
       <Breadcrumb items={[{ label: "Scrutins", href: "/votes" }, { label: "Vote par député", href: "/votes/deputy" }, { label: displayName || "Député" }]} />
       {loading && (
-        <div className={styles.loading}>Chargement des votes...</div>
+        <div className="stateLoading">Chargement des votes...</div>
       )}
 
       {error && (
-        <div className={styles.error}>
+        <div className="stateError">
           <p>Erreur : {error}</p>
         </div>
       )}
@@ -75,7 +75,7 @@ export default function DeputyVotesByRefPage() {
             </Link>
           </div>
           {data.votes.length === 0 ? (
-            <p className={styles.empty}>
+            <p className="stateEmpty">
               Aucun vote enregistré pour cet identifiant.
             </p>
           ) : (

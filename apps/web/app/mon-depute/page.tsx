@@ -108,11 +108,11 @@ export default function MonDeputePage() {
     <div className="container">
       <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Trouver mon député" }]} />
           {loadingDepts && (
-            <div className={styles.loading}>Chargement des départements...</div>
+            <div className="stateLoading">Chargement des départements...</div>
           )}
 
           {error && !selectedDepartement && (
-            <div className={styles.error}>
+            <div className="stateError">
               <p>Erreur : {error}</p>
               <p className={styles.errorHint}>
                 Vérifiez que l&apos;API est disponible.
@@ -217,13 +217,13 @@ export default function MonDeputePage() {
           {selectedDepartement && (
             <>
               {loadingDeputies && (
-                <div className={styles.loading}>
+                <div className="stateLoading">
                   Chargement des députés du {selectedDepartement}...
                 </div>
               )}
 
               {error && selectedDepartement && (
-                <div className={styles.error}>
+                <div className="stateError">
                   <p>Erreur : {error}</p>
                 </div>
               )}
@@ -327,7 +327,7 @@ export default function MonDeputePage() {
 
                   {currentDeputies.length === 0 &&
                     pastDeputies.length === 0 && (
-                      <p className={styles.empty}>
+                      <p className="stateEmpty">
                         Aucun député trouvé pour ce département.
                       </p>
                     )}
@@ -337,7 +337,7 @@ export default function MonDeputePage() {
           )}
 
           {!loadingDepts && departements.length === 0 && !error && (
-            <p className={styles.empty}>
+            <p className="stateEmpty">
               Aucun département avec députés en base. Vérifiez que
               l&apos;ingestion des députés a été effectuée.
             </p>

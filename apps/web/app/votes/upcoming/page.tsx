@@ -80,10 +80,10 @@ export default function UpcomingVotesPage() {
     <div className="container">
       <Breadcrumb items={[{ label: "Scrutins", href: "/votes" }, { label: "Prochains votes" }]} />
 
-      {loading && <div className={styles.loading}>Chargement...</div>}
+      {loading && <div className="stateLoading">Chargement...</div>}
 
       {error && (
-        <div className={styles.error}>
+        <div className="stateError">
           <p>Erreur: {error}</p>
         </div>
       )}
@@ -91,7 +91,7 @@ export default function UpcomingVotesPage() {
       {!loading && !error && (
         <div className={styles.content}>
           {sittingsWithVotes.length === 0 ? (
-            <div className={styles.empty}>
+            <div className="stateEmpty">
               <p>
                 Aucune séance avec point de vote identifié pour les{" "}
                 {DAYS_AHEAD} prochains jours.

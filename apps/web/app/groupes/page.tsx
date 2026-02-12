@@ -52,13 +52,13 @@ export default function GroupesPage() {
     <div className="container">
       <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Groupes politiques" }]} />
           {loading && (
-            <div className={styles.loading}>
+            <div className="stateLoading">
               Chargement des groupes politiques...
             </div>
           )}
 
           {error && (
-            <div className={styles.error}>
+            <div className="stateError">
               <p>Erreur : {error}</p>
               <p className={styles.errorHint}>
                 Vérifiez que l&apos;API est disponible et que les députés ont
@@ -70,7 +70,7 @@ export default function GroupesPage() {
           {!loading && !error && (
             <>
               {groups.length === 0 ? (
-                <p className={styles.loading}>
+                <p className="stateEmpty">
                   Aucun groupe politique trouvé. Réingérez les députés pour
                   remplir les groupes.
                 </p>

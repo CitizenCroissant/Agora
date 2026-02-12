@@ -69,7 +69,7 @@ export default function Home() {
             Comprendre les votes d&apos;aujourd&apos;hui →
           </Link>
 
-          <div className={styles.controlBar}>
+          <div className={`controlBar ${styles.controlBar}`}>
             <div className={styles.leftControls}>
               <button
                 className={styles.iconButton}
@@ -114,11 +114,11 @@ export default function Home() {
           </div>
 
           {loading && (
-            <div className={styles.loading}>Chargement de l'agenda...</div>
+            <div className="stateLoading">Chargement de l'agenda...</div>
           )}
 
           {error && (
-            <div className={styles.error}>
+            <div className="stateError">
               <p>Erreur: {error}</p>
               <p className={styles.errorHint}>
                 Assurez-vous que l'API est démarrée et accessible.
@@ -129,7 +129,7 @@ export default function Home() {
           {!loading && !error && agenda && (
             <>
               {agenda.sittings.length === 0 ? (
-                <div className={styles.empty}>
+                <div className="stateEmpty">
                   <p>Aucune séance prévue pour cette date.</p>
                 </div>
               ) : (

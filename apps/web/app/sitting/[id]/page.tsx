@@ -51,11 +51,11 @@ export default function SittingPage() {
           />
 
           {loading && (
-            <div className={styles.loading}>Chargement des détails...</div>
+            <div className="stateLoading">Chargement des détails...</div>
           )}
 
           {error && (
-            <div className={styles.error}>
+            <div className="stateError">
               <p>Erreur: {error}</p>
             </div>
           )}

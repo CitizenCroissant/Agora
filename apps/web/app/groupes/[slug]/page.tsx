@@ -54,11 +54,11 @@ export default function GroupPage() {
     <div className="container">
       <Breadcrumb items={[{ label: "Groupes", href: "/groupes" }, { label: group?.label || "Groupe" }]} />
           {loading && (
-            <div className={styles.loading}>Chargement du groupe...</div>
+            <div className="stateLoading">Chargement du groupe...</div>
           )}
 
           {error && (
-            <div className={styles.error}>
+            <div className="stateError">
               <p>Erreur : {error}</p>
               <p className={styles.errorHint}>
                 Ce groupe n&apos;existe peut-être pas ou l&apos;API est
@@ -314,7 +314,7 @@ export default function GroupPage() {
                   )}
 
                   {current.length === 0 && past.length === 0 && (
-                    <p className={styles.empty}>Aucun député dans ce groupe.</p>
+                    <p className="stateEmpty">Aucun député dans ce groupe.</p>
                   )}
                 </>
               );
