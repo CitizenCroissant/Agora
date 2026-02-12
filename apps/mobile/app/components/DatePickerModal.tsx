@@ -20,6 +20,7 @@ import {
   Platform,
   TextInput,
 } from "react-native";
+import { colors, spacing, radius, typography } from "@/theme";
 
 // DateTimePicker will be loaded lazily in the component to avoid module loading issues
 
@@ -146,39 +147,39 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modal: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    paddingBottom: Platform.OS === "ios" ? 0 : 16,
+    backgroundColor: colors.background,
+    borderRadius: radius.lg,
+    paddingBottom: Platform.OS === "ios" ? 0 : spacing.lg,
     minWidth: 280,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: colors.border,
   },
   cancelText: {
-    fontSize: 16,
-    color: "#666",
+    fontSize: typography.fontSize.base,
+    color: colors.textLight,
   },
   confirmText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#0055a4",
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.primary,
   },
   webInputWrapper: {
-    padding: 16,
+    padding: spacing.lg,
     minHeight: 120,
   },
   webInput: {
-    fontSize: 16,
-    padding: 12,
+    fontSize: typography.fontSize.base,
+    padding: spacing.md,
     borderWidth: 1,
-    borderColor: "#e0e0e0",
-    borderRadius: 8,
+    borderColor: colors.border,
+    borderRadius: radius.md,
     ...(Platform.OS === "web" && { width: "100%" as const }),
   },
 });

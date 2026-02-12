@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { colors, spacing, radius, typography } from "@/theme";
 
 export default function SourcesScreen() {
   const router = useRouter();
@@ -91,50 +92,50 @@ export default function SourcesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: colors.background,
   },
   section: {
-    padding: 16,
-    paddingBottom: 8,
+    padding: spacing.lg,
+    paddingBottom: spacing.sm,
   },
   h2: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#1a1a1a",
-    marginBottom: 8,
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.text,
+    marginBottom: spacing.sm,
   },
   h3: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#1a1a1a",
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text,
     marginBottom: 6,
   },
   p: {
     fontSize: 15,
-    color: "#333",
+    color: colors.text,
     lineHeight: 22,
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   card: {
-    backgroundColor: "#f5f5f5",
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 12,
+    backgroundColor: colors.backgroundAlt,
+    padding: spacing.md,
+    borderRadius: radius.md,
+    marginBottom: spacing.md,
   },
   link: {
     fontSize: 15,
-    color: "#0055a4",
-    fontWeight: "500",
+    color: colors.primary,
+    fontWeight: typography.fontWeight.medium,
   },
   termTitle: {
     fontSize: 15,
-    fontWeight: "600",
-    color: "#1a1a1a",
-    marginTop: 12,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text,
+    marginTop: spacing.md,
     marginBottom: 2,
   },
   footer: {
-    padding: 16,
-    paddingBottom: 32,
+    padding: spacing.lg,
+    paddingBottom: spacing.xxl,
   },
 });

@@ -9,6 +9,7 @@ import {
   Switch,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { colors } from "@/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Config } from "../../config";
 import {
@@ -281,8 +282,8 @@ export default function AboutScreen() {
                 value={pushEnabled}
                 onValueChange={handlePushToggle}
                 disabled={pushLoading}
-                trackColor={{ false: "#ccc", true: "#0055a4" }}
-                thumbColor="#fff"
+                trackColor={{ false: "#ccc", true: colors.primary }}
+                thumbColor={colors.background}
               />
             </View>
             {pushEnabled && (
@@ -359,23 +360,23 @@ export default function AboutScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: colors.background,
   },
   section: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomColor: colors.borderLight,
   },
   heading: {
     fontSize: 20,
     fontWeight: "600",
-    color: "#0055a4",
+    color: colors.primary,
     marginBottom: 12,
   },
   paragraph: {
     fontSize: 16,
     lineHeight: 24,
-    color: "#333",
+    color: colors.text,
     marginBottom: 12,
   },
   step: {
@@ -386,13 +387,13 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#0055a4",
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 12,
   },
   stepNumberText: {
-    color: "#fff",
+    color: colors.background,
     fontSize: 18,
     fontWeight: "600",
   },
@@ -407,14 +408,14 @@ const styles = StyleSheet.create({
   stepText: {
     fontSize: 14,
     lineHeight: 20,
-    color: "#666",
+    color: colors.textLight,
   },
   link: {
     paddingVertical: 8,
   },
   linkText: {
     fontSize: 16,
-    color: "#0055a4",
+    color: colors.primary,
     fontWeight: "500",
   },
   footer: {
@@ -423,7 +424,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 12,
-    color: "#999",
+    color: colors.textMuted,
     marginBottom: 4,
   },
   pushRow: {
@@ -434,11 +435,11 @@ const styles = StyleSheet.create({
   },
   pushLabel: {
     fontSize: 16,
-    color: "#333",
+    color: colors.text,
   },
   pushError: {
     fontSize: 14,
-    color: "#c00",
+    color: colors.error,
     marginTop: 8,
   },
   topicRow: {
@@ -446,7 +447,7 @@ const styles = StyleSheet.create({
   },
   topicLabel: {
     fontSize: 14,
-    color: "#666",
+    color: colors.textLight,
     marginBottom: 8,
   },
   topicButtons: {
@@ -458,24 +459,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#ccc",
-    backgroundColor: "#fff",
+    borderColor: colors.border,
+    backgroundColor: colors.background,
   },
   topicButtonActive: {
-    borderColor: "#0055a4",
-    backgroundColor: "#0055a4",
+    borderColor: colors.primary,
+    backgroundColor: colors.primary,
   },
   topicButtonText: {
     fontSize: 14,
-    color: "#333",
+    color: colors.text,
   },
   topicButtonTextActive: {
-    color: "#fff",
+    color: colors.background,
     fontWeight: "600",
   },
   topicHint: {
     fontSize: 12,
-    color: "#666",
+    color: colors.textLight,
     marginTop: 8,
   },
 });

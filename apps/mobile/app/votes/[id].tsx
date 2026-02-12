@@ -13,6 +13,7 @@ import { useRouter } from "expo-router";
 import type { ScrutinDetailResponse } from "@agora/shared";
 import { formatDate } from "@agora/shared";
 import { apiClient } from "@/lib/api";
+import { colors } from "@/theme";
 
 const POSITION_LABELS: Record<string, string> = {
   pour: "Pour",
@@ -69,7 +70,7 @@ export default function ScrutinDetailScreen() {
       <ScrollView style={styles.container}>
         {loading && (
           <View style={styles.centerContent}>
-            <ActivityIndicator size="large" color="#0055a4" />
+            <ActivityIndicator size="large" color={colors.primary} />
             <Text style={styles.loadingText}>Chargement du scrutin...</Text>
           </View>
         )}

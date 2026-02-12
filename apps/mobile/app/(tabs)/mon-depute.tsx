@@ -11,6 +11,7 @@ import { useRouter } from "expo-router";
 import type { DepartementSummary, Deputy } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import { isCurrentlySitting } from "@agora/shared";
+import { colors } from "@/theme";
 
 export default function MonDeputeTabScreen() {
   const router = useRouter();
@@ -97,7 +98,7 @@ export default function MonDeputeTabScreen() {
       <ScrollView style={styles.content}>
         {loadingDepts && !selectedDepartement && (
           <View style={styles.centerContent}>
-            <ActivityIndicator size="large" color="#0055a4" />
+            <ActivityIndicator size="large" color={colors.primary} />
             <Text style={styles.loadingText}>
               Chargement des départements...
             </Text>
@@ -150,7 +151,7 @@ export default function MonDeputeTabScreen() {
           <>
             {loadingDeputies && (
               <View style={styles.centerContent}>
-                <ActivityIndicator size="large" color="#0055a4" />
+                <ActivityIndicator size="large" color={colors.primary} />
                 <Text style={styles.loadingText}>
                   Chargement des députés du {selectedDepartement}...
                 </Text>

@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
 import { useRouter } from 'expo-router'
 import { AgendaResponse } from '@agora/shared'
 import { getTodayDate, formatDate, addDays, subtractDays } from '@agora/shared'
 import { apiClient } from '@/lib/api'
+import { ScreenContainer } from '@/app/components/ScreenContainer'
+import { StatusMessage } from '@/app/components/StatusMessage'
+import { colors, spacing, radius, typography, shadows } from '@/theme'
 
 export default function TodayScreen() {
   const router = useRouter()
@@ -43,7 +46,7 @@ export default function TodayScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScreenContainer>
       <View style={styles.controlBar}>
         <View style={styles.topRow}>
           <View style={styles.navigationControls}>
@@ -75,27 +78,21 @@ export default function TodayScreen() {
 
       <ScrollView style={styles.content}>
         {loading && (
-          <View style={styles.centerContent}>
-            <ActivityIndicator size="large" color="#0055a4" />
-            <Text style={styles.loadingText}>Chargement...</Text>
-          </View>
+          <StatusMessage type="loading" message="Chargement..." />
         )}
 
         {error && (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>Erreur: {error}</Text>
-            <Text style={styles.errorHint}>
-              Vérifiez votre connexion internet et réessayez.
-            </Text>
-          </View>
+          <StatusMessage
+            type="error"
+            message={`Erreur: ${error}`}
+            hint="Vérifiez votre connexion internet et réessayez."
+          />
         )}
 
         {!loading && !error && agenda && (
           <>
             {agenda.sittings.length === 0 ? (
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>Aucune séance prévue pour cette date.</Text>
-              </View>
+              <StatusMessage type="empty" message="Aucune séance prévue pour cette date." />
             ) : (
               agenda.sittings.map((sitting) => (
                 <TouchableOpacity
@@ -140,29 +137,21 @@ export default function TodayScreen() {
           </>
         )}
       </ScrollView>
-    </View>
+    </ScreenContainer>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
   controlBar: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 85, 164, 0.1)',
-    padding: 16,
-    paddingBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 3,
+    borderBottomColor: colors.primaryTint,
+    padding: spacing.lg,
+    paddingBottom: spacing.md,
+    ...shadows.sm,
   },
   topRow: {
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   navigationControls: {
     flexDirection: 'row',
@@ -176,157 +165,119 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#e0e0e0',
-    borderRadius: 8,
-    backgroundColor: '#fff',
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    backgroundColor: colors.background,
   },
   iconButtonText: {
     fontSize: 28,
     fontWeight: '300',
-    color: '#333',
+    color: colors.text,
     lineHeight: 32,
   },
   todayButton: {
     paddingHorizontal: 14,
-    paddingVertical: 8,
-    backgroundColor: '#0055a4',
-    borderRadius: 8,
+    paddingVertical: spacing.sm,
+    backgroundColor: colors.primary,
+    borderRadius: radius.md,
     marginLeft: 6,
   },
   todayButtonText: {
     fontSize: 13,
-    fontWeight: '600',
-    color: '#fff',
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.background,
   },
   dateTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text,
     textAlign: 'center',
     textTransform: 'capitalize',
   },
   voteCta: {
-    marginHorizontal: 16,
-    marginTop: 12,
-    marginBottom: 8,
-    padding: 12,
-    backgroundColor: 'rgba(0, 85, 164, 0.08)',
-    borderRadius: 8,
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.md,
+    marginBottom: spacing.sm,
+    padding: spacing.md,
+    backgroundColor: colors.primaryTintLight,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: 'rgba(0, 85, 164, 0.2)',
+    borderColor: colors.primaryTintStrong,
   },
   voteCtaText: {
     fontSize: 15,
-    fontWeight: '600',
-    color: '#0055a4',
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.primary,
     textAlign: 'center',
   },
   content: {
     flex: 1,
   },
-  centerContent: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 48,
-  },
-  loadingText: {
-    marginTop: 16,
-    color: '#666',
-    fontSize: 16,
-  },
-  errorContainer: {
-    padding: 24,
-    alignItems: 'center',
-  },
-  errorText: {
-    color: '#ef4135',
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 8,
-  },
-  errorHint: {
-    color: '#666',
-    fontSize: 14,
-    textAlign: 'center',
-  },
-  emptyContainer: {
-    padding: 48,
-    alignItems: 'center',
-  },
-  emptyText: {
-    color: '#666',
-    fontSize: 16,
-    textAlign: 'center',
-  },
   sittingCard: {
-    backgroundColor: '#fff',
-    marginHorizontal: 16,
-    marginTop: 16,
-    padding: 16,
-    borderRadius: 8,
+    backgroundColor: colors.background,
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.lg,
+    padding: spacing.lg,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    borderColor: colors.border,
+    ...shadows.md,
   },
   sittingHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   sittingTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#0055a4',
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.primary,
     flex: 1,
-    marginRight: 8,
+    marginRight: spacing.sm,
   },
   timeRange: {
-    fontSize: 12,
-    color: '#666',
-    backgroundColor: '#f5f5f5',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
+    fontSize: typography.fontSize.sm,
+    color: colors.textLight,
+    backgroundColor: colors.backgroundAlt,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.sm,
   },
   location: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 8,
+    fontSize: typography.fontSize.md,
+    color: colors.textLight,
+    marginBottom: spacing.sm,
   },
   description: {
-    fontSize: 14,
+    fontSize: typography.fontSize.md,
     lineHeight: 20,
-    color: '#333',
-    marginBottom: 8,
+    color: colors.text,
+    marginBottom: spacing.sm,
   },
   itemsCount: {
-    paddingTop: 8,
+    paddingTop: spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
+    borderTopColor: colors.borderLight,
   },
   itemsCountText: {
-    fontSize: 12,
-    color: '#666',
+    fontSize: typography.fontSize.sm,
+    color: colors.textLight,
   },
   source: {
-    margin: 16,
-    padding: 16,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 8,
+    margin: spacing.lg,
+    padding: spacing.lg,
+    backgroundColor: colors.backgroundAlt,
+    borderRadius: radius.md,
     alignItems: 'center',
   },
   sourceLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    marginBottom: 4,
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.semibold,
+    marginBottom: spacing.xs,
   },
   sourceDate: {
-    fontSize: 11,
-    color: '#666',
+    fontSize: typography.fontSize.xs,
+    color: colors.textLight,
   },
 })

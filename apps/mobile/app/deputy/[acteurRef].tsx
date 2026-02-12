@@ -20,6 +20,7 @@ import {
   isPushSupported,
   FAVORITE_DEPUTY_KEY,
 } from "@/lib/notifications";
+import { colors } from "@/theme";
 
 const PUSH_ENABLED_KEY = "@agora_push_enabled";
 const PUSH_TOKEN_KEY = "@agora_push_token";
@@ -96,7 +97,7 @@ export default function DeputyDetailScreen() {
       <ScrollView style={styles.container}>
         {loading && (
           <View style={styles.centerContent}>
-            <ActivityIndicator size="large" color="#0055a4" />
+            <ActivityIndicator size="large" color={colors.primary} />
             <Text style={styles.loadingText}>Chargement du député...</Text>
           </View>
         )}

@@ -13,6 +13,7 @@ import { useRouter } from "expo-router";
 import { SittingDetailResponse } from "@agora/shared";
 import { formatDate } from "@agora/shared";
 import { apiClient } from "@/lib/api";
+import { colors } from "@/theme";
 
 export default function SittingDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -52,7 +53,7 @@ export default function SittingDetailScreen() {
       <ScrollView style={styles.container}>
         {loading && (
           <View style={styles.centerContent}>
-            <ActivityIndicator size="large" color="#0055a4" />
+            <ActivityIndicator size="large" color={colors.primary} />
             <Text style={styles.loadingText}>Chargement...</Text>
           </View>
         )}

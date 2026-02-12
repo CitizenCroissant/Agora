@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Stack, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { setupNotificationHandler } from "@/lib/notifications";
+import { colors } from "@/theme";
 
 // Lazy load expo-notifications to avoid module loading errors
 function getNotifications() {
@@ -47,9 +48,9 @@ export default function RootLayout() {
       <Stack
         screenOptions={{
           headerStyle: {
-            backgroundColor: "#0055a4",
+            backgroundColor: colors.primary,
           },
-          headerTintColor: "#fff",
+          headerTintColor: colors.background,
           headerTitleStyle: {
             fontWeight: "bold",
           },

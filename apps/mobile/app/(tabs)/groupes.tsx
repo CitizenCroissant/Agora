@@ -11,6 +11,7 @@ import {
 import { useRouter } from "expo-router";
 import type { PoliticalGroupSummary } from "@agora/shared";
 import { apiClient } from "@/lib/api";
+import { colors } from "@/theme";
 
 export default function GroupesTabScreen() {
   const router = useRouter();
@@ -62,7 +63,7 @@ export default function GroupesTabScreen() {
       <ScrollView style={styles.content}>
         {loading && (
           <View style={styles.centerContent}>
-            <ActivityIndicator size="large" color="#0055a4" />
+            <ActivityIndicator size="large" color={colors.primary} />
             <Text style={styles.loadingText}>
               Chargement des groupes politiques...
             </Text>

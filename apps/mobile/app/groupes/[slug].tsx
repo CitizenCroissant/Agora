@@ -12,6 +12,7 @@ import { useRouter } from "expo-router";
 import type { PoliticalGroupDetail, Deputy } from "@agora/shared";
 import { isCurrentlySitting } from "@agora/shared";
 import { apiClient } from "@/lib/api";
+import { colors } from "@/theme";
 
 export default function GroupDetailScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
@@ -51,7 +52,7 @@ export default function GroupDetailScreen() {
       <ScrollView style={styles.container}>
         {loading && (
           <View style={styles.centerContent}>
-            <ActivityIndicator size="large" color="#0055a4" />
+            <ActivityIndicator size="large" color={colors.primary} />
             <Text style={styles.loadingText}>Chargement du groupe...</Text>
           </View>
         )}

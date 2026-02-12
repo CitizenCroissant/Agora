@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { colors, spacing, radius, typography } from "@/theme";
 
 const LINKS = [
   {
@@ -39,12 +40,12 @@ export default function ExplorerScreen() {
           onPress={() => router.push(item.href)}
           activeOpacity={0.7}
         >
-          <Ionicons name={item.icon} size={28} color="#0055a4" />
+          <Ionicons name={item.icon} size={28} color={colors.primary} />
           <View style={styles.cardText}>
             <Text style={styles.cardTitle}>{item.label}</Text>
             <Text style={styles.cardDescription}>{item.description}</Text>
           </View>
-          <Ionicons name="chevron-forward" size={22} color="#666" />
+          <Ionicons name="chevron-forward" size={22} color={colors.textLight} />
         </TouchableOpacity>
       ))}
     </View>
@@ -54,36 +55,36 @@ export default function ExplorerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: "#fff",
+    padding: spacing.lg,
+    backgroundColor: colors.background,
   },
   intro: {
-    fontSize: 16,
-    color: "#666",
+    fontSize: typography.fontSize.base,
+    color: colors.textLight,
     marginBottom: 20,
   },
   card: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
-    backgroundColor: "#f5f5f5",
-    borderRadius: 12,
-    marginBottom: 12,
+    padding: spacing.lg,
+    backgroundColor: colors.backgroundAlt,
+    borderRadius: radius.lg,
+    marginBottom: spacing.md,
     borderWidth: 1,
-    borderColor: "#e0e0e0",
+    borderColor: colors.border,
   },
   cardText: {
     flex: 1,
-    marginLeft: 16,
+    marginLeft: spacing.lg,
   },
   cardTitle: {
     fontSize: 17,
-    fontWeight: "600",
-    color: "#1a1a1a",
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text,
   },
   cardDescription: {
-    fontSize: 14,
-    color: "#666",
+    fontSize: typography.fontSize.md,
+    color: colors.textLight,
     marginTop: 2,
   },
 });

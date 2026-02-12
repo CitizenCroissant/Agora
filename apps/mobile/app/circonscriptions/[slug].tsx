@@ -11,6 +11,7 @@ import { useLocalSearchParams, Stack } from "expo-router";
 import { useRouter } from "expo-router";
 import type { CirconscriptionDetail } from "@agora/shared";
 import { apiClient } from "@/lib/api";
+import { colors } from "@/theme";
 
 export default function CirconscriptionDetailScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
@@ -53,7 +54,7 @@ export default function CirconscriptionDetailScreen() {
       <ScrollView style={styles.container}>
         {loading && (
           <View style={styles.centerContent}>
-            <ActivityIndicator size="large" color="#0055a4" />
+            <ActivityIndicator size="large" color={colors.primary} />
             <Text style={styles.loadingText}>
               Chargement de la circonscription...
             </Text>

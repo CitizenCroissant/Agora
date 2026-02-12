@@ -4,12 +4,14 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
   StyleSheet,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { DatePickerModal } from "@/app/components/DatePickerModal";
+import { StatusMessage } from "@/app/components/StatusMessage";
+import { ScreenContainer } from "@/app/components/ScreenContainer";
 import type { Scrutin, ScrutinsResponse } from "@agora/shared";
+import { colors, spacing, radius, typography, shadows } from "@/theme";
 import {
   getTodayDate,
   formatDate,
@@ -137,7 +139,7 @@ export default function VotesTabScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <ScreenContainer>
       <View style={styles.controlBar}>
         <View style={styles.topRow}>
           <View style={styles.navigationControls}>
@@ -204,26 +206,17 @@ export default function VotesTabScreen() {
 
       <ScrollView style={styles.content}>
         {loading && (
-          <View style={styles.centerContent}>
-            <ActivityIndicator size="large" color="#0055a4" />
-            <Text style={styles.loadingText}>Chargement des scrutins...</Text>
-          </View>
+          <StatusMessage type="loading" message="Chargement des scrutins..." />
         )}
 
         {error && (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>Erreur: {error}</Text>
-          </View>
+          <StatusMessage type="error" message={`Erreur: ${error}`} />
         )}
 
         {!loading && !error && (
           <>
             {sortedDates.length === 0 ? (
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>
-                  Aucun scrutin pour cette période.
-                </Text>
-              </View>
+              <StatusMessage type="empty" message="Aucun scrutin pour cette période." />
             ) : (
               sortedDates.map((dateStr) => (
                 <View key={dateStr} style={styles.dateSection}>
@@ -293,32 +286,24 @@ export default function VotesTabScreen() {
         onConfirm={handleDateConfirm}
         onCancel={() => setShowDatePicker(false)}
       />
-    </View>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
   controlBar: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(0, 85, 164, 0.1)",
-    padding: 16,
-    paddingBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 3,
+    borderBottomColor: colors.primaryTint,
+    padding: spacing.lg,
+    paddingBottom: spacing.md,
+    ...shadows.sm,
   },
   topRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   navigationControls: {
     flexDirection: "row",
@@ -328,29 +313,29 @@ const styles = StyleSheet.create({
   rightControls: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: spacing.sm,
   },
   dateButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
     gap: 6,
     borderWidth: 1,
-    borderColor: "#e0e0e0",
-    borderRadius: 8,
-    backgroundColor: "#fff",
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    backgroundColor: colors.background,
     minWidth: 44,
   },
   dateButtonText: {
-    fontSize: 18,
+    fontSize: typography.fontSize.lg,
     lineHeight: 20,
   },
   viewToggle: {
     flexDirection: "row",
-    backgroundColor: "#f5f5f5",
-    borderRadius: 8,
+    backgroundColor: colors.backgroundAlt,
+    borderRadius: radius.md,
     padding: 3,
     gap: 2,
   },
@@ -363,20 +348,16 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   viewButtonActive: {
-    backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
+    backgroundColor: colors.background,
+    ...shadows.sm,
   },
   viewButtonText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#666",
+    fontSize: typography.fontSize.md,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.textLight,
   },
   viewButtonTextActive: {
-    color: "#0055a4",
+    color: colors.primary,
   },
   iconButton: {
     width: 36,
@@ -384,149 +365,117 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e0e0e0",
-    borderRadius: 8,
-    backgroundColor: "#fff",
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    backgroundColor: colors.background,
   },
   iconButtonText: {
     fontSize: 28,
     fontWeight: "300",
-    color: "#333",
+    color: colors.text,
   },
   todayButton: {
     paddingHorizontal: 14,
-    paddingVertical: 8,
-    backgroundColor: "#0055a4",
-    borderRadius: 8,
+    paddingVertical: spacing.sm,
+    backgroundColor: colors.primary,
+    borderRadius: radius.md,
   },
   todayButtonText: {
     fontSize: 13,
-    fontWeight: "600",
-    color: "#fff",
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.background,
   },
   periodTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text,
     textAlign: "center",
     textTransform: "capitalize",
   },
   content: {
     flex: 1,
   },
-  centerContent: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 48,
-  },
-  loadingText: {
-    marginTop: 16,
-    color: "#666",
-    fontSize: 16,
-  },
-  errorContainer: {
-    padding: 24,
-    alignItems: "center",
-  },
-  errorText: {
-    color: "#ef4135",
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  emptyContainer: {
-    padding: 48,
-    alignItems: "center",
-  },
-  emptyText: {
-    color: "#666",
-    fontSize: 16,
-    textAlign: "center",
-  },
   dateSection: {
-    marginHorizontal: 16,
+    marginHorizontal: spacing.lg,
     marginTop: 20,
   },
   dateSectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#0055a4",
-    marginBottom: 12,
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.primary,
+    marginBottom: spacing.md,
     textTransform: "capitalize",
   },
   scrutinCard: {
-    backgroundColor: "#fff",
-    padding: 16,
-    borderRadius: 8,
+    backgroundColor: colors.background,
+    padding: spacing.lg,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: "#e0e0e0",
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    borderColor: colors.border,
+    marginBottom: spacing.md,
+    ...shadows.sm,
   },
   scrutinHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 8,
-    gap: 8,
+    marginBottom: spacing.sm,
+    gap: spacing.sm,
   },
   badge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
     borderRadius: 6,
   },
   badgeAdopte: {
-    backgroundColor: "rgba(0, 128, 0, 0.15)",
+    backgroundColor: colors.successBg,
   },
   badgeRejete: {
-    backgroundColor: "rgba(200, 0, 0, 0.15)",
+    backgroundColor: colors.errorBg,
   },
   badgeText: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#333",
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text,
   },
   scrutinNumero: {
-    fontSize: 12,
-    color: "#666",
+    fontSize: typography.fontSize.sm,
+    color: colors.textLight,
   },
   scrutinTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 8,
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text,
+    marginBottom: spacing.sm,
   },
   tagsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 6,
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   tag: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    backgroundColor: "rgba(0, 85, 164, 0.1)",
-    borderRadius: 12,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    backgroundColor: colors.primaryTint,
+    borderRadius: radius.lg,
   },
   tagText: {
     fontSize: 11,
-    fontWeight: "500",
-    color: "#0055a4",
+    fontWeight: typography.fontWeight.medium,
+    color: colors.primary,
   },
   moreTags: {
     fontSize: 11,
-    color: "#666",
+    color: colors.textLight,
     alignSelf: "center",
   },
   syntheseRow: {
-    paddingTop: 8,
+    paddingTop: spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: "#f0f0f0",
+    borderTopColor: colors.borderLight,
   },
   syntheseText: {
-    fontSize: 12,
-    color: "#666",
+    fontSize: typography.fontSize.sm,
+    color: colors.textLight,
   },
 });
