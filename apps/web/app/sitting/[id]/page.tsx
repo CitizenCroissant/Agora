@@ -268,12 +268,6 @@ export default function SittingPage() {
                         Données officielles de l'Assemblée nationale
                       </strong>
                     </p>
-                    <p className={styles.sourceDate}>
-                      Dernière synchronisation :{" "}
-                      {new Date(
-                        sitting.source_metadata.last_synced_at
-                      ).toLocaleString("fr-FR")}
-                    </p>
                     <a
                       href={sitting.source_metadata.original_source_url}
                       target="_blank"

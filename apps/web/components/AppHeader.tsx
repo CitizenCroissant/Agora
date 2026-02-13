@@ -15,8 +15,7 @@ type NavSectionId =
   | "votes"
   | "calendar"
   | "explore"
-  | "comprendre"
-  | "about";
+  | "comprendre";
 
 type NavSection = {
   id: NavSectionId;
@@ -51,13 +50,7 @@ const NAV_SECTIONS: NavSection[] = [
       { label: "Recherche", href: "/search" }
     ]
   },
-  { id: "comprendre", label: "Comprendre", href: "/democratie" },
-  {
-    id: "about",
-    label: "À propos",
-    href: "/about",
-    children: [{ label: "Sources de données", href: "/sources" }]
-  }
+  { id: "comprendre", label: "Comprendre", href: "/democratie" }
 ] satisfies NavSection[];
 
 export function AppHeader() {

@@ -381,6 +381,19 @@ export interface SearchResponse {
 }
 
 /**
+ * Ingestion status (data freshness) - GET /ingestion-status
+ */
+export interface IngestionStatusResponse {
+  ok: boolean;
+  agenda: {
+    latest_sitting_date: string | null;
+    last_synced_at: string | null;
+    is_fresh: boolean;
+  };
+  checked_at: string;
+}
+
+/**
  * API Error types
  */
 

@@ -351,11 +351,6 @@
   font-size: 0.938rem;
 }
 
-.sourceDate {
-  color: var(--color-text-light);
-  font-size: 0.875rem;
-}
-
 .sourceLink {
   display: inline-block;
   margin-top: var(--spacing-sm);

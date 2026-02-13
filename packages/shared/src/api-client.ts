@@ -26,7 +26,8 @@ import {
   SearchType,
   ApiError,
   BillSummary,
-  BillDetailResponse
+  BillDetailResponse,
+  IngestionStatusResponse
 } from "./types";
 
 const API_NOT_JSON_MESSAGE =
@@ -481,6 +482,21 @@ export class ApiClient {
     }
 
     return data as BillDetailResponse;
+  }
+
+  /**
+   * Fetch ingestion status (data freshness) for transparency
+   */
+  async getIngestionStatus(): Promise<IngestionStatusResponse> {
+    const response = await fetch(`${this.baseUrl}/ingestion-status`);
+    const data = await parseJsonOrThrow<IngestionStatusResponse | ApiError>(
+      response
+    );
+    if (!response.ok) {
+      const error = data as ApiError;
+      throw new Error(error.message || "Failed to fetch ingestion status");
+    }
+    return data as IngestionStatusResponse;
   }
 }
 

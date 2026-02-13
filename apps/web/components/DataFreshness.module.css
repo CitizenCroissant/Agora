@@ -1,0 +1,23 @@
+.freshness {
+  margin: 0;
+  margin-top: var(--spacing-xs);
+  font-size: 0.8125rem;
+  color: var(--color-text-light);
+}
+
+.fresh {
+  color: var(--color-text-light);
+}
+
+.stale {
+  color: var(--color-text-light);
+}
+
+.sourcesLink {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.sourcesLink:hover {
+  text-decoration: none;
+}
