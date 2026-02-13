@@ -16,10 +16,8 @@ export interface OrganeInsert {
   official_url: string | null;
 }
 
-const LEGISLATURE = 17;
-
 function buildOfficialUrl(organeId: string): string {
-  return `https://www.assemblee-nationale.fr/dyn/${LEGISLATURE}/organes/${organeId}`;
+  return `https://www.assemblee-nationale.fr/dyn/org/${organeId}`;
 }
 
 function getText(val: unknown): string | null {
