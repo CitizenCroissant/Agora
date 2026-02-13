@@ -9,6 +9,7 @@ import Link from "next/link";
 import styles from "./scrutin.module.css";
 import { GlossaryTooltip } from "@/components/GlossaryTooltip";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { ShareBar } from "@/components/ShareBar";
 
 const POSITION_LABELS: Record<string, string> = {
   pour: "Pour",
@@ -84,6 +85,7 @@ export default function ScrutinPage() {
 
           {!loading && !error && scrutin && (
             <>
+              <ShareBar title={scrutin.titre} />
               <div className={styles.scrutinHeader}>
                 <div>
                   <span

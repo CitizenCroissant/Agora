@@ -9,6 +9,7 @@ import { apiClient } from "@/lib/api";
 import styles from "./bill.module.css";
 import { PageHelp } from "@/components/PageHelp";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { ShareBar } from "@/components/ShareBar";
 
 function formatTypeLabel(type?: string | null): string | null {
   if (!type) return null;
@@ -91,6 +92,7 @@ export default function BillPage() {
 
       {!loading && !error && bill && (
         <>
+          <ShareBar title={bill.short_title || bill.title} />
           {/* ── Bill header ── */}
           <section className={styles.billHeader}>
             <h1 className={styles.billTitle}>

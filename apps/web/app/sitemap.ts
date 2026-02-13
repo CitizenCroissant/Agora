@@ -1,19 +1,5 @@
 import type { MetadataRoute } from "next";
-
-/**
- * Base URL for the web app. Used for sitemap and SEO.
- * Set NEXT_PUBLIC_APP_URL in production (e.g. https://agora.example.com).
- * Vercel sets VERCEL_URL automatically.
- */
-function getBaseUrl(): string {
-  if (process.env.NEXT_PUBLIC_APP_URL) {
-    return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
-  }
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
-  return "https://agora.example.com";
-}
+import { getBaseUrl } from "@/lib/url";
 
 /**
  * Static description pages: indexable content that does not rely on the custom API.

@@ -13,6 +13,7 @@ import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./deputy.module.css";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { ShareBar } from "@/components/ShareBar";
 
 function computeAge(dateNaissance: string | null): number | null {
   if (!dateNaissance) return null;
@@ -80,6 +81,7 @@ export default function DeputyPage() {
 
       {!loading && !error && deputy && (
         <>
+          <ShareBar title={displayName} />
           <div className={styles.profileHeader}>
             <h1 className={styles.title}>{displayName}</h1>
             {deputy.groupe_politique && (

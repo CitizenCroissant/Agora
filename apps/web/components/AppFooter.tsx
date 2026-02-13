@@ -1,5 +1,6 @@
 import Link from "next/link";
 import styles from "./AppFooter.module.css";
+import { FooterShareCta } from "./FooterShareCta";
 
 export function AppFooter() {
   return (
@@ -13,6 +14,7 @@ export function AppFooter() {
           <Link href="/votes">Scrutins</Link>
           <Link href="/timeline">Calendrier</Link>
         </div>
+        <FooterShareCta />
       </div>
     </footer>
   );

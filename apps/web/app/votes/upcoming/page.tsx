@@ -12,6 +12,7 @@ import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./upcoming.module.css";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { ShareBar } from "@/components/ShareBar";
 
 const DAYS_AHEAD = 14;
 
@@ -76,9 +77,14 @@ export default function UpcomingVotesPage() {
     }
   }
 
+  const upcomingShareTitle = "Prochains votes à l'Assemblée nationale";
+  const upcomingShareMessage =
+    "Découvrez les prochains scrutins prévus à l'Assemblée nationale sur Agora.";
+
   return (
     <div className="container">
       <Breadcrumb items={[{ label: "Scrutins", href: "/votes" }, { label: "Prochains votes" }]} />
+      <ShareBar title={upcomingShareTitle} shareMessage={upcomingShareMessage} />
 
       {loading && <div className="stateLoading">Chargement...</div>}
 

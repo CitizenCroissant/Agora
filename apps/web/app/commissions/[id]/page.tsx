@@ -8,6 +8,7 @@ import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./commission.module.css";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { ShareBar } from "@/components/ShareBar";
 
 const MEMBERS_VISIBLE_INITIAL = 12;
 const LABEL_SANS_GROUPE = "Non inscrit";
@@ -106,6 +107,7 @@ export default function CommissionDetailPage() {
 
       {!loading && !error && organe && (
         <>
+          <ShareBar title={organe.libelle ?? organe.libelle_abrege ?? id} />
           <p className={styles.comprendreBlock}>
             <Link href="/democratie#commissions" className={styles.comprendreLink}>
               Comprendre les commissions et organes →
