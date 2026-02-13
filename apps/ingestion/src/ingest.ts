@@ -8,6 +8,7 @@ import { assembleeClient } from "./assemblee-client";
 import {
   transformSeance,
   transformAgendaItems,
+  transformAttendance,
   createSourceMetadata
 } from "./transform";
 import { ingestDossiers } from "./ingest-dossiers";
@@ -22,6 +23,31 @@ export interface IngestOptions {
   legislature?: string;
 }
 
+/** Fetch all organe ids from DB (paginated). Used to skip sittings that reference an unknown organe. */
+async function fetchValidOrganeIds(): Promise<Set<string>> {
+  const ids = new Set<string>();
+  const pageSize = 1000;
+  let from = 0;
+  let hasMore = true;
+  while (hasMore) {
+    const { data, error } = await supabase
+      .from("organes")
+      .select("id")
+      .range(from, from + pageSize - 1);
+    if (error) {
+      console.warn("Could not fetch organes for filtering:", error.message);
+      return ids;
+    }
+    if (!data?.length) break;
+    for (const row of data as { id: string }[]) {
+      if (row.id) ids.add(row.id);
+    }
+    hasMore = data.length === pageSize;
+    from += pageSize;
+  }
+  return ids;
+}
+
 export async function ingest(options: IngestOptions = {}) {
   console.log("Starting ingestion...", options);
 
@@ -29,6 +55,11 @@ export async function ingest(options: IngestOptions = {}) {
     const leg = options.legislature ?? "17";
     const dates = getDatesToFetch(options);
     console.log(`Fetching data for ${dates.length} date(s)`);
+
+    const validOrganeIds = options.dryRun ? undefined : await fetchValidOrganeIds();
+    if (validOrganeIds) {
+      console.log(`Organes in DB: ${validOrganeIds.size} (sittings with unknown organe_ref will be skipped)`);
+    }
 
     let totalSittings = 0;
     let totalItems = 0;
@@ -52,7 +83,7 @@ export async function ingest(options: IngestOptions = {}) {
 
       for (const date of sortedDates) {
         const allSeances = byDate.get(date)!;
-        const result = await processDate(date, allSeances, options);
+        const result = await processDate(date, allSeances, options, validOrganeIds);
         totalSittings += result.sittingsCount;
         totalItems += result.itemsCount;
       }
@@ -66,7 +97,7 @@ export async function ingest(options: IngestOptions = {}) {
         ]);
         const allSeances = [...seances, ...commissionReunions];
         console.log(`Found ${seances.length} seance(s), ${commissionReunions.length} commission reunion(s)`);
-        const result = await processDate(date, allSeances, options);
+        const result = await processDate(date, allSeances, options, validOrganeIds);
         totalSittings += result.sittingsCount;
         totalItems += result.itemsCount;
       }
@@ -98,17 +129,36 @@ export async function ingest(options: IngestOptions = {}) {
 
 /**
  * Process one day's seances: upsert sittings, agenda items, and source metadata.
+ * Sittings whose organe_ref is not in validOrganeIds are skipped (dropped).
  * Returns counts for this date.
  */
 async function processDate(
   date: string,
   allSeances: AssembleeSeance[],
-  options: IngestOptions
+  options: IngestOptions,
+  validOrganeIds?: Set<string>
 ): Promise<{ sittingsCount: number; itemsCount: number }> {
-  if (allSeances.length === 0) return { sittingsCount: 0, itemsCount: 0 };
+  let seances = allSeances;
+
+  if (validOrganeIds && allSeances.length > 0) {
+    const before = allSeances.length;
+    seances = allSeances.filter((s) => {
+      const ref = s.organeRef?.trim();
+      if (!ref) return true;
+      if (validOrganeIds.has(ref)) return true;
+      return false;
+    });
+    const dropped = before - seances.length;
+    if (dropped > 0) {
+      const skippedRefs = [...new Set(allSeances.filter((s) => s.organeRef?.trim() && !validOrganeIds.has(s.organeRef.trim())).map((s) => s.organeRef!.trim()))];
+      console.log(`${date}: skipping ${dropped} sitting(s) with unknown organe_ref: ${skippedRefs.join(", ")}`);
+    }
+  }
+
+  if (seances.length === 0) return { sittingsCount: 0, itemsCount: 0 };
 
   if (options.dryRun) {
-    for (const seance of allSeances) {
+    for (const seance of seances) {
       console.log("Dry run - would upsert:", {
         official_id: seance.uid,
         date: seance.dateSeance,
@@ -119,7 +169,7 @@ async function processDate(
     return { sittingsCount: 0, itemsCount: 0 };
   }
 
-  const sittingsData = allSeances.map((s) => transformSeance(s));
+  const sittingsData = seances.map((s) => transformSeance(s));
 
   const { data: sittings, error: sittingsError } = await supabase
     .from("sittings")
@@ -154,11 +204,13 @@ async function processDate(
   const allAgendaItems: ReturnType<typeof transformAgendaItems> = [];
   const allMetadata: ReturnType<typeof createSourceMetadata>[] = [];
 
-  for (const seance of allSeances) {
+  const allAttendance: ReturnType<typeof transformAttendance> = [];
+  for (const seance of seances) {
     const sittingId = sittingMap.get(seance.uid);
     if (!sittingId) continue;
     allAgendaItems.push(...transformAgendaItems(seance, sittingId));
     allMetadata.push(createSourceMetadata(seance, sittingId));
+    allAttendance.push(...transformAttendance(seance, sittingId));
   }
 
   let itemsCount = 0;
@@ -180,6 +232,27 @@ async function processDate(
       .upsert(allMetadata, { onConflict: "sitting_id" });
     if (metadataError) {
       console.error("Error upserting source metadata:", metadataError);
+    }
+  }
+
+  // Attendance: only for commission reunions; replace existing rows for these sittings
+  if (allAttendance.length > 0) {
+    const attendanceSittingIds = [...new Set(allAttendance.map((a) => a.sitting_id))];
+    const { error: delErr } = await supabase
+      .from("sitting_attendance")
+      .delete()
+      .in("sitting_id", attendanceSittingIds);
+    if (delErr) {
+      console.error("Error deleting existing sitting_attendance:", delErr);
+    } else {
+      const { error: attErr } = await supabase
+        .from("sitting_attendance")
+        .insert(allAttendance);
+      if (attErr) {
+        console.error("Error inserting sitting_attendance:", attErr);
+      } else {
+        console.log(`${date}: inserted ${allAttendance.length} attendance record(s) for ${attendanceSittingIds.length} reunion(s)`);
+      }
     }
   }
 

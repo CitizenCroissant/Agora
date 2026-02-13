@@ -20,8 +20,10 @@
 
 .title {
   font-size: 2rem;
+  line-height: 1.3;
   color: var(--color-primary);
   margin-bottom: var(--spacing-xs);
+  max-width: 42rem;
 }
 
 .date {
@@ -30,17 +32,22 @@
   text-transform: capitalize;
 }
 
-.commissionLink {
+.commissionInfo {
   margin-top: var(--spacing-xs);
   font-size: 0.9rem;
 }
 
-.commissionLink a {
+.commissionLabel {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.commissionLink {
   color: var(--color-primary);
   text-decoration: none;
 }
 
-.commissionLink a:hover {
+.commissionLink:hover {
   text-decoration: underline;
 }
 
@@ -84,6 +91,12 @@
   margin-bottom: var(--spacing-xl);
   line-height: 1.6;
   font-size: 1.125rem;
+}
+
+.descriptionHeading {
+  font-size: 1.25rem;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-sm);
 }
 
 .scrutinsSection {
@@ -151,6 +164,81 @@
 }
 
 .scrutinItem:hover .scrutinLink {
+  text-decoration: underline;
+}
+
+.attendanceSection {
+  margin-bottom: var(--spacing-xl);
+}
+
+.attendanceSection h2 {
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-primary);
+}
+
+.attendanceIntro {
+  font-size: 0.938rem;
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-md);
+}
+
+.attendanceNote {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  font-style: italic;
+  margin-bottom: var(--spacing-md);
+}
+
+.attendanceGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.attendanceBlock {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+}
+
+.attendanceCount {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.attendanceLabel {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-sm);
+}
+
+.attendanceList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.875rem;
+  max-height: 12rem;
+  overflow-y: auto;
+}
+
+.attendanceList li {
+  margin-bottom: var(--spacing-xs);
+}
+
+.attendanceLink {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.attendanceLink:hover {
   text-decoration: underline;
 }
 

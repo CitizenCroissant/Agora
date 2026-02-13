@@ -2,13 +2,66 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { SittingDetailResponse } from "@agora/shared";
+import { SittingDetailResponse, SittingAttendanceEntry } from "@agora/shared";
 import { formatDate } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./sitting.module.css";
 import { PageHelp } from "@/components/PageHelp";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { ShareBar } from "@/components/ShareBar";
+
+function AttendanceSummary({ attendance }: { attendance: SittingAttendanceEntry[] }) {
+  const present = attendance.filter((a) => a.presence === "présent");
+  const absent = attendance.filter((a) => a.presence === "absent");
+  const excused = attendance.filter((a) => a.presence === "excusé");
+
+  const renderName = (a: SittingAttendanceEntry) => a.acteur_nom ?? a.acteur_ref;
+
+  return (
+    <div className={styles.attendanceGrid}>
+      <div className={styles.attendanceBlock}>
+        <span className={styles.attendanceCount}>{present.length}</span>
+        <span className={styles.attendanceLabel}>Présents</span>
+        <ul className={styles.attendanceList}>
+          {present.map((a) => (
+            <li key={a.acteur_ref}>
+              <Link href={`/deputy/${encodeURIComponent(a.acteur_ref)}`} className={styles.attendanceLink}>
+                {renderName(a)}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className={styles.attendanceBlock}>
+        <span className={styles.attendanceCount}>{absent.length}</span>
+        <span className={styles.attendanceLabel}>Absents</span>
+        <ul className={styles.attendanceList}>
+          {absent.map((a) => (
+            <li key={a.acteur_ref}>
+              <Link href={`/deputy/${encodeURIComponent(a.acteur_ref)}`} className={styles.attendanceLink}>
+                {renderName(a)}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className={styles.attendanceBlock}>
+        <span className={styles.attendanceCount}>{excused.length}</span>
+        <span className={styles.attendanceLabel}>Excusés</span>
+        <ul className={styles.attendanceList}>
+          {excused.map((a) => (
+            <li key={a.acteur_ref}>
+              <Link href={`/deputy/${encodeURIComponent(a.acteur_ref)}`} className={styles.attendanceLink}>
+                {renderName(a)}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
 
 export default function SittingPage() {
   const params = useParams();
@@ -38,37 +91,48 @@ export default function SittingPage() {
     }
   };
 
+  const breadcrumbLabel =
+    sitting?.title && sitting.title.length > 50
+      ? sitting.title.slice(0, 50).trim() + "…"
+      : sitting?.title || "Séance";
+
+  const showDescription =
+    sitting?.description &&
+    sitting.description.trim() !== sitting.title.trim();
+
   return (
     <div className="container">
-      <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: sitting?.title || "Séance" }]} />
-          <PageHelp
-            title="Comment lire cette page ?"
-            points={[
-              "La description présente le contexte général de la séance (type, lieu, horaires).",
-              "La section « Scrutins de cette séance » liste les votes formels tenus pendant cette séance.",
-              "L’« Ordre du jour » détaille les points examinés, avec leur numéro, catégorie et éventuelle référence."
-            ]}
-          />
+      <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: breadcrumbLabel }]} />
 
-          {loading && (
-            <div className="stateLoading">Chargement des détails...</div>
-          )}
+      {loading && (
+        <div className="stateLoading">Chargement des détails...</div>
+      )}
 
-          {error && (
-            <div className="stateError">
-              <p>Erreur: {error}</p>
-            </div>
-          )}
+      {error && (
+        <div className="stateError">
+          <p>Erreur: {error}</p>
+        </div>
+      )}
 
-          {!loading && !error && sitting && (
+      {!loading && !error && sitting && (
             <>
+              <ShareBar title={sitting.title} />
               <div className={styles.sittingHeader}>
                 <div>
                   <h1 className={styles.title}>{sitting.title}</h1>
                   <p className={styles.date}>{formatDate(sitting.date)}</p>
                   {sitting.organe_ref && (
-                    <p className={styles.commissionLink}>
-                      <Link href={`/commissions/${encodeURIComponent(sitting.organe_ref)}`}>
+                    <p className={styles.commissionInfo}>
+                      <span className={styles.commissionLabel}>
+                        {sitting.organe?.libelle ??
+                          sitting.organe?.libelle_abrege ??
+                          "Commission"}
+                      </span>
+                      {" · "}
+                      <Link
+                        href={`/commissions/${encodeURIComponent(sitting.organe_ref)}`}
+                        className={styles.commissionLink}
+                      >
                         Voir la commission →
                       </Link>
                     </p>
@@ -89,9 +153,21 @@ export default function SittingPage() {
                 </div>
               )}
 
-              <div className={styles.description}>
-                <p>{sitting.description}</p>
-              </div>
+              {showDescription && (
+                <div className={styles.description}>
+                  <h2 className={styles.descriptionHeading}>Description</h2>
+                  <p>{sitting.description}</p>
+                </div>
+              )}
+
+              <PageHelp
+                title="Comment lire cette page ?"
+                points={[
+                  "La description présente le contexte général de la séance (type, lieu, horaires).",
+                  "La section « Scrutins de cette séance » liste les votes formels tenus pendant cette séance.",
+                  "L'« Ordre du jour » détaille les points examinés, avec leur numéro, catégorie et éventuelle référence."
+                ]}
+              />
 
               {sitting.scrutins && sitting.scrutins.length > 0 && (
                 <div className={styles.scrutinsSection}>
@@ -121,6 +197,21 @@ export default function SittingPage() {
                       </Link>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {sitting.attendance && sitting.attendance.length > 0 && (
+                <div className={styles.attendanceSection}>
+                  <h2>Présence à la réunion</h2>
+                  <p className={styles.attendanceIntro}>
+                    Données officielles (présents, absents, excusés) pour cette réunion de commission.
+                  </p>
+                  {sitting.attendance.every((a) => a.presence === "absent") && (
+                    <p className={styles.attendanceNote}>
+                      Pour cette réunion, l’Assemblée nationale ne publie que les absences dans l’open data.
+                    </p>
+                  )}
+                  <AttendanceSummary attendance={sitting.attendance} />
                 </div>
               )}
 

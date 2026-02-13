@@ -39,6 +39,12 @@ export interface AssembleeReunion {
     quantieme?: string;
   };
   compteRenduRef?: string | null;
+  /** Present for commission reunions: participantsInternes.participantInterne[] (présent/absent/excusé) */
+  participants?: {
+    participantsInternes?: {
+      participantInterne?: { acteurRef: string; presence: string } | { acteurRef: string; presence: string }[];
+    };
+  } | null;
 }
 
 export interface AssembleePointODJ {
@@ -73,6 +79,14 @@ export interface AssembleeSeance {
   organeRef: string;
   lieuLibelle?: string;
   pointsOdj?: AssembleePointOdj[];
+  /** Only for commission reunions: list of acteurRef + presence (présent/absent/excusé) */
+  participants?: { acteurRef: string; presence: string }[];
+}
+
+export interface SittingAttendanceInsert {
+  sitting_id: string;
+  acteur_ref: string;
+  presence: string;
 }
 
 export interface AssembleePointOdj {

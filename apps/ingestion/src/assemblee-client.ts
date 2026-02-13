@@ -291,6 +291,8 @@ export class AssembleeClient {
         }));
     }
 
+    const participants = this.extractParticipants(reunion);
+
     return {
       uid: reunion.uid,
       legislature: legislatureFromUid(reunion.uid),
@@ -301,8 +303,22 @@ export class AssembleeClient {
       intitule,
       organeRef: reunion.organeReuniRef,
       lieuLibelle: reunion.lieu?.libelleLong,
-      pointsOdj
+      pointsOdj,
+      participants
     };
+  }
+
+  /**
+   * Extract participants list (acteurRef + presence) for commission reunions.
+   * Presence: "présent" | "absent" | "excusé".
+   */
+  private extractParticipants(reunion: AssembleeReunion): { acteurRef: string; presence: string }[] | undefined {
+    const p = reunion.participants?.participantsInternes?.participantInterne;
+    if (!p) return undefined;
+    const list = Array.isArray(p) ? p : [p];
+    return list
+      .filter((x) => x?.acteurRef && x?.presence)
+      .map((x) => ({ acteurRef: x.acteurRef, presence: x.presence }));
   }
 }
 

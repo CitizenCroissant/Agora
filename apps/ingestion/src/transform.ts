@@ -7,7 +7,8 @@ import {
   AssembleeSeance,
   SittingInsert,
   AgendaItemInsert,
-  SourceMetadataInsert
+  SourceMetadataInsert,
+  SittingAttendanceInsert
 } from './types';
 
 /**
@@ -49,6 +50,25 @@ export function transformAgendaItems(
       ? `https://www.assemblee-nationale.fr/dyn/${seance.legislature}/dossiers_/${point.texteRef}`
       : undefined
   }));
+}
+
+/**
+ * Transform commission reunion participants to sitting_attendance rows.
+ * Returns empty array when seance has no participants (e.g. séance publique).
+ */
+export function transformAttendance(
+  seance: AssembleeSeance,
+  sittingId: string
+): SittingAttendanceInsert[] {
+  if (!seance.participants?.length) return [];
+  const valid = ['présent', 'absent', 'excusé'];
+  return seance.participants
+    .filter((p) => p.acteurRef && valid.includes(p.presence))
+    .map((p) => ({
+      sitting_id: sittingId,
+      acteur_ref: p.acteurRef,
+      presence: p.presence
+    }));
 }
 
 /**

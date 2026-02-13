@@ -124,3 +124,12 @@ export interface DbOrgane {
   created_at: string;
   updated_at: string;
 }
+
+export interface DbSittingAttendance {
+  id: string;
+  sitting_id: string;
+  acteur_ref: string;
+  presence: string;
+  created_at: string;
+  updated_at: string;
+}

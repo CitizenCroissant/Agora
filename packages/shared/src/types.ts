@@ -118,10 +118,22 @@ export interface BillDetailResponse extends Bill {
   sittings?: SittingWithItems[];
 }
 
+/** One attendance record for a commission reunion (présent / absent / excusé) */
+export interface SittingAttendanceEntry {
+  acteur_ref: string;
+  presence: "présent" | "absent" | "excusé";
+  /** Display name when deputy is in deputies table */
+  acteur_nom?: string | null;
+}
+
 export interface SittingDetailResponse extends SittingWithItems {
   source_metadata: SourceMetadata;
   /** Scrutins (votes) held during this sitting */
   scrutins?: Scrutin[];
+  /** Attendance for commission reunions only (official open data) */
+  attendance?: SittingAttendanceEntry[];
+  /** Commission/organe when organe_ref is set (name and link) */
+  organe?: Organe | null;
 }
 
 /**
