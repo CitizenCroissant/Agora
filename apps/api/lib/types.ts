@@ -56,6 +56,8 @@ export interface DbScrutin {
   synthese_abstentions: number;
   synthese_non_votants: number;
   official_url: string | null;
+  objet_libelle: string | null;
+  demandeur_texte: string | null;
   created_at: string;
   updated_at: string;
 }

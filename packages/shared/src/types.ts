@@ -168,6 +168,10 @@ export interface Scrutin {
   synthese_abstentions: number;
   synthese_non_votants: number;
   official_url: string | null;
+  /** Full official description of what is being voted on (plain-language context). */
+  objet_libelle?: string | null;
+  /** Who requested the vote (e.g. "Président du groupe X"). */
+  demandeur_texte?: string | null;
   tags?: ThematicTag[];
 }
 

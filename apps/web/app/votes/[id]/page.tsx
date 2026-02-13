@@ -115,6 +115,22 @@ export default function ScrutinPage() {
                     {formatDate(scrutin.date_scrutin)} · Scrutin n°
                     {scrutin.numero}
                   </p>
+                  {(scrutin.objet_libelle || scrutin.demandeur_texte) && (
+                    <div className={styles.contextSection}>
+                      {scrutin.objet_libelle && (
+                        <div className={styles.contextBlock}>
+                          <h3 className={styles.contextLabel}>De quoi s&apos;agit-il ?</h3>
+                          <p className={styles.contextText}>{scrutin.objet_libelle}</p>
+                        </div>
+                      )}
+                      {scrutin.demandeur_texte && (
+                        <div className={styles.contextBlock}>
+                          <h3 className={styles.contextLabel}>Demandeur</h3>
+                          <p className={styles.contextText}>{scrutin.demandeur_texte}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   {scrutin.tags && scrutin.tags.length > 0 && (
                     <div className={styles.tagsSection}>
                       <h3 className={styles.tagsTitle}>Thèmes</h3>

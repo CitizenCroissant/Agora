@@ -126,6 +126,8 @@ CREATE TABLE scrutins (
     synthese_abstentions INTEGER NOT NULL DEFAULT 0,
     synthese_non_votants INTEGER NOT NULL DEFAULT 0,
     official_url TEXT,
+    objet_libelle TEXT,
+    demandeur_texte TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );

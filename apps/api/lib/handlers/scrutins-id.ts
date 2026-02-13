@@ -201,6 +201,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       synthese_abstentions: dbScrutin.synthese_abstentions,
       synthese_non_votants: dbScrutin.synthese_non_votants,
       official_url: dbScrutin.official_url,
+      objet_libelle: dbScrutin.objet_libelle ?? null,
+      demandeur_texte: dbScrutin.demandeur_texte ?? null,
       votes: (votes || []).map((v: DbScrutinVote) => ({
         id: v.id,
         scrutin_id: v.scrutin_id,

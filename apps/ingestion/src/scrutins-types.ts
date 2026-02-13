@@ -94,6 +94,10 @@ export interface ScrutinInsert {
   synthese_abstentions: number;
   synthese_non_votants: number;
   official_url: string | null;
+  /** Full official description of what is being voted on (objet.libelle) */
+  objet_libelle: string | null;
+  /** Who requested the vote, e.g. "Président du groupe X" (demandeur.texte) */
+  demandeur_texte: string | null;
 }
 
 export interface ScrutinVoteInsert {

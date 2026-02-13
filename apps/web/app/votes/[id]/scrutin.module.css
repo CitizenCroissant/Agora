@@ -130,6 +130,37 @@
   text-transform: capitalize;
 }
 
+.contextSection {
+  margin: var(--spacing-md) 0;
+  padding: var(--spacing-md);
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius);
+}
+
+.contextBlock {
+  margin-bottom: var(--spacing-sm);
+}
+
+.contextBlock:last-child {
+  margin-bottom: 0;
+}
+
+.contextLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  margin: 0 0 var(--spacing-xs) 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.contextText {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--color-text);
+  margin: 0;
+}
+
 .synthese {
   margin-bottom: var(--spacing-xl);
 }

@@ -105,7 +105,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         synthese_contre: row.synthese_contre,
         synthese_abstentions: row.synthese_abstentions,
         synthese_non_votants: row.synthese_non_votants,
-        official_url: row.official_url
+        official_url: row.official_url,
+        objet_libelle: row.objet_libelle ?? null,
+        demandeur_texte: row.demandeur_texte ?? null
       }));
 
       if (groupSlug && scrutinsList.length > 0) {

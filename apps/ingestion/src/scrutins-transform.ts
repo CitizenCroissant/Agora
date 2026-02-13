@@ -25,6 +25,15 @@ export function transformScrutin(
   const normalizedSort =
     sortCode === "adopté" || sortCode === "rejeté" ? sortCode : "adopté";
 
+  const objetLibelle =
+    typeof raw.objet?.libelle === "string" && raw.objet.libelle.trim()
+      ? raw.objet.libelle.trim()
+      : null;
+  const demandeurTexte =
+    typeof raw.demandeur?.texte === "string" && raw.demandeur.texte.trim()
+      ? raw.demandeur.texte.trim()
+      : null;
+
   return {
     official_id: raw.uid,
     sitting_id: sittingId,
@@ -41,7 +50,9 @@ export function transformScrutin(
     synthese_non_votants:
       parseInt(decompte.nonVotants ?? "0", 10) +
         parseInt(decompte.nonVotantsVolontaires ?? "0", 10) || 0,
-    official_url: `${SCRUTIN_OFFICIAL_URL_BASE}/${raw.numero ?? raw.uid}`
+    official_url: `${SCRUTIN_OFFICIAL_URL_BASE}/${raw.numero ?? raw.uid}`,
+    objet_libelle: objetLibelle,
+    demandeur_texte: demandeurTexte
   };
 }
 
