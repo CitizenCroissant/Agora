@@ -66,6 +66,13 @@ export default function SittingPage() {
                 <div>
                   <h1 className={styles.title}>{sitting.title}</h1>
                   <p className={styles.date}>{formatDate(sitting.date)}</p>
+                  {sitting.organe_ref && (
+                    <p className={styles.commissionLink}>
+                      <Link href={`/commissions/${encodeURIComponent(sitting.organe_ref)}`}>
+                        Voir la commission →
+                      </Link>
+                    </p>
+                  )}
                 </div>
                 {sitting.time_range && (
                   <div className={styles.timeRange}>

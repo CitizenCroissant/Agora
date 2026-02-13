@@ -58,6 +58,28 @@
   font-size: 1.125rem;
 }
 
+.subSectionTitle {
+  font-size: 1.25rem;
+  color: var(--color-primary);
+  margin: var(--spacing-lg) 0 var(--spacing-sm);
+}
+
+.subSection {
+  margin-bottom: var(--spacing-md);
+}
+
+.subSection h4 {
+  font-size: 1.0625rem;
+  margin: 0 0 var(--spacing-xs);
+  color: var(--color-text);
+}
+
+.subSection p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
 .summaryBox {
   padding: var(--spacing-md);
   background: var(--color-background-alt);

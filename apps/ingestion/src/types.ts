@@ -93,6 +93,7 @@ export interface SittingInsert {
   title: string;
   description: string;
   location?: string;
+  organe_ref?: string | null;
 }
 
 export interface AgendaItemInsert {

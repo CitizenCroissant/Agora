@@ -11,6 +11,10 @@ import {
   ScrutinDetailResponse,
   DeputyVotesResponse,
   Deputy,
+  Organe,
+  CommissionMember,
+  CommissionTypesResponse,
+  SittingWithItems,
   PoliticalGroupsListResponse,
   PoliticalGroupDetail,
   CirconscriptionsListResponse,
@@ -103,6 +107,83 @@ export class ApiClient {
     }
 
     return (await response.json()) as SittingDetailResponse;
+  }
+
+  /**
+   * Fetch available organe types (for filter dropdown). Excludes CIRCONSCRIPTION.
+   */
+  async getCommissionTypes(): Promise<CommissionTypesResponse> {
+    const response = await fetch(`${this.baseUrl}/commissions/types`);
+    if (!response.ok) {
+      const error = (await response.json()) as ApiError;
+      throw new Error(error.message || "Failed to fetch commission types");
+    }
+    return (await response.json()) as CommissionTypesResponse;
+  }
+
+  /**
+   * Fetch list of organes (commissions, delegations, etc.). Type is required (e.g. COMPER).
+   */
+  async getCommissions(type: string): Promise<Organe[]> {
+    const response = await fetch(
+      `${this.baseUrl}/commissions?type=${encodeURIComponent(type)}`
+    );
+    if (!response.ok) {
+      const error = (await response.json()) as ApiError;
+      throw new Error(error.message || "Failed to fetch commissions");
+    }
+    return (await response.json()) as Organe[];
+  }
+
+  /**
+   * Fetch one organe (commission) by id.
+   */
+  async getCommission(id: string): Promise<Organe> {
+    const response = await fetch(
+      `${this.baseUrl}/commissions/${encodeURIComponent(id)}`
+    );
+    if (!response.ok) {
+      const error = (await response.json()) as ApiError;
+      throw new Error(error.message || "Failed to fetch commission");
+    }
+    return (await response.json()) as Organe;
+  }
+
+  /**
+   * Fetch reunions (sittings) for one commission. Optional date range.
+   */
+  async getCommissionReunions(
+    id: string,
+    from?: string,
+    to?: string
+  ): Promise<{ organe_ref: string; reunions: SittingWithItems[] }> {
+    const params = new URLSearchParams();
+    if (from) params.set("from", from);
+    if (to) params.set("to", to);
+    const qs = params.toString();
+    const url = `${this.baseUrl}/commissions/${encodeURIComponent(id)}/reunions${qs ? `?${qs}` : ""}`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      const error = (await response.json()) as ApiError;
+      throw new Error(error.message || "Failed to fetch commission reunions");
+    }
+    return response.json() as Promise<{
+      organe_ref: string;
+      reunions: SittingWithItems[];
+    }>;
+  }
+
+  /**
+   * Fetch members (deputies) of one commission/organe.
+   */
+  async getCommissionMembers(id: string): Promise<{ organe_ref: string; members: CommissionMember[] }> {
+    const url = `${this.baseUrl}/commissions/${encodeURIComponent(id)}/members`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      const error = (await response.json()) as ApiError;
+      throw new Error(error.message || "Failed to fetch commission members");
+    }
+    return response.json() as Promise<{ organe_ref: string; members: CommissionMember[] }>;
   }
 
   /**

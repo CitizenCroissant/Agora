@@ -102,6 +102,16 @@ export default async function handler(
     routeHandler = m.default;
     matched = true;
   }
+  if (path === "commissions" && method === "GET") {
+    const m = await import("../lib/handlers/commissions");
+    routeHandler = m.default;
+    matched = true;
+  }
+  if (path === "commissions/types" && method === "GET") {
+    const m = await import("../lib/handlers/commissions-types");
+    routeHandler = m.default;
+    matched = true;
+  }
   if (path === "circonscriptions" && method === "GET") {
     const m = await import("../lib/handlers/circonscriptions");
     routeHandler = m.default;
@@ -210,6 +220,45 @@ export default async function handler(
   ) {
     withParams(req, { id: segments[1] });
     const m = await import("../lib/handlers/circonscriptions-id");
+    routeHandler = m.default;
+    matched = true;
+  }
+  // Dynamic: commissions/:id/reunions
+  if (
+    !matched &&
+    segments[0] === "commissions" &&
+    segments.length === 3 &&
+    segments[2] === "reunions" &&
+    method === "GET"
+  ) {
+    withParams(req, { id: segments[1] });
+    const m = await import("../lib/handlers/commissions-id-reunions");
+    routeHandler = m.default;
+    matched = true;
+  }
+  // Dynamic: commissions/:id/members
+  if (
+    !matched &&
+    segments[0] === "commissions" &&
+    segments.length === 3 &&
+    segments[2] === "members" &&
+    method === "GET"
+  ) {
+    withParams(req, { id: segments[1] });
+    const m = await import("../lib/handlers/commissions-id-members");
+    routeHandler = m.default;
+    matched = true;
+  }
+  // Dynamic: commissions/:id
+  if (
+    !matched &&
+    segments[0] === "commissions" &&
+    segments.length === 2 &&
+    segments[1] &&
+    method === "GET"
+  ) {
+    withParams(req, { id: segments[1] });
+    const m = await import("../lib/handlers/commissions-id");
     routeHandler = m.default;
     matched = true;
   }

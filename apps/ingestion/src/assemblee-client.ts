@@ -158,6 +158,50 @@ export class AssembleeClient {
   }
 
   /**
+   * Get reunion date (YYYY-MM-DD). Commission reunions often lack identifiants.DateSeance;
+   * use timeStampDebut as fallback.
+   */
+  private getReunionDate(r: AssembleeReunion): string {
+    const fromIdent = r.identifiants?.DateSeance?.split('+')[0];
+    if (fromIdent) return fromIdent;
+    const fromStamp = r.timeStampDebut?.split('T')[0];
+    return fromStamp ?? '';
+  }
+
+  /**
+   * Fetch commission (and other organe) reunions for a given date.
+   * @param legislature - "14"-"17" or "all". Default "17".
+   */
+  async fetchCommissionReunions(date: string, legislature = '17'): Promise<AssembleeSeance[]> {
+    const dateOnly = date.split('T')[0];
+    const allReunions = await this.fetchAllReunions(legislature);
+    const reunions = allReunions.filter(r => {
+      const reunionDate = this.getReunionDate(r);
+      return reunionDate === dateOnly &&
+             r['@xsi:type'] === 'reunionCommission_type' &&
+             r.cycleDeVie.etat === 'Confirmé';
+    });
+    return reunions.map(r => this.convertToLegacyFormat(r));
+  }
+
+  /**
+   * Fetch commission reunions for a date range.
+   * @param legislature - "14"-"17" or "all". Default "17".
+   */
+  async fetchCommissionReunionsRange(from: string, to: string, legislature = '17'): Promise<AssembleeSeance[]> {
+    const fromDate = from.split('T')[0];
+    const toDate = to.split('T')[0];
+    const allReunions = await this.fetchAllReunions(legislature);
+    const reunions = allReunions.filter(r => {
+      const reunionDate = this.getReunionDate(r);
+      return reunionDate >= fromDate && reunionDate <= toDate &&
+             r['@xsi:type'] === 'reunionCommission_type' &&
+             r.cycleDeVie.etat === 'Confirmé';
+    });
+    return reunions.map(r => this.convertToLegacyFormat(r));
+  }
+
+  /**
    * Fetch all reunions for one or all legislatures.
    * @param legislature - "14"-"17" or "all".
    */
@@ -217,7 +261,7 @@ export class AssembleeClient {
    * Convert raw reunion format to legacy AssembleeSeance format.
    */
   private convertToLegacyFormat(reunion: AssembleeReunion): AssembleeSeance {
-    const dateSeance = reunion.identifiants?.DateSeance?.split('+')[0] || '';
+    const dateSeance = this.getReunionDate(reunion);
 
     const heureDebut = reunion.timeStampDebut ?
       new Date(reunion.timeStampDebut).toTimeString().split(' ')[0] : undefined;

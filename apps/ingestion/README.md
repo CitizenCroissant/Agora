@@ -102,7 +102,14 @@ The ingestion system fetches live parliamentary data from:
 - **Legislature**: 17th (2024-2029)
 - **Format**: ZIP archive containing JSON files for each meeting
 - **Update frequency**: Updated regularly by the Assemblée nationale
-- **Coverage**: All public sessions (séances publiques) and commission meetings
+- **Coverage**: All public sessions (séances publiques) and commission (and other organe) meetings. The main `npm run ingest` ingests both; run `ingest:organes` first so `sittings.organe_ref` can reference the organes table.
+
+#### Commission meetings and agenda
+
+- The same Agenda.zip contains **reunionCommission_type** entries (commission meetings) with full agenda (ODJ). Each has `organeReuniRef` pointing to the commission/organe (e.g. PO420120 = Commission des Affaires sociales).
+- Commission reunions in the archive often **do not have** `identifiants.DateSeance`; the date is taken from **timeStampDebut** (see `assemblee-client.ts` `getReunionDate()`).
+- For commission detail pages to show meetings, **run `ingest:organes` before (or regularly with) agenda ingestion**. Some organes referenced by the agenda may be created during the legislature and only appear in a newer AMO export; re-run `npm run ingest:organes` when the Assemblée updates the AMO dataset to reduce “foreign key” errors for sittings.
+- Optional: `npx ts-node src/inspect-commission-organes.ts [from] [to]` prints reunion types and organe ref counts from the archive (no DB writes).
 
 ### Data Structure
 
@@ -145,6 +152,24 @@ npm run ingest:scrutins -- --from 2026-01-01 --to 2026-01-31
 
 # Dry run
 npm run ingest:scrutins -- --dry-run
+```
+
+**Organes (commissions, délégations):**
+
+Run once (or when the AMO dataset is updated) so commission reunions and deputy profiles can resolve organe names:
+
+```bash
+npm run ingest:organes
+npm run ingest:organes -- --dry-run
+```
+
+**Deputy–commission membership:**
+
+Run after `ingest:organes` and `ingest:deputies` to fill `deputy_organes` (used on deputy profile pages):
+
+```bash
+npm run ingest:deputy-organes
+npm run ingest:deputy-organes -- --dry-run
 ```
 
 Scrutins are linked to sittings by `seanceRef` (matching `sittings.official_id`) or by date when no match is found.

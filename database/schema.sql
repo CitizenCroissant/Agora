@@ -4,8 +4,26 @@
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- Table: organes
+-- Parliamentary organs: commissions permanentes, spéciales, d'enquête, délégations, etc.
+-- Source: AMO open data. Required for commission reunions (sittings.organe_ref) and deputy membership.
+CREATE TABLE organes (
+    id TEXT PRIMARY KEY,
+    libelle TEXT,
+    libelle_abrege TEXT,
+    type_organe TEXT NOT NULL,
+    official_url TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_organes_type_organe ON organes(type_organe);
+
+CREATE TRIGGER update_organes_updated_at BEFORE UPDATE ON organes
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
 -- Table: sittings
--- Represents a parliamentary sitting/session
+-- Represents a parliamentary sitting/session (séance publique or commission reunion)
 CREATE TABLE sittings (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     official_id TEXT UNIQUE NOT NULL,
@@ -16,6 +34,7 @@ CREATE TABLE sittings (
     title TEXT NOT NULL,
     description TEXT NOT NULL,
     location TEXT,
+    organe_ref TEXT REFERENCES organes(id) ON DELETE SET NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -23,6 +42,7 @@ CREATE TABLE sittings (
 -- Index on date for efficient agenda queries
 CREATE INDEX idx_sittings_date ON sittings(date);
 CREATE INDEX idx_sittings_official_id ON sittings(official_id);
+CREATE INDEX idx_sittings_organe_ref ON sittings(organe_ref);
 
 -- Table: agenda_items
 -- Represents individual items on a sitting's agenda
@@ -243,4 +263,24 @@ CREATE TABLE push_tokens (
 CREATE INDEX idx_push_tokens_topic_deputy ON push_tokens(topic, deputy_acteur_ref);
 
 CREATE TRIGGER update_push_tokens_updated_at BEFORE UPDATE ON push_tokens
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Table: deputy_organes
+-- Deputy membership in organes (commissions, etc.). Source: AMO mandats.
+CREATE TABLE deputy_organes (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    acteur_ref TEXT NOT NULL REFERENCES deputies(acteur_ref) ON DELETE CASCADE,
+    organe_ref TEXT NOT NULL REFERENCES organes(id) ON DELETE CASCADE,
+    role TEXT,
+    date_debut DATE,
+    date_fin DATE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(acteur_ref, organe_ref)
+);
+
+CREATE INDEX idx_deputy_organes_acteur_ref ON deputy_organes(acteur_ref);
+CREATE INDEX idx_deputy_organes_organe_ref ON deputy_organes(organe_ref);
+
+CREATE TRIGGER update_deputy_organes_updated_at BEFORE UPDATE ON deputy_organes
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

@@ -21,8 +21,8 @@ function toList<T>(x: T | T[] | null | undefined): T[] {
   return Array.isArray(x) ? x : [x];
 }
 
-/** Extract UID string - AMO30 has uid as { "#text": "PA123" }, AMO10 has plain string */
-function extractUid(uid: unknown): string | null {
+/** Extract UID string - AMO30 has uid as { "#text": "PA123" }, AMO10 has plain string. Exported for organes ingest. */
+export function extractUid(uid: unknown): string | null {
   if (typeof uid === "string" && uid.trim()) return uid.trim();
   if (uid && typeof uid === "object" && "#text" in uid) {
     const t = (uid as { "#text"?: unknown })["#text"];

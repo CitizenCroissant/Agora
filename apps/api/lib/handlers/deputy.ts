@@ -50,6 +50,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       throw new ApiError(404, "Deputy not found", "NotFound");
     }
 
+    const { data: deputyOrganes } = await supabase
+      .from("deputy_organes")
+      .select("organe_ref")
+      .eq("acteur_ref", deputy.acteur_ref);
+
+    let commissions: { id: string; libelle: string | null; libelle_abrege: string | null; type_organe: string; official_url: string | null }[] = [];
+    if (deputyOrganes && deputyOrganes.length > 0) {
+      const organeRefs = deputyOrganes.map((r: { organe_ref: string }) => r.organe_ref);
+      const { data: organesRows } = await supabase
+        .from("organes")
+        .select("id, libelle, libelle_abrege, type_organe, official_url")
+        .in("id", organeRefs);
+      if (organesRows && organesRows.length > 0) {
+        commissions = organesRows.map((o: { id: string; libelle: string | null; libelle_abrege: string | null; type_organe: string; official_url: string | null }) => ({
+          id: o.id,
+          libelle: o.libelle ?? null,
+          libelle_abrege: o.libelle_abrege ?? null,
+          type_organe: o.type_organe,
+          official_url: o.official_url ?? null
+        }));
+      }
+    }
+
     const response: Deputy = {
       acteur_ref: deputy.acteur_ref,
       civil_nom: deputy.civil_nom,
@@ -68,7 +91,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       date_debut_mandat: deputy.date_debut_mandat,
       date_fin_mandat: deputy.date_fin_mandat ?? null,
       legislature: deputy.legislature,
-      official_url: deputy.official_url
+      official_url: deputy.official_url,
+      commissions: commissions.length > 0 ? commissions : undefined
     };
 
     res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");

@@ -47,6 +47,9 @@ export interface AssembleeOrgane {
   libelleAbrege?: string;
   libelle?: string;
   typeOrgane?: string;
+  /** AMO30 uses codeType (e.g. COMPER, GP); AMO10 may use codeTypeOrgane */
+  codeType?: string;
+  codeTypeOrgane?: string;
 }
 
 export interface DeputyInsert {

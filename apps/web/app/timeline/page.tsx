@@ -233,11 +233,23 @@ export default function TimelinePage() {
                               >
                                 <div className={styles.sittingHeader}>
                                   <h3>{sitting.title}</h3>
-                                  {sitting.time_range && (
-                                    <span className={styles.timeRange}>
-                                      {sitting.time_range}
-                                    </span>
-                                  )}
+                                  <div className={styles.sittingHeaderMeta}>
+                                    {sitting.type === "reunionCommission_type" && (
+                                      <span className={styles.typeBadgeCommission}>
+                                        Commission
+                                      </span>
+                                    )}
+                                    {sitting.type === "seance_type" && (
+                                      <span className={styles.typeBadgeSeance}>
+                                        Séance publique
+                                      </span>
+                                    )}
+                                    {sitting.time_range && (
+                                      <span className={styles.timeRange}>
+                                        {sitting.time_range}
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
                                 <p className={styles.itemCount}>
                                   {sitting.agenda_items.length} point(s) à

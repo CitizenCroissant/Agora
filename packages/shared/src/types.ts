@@ -12,12 +12,40 @@ export interface Sitting {
   date: string; // YYYY-MM-DD
   start_time?: string; // HH:MM:SS
   end_time?: string; // HH:MM:SS
-  type: string; // e.g., 'seance_publique'
+  type: string; // e.g. 'seance_type', 'reunionCommission_type'
   title: string;
   description: string;
   location?: string;
+  organe_ref?: string | null;
   agenda_items?: AgendaItem[];
   source_metadata?: SourceMetadata;
+}
+
+/** Parliamentary organ (commission, delegation, etc.) from AMO open data */
+export interface Organe {
+  id: string;
+  libelle: string | null;
+  libelle_abrege: string | null;
+  type_organe: string;
+  official_url: string | null;
+}
+
+/** Member of a commission/organe (from GET /api/commissions/:id/members) */
+export interface CommissionMember {
+  acteur_ref: string;
+  civil_nom: string | null;
+  civil_prenom: string | null;
+  groupe_politique: string | null;
+}
+
+/** One commission/organe type from GET /api/commissions/types */
+export interface CommissionType {
+  code: string;
+  label: string;
+}
+
+export interface CommissionTypesResponse {
+  types: CommissionType[];
 }
 
 export interface AgendaItem {
@@ -231,6 +259,8 @@ export interface Deputy {
   date_fin_mandat: string | null;
   legislature: number | null;
   official_url: string | null;
+  /** Commissions and other organes the deputy is a member of (from deputy_organes). */
+  commissions?: Organe[];
 }
 
 /** Political position: majority, opposition, or minority */

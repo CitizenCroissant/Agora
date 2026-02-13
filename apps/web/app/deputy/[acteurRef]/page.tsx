@@ -212,6 +212,24 @@ export default function DeputyPage() {
                 )}
               </dl>
             </div>
+
+            {deputy.commissions && deputy.commissions.length > 0 && (
+              <div className={styles.infoSection}>
+                <h2>Commissions et organes</h2>
+                <ul className={styles.commissionsList}>
+                  {deputy.commissions.map((org) => (
+                    <li key={org.id}>
+                      <Link
+                        href={`/commissions/${encodeURIComponent(org.id)}`}
+                        className={styles.actionLink}
+                      >
+                        {org.libelle ?? org.libelle_abrege ?? org.id}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
           {isCurrentlySitting(deputy.date_fin_mandat) && (

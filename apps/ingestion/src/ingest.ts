@@ -11,6 +11,7 @@ import {
   createSourceMetadata
 } from "./transform";
 import { ingestDossiers } from "./ingest-dossiers";
+import type { AssembleeSeance } from "./types";
 
 export interface IngestOptions {
   date?: string;
@@ -25,104 +26,49 @@ export async function ingest(options: IngestOptions = {}) {
   console.log("Starting ingestion...", options);
 
   try {
-    // Determine dates to fetch
+    const leg = options.legislature ?? "17";
     const dates = getDatesToFetch(options);
     console.log(`Fetching data for ${dates.length} date(s)`);
 
     let totalSittings = 0;
     let totalItems = 0;
 
-    for (const date of dates) {
-      console.log(`Processing date: ${date}`);
-
-      // Fetch seances from Assemblée API
-      const seances = await assembleeClient.fetchSeances(date, options.legislature ?? "17");
-      console.log(`Found ${seances.length} seance(s)`);
-
-      if (seances.length === 0) continue;
-
-      if (options.dryRun) {
-        for (const seance of seances) {
-          console.log("Dry run - would upsert:", {
-            official_id: seance.uid,
-            date: seance.dateSeance,
-            items: seance.pointsOdj?.length || 0
-          });
-        }
-        continue;
+    if (options.fromDate && options.toDate && dates.length > 1) {
+      // Range path: fetch archive once, group by date, then process each date
+      console.log(`Range backfill: fetching seances and commission reunions for ${options.fromDate}..${options.toDate}`);
+      const [seancesRange, commissionReunionsRange] = await Promise.all([
+        assembleeClient.fetchSeancesRange(options.fromDate, options.toDate, leg),
+        assembleeClient.fetchCommissionReunionsRange(options.fromDate, options.toDate, leg)
+      ]);
+      const allSeancesRange = [...seancesRange, ...commissionReunionsRange];
+      const byDate = new Map<string, AssembleeSeance[]>();
+      for (const s of allSeancesRange) {
+        const d = s.dateSeance.split("T")[0];
+        if (!byDate.has(d)) byDate.set(d, []);
+        byDate.get(d)!.push(s);
       }
+      const sortedDates = Array.from(byDate.keys()).sort();
+      console.log(`Fetched ${allSeancesRange.length} seance(s)/reunion(s) across ${sortedDates.length} dates`);
 
-      // Batch upsert all sittings for this date
-      const sittingsData = seances.map((s) => transformSeance(s));
-
-      const { data: sittings, error: sittingsError } = await supabase
-        .from("sittings")
-        .upsert(sittingsData, {
-          onConflict: "official_id",
-          ignoreDuplicates: false
-        })
-        .select();
-
-      if (sittingsError || !sittings) {
-        console.error("Error upserting sittings:", sittingsError);
-        continue;
+      for (const date of sortedDates) {
+        const allSeances = byDate.get(date)!;
+        const result = await processDate(date, allSeances, options);
+        totalSittings += result.sittingsCount;
+        totalItems += result.itemsCount;
       }
-
-      console.log(`Upserted ${sittings.length} sitting(s)`);
-      totalSittings += sittings.length;
-
-      // Build a map from official_id → sitting UUID
-      const sittingMap = new Map<string, string>();
-      for (const sitting of sittings) {
-        sittingMap.set(sitting.official_id, sitting.id);
-      }
-
-      // Batch delete existing agenda items for all sittings of this date
-      const sittingIds = sittings.map((s) => s.id);
-      const { error: deleteError } = await supabase
-        .from("agenda_items")
-        .delete()
-        .in("sitting_id", sittingIds);
-
-      if (deleteError) {
-        console.error("Error deleting agenda items:", deleteError);
-      }
-
-      // Collect all agenda items and source metadata for this date
-      const allAgendaItems: ReturnType<typeof transformAgendaItems> = [];
-      const allMetadata: ReturnType<typeof createSourceMetadata>[] = [];
-
-      for (const seance of seances) {
-        const sittingId = sittingMap.get(seance.uid);
-        if (!sittingId) continue;
-
-        allAgendaItems.push(...transformAgendaItems(seance, sittingId));
-        allMetadata.push(createSourceMetadata(seance, sittingId));
-      }
-
-      // Batch insert all agenda items for this date
-      if (allAgendaItems.length > 0) {
-        const { error: itemsError } = await supabase
-          .from("agenda_items")
-          .insert(allAgendaItems);
-
-        if (itemsError) {
-          console.error("Error inserting agenda items:", itemsError);
-        } else {
-          console.log(`Inserted ${allAgendaItems.length} agenda item(s)`);
-          totalItems += allAgendaItems.length;
-        }
-      }
-
-      // Batch upsert source metadata for this date
-      if (allMetadata.length > 0) {
-        const { error: metadataError } = await supabase
-          .from("source_metadata")
-          .upsert(allMetadata, { onConflict: "sitting_id" });
-
-        if (metadataError) {
-          console.error("Error upserting source metadata:", metadataError);
-        }
+    } else {
+      // Per-date path: fetch and process each date (e.g. single --date or default 7 days)
+      for (const date of dates) {
+        console.log(`Processing date: ${date}`);
+        const [seances, commissionReunions] = await Promise.all([
+          assembleeClient.fetchSeances(date, leg),
+          assembleeClient.fetchCommissionReunions(date, leg)
+        ]);
+        const allSeances = [...seances, ...commissionReunions];
+        console.log(`Found ${seances.length} seance(s), ${commissionReunions.length} commission reunion(s)`);
+        const result = await processDate(date, allSeances, options);
+        totalSittings += result.sittingsCount;
+        totalItems += result.itemsCount;
       }
     }
 
@@ -130,7 +76,7 @@ export async function ingest(options: IngestOptions = {}) {
     console.log(`Total sittings: ${totalSittings}`);
     console.log(`Total agenda items: ${totalItems}`);
 
-    // Ingest legislative dossiers (bills) from the official dataset.
+    // Ingest legislative dossiers (bills) from the official dataset (once per run).
     const dossiersResult = await ingestDossiers({
       dryRun: options.dryRun ?? false,
       legislature: options.legislature ?? "17"
@@ -148,6 +94,96 @@ export async function ingest(options: IngestOptions = {}) {
     console.error("Ingestion failed:", error);
     throw error;
   }
+}
+
+/**
+ * Process one day's seances: upsert sittings, agenda items, and source metadata.
+ * Returns counts for this date.
+ */
+async function processDate(
+  date: string,
+  allSeances: AssembleeSeance[],
+  options: IngestOptions
+): Promise<{ sittingsCount: number; itemsCount: number }> {
+  if (allSeances.length === 0) return { sittingsCount: 0, itemsCount: 0 };
+
+  if (options.dryRun) {
+    for (const seance of allSeances) {
+      console.log("Dry run - would upsert:", {
+        official_id: seance.uid,
+        date: seance.dateSeance,
+        type: seance.typeSeance,
+        items: seance.pointsOdj?.length || 0
+      });
+    }
+    return { sittingsCount: 0, itemsCount: 0 };
+  }
+
+  const sittingsData = allSeances.map((s) => transformSeance(s));
+
+  const { data: sittings, error: sittingsError } = await supabase
+    .from("sittings")
+    .upsert(sittingsData, {
+      onConflict: "official_id",
+      ignoreDuplicates: false
+    })
+    .select();
+
+  if (sittingsError || !sittings) {
+    console.error(`Error upserting sittings for ${date}:`, sittingsError);
+    return { sittingsCount: 0, itemsCount: 0 };
+  }
+
+  console.log(`${date}: upserted ${sittings.length} sitting(s)`);
+
+  const sittingMap = new Map<string, string>();
+  for (const sitting of sittings) {
+    sittingMap.set(sitting.official_id, sitting.id);
+  }
+
+  const sittingIds = sittings.map((s) => s.id);
+  const { error: deleteError } = await supabase
+    .from("agenda_items")
+    .delete()
+    .in("sitting_id", sittingIds);
+
+  if (deleteError) {
+    console.error("Error deleting agenda items:", deleteError);
+  }
+
+  const allAgendaItems: ReturnType<typeof transformAgendaItems> = [];
+  const allMetadata: ReturnType<typeof createSourceMetadata>[] = [];
+
+  for (const seance of allSeances) {
+    const sittingId = sittingMap.get(seance.uid);
+    if (!sittingId) continue;
+    allAgendaItems.push(...transformAgendaItems(seance, sittingId));
+    allMetadata.push(createSourceMetadata(seance, sittingId));
+  }
+
+  let itemsCount = 0;
+  if (allAgendaItems.length > 0) {
+    const { error: itemsError } = await supabase
+      .from("agenda_items")
+      .insert(allAgendaItems);
+    if (itemsError) {
+      console.error("Error inserting agenda items:", itemsError);
+    } else {
+      console.log(`${date}: inserted ${allAgendaItems.length} agenda item(s)`);
+      itemsCount = allAgendaItems.length;
+    }
+  }
+
+  if (allMetadata.length > 0) {
+    const { error: metadataError } = await supabase
+      .from("source_metadata")
+      .upsert(allMetadata, { onConflict: "sitting_id" });
+    if (metadataError) {
+      console.error("Error upserting source metadata:", metadataError);
+    }
+  }
+
+  return { sittingsCount: sittings.length, itemsCount };
 }
 
 /**

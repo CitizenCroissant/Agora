@@ -9,6 +9,8 @@
     "ingest:dossiers": "ts-node src/ingest-dossiers.ts",
     "ingest:scrutins": "ts-node src/ingest-scrutins-cli.ts",
     "ingest:deputies": "ts-node src/ingest-deputies-cli.ts",
+    "ingest:organes": "ts-node src/ingest-organes-cli.ts",
+    "ingest:deputy-organes": "ts-node src/ingest-deputy-organes-cli.ts",
     "ingest:circonscriptions": "ts-node src/ingest-circonscriptions-cli.ts",
     "tag:all-scrutins": "ts-node src/tag-all-scrutins-cli.ts",
     "tag:single-scrutin": "ts-node src/tag-single-scrutin-cli.ts",

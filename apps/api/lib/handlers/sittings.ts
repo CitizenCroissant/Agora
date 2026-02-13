@@ -107,6 +107,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       title: dbSitting.title,
       description: dbSitting.description,
       location: dbSitting.location || undefined,
+      organe_ref: dbSitting.organe_ref ?? undefined,
       time_range: timeRange,
       agenda_items: (agendaItems || []).map((item: DbAgendaItem) => ({
         id: item.id,

@@ -30,6 +30,20 @@
   text-transform: capitalize;
 }
 
+.commissionLink {
+  margin-top: var(--spacing-xs);
+  font-size: 0.9rem;
+}
+
+.commissionLink a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.commissionLink a:hover {
+  text-decoration: underline;
+}
+
 .timeRange {
   background: var(--color-background-alt);
   padding: var(--spacing-md);

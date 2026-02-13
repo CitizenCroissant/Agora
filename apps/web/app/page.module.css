@@ -223,6 +223,31 @@
   flex: 1;
 }
 
+.sittingHeaderMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.typeBadgeSeance,
+.typeBadgeCommission {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+}
+
+.typeBadgeSeance {
+  background: var(--color-background-alt);
+  color: var(--color-text);
+}
+
+.typeBadgeCommission {
+  background: var(--color-primary-tint-light);
+  color: var(--color-primary);
+}
+
 .timeRange {
   padding: var(--spacing-xs) var(--spacing-sm);
   background: var(--color-background-alt);

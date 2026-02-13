@@ -22,7 +22,8 @@ export function transformSeance(seance: AssembleeSeance): SittingInsert {
     type: seance.typeSeance,
     title: seance.intitule || 'Séance',
     description: generateDescription(seance),
-    location: seance.lieuLibelle
+    location: seance.lieuLibelle,
+    organe_ref: seance.organeRef?.trim() || null
   };
 }
 

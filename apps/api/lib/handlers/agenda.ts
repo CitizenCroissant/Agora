@@ -35,11 +35,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       );
     }
 
-    const { data: sittings, error: sittingsError } = await supabase
+    let query = supabase
       .from("sittings")
       .select("*")
       .eq("date", date)
       .order("start_time", { ascending: true, nullsFirst: false });
+
+    const typeFilter = req.query?.type;
+    if (typeFilter === "seance" || typeFilter === "seance_type") {
+      query = query.eq("type", "seance_type");
+    } else if (typeFilter === "commission" || typeFilter === "reunionCommission_type") {
+      query = query.eq("type", "reunionCommission_type");
+    }
+
+    const { data: sittings, error: sittingsError } = await query;
 
     if (sittingsError) {
       console.error("Supabase error:", sittingsError);
@@ -103,6 +112,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           title: sitting.title,
           description: sitting.description,
           location: sitting.location || undefined,
+          organe_ref: sitting.organe_ref ?? undefined,
           time_range: timeRange,
           agenda_items: items.map((item: DbAgendaItem) => ({
             id: item.id,

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { LegislativeProcessSteps } from "@/components/LegislativeProcessSteps";
 import { DemocracyDiagram } from "@/components/DemocracyDiagram";
+import { ScrollToTopOnLanding } from "@/components/ScrollToTopOnLanding";
 import { DEMOCRATIE } from "@/content/democratie";
 import styles from "./democratie.module.css";
 
@@ -19,10 +20,11 @@ export const metadata: Metadata = {
 };
 
 export default function DemocratiePage() {
-  const { hub, loi, assemblee, senat, citoyen } = DEMOCRATIE;
+  const { hub, loi, assemblee, senat, citoyen, commissions } = DEMOCRATIE;
 
   return (
     <div className="container">
+      <ScrollToTopOnLanding />
       <Breadcrumb
         items={[
           { label: "Accueil", href: "/" },
@@ -133,6 +135,55 @@ export default function DemocratiePage() {
               ) : (
                 <Link href={link.href}>{link.label}</Link>
               )}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section
+        id="commissions"
+        className={styles.section}
+        aria-labelledby="commissions-title"
+      >
+        <h2 id="commissions-title">{commissions.title}</h2>
+        <p>{commissions.intro}</p>
+        <h3 className={styles.subSectionTitle}>{commissions.typesTitle}</h3>
+        {commissions.types.map((item) => (
+          <div key={item.title} className={styles.subSection}>
+            <h4>{item.title}</h4>
+            <p>{item.body}</p>
+          </div>
+        ))}
+        <h3 className={styles.subSectionTitle}>{commissions.roleTitle}</h3>
+        <p>{commissions.roleIntro}</p>
+        {commissions.rolePoints.map((item) => (
+          <div key={item.title} className={styles.subSection}>
+            <h4>{item.title}</h4>
+            <p>{item.body}</p>
+          </div>
+        ))}
+        <h3 className={styles.subSectionTitle}>{commissions.constitutionTitle}</h3>
+        {commissions.constitution.map((item) => (
+          <div key={item.title} className={styles.subSection}>
+            <h4>{item.title}</h4>
+            <p>{item.body}</p>
+          </div>
+        ))}
+        <h3 className={styles.subSectionTitle}>{commissions.saisineTitle}</h3>
+        {commissions.saisine.map((item) => (
+          <div key={item.title} className={styles.subSection}>
+            <h4>{item.title}</h4>
+            <p>{item.body}</p>
+          </div>
+        ))}
+        <div className={styles.summaryBox}>
+          <h3>{commissions.summaryTitle}</h3>
+          <p>{commissions.summary}</p>
+        </div>
+        <ul className={styles.linkList}>
+          {commissions.links.map((link) => (
+            <li key={link.href}>
+              <Link href={link.href}>{link.label}</Link>
             </li>
           ))}
         </ul>

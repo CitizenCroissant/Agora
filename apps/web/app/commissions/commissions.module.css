@@ -1,0 +1,145 @@
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-xs);
+}
+
+.intro {
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text);
+  opacity: 0.9;
+}
+
+.comprendreBlock {
+  margin-bottom: var(--spacing-lg);
+}
+
+.comprendreLink {
+  color: var(--color-primary);
+  text-decoration: underline;
+  font-size: 0.9375rem;
+}
+
+.comprendreLink:hover {
+  color: var(--color-primary-dark);
+}
+
+.errorHint {
+  margin-top: var(--spacing-sm);
+  font-size: 0.875rem;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+}
+
+.filterLabel {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.filterSelect {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 0.9375rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  background: var(--color-background);
+  color: var(--color-text);
+  min-width: 12rem;
+}
+
+.filterSelect:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.resultCount {
+  font-size: 0.875rem;
+  color: var(--color-text);
+  opacity: 0.9;
+}
+
+.listByType {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.typeSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.typeHeading {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin: 0;
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+}
+
+.card:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow);
+}
+
+.cardLabel {
+  font-weight: 600;
+  color: var(--color-primary);
+  flex: 1;
+  min-width: 0;
+}
+
+.cardFullName {
+  font-size: 0.9rem;
+  color: var(--color-text);
+  opacity: 0.9;
+  width: 100%;
+}
+
+.cardType {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius);
+  color: var(--color-text);
+}
+
+.cardArrow {
+  color: var(--color-primary);
+  font-weight: 600;
+}

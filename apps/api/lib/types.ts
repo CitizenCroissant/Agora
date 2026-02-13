@@ -12,6 +12,7 @@ export interface DbSitting {
   title: string;
   description: string;
   location: string | null;
+  organe_ref: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -112,4 +113,14 @@ export interface DbBillThematicTag {
   confidence: number;
   source: string;
   created_at: string;
+}
+
+export interface DbOrgane {
+  id: string;
+  libelle: string | null;
+  libelle_abrege: string | null;
+  type_organe: string;
+  official_url: string | null;
+  created_at: string;
+  updated_at: string;
 }

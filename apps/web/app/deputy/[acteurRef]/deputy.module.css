@@ -72,6 +72,16 @@
   margin: 0;
 }
 
+.commissionsList {
+  margin: 0;
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+
+.commissionsList li {
+  margin-bottom: var(--spacing-xs);
+}
+
 .infoRow {
   display: flex;
   flex-direction: column;
