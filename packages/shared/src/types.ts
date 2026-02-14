@@ -256,6 +256,20 @@ export interface DeputyVotesResponse {
   votes: DeputyVoteRecord[];
 }
 
+/** One attendance record for a deputy at a commission reunion (from GET /api/deputies/:acteurRef/attendance) */
+export interface DeputyAttendanceEntry {
+  sitting_id: string;
+  sitting_title: string;
+  date: string;
+  presence: "présent" | "absent" | "excusé";
+}
+
+export interface DeputyAttendanceResponse {
+  acteur_ref: string;
+  acteur_nom?: string | null;
+  attendance: DeputyAttendanceEntry[];
+}
+
 export interface Deputy {
   acteur_ref: string;
   civil_nom: string;

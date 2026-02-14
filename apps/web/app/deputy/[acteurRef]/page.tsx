@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { Deputy } from "@agora/shared";
+import {
+  Deputy,
+  DeputyVotesResponse,
+  DeputyVoteRecord,
+  DeputyAttendanceResponse,
+  DeputyAttendanceEntry
+} from "@agora/shared";
 import {
   formatDate,
   slugify,
@@ -14,6 +20,35 @@ import Link from "next/link";
 import styles from "./deputy.module.css";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { ShareBar } from "@/components/ShareBar";
+
+const POSITION_LABELS: Record<string, string> = {
+  pour: "Pour",
+  contre: "Contre",
+  abstention: "Abstention",
+  non_votant: "Non votant"
+};
+
+const RECENT_VOTES_COUNT = 5;
+
+/** Start of current month (YYYY-MM-DD) */
+function startOfThisMonth(): string {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  return `${y}-${m}-01`;
+}
+
+/** Count votes in a given month (date_scrutin >= monthStart and < next month) */
+function countVotesInMonth(
+  votes: DeputyVoteRecord[],
+  monthStart: string
+): number {
+  const [y, m] = monthStart.split("-").map(Number);
+  const nextMonth = m === 12 ? `${y + 1}-01-01` : `${y}-${String(m + 1).padStart(2, "0")}-01`;
+  return votes.filter(
+    (v) => v.date_scrutin >= monthStart && v.date_scrutin < nextMonth
+  ).length;
+}
 
 function computeAge(dateNaissance: string | null): number | null {
   if (!dateNaissance) return null;
@@ -31,12 +66,25 @@ export default function DeputyPage() {
   const acteurRef = params.acteurRef as string;
 
   const [deputy, setDeputy] = useState<Deputy | null>(null);
+  const [votes, setVotes] = useState<DeputyVotesResponse | null>(null);
+  const [attendance, setAttendance] = useState<DeputyAttendanceResponse | null>(
+    null
+  );
+  const [showAllAttendance, setShowAllAttendance] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  const RECENT_ATTENDANCE_COUNT = 5;
+  const attendanceList = attendance?.attendance ?? [];
+  const attendanceRecent = attendanceList.slice(0, RECENT_ATTENDANCE_COUNT);
+  const showAttendanceExpand =
+    attendanceList.length > RECENT_ATTENDANCE_COUNT;
 
   useEffect(() => {
     if (acteurRef) {
       loadDeputy(acteurRef);
+      loadVotes(acteurRef);
+      loadAttendance(acteurRef);
     }
   }, [acteurRef]);
 
@@ -51,6 +99,24 @@ export default function DeputyPage() {
       setDeputy(null);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadVotes = async (ref: string) => {
+    try {
+      const data = await apiClient.getDeputyVotes(ref);
+      setVotes(data);
+    } catch {
+      setVotes(null);
+    }
+  };
+
+  const loadAttendance = async (ref: string) => {
+    try {
+      const data = await apiClient.getDeputyAttendance(ref);
+      setAttendance(data);
+    } catch {
+      setAttendance(null);
     }
   };
 
@@ -82,164 +148,309 @@ export default function DeputyPage() {
       {!loading && !error && deputy && (
         <>
           <ShareBar title={displayName} />
-          <div className={styles.profileHeader}>
-            <h1 className={styles.title}>{displayName}</h1>
-            {deputy.groupe_politique && (
-              <span className={styles.badge}>{deputy.groupe_politique}</span>
+          <header className={styles.profileHeader}>
+            <div className={styles.profileTitleRow}>
+              <h1 className={styles.title}>{displayName}</h1>
+              {deputy.groupe_politique && (
+                <span className={styles.badge}>{deputy.groupe_politique}</span>
+              )}
+            </div>
+            {deputy.official_url && (
+              <a
+                href={deputy.official_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.officialLink}
+              >
+                Fiche sur assemblee-nationale.fr →
+              </a>
             )}
-          </div>
+          </header>
 
-          <div className={styles.infoGrid}>
-            <div className={styles.infoSection}>
-              <h2>Identité</h2>
-              <dl className={styles.infoList}>
-                <div className={styles.infoRow}>
-                  <dt>Identifiant acteur</dt>
+          {/* 1. Fiche du député */}
+          <section
+            className={styles.ficheBlock}
+            aria-labelledby="section-fiche"
+          >
+            <h2 id="section-fiche" className={styles.sectionTitle}>
+              Fiche du député
+            </h2>
+            <dl className={styles.ficheList}>
+              <div className={styles.ficheRow}>
+                <dt>Identifiant</dt>
+                <dd><code>{deputy.acteur_ref}</code></dd>
+              </div>
+              {deputy.date_naissance && (
+                <div className={styles.ficheRow}>
+                  <dt>Naissance</dt>
+                  <dd>{formatDate(deputy.date_naissance)}{age != null && ` (${age} ans)`}</dd>
+                </div>
+              )}
+              {deputy.profession && (
+                <div className={styles.ficheRow}>
+                  <dt>Profession</dt>
+                  <dd>{deputy.profession}</dd>
+                </div>
+              )}
+              {(deputy.date_debut_mandat || deputy.date_fin_mandat) && (
+                <div className={styles.ficheRow}>
+                  <dt>Mandat</dt>
                   <dd>
-                    <code>{deputy.acteur_ref}</code>
+                    <span
+                      className={
+                        isCurrentlySitting(deputy.date_fin_mandat)
+                          ? styles.mandatActuel
+                          : styles.mandatPasse
+                      }
+                    >
+                      {mandateStatusLabel(
+                        deputy.date_debut_mandat,
+                        deputy.date_fin_mandat
+                      )}
+                    </span>
                   </dd>
                 </div>
-                {deputy.date_naissance && (
-                  <div className={styles.infoRow}>
-                    <dt>Date de naissance</dt>
-                    <dd>
-                      {formatDate(deputy.date_naissance)}
-                      {age != null && ` (${age} ans)`}
-                    </dd>
-                  </div>
-                )}
-                {deputy.lieu_naissance && (
-                  <div className={styles.infoRow}>
-                    <dt>Lieu de naissance</dt>
-                    <dd>{deputy.lieu_naissance}</dd>
-                  </div>
-                )}
-                {deputy.profession && (
-                  <div className={styles.infoRow}>
-                    <dt>Profession</dt>
-                    <dd>{deputy.profession}</dd>
-                  </div>
-                )}
-              </dl>
-            </div>
-
-            <div className={styles.infoSection}>
-              <h2>Mandat</h2>
-              <dl className={styles.infoList}>
-                {(deputy.date_debut_mandat || deputy.date_fin_mandat) && (
-                  <div className={styles.infoRow}>
-                    <dt>Statut du mandat</dt>
-                    <dd>
-                      <span
-                        className={
-                          isCurrentlySitting(deputy.date_fin_mandat)
-                            ? styles.mandatActuel
-                            : styles.mandatPasse
-                        }
-                      >
-                        {mandateStatusLabel(
-                          deputy.date_debut_mandat,
-                          deputy.date_fin_mandat
-                        )}
-                      </span>
-                    </dd>
-                  </div>
-                )}
-                {deputy.circonscription && (
-                  <div className={styles.infoRow}>
-                    <dt>Circonscription</dt>
-                    <dd>
-                      {deputy.circonscription_ref ? (
-                        <Link
-                          href={`/circonscriptions/${encodeURIComponent(deputy.circonscription_ref ?? "")}`}
-                          className={styles.actionLink}
-                        >
-                          {deputy.circonscription}
-                        </Link>
-                      ) : (
-                        deputy.circonscription
-                      )}
-                    </dd>
-                  </div>
-                )}
-                {deputy.departement && (
-                  <div className={styles.infoRow}>
-                    <dt>Département</dt>
-                    <dd>{deputy.departement}</dd>
-                  </div>
-                )}
-                {deputy.date_debut_mandat && (
-                  <div className={styles.infoRow}>
-                    <dt>Début du mandat</dt>
-                    <dd>{formatDate(deputy.date_debut_mandat)}</dd>
-                  </div>
-                )}
-                {deputy.date_fin_mandat &&
-                  !isCurrentlySitting(deputy.date_fin_mandat) && (
-                    <div className={styles.infoRow}>
-                      <dt>Fin du mandat</dt>
-                      <dd>{formatDate(deputy.date_fin_mandat)}</dd>
-                    </div>
-                  )}
-                {deputy.legislature && (
-                  <div className={styles.infoRow}>
-                    <dt>Législature</dt>
-                    <dd>{deputy.legislature}e</dd>
-                  </div>
-                )}
-              </dl>
-            </div>
-
-            <div className={styles.infoSection}>
-              <h2>Affiliation politique</h2>
-              <dl className={styles.infoList}>
-                {deputy.groupe_politique && (
-                  <div className={styles.infoRow}>
-                    <dt>Groupe politique</dt>
-                    <dd>
+              )}
+              {deputy.circonscription && (
+                <div className={styles.ficheRow}>
+                  <dt>Circonscription</dt>
+                  <dd>
+                    {deputy.circonscription_ref ? (
                       <Link
-                        href={`/groupes/${encodeURIComponent(slugify(deputy.groupe_politique))}`}
+                        href={`/circonscriptions/${encodeURIComponent(deputy.circonscription_ref)}`}
                         className={styles.actionLink}
                       >
-                        {deputy.groupe_politique}
+                        {deputy.circonscription}
                       </Link>
-                    </dd>
-                  </div>
-                )}
-                {deputy.parti_politique && (
-                  <div className={styles.infoRow}>
-                    <dt>Parti politique</dt>
-                    <dd>{deputy.parti_politique}</dd>
-                  </div>
-                )}
-              </dl>
-            </div>
-
+                    ) : (
+                      deputy.circonscription
+                    )}
+                    {deputy.departement && ` · ${deputy.departement}`}
+                  </dd>
+                </div>
+              )}
+              {deputy.date_debut_mandat && (
+                <div className={styles.ficheRow}>
+                  <dt>Début mandat</dt>
+                  <dd>{formatDate(deputy.date_debut_mandat)}</dd>
+                </div>
+              )}
+              {deputy.legislature && (
+                <div className={styles.ficheRow}>
+                  <dt>Législature</dt>
+                  <dd>{deputy.legislature}e</dd>
+                </div>
+              )}
+              {deputy.groupe_politique && (
+                <div className={styles.ficheRow}>
+                  <dt>Groupe</dt>
+                  <dd>
+                    <Link
+                      href={`/groupes/${encodeURIComponent(slugify(deputy.groupe_politique))}`}
+                      className={styles.actionLink}
+                    >
+                      {deputy.groupe_politique}
+                    </Link>
+                  </dd>
+                </div>
+              )}
+              {deputy.parti_politique && (
+                <div className={styles.ficheRow}>
+                  <dt>Parti</dt>
+                  <dd>{deputy.parti_politique}</dd>
+                </div>
+              )}
+            </dl>
             {deputy.commissions && deputy.commissions.length > 0 && (
-              <div className={styles.infoSection}>
-                <h2>Commissions et organes</h2>
-                <ul className={styles.commissionsList}>
+              <div className={styles.commissionsBlock}>
+                <span className={styles.commissionsLabel}>Commissions et organes</span>
+                <ul className={styles.commissionsChips}>
                   {deputy.commissions.map((org) => (
                     <li key={org.id}>
                       <Link
                         href={`/commissions/${encodeURIComponent(org.id)}`}
-                        className={styles.actionLink}
+                        className={styles.commissionChip}
                       >
-                        {org.libelle ?? org.libelle_abrege ?? org.id}
+                        {org.libelle_abrege ?? org.libelle ?? org.id}
                       </Link>
                     </li>
                   ))}
                 </ul>
               </div>
             )}
-          </div>
+          </section>
 
+          {/* 2. Activité */}
+          <section
+            className={styles.activitySection}
+            aria-labelledby="section-activite"
+          >
+            <h2 id="section-activite" className={styles.sectionTitle}>
+              Activité
+            </h2>
+            <div className={styles.activitySummary}>
+              <div className={styles.activitySummaryItem}>
+                <span className={styles.activitySummaryValue}>
+                  {votes?.votes
+                    ? countVotesInMonth(votes.votes, startOfThisMonth())
+                    : "—"}
+                </span>
+                <span className={styles.activitySummaryLabel}>
+                  scrutins ce mois
+                </span>
+              </div>
+              <div className={styles.activitySummaryItem}>
+                <span className={styles.activitySummaryValue}>
+                  {votes?.votes?.length ?? "—"}
+                </span>
+                <span className={styles.activitySummaryLabel}>
+                  scrutins au total
+                </span>
+              </div>
+              <div className={styles.activitySummaryItem}>
+                <span className={styles.activitySummaryValue}>
+                  {attendance?.attendance
+                    ? attendance.attendance.length
+                    : attendance === null
+                      ? "—"
+                      : 0}
+                </span>
+                <span className={styles.activitySummaryLabel}>
+                  réunions commission
+                </span>
+              </div>
+            </div>
+
+            <h3 id="section-reunions" className={styles.sectionSubtitle}>
+              Présence aux réunions de commission
+            </h3>
+            {attendance === null && (
+              <p className={styles.attendanceState}>
+                Chargement…
+              </p>
+            )}
+            {attendance?.attendance && attendance.attendance.length === 0 && (
+              <p className={styles.attendanceState}>
+                Aucune réunion enregistrée.
+              </p>
+            )}
+            {attendanceList.length > 0 && (
+              <>
+                <ul className={styles.attendanceList}>
+                  {(showAllAttendance ? attendanceList : attendanceRecent).map(
+                    (a: DeputyAttendanceEntry) => (
+                      <li key={a.sitting_id} className={styles.attendanceItem}>
+                        <span
+                          className={
+                            a.presence === "présent"
+                              ? styles.badgePresent
+                              : a.presence === "absent"
+                                ? styles.badgeAbsent
+                                : styles.badgeExcuse
+                          }
+                        >
+                          {a.presence === "présent"
+                            ? "Présent"
+                            : a.presence === "absent"
+                              ? "Absent"
+                              : "Excusé"}
+                        </span>
+                        <span className={styles.attendanceDate}>
+                          {formatDate(a.date)}
+                        </span>
+                        <Link
+                          href={`/sitting/${encodeURIComponent(a.sitting_id)}`}
+                          className={styles.attendanceTitle}
+                        >
+                          {a.sitting_title || "Réunion de commission"}
+                        </Link>
+                      </li>
+                    )
+                  )}
+                </ul>
+                {showAttendanceExpand && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllAttendance((v) => !v)}
+                    className={styles.viewAllButton}
+                  >
+                    {showAllAttendance
+                      ? "Voir moins de réunions"
+                      : `Voir toutes les réunions (${attendanceList.length}) →`}
+                  </button>
+                )}
+              </>
+            )}
+
+            <h3 id="section-votes" className={styles.sectionSubtitle}>
+              Votes récents
+            </h3>
+            {votes?.votes && votes.votes.length > 0 ? (
+              <>
+                <ul className={styles.activityVoteList}>
+                  {votes.votes
+                    .slice(0, RECENT_VOTES_COUNT)
+                    .map((v: DeputyVoteRecord) => (
+                      <li key={v.scrutin_id} className={styles.activityVoteItem}>
+                        <span
+                          className={
+                            v.position === "pour"
+                              ? styles.badgePour
+                              : v.position === "contre"
+                                ? styles.badgeContre
+                                : v.position === "abstention"
+                                  ? styles.badgeAbstention
+                                  : styles.badgeNonVotant
+                          }
+                        >
+                          {POSITION_LABELS[v.position]}
+                        </span>
+                        <span className={styles.activityVoteDate}>
+                          {formatDate(v.date_scrutin)}
+                        </span>
+                        <Link
+                          href={`/votes/${v.scrutin_id}`}
+                          className={styles.activityVoteTitre}
+                        >
+                          {v.scrutin_titre}
+                        </Link>
+                      </li>
+                    ))}
+                </ul>
+                <p className={styles.activityFooter}>
+                  <Link
+                    href={`/votes/deputy/${encodeURIComponent(deputy.acteur_ref)}`}
+                    className={styles.actionLink}
+                  >
+                    Voir tout l&apos;historique des votes
+                    {votes.votes.length > 0
+                      ? ` (${votes.votes.length})`
+                      : ""}
+                    {" →"}
+                  </Link>
+                </p>
+              </>
+            ) : (
+              <p className={styles.activityFooter}>
+                <Link
+                  href={`/votes/deputy/${encodeURIComponent(deputy.acteur_ref)}`}
+                  className={styles.actionLink}
+                >
+                  Voir l&apos;historique des votes
+                  {votes?.votes ? ` (${votes.votes.length})` : ""}
+                  {" →"}
+                </Link>
+              </p>
+            )}
+          </section>
+
+          {/* 3. Contact (generic, at bottom) */}
           {isCurrentlySitting(deputy.date_fin_mandat) && (
             <section
               className={styles.contactSection}
-              aria-labelledby="contact-depute-heading"
+              aria-labelledby="section-contact"
             >
-              <h2 id="contact-depute-heading" className={styles.contactHeading}>
+              <h2 id="section-contact" className={styles.sectionTitle}>
                 Contacter ce député
               </h2>
               <div className={styles.contactBlock}>
@@ -285,25 +496,6 @@ export default function DeputyPage() {
               </div>
             </section>
           )}
-
-          <div className={styles.actions}>
-            <Link
-              href={`/votes/deputy/${encodeURIComponent(deputy.acteur_ref)}`}
-              className={styles.actionLink}
-            >
-              Voir l&apos;historique des votes →
-            </Link>
-            {deputy.official_url && (
-              <a
-                href={deputy.official_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.actionLink}
-              >
-                Fiche sur assemblee-nationale.fr →
-              </a>
-            )}
-          </div>
         </>
       )}
     </div>

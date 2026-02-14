@@ -185,6 +185,19 @@ export default async function handler(
     routeHandler = m.default;
     matched = true;
   }
+  // Dynamic: deputies/:acteurRef/attendance
+  if (
+    !matched &&
+    segments[0] === "deputies" &&
+    segments.length === 3 &&
+    segments[2] === "attendance" &&
+    method === "GET"
+  ) {
+    withParams(req, { acteurRef: segments[1] });
+    const m = await import("../lib/handlers/deputies-attendance");
+    routeHandler = m.default;
+    matched = true;
+  }
   // Dynamic: deputies/:acteurRef/votes
   if (
     !matched &&

@@ -10,6 +10,7 @@ import {
   ScrutinsResponse,
   ScrutinDetailResponse,
   DeputyVotesResponse,
+  DeputyAttendanceResponse,
   Deputy,
   Organe,
   CommissionMember,
@@ -264,6 +265,27 @@ export class ApiClient {
     }
 
     return (await response.json()) as DeputyVotesResponse;
+  }
+
+  /**
+   * Fetch commission reunion attendance for a deputy (présent / absent / excusé)
+   */
+  async getDeputyAttendance(
+    acteurRef: string
+  ): Promise<DeputyAttendanceResponse> {
+    const encoded = encodeURIComponent(acteurRef);
+    const response = await fetch(
+      `${this.baseUrl}/deputies/${encoded}/attendance`
+    );
+
+    if (!response.ok) {
+      const error = (await response.json()) as ApiError;
+      throw new Error(
+        error.message || "Failed to fetch deputy attendance"
+      );
+    }
+
+    return (await response.json()) as DeputyAttendanceResponse;
   }
 
   /**
