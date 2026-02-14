@@ -35,12 +35,24 @@ export default function DemocratiePage() {
       <p className={styles.intro}>{hub.intro}</p>
 
       <nav className={styles.cards} aria-label="Sections de la page">
-        {hub.cards.map((card) => (
-          <a key={card.id} href={`#${card.id}`} className={styles.card}>
-            <h2 className={styles.cardTitle}>{card.title}</h2>
-            <p className={styles.cardDescription}>{card.description}</p>
-          </a>
-        ))}
+        {hub.cards.map((card) => {
+          const href =
+            "externalHref" in card && card.externalHref
+              ? card.externalHref
+              : `#${card.id}`;
+          const isExternalUrl = href.startsWith("http://") || href.startsWith("https://");
+          return (
+            <a
+              key={card.id}
+              href={href}
+              className={styles.card}
+              {...(isExternalUrl ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            >
+              <h2 className={styles.cardTitle}>{card.title}</h2>
+              <p className={styles.cardDescription}>{card.description}</p>
+            </a>
+          );
+        })}
       </nav>
 
       <section id="loi" className={styles.section} aria-labelledby="loi-title">

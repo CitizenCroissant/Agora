@@ -31,6 +31,48 @@
   font-size: 1.125rem;
 }
 
+.anchorLink {
+  color: var(--color-primary);
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+.anchorLink:hover {
+  opacity: 0.8;
+}
+
+.methodologieSubtitle {
+  font-size: 1.25rem;
+  color: var(--color-primary);
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-sm);
+}
+
+.methodologieList {
+  margin: var(--spacing-md) 0;
+  padding-left: 1.5rem;
+  line-height: 1.8;
+  font-size: 1.125rem;
+}
+
+.methodologieList li {
+  margin-bottom: var(--spacing-sm);
+}
+
+.charteBox {
+  background: var(--color-background-alt);
+  border-left: 4px solid var(--color-primary);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius);
+  margin-top: var(--spacing-lg);
+}
+
+.charteTitle {
+  font-size: 1.25rem;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-md);
+}
+
 .sources {
   display: flex;
   flex-direction: column;

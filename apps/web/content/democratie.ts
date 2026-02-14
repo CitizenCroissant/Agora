@@ -37,6 +37,13 @@ export const DEMOCRATIE = {
         title: "Les commissions et organes",
         description:
           "Commissions permanentes, spéciales, d'enquête, missions d'information : organisation et rôle du travail en commission."
+      },
+      {
+        id: "methodologie",
+        title: "Comment nous présentons les votes",
+        description:
+          "D'où viennent les données, comment sont regroupés les votes (pour, contre, abstention, non votant), ce que signifient adopté et rejeté, et notre charte de neutralité.",
+        externalHref: "/sources#methodologie"
       }
     ] as const
   },
