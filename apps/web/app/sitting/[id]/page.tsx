@@ -119,7 +119,9 @@ export default function SittingPage() {
               <ShareBar title={sitting.title} />
               <div className={styles.sittingHeader}>
                 <div>
-                  <h1 className={styles.title}>{sitting.title}</h1>
+                  <h1 className={styles.title} title={sitting.title}>
+                    {sitting.title}
+                  </h1>
                   <p className={styles.date}>{formatDate(sitting.date)}</p>
                   {sitting.organe_ref && (
                     <p className={styles.commissionInfo}>
@@ -259,25 +261,18 @@ export default function SittingPage() {
                 </div>
               )}
 
-              {sitting.source_metadata &&
-                sitting.source_metadata.original_source_url && (
-                  <div className={styles.source}>
-                    <h3>Source et provenance</h3>
-                    <p>
-                      <strong>
-                        Données officielles de l'Assemblée nationale
-                      </strong>
-                    </p>
-                    <a
-                      href={sitting.source_metadata.original_source_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.sourceLink}
-                    >
-                      Voir la source originale →
-                    </a>
-                  </div>
-                )}
+              {sitting.source_metadata?.original_source_url && (
+                <p className={styles.sourceLinkWrap}>
+                  <a
+                    href={sitting.source_metadata.original_source_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.sourceLink}
+                  >
+                    Voir la source originale →
+                  </a>
+                </p>
+              )}
             </>
           )}
     </div>

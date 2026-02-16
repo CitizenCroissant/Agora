@@ -251,6 +251,37 @@ export default function TimelinePage() {
                                     )}
                                   </div>
                                 </div>
+                                {(sitting.organe || sitting.organe_ref || sitting.type === "seance_type") && (
+                                  <p className={styles.organeLine}>
+                                    {sitting.type === "seance_type" ? (
+                                      "Assemblée nationale"
+                                    ) : sitting.organe ? (
+                                      sitting.organe_ref ? (
+                                        <Link
+                                          href={`/commissions/${encodeURIComponent(sitting.organe_ref)}`}
+                                          className={styles.organeLink}
+                                          onClick={(e) => e.stopPropagation()}
+                                        >
+                                          {sitting.organe.libelle_abrege ??
+                                            sitting.organe.libelle ??
+                                            "Commission"}
+                                        </Link>
+                                      ) : (
+                                        sitting.organe.libelle_abrege ??
+                                          sitting.organe.libelle ??
+                                          "Commission"
+                                      )
+                                    ) : sitting.organe_ref ? (
+                                      <Link
+                                        href={`/commissions/${encodeURIComponent(sitting.organe_ref)}`}
+                                        className={styles.organeLink}
+                                        onClick={(e) => e.stopPropagation()}
+                                      >
+                                        Commission
+                                      </Link>
+                                    ) : null}
+                                  </p>
+                                )}
                                 <p className={styles.itemCount}>
                                   {sitting.agenda_items.length} point(s) à
                                   l&apos;ordre du jour

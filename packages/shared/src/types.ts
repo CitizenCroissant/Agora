@@ -17,6 +17,8 @@ export interface Sitting {
   description: string;
   location?: string;
   organe_ref?: string | null;
+  /** Commission/organe when organe_ref is set (name and link). Populated by API when available. */
+  organe?: Organe | null;
   agenda_items?: AgendaItem[];
   source_metadata?: SourceMetadata;
 }
@@ -112,10 +114,20 @@ export interface BillSummary extends Bill {
   scrutins_count?: number | null;
 }
 
+/** Minimal bill info for "amended" (parent) bill when this bill is an amendment */
+export interface BillAmendsBill {
+  id: string;
+  official_id: string;
+  title: string;
+  short_title?: string | null;
+}
+
 export interface BillDetailResponse extends Bill {
   scrutins: Scrutin[];
   /** Optional sittings where this bill appears on the agenda */
   sittings?: SittingWithItems[];
+  /** When this bill is an amendment, the main bill it amends */
+  amends_bill?: BillAmendsBill | null;
 }
 
 /** One attendance record for a commission reunion (présent / absent / excusé) */

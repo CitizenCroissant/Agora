@@ -198,10 +198,12 @@
   background: var(--color-background);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius);
-  padding: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
   box-shadow: var(--shadow);
   transition: all 0.2s;
   cursor: pointer;
+  display: block;
+  text-align: left;
 }
 
 .sittingCard:hover {
@@ -213,14 +215,21 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
   gap: var(--spacing-md);
 }
 
 .sittingHeader h3 {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
   color: var(--color-primary);
   flex: 1;
+  min-width: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.35;
 }
 
 .sittingHeaderMeta {
@@ -257,15 +266,36 @@
   white-space: nowrap;
 }
 
+.organeLine {
+  font-size: 0.8125rem;
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-xs);
+}
+
+.organeLink {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.organeLink:hover {
+  text-decoration: underline;
+}
+
 .location {
   color: var(--color-text-light);
-  font-size: 0.875rem;
-  margin-bottom: var(--spacing-sm);
+  font-size: 0.8125rem;
+  margin-bottom: var(--spacing-xs);
 }
 
 .description {
   margin-bottom: var(--spacing-md);
-  line-height: 1.6;
+  line-height: 1.5;
+  font-size: 0.938rem;
+  color: var(--color-text);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .agendaItems {

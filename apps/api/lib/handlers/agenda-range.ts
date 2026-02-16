@@ -10,7 +10,8 @@ import { DbSitting, DbAgendaItem, DbSourceMetadata } from "../types";
 import {
   AgendaRangeResponse,
   AgendaResponse,
-  SittingWithItems
+  SittingWithItems,
+  Organe
 } from "@agora/shared";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -138,6 +139,37 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       {}
     );
 
+    // Fetch organes for sittings that have organe_ref
+    const organeRefs = [
+      ...new Set(
+        (sittings as DbSitting[])
+          .map((s) => s.organe_ref?.trim())
+          .filter((ref): ref is string => !!ref)
+      )
+    ];
+    let organeByRef: Record<string, Organe> = {};
+    if (organeRefs.length > 0) {
+      const { data: organeRows } = await supabase
+        .from("organes")
+        .select("id, libelle, libelle_abrege, type_organe, official_url")
+        .in("id", organeRefs);
+      if (organeRows) {
+        organeByRef = organeRows.reduce(
+          (acc: Record<string, Organe>, r: { id: string; libelle: string | null; libelle_abrege: string | null; type_organe: string; official_url: string | null }) => {
+            acc[r.id] = {
+              id: r.id,
+              libelle: r.libelle ?? null,
+              libelle_abrege: r.libelle_abrege ?? null,
+              type_organe: r.type_organe,
+              official_url: r.official_url ?? null
+            };
+            return acc;
+          },
+          {}
+        );
+      }
+    }
+
     // Group source metadata by sitting
     const metadataBySitting = (sourceMetadata || []).reduce(
       (acc: Record<string, DbSourceMetadata>, meta: DbSourceMetadata) => {
@@ -164,6 +196,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 : sitting.start_time
                   ? sitting.start_time.substring(0, 5)
                   : undefined;
+            const organeRef = sitting.organe_ref?.trim();
+            const organe = organeRef ? organeByRef[organeRef] ?? undefined : undefined;
 
             return {
               id: sitting.id,
@@ -176,6 +210,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               description: sitting.description,
               location: sitting.location || undefined,
               organe_ref: sitting.organe_ref ?? undefined,
+              organe: organe ?? undefined,
               time_range: timeRange,
               agenda_items: items.map((item: DbAgendaItem) => ({
                 id: item.id,

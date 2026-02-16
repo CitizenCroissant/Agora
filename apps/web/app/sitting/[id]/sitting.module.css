@@ -24,6 +24,10 @@
   color: var(--color-primary);
   margin-bottom: var(--spacing-xs);
   max-width: 42rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .date {
@@ -333,27 +337,13 @@
   opacity: 0.8;
 }
 
-.source {
+.sourceLinkWrap {
   margin-top: var(--spacing-xl);
-  padding: var(--spacing-lg);
-  background: var(--color-background-alt);
-  border-radius: var(--border-radius);
-  border: 1px solid var(--color-border);
-}
-
-.source h3 {
-  font-size: 1.25rem;
-  margin-bottom: var(--spacing-md);
-}
-
-.source p {
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: 0;
   font-size: 0.938rem;
 }
 
 .sourceLink {
-  display: inline-block;
-  margin-top: var(--spacing-sm);
   color: var(--color-primary);
   font-weight: 500;
   text-decoration: underline;
