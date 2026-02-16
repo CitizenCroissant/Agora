@@ -16,18 +16,8 @@ export interface ShareBarProps {
   className?: string;
 }
 
-function getShareUrl(url?: string): string {
-  if (typeof window !== "undefined" && !url) {
-    return window.location.href;
-  }
-  return url ?? "";
-}
-
-function getShareTitle(title?: string): string {
-  if (title) return title;
-  if (typeof document !== "undefined") return document.title;
-  return SITE_NAME;
-}
+// Resolve URL/title only after mount to avoid server/client mismatch (hydration error).
+// Callers can pass url/title for stable SSR; otherwise we use client-only values in useEffect.
 
 function IconLink() {
   return (
@@ -98,16 +88,21 @@ export function ShareBar({ title, url, shareMessage, className }: ShareBarProps)
   const [copied, setCopied] = useState(false);
   const [shared, setShared] = useState(false);
   const [canNativeShare, setCanNativeShare] = useState(false);
-
-  const shareUrl = getShareUrl(url);
-  const shareTitle = getShareTitle(title);
-  const message = shareMessage ?? getDefaultShareMessage(shareTitle);
+  // Resolve url/title after mount when not provided, so server and first client render match (avoid hydration mismatch).
+  const [resolvedUrl, setResolvedUrl] = useState(url ?? "");
+  const [resolvedTitle, setResolvedTitle] = useState(title ?? "");
 
   useEffect(() => {
+    if (!url) setResolvedUrl(window.location.href);
+    if (!title) setResolvedTitle(document.title || SITE_NAME);
     setCanNativeShare(
       typeof navigator !== "undefined" && typeof navigator.share === "function"
     );
-  }, []);
+  }, [url, title]);
+
+  const shareUrl = url ?? resolvedUrl;
+  const shareTitle = title ?? (resolvedTitle || SITE_NAME);
+  const message = shareMessage ?? getDefaultShareMessage(shareTitle);
 
   const handleNativeShare = useCallback(async () => {
     try {

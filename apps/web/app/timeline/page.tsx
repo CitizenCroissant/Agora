@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { AgendaRangeResponse } from "@agora/shared";
 import {
   getTodayDate,
@@ -23,6 +24,7 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 type ViewMode = "week" | "month";
 
 export default function TimelinePage() {
+  const router = useRouter();
   const [agendaRange, setAgendaRange] = useState<AgendaRangeResponse | null>(
     null
   );
@@ -31,6 +33,15 @@ export default function TimelinePage() {
   const [viewMode, setViewMode] = useState<ViewMode>("week");
   const [currentDate, setCurrentDate] = useState<string>(getTodayDate());
   const [dateInput, setDateInput] = useState<string>(getTodayDate());
+
+  const handleCommissionClick = (
+    e: React.MouseEvent | React.KeyboardEvent,
+    organeRef: string
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    router.push(`/commissions/${encodeURIComponent(organeRef)}`);
+  };
 
   const loadTimeline = useCallback(async () => {
     setLoading(true);
@@ -257,28 +268,62 @@ export default function TimelinePage() {
                                       "Assemblée nationale"
                                     ) : sitting.organe ? (
                                       sitting.organe_ref ? (
-                                        <Link
-                                          href={`/commissions/${encodeURIComponent(sitting.organe_ref)}`}
+                                        <span
+                                          role="link"
+                                          tabIndex={0}
                                           className={styles.organeLink}
-                                          onClick={(e) => e.stopPropagation()}
+                                          onClick={(e) =>
+                                            handleCommissionClick(
+                                              e,
+                                              sitting.organe_ref!
+                                            )
+                                          }
+                                          onKeyDown={(e) => {
+                                            if (
+                                              e.key === "Enter" ||
+                                              e.key === " "
+                                            ) {
+                                              handleCommissionClick(
+                                                e,
+                                                sitting.organe_ref!
+                                              );
+                                            }
+                                          }}
                                         >
                                           {sitting.organe.libelle_abrege ??
                                             sitting.organe.libelle ??
                                             "Commission"}
-                                        </Link>
+                                        </span>
                                       ) : (
                                         sitting.organe.libelle_abrege ??
                                           sitting.organe.libelle ??
                                           "Commission"
                                       )
                                     ) : sitting.organe_ref ? (
-                                      <Link
-                                        href={`/commissions/${encodeURIComponent(sitting.organe_ref)}`}
+                                      <span
+                                        role="link"
+                                        tabIndex={0}
                                         className={styles.organeLink}
-                                        onClick={(e) => e.stopPropagation()}
+                                        onClick={(e) =>
+                                          handleCommissionClick(
+                                            e,
+                                            sitting.organe_ref!
+                                          )
+                                        }
+                                        onKeyDown={(e) => {
+                                          if (
+                                            e.key === "Enter" ||
+                                            e.key === " "
+                                          ) {
+                                            handleCommissionClick(
+                                              e,
+                                              sitting.organe_ref!
+                                            );
+                                          }
+                                        }}
                                       >
                                         Commission
-                                      </Link>
+                                      </span>
                                     ) : null}
                                   </p>
                                 )}

@@ -26,6 +26,10 @@
 .current {
   color: var(--color-text);
   font-weight: 500;
+  max-width: 60ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .separator {

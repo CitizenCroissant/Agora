@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { AgendaResponse } from "@agora/shared";
 import { getTodayDate, formatDate, addDays, subtractDays } from "@agora/shared";
 import { apiClient } from "@/lib/api";
@@ -14,10 +15,20 @@ const AGENDA_SHARE_MESSAGE =
   "Découvrez l'agenda du jour à l'Assemblée nationale sur Agora – transparence et simplicité.";
 
 export default function HomePageClient() {
+  const router = useRouter();
   const [currentDate, setCurrentDate] = useState<string>(getTodayDate());
   const [agenda, setAgenda] = useState<AgendaResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handleCommissionClick = (
+    e: React.MouseEvent | React.KeyboardEvent,
+    organeRef: string
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    router.push(`/commissions/${encodeURIComponent(organeRef)}`);
+  };
 
   useEffect(() => {
     loadAgenda(currentDate);
@@ -177,28 +188,44 @@ export default function HomePageClient() {
                           "Assemblée nationale"
                         ) : sitting.organe ? (
                           sitting.organe_ref ? (
-                            <Link
-                              href={`/commissions/${encodeURIComponent(sitting.organe_ref)}`}
+                            <span
+                              role="link"
+                              tabIndex={0}
                               className={styles.organeLink}
-                              onClick={(e) => e.stopPropagation()}
+                              onClick={(e) =>
+                                handleCommissionClick(e, sitting.organe_ref!)
+                              }
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                  handleCommissionClick(e, sitting.organe_ref!);
+                                }
+                              }}
                             >
                               {sitting.organe.libelle_abrege ??
                                 sitting.organe.libelle ??
                                 "Commission"}
-                            </Link>
+                            </span>
                           ) : (
                             sitting.organe.libelle_abrege ??
                               sitting.organe.libelle ??
                               "Commission"
                           )
                         ) : sitting.organe_ref ? (
-                          <Link
-                            href={`/commissions/${encodeURIComponent(sitting.organe_ref)}`}
+                          <span
+                            role="link"
+                            tabIndex={0}
                             className={styles.organeLink}
-                            onClick={(e) => e.stopPropagation()}
+                            onClick={(e) =>
+                              handleCommissionClick(e, sitting.organe_ref!)
+                            }
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                handleCommissionClick(e, sitting.organe_ref!);
+                              }
+                            }}
                           >
                             Commission
-                          </Link>
+                          </span>
                         ) : null}
                       </p>
                     )}

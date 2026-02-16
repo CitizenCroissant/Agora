@@ -70,7 +70,7 @@ export default function ScrutinPage() {
       <Breadcrumb
             items={[
               { label: "Scrutins", href: "/votes" },
-              { label: scrutin?.titre?.slice(0, 50) || "Scrutin" }
+              { label: scrutin?.titre ?? "Scrutin" }
             ]}
           />
           {loading && (
