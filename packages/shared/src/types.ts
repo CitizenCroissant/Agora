@@ -211,6 +211,8 @@ export interface ScrutinVote {
 /** Scrutin vote with optional deputy display name (when deputies table is populated) */
 export interface ScrutinVoteWithName extends ScrutinVote {
   acteur_nom?: string | null;
+  /** Political group label when deputy is in deputies table */
+  groupe_politique?: string | null;
 }
 
 /** Per-political-group breakdown for a single scrutin */
@@ -229,6 +231,8 @@ export interface ScrutinGroupVoteSummary {
   contre_pct: number;
   abstention_pct: number;
   non_votant_pct: number;
+  /** Percentage of this group that voted like the assembly outcome (pour if adopté, contre if rejeté). 0-100. */
+  pct_voted_like_assembly?: number;
 }
 
 export interface ScrutinWithVotes extends Scrutin {
@@ -269,11 +273,28 @@ export interface DeputyVoteRecord {
   position: ScrutinVotePosition;
 }
 
+/** Comparison context for one vote when enrich=comparison is requested */
+export interface DeputyVoteComparison {
+  /** Assembly outcome for this scrutin */
+  assembly_result: "adopté" | "rejeté";
+  /** Deputy's political group label */
+  group_label: string;
+  group_pour_pct: number;
+  group_contre_pct: number;
+  group_abstention_pct: number;
+  group_non_votant_pct: number;
+}
+
+/** Vote record with optional comparison (when GET /deputies/:ref/votes?enrich=comparison) */
+export interface DeputyVoteRecordWithComparison extends DeputyVoteRecord {
+  comparison?: DeputyVoteComparison | null;
+}
+
 export interface DeputyVotesResponse {
   acteur_ref: string;
   /** Display name when deputy is in deputies table */
   acteur_nom?: string | null;
-  votes: DeputyVoteRecord[];
+  votes: DeputyVoteRecord[] | DeputyVoteRecordWithComparison[];
 }
 
 /** One attendance record for a deputy at a commission reunion (from GET /api/deputies/:acteurRef/attendance) */

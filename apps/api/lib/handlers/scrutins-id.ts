@@ -170,6 +170,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const denom = stats.total || 1;
         const pct = (count: number) =>
           Math.round((count * 10000) / denom) / 100; // 2 decimal places
+        const pour_pct = pct(stats.pour);
+        const contre_pct = pct(stats.contre);
+        const pct_voted_like_assembly =
+          dbScrutin.sort_code === "adopté" ? pour_pct : contre_pct;
         return {
           groupe_politique: label,
           total: stats.total,
@@ -177,10 +181,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           contre: stats.contre,
           abstention: stats.abstention,
           non_votant: stats.non_votant,
-          pour_pct: pct(stats.pour),
-          contre_pct: pct(stats.contre),
+          pour_pct,
+          contre_pct,
           abstention_pct: pct(stats.abstention),
-          non_votant_pct: pct(stats.non_votant)
+          non_votant_pct: pct(stats.non_votant),
+          pct_voted_like_assembly
         };
       })
       // Sort by total descending to show largest groups first
@@ -208,7 +213,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         scrutin_id: v.scrutin_id,
         acteur_ref: v.acteur_ref,
         position: v.position as "pour" | "contre" | "abstention" | "non_votant",
-        acteur_nom: acteurNomMap.get(v.acteur_ref) ?? null
+        acteur_nom: acteurNomMap.get(v.acteur_ref) ?? null,
+        groupe_politique: acteurGroupMap.get(v.acteur_ref) ?? null
       })),
       tags: tags || [],
       group_votes: groupVotes

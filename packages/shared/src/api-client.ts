@@ -253,11 +253,23 @@ export class ApiClient {
   }
 
   /**
-   * Fetch voting record for a deputy by acteur_ref (e.g. PA842279)
+   * Fetch voting record for a deputy by acteur_ref (e.g. PA842279).
+   * @param options.enrich - Pass "comparison" to get per-vote comparison (assembly result + deputy's group breakdown).
    */
-  async getDeputyVotes(acteurRef: string): Promise<DeputyVotesResponse> {
+  async getDeputyVotes(
+    acteurRef: string,
+    options?: { enrich?: "comparison" }
+  ): Promise<DeputyVotesResponse> {
     const encoded = encodeURIComponent(acteurRef);
-    const response = await fetch(`${this.baseUrl}/deputies/${encoded}/votes`);
+    const params = new URLSearchParams();
+    if (options?.enrich === "comparison") {
+      params.set("enrich", "comparison");
+    }
+    const query = params.toString();
+    const url = query
+      ? `${this.baseUrl}/deputies/${encoded}/votes?${query}`
+      : `${this.baseUrl}/deputies/${encoded}/votes`;
+    const response = await fetch(url);
 
     if (!response.ok) {
       const error = (await response.json()) as ApiError;

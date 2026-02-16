@@ -199,6 +199,9 @@ export default function ScrutinPage() {
                           <th>Abstention</th>
                           <th>Non votants</th>
                           <th>Total</th>
+                          <th className={styles.thLikeAssembly} title="Part du groupe ayant voté comme le résultat de l'Assemblée (pour si adopté, contre si rejeté)">
+                            Comme l&apos;Assemblée
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -206,6 +209,10 @@ export default function ScrutinPage() {
                           const slug = slugify(g.groupe_politique);
                           const formatCell = (count: number, pct: number) =>
                             count === 0 ? "—" : `${count} (${pct.toFixed(1)} %)`;
+                          const pctLike =
+                            typeof g.pct_voted_like_assembly === "number"
+                              ? g.pct_voted_like_assembly
+                              : null;
                           return (
                             <tr key={g.groupe_politique}>
                               <td>
@@ -221,6 +228,30 @@ export default function ScrutinPage() {
                               <td>{formatCell(g.abstention, g.abstention_pct)}</td>
                               <td>{formatCell(g.non_votant, g.non_votant_pct)}</td>
                               <td>{g.total}</td>
+                              <td className={styles.tdLikeAssembly}>
+                                {pctLike !== null ? (
+                                  <span
+                                    className={styles.likeAssemblyCell}
+                                    title={`${pctLike.toFixed(0)} % des députés du groupe ont voté comme l'Assemblée`}
+                                  >
+                                    <span
+                                      className={styles.likeAssemblyBarWrap}
+                                      role="img"
+                                      aria-label={`${pctLike.toFixed(0)} %`}
+                                    >
+                                      <span
+                                        className={styles.likeAssemblyBar}
+                                        style={{ width: `${pctLike}%` }}
+                                      />
+                                    </span>
+                                    <span className={styles.likeAssemblyPct}>
+                                      {pctLike.toFixed(0)} %
+                                    </span>
+                                  </span>
+                                ) : (
+                                  "—"
+                                )}
+                              </td>
                             </tr>
                           );
                         })}
@@ -241,28 +272,122 @@ export default function ScrutinPage() {
               {scrutin.votes && scrutin.votes.length > 0 && (
                 <div className={styles.votesSection}>
                   <h2>Vote des députés</h2>
+                  <p className={styles.votesSectionHint}>
+                    Par groupe politique : répartition du groupe (barre pour/contre) et liste des députés.
+                  </p>
                   {(
                     ["pour", "contre", "abstention", "non_votant"] as const
                   ).map((pos) => {
-                    const list = byPosition[pos] ?? [];
-                    if (list.length === 0) return null;
+                    const rawList = byPosition[pos] ?? [];
+                    const sorted = [...rawList].sort((a, b) => {
+                      const ga = a.groupe_politique ?? "";
+                      const gb = b.groupe_politique ?? "";
+                      if (!ga && !gb) return 0;
+                      if (!ga) return 1;
+                      if (!gb) return -1;
+                      return ga.localeCompare(gb, "fr");
+                    });
+                    const byGroup = sorted.reduce(
+                      (acc, v) => {
+                        const key = v.groupe_politique ?? "\uFFFF"; // sort "Sans groupe" last
+                        if (!acc[key]) acc[key] = [];
+                        acc[key].push(v);
+                        return acc;
+                      },
+                      {} as Record<string, typeof sorted>
+                    );
+                    const groupKeys = Object.keys(byGroup).sort((a, b) =>
+                      a === "\uFFFF" ? 1 : b === "\uFFFF" ? -1 : a.localeCompare(b, "fr")
+                    );
+                    if (sorted.length === 0) return null;
                     return (
-                      <div key={pos} className={styles.positionBlock}>
-                        <h3>
-                          {POSITION_LABELS[pos]} ({list.length})
+                      <div
+                        key={pos}
+                        className={`${styles.positionBlock} ${
+                          pos === "pour"
+                            ? styles.positionBlockPour
+                            : pos === "contre"
+                              ? styles.positionBlockContre
+                              : pos === "abstention"
+                                ? styles.positionBlockAbstention
+                                : styles.positionBlockNonVotant
+                        }`}
+                      >
+                        <h3 className={styles.positionBlockTitle}>
+                          <span
+                            className={
+                              pos === "pour"
+                                ? styles.positionDotPour
+                                : pos === "contre"
+                                  ? styles.positionDotContre
+                                  : pos === "abstention"
+                                    ? styles.positionDotAbstention
+                                    : styles.positionDotNonVotant
+                            }
+                          />
+                          {POSITION_LABELS[pos]} ({sorted.length})
                         </h3>
-                        <ul className={styles.voteList}>
-                          {list.map((v) => (
-                            <li key={v.id}>
-                              <Link
-                                href={`/deputy/${encodeURIComponent(v.acteur_ref)}`}
-                                className={styles.deputyLink}
-                              >
-                                {v.acteur_nom ?? v.acteur_ref}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
+                        {groupKeys.map((groupKey) => {
+                          const groupVotes = byGroup[groupKey];
+                          const groupLabel =
+                            groupKey === "\uFFFF" ? "Sans groupe" : groupKey;
+                          const groupForSection =
+                            groupKey !== "\uFFFF" &&
+                            scrutin.group_votes
+                              ? scrutin.group_votes.find(
+                                  (g) => g.groupe_politique === groupKey
+                                )
+                              : undefined;
+                          return (
+                            <details
+                              key={groupKey}
+                              className={styles.positionGroupSubsection}
+                            >
+                              <summary className={styles.positionGroupHeading}>
+                                <span className={styles.positionGroupChevron} aria-hidden>
+                                  ▼
+                                </span>
+                                <span className={styles.positionGroupBadge}>
+                                  {groupLabel}
+                                </span>
+                                {groupForSection && (
+                                  <span
+                                    className={styles.groupBarWrap}
+                                    title={`${groupForSection.pour_pct.toFixed(0)}% pour, ${groupForSection.contre_pct.toFixed(0)}% contre`}
+                                  >
+                                    <span
+                                      className={styles.groupBarPour}
+                                      style={{
+                                        width: `${groupForSection.pour_pct}%`
+                                      }}
+                                    />
+                                    <span
+                                      className={styles.groupBarContre}
+                                      style={{
+                                        width: `${groupForSection.contre_pct}%`
+                                      }}
+                                    />
+                                  </span>
+                                )}
+                                <span className={styles.positionGroupCount}>
+                                  ({groupVotes.length})
+                                </span>
+                              </summary>
+                              <ul className={styles.voteList}>
+                                {groupVotes.map((v) => (
+                                  <li key={v.id} className={styles.voteCard}>
+                                    <Link
+                                      href={`/deputy/${encodeURIComponent(v.acteur_ref)}`}
+                                      className={styles.deputyName}
+                                    >
+                                      {v.acteur_nom ?? v.acteur_ref}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </details>
+                          );
+                        })}
                       </div>
                     );
                   })}

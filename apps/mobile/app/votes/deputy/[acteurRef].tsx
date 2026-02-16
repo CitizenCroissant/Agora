@@ -9,7 +9,10 @@ import {
 } from "react-native";
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useRouter } from "expo-router";
-import type { DeputyVotesResponse } from "@agora/shared";
+import type {
+  DeputyVotesResponse,
+  DeputyVoteRecordWithComparison
+} from "@agora/shared";
 import { formatDate } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import { colors } from "@/theme";
@@ -38,7 +41,9 @@ export default function DeputyVotesScreen() {
     setLoading(true);
     setError(null);
     try {
-      const result = await apiClient.getDeputyVotes(ref);
+      const result = await apiClient.getDeputyVotes(ref, {
+        enrich: "comparison"
+      });
       setData(result);
     } catch (err) {
       setError(
@@ -89,36 +94,50 @@ export default function DeputyVotesScreen() {
               </Text>
             ) : (
               <View style={styles.voteList}>
-                {data.votes.map((v) => (
-                  <TouchableOpacity
-                    key={`${v.scrutin_id}-${v.date_scrutin}-${v.position}`}
-                    style={styles.voteCard}
-                    onPress={() => router.push(`/votes/${v.scrutin_id}`)}
-                  >
-                    <View style={styles.voteHeader}>
-                      <View
-                        style={[
-                          styles.positionBadge,
-                          v.position === "pour" && styles.badgePour,
-                          v.position === "contre" && styles.badgeContre,
-                          v.position === "abstention" && styles.badgeAbstention,
-                          v.position === "non_votant" && styles.badgeNonVotant
-                        ]}
-                      >
-                        <Text style={styles.positionText}>
-                          {POSITION_LABELS[v.position]}
+                {data.votes.map((v) => {
+                  const withComp = v as DeputyVoteRecordWithComparison;
+                  const comp = withComp.comparison;
+                  return (
+                    <TouchableOpacity
+                      key={`${v.scrutin_id}-${v.date_scrutin}-${v.position}`}
+                      style={styles.voteCard}
+                      onPress={() => router.push(`/votes/${v.scrutin_id}`)}
+                    >
+                      <View style={styles.voteHeader}>
+                        <View
+                          style={[
+                            styles.positionBadge,
+                            v.position === "pour" && styles.badgePour,
+                            v.position === "contre" && styles.badgeContre,
+                            v.position === "abstention" && styles.badgeAbstention,
+                            v.position === "non_votant" && styles.badgeNonVotant
+                          ]}
+                        >
+                          <Text style={styles.positionText}>
+                            {POSITION_LABELS[v.position]}
+                          </Text>
+                        </View>
+                        <Text style={styles.voteDate}>
+                          {formatDate(v.date_scrutin)}
                         </Text>
                       </View>
-                      <Text style={styles.voteDate}>
-                        {formatDate(v.date_scrutin)}
+                      <Text style={styles.voteTitle} numberOfLines={2}>
+                        {v.scrutin_titre}
                       </Text>
-                    </View>
-                    <Text style={styles.voteTitle} numberOfLines={2}>
-                      {v.scrutin_titre}
-                    </Text>
-                    <Text style={styles.voteLink}>Voir le scrutin →</Text>
-                  </TouchableOpacity>
-                ))}
+                      {comp && (
+                        <Text style={styles.voteComparisonLine}>
+                          Votre député : {POSITION_LABELS[v.position]} · Groupe (
+                          {comp.group_label}) : {comp.group_pour_pct.toFixed(0)} %
+                          pour · Assemblée :{" "}
+                          {comp.assembly_result === "adopté"
+                            ? "Adopté"
+                            : "Rejeté"}
+                        </Text>
+                      )}
+                      <Text style={styles.voteLink}>Voir le scrutin →</Text>
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
             )}
           </View>
@@ -224,6 +243,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: "#333",
+    marginBottom: 8
+  },
+  voteComparisonLine: {
+    fontSize: 12,
+    color: "#666",
     marginBottom: 8
   },
   voteLink: {

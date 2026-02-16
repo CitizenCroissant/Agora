@@ -282,7 +282,7 @@ GET /api/scrutins?from=2026-01-01&to=2026-01-31
 
 ### Get Scrutin Details
 
-Retrieve a single scrutin by UUID or official_id, including per-deputy votes.
+Retrieve a single scrutin by UUID or official_id, including per-deputy votes and optional per-group breakdown.
 
 **Endpoint**: `GET /scrutins/:id`
 
@@ -290,7 +290,10 @@ Retrieve a single scrutin by UUID or official_id, including per-deputy votes.
 
 - `id`: Scrutin UUID or official_id (e.g. VTANR5L17V2657)
 
-**Success Response** (200): Scrutin object with optional `votes` array of `{ id, scrutin_id, acteur_ref, acteur_nom, position }` (position: pour, contre, abstention, non_votant). `acteur_nom` is present when deputies table is populated.
+**Success Response** (200): Scrutin object with:
+
+- Optional `votes` array: each item has `id`, `scrutin_id`, `acteur_ref`, `position` (pour, contre, abstention, non_votant), and when deputies are populated: `acteur_nom`, `groupe_politique` (political group label for that deputy).
+- Optional `group_votes` array: per-political-group breakdown for this scrutin. Each entry has `groupe_politique`, `total`, `pour`, `contre`, `abstention`, `non_votant`, `pour_pct`, `contre_pct`, `abstention_pct`, `non_votant_pct`, and optionally `pct_voted_like_assembly` (0–100): share of that group that voted in line with the assembly outcome (pour if adopté, contre if rejeté).
 
 ---
 
@@ -334,6 +337,10 @@ Retrieve voting record for a deputy by acteur_ref (e.g. PA842279).
 
 **Endpoint**: `GET /deputies/:acteurRef/votes`
 
+**Query Parameters**:
+
+- `enrich` (optional): Set to `comparison` to add per-vote comparison data (assembly result and the deputy's group breakdown for that scrutin). When present, each vote in the response may include a `comparison` object.
+
 **Path Parameters**:
 
 - `acteurRef` (required): Deputy acteur reference (e.g. PA842279)
@@ -354,6 +361,8 @@ Retrieve voting record for a deputy by acteur_ref (e.g. PA842279).
   ]
 }
 ```
+
+When `enrich=comparison` is used, each vote object may include a `comparison` object: `assembly_result` ("adopté" or "rejeté"), `group_label`, `group_pour_pct`, `group_contre_pct`, `group_abstention_pct`, `group_non_votant_pct`. Omitted when the deputy has no political group or the scrutin has no group breakdown.
 
 ---
 

@@ -11,7 +11,7 @@ import {
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useRouter } from "expo-router";
 import type { ScrutinDetailResponse } from "@agora/shared";
-import { formatDate } from "@agora/shared";
+import { formatDate, slugify } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import { colors } from "@/theme";
 
@@ -159,6 +159,57 @@ export default function ScrutinDetailScreen() {
               </View>
             </View>
 
+            {scrutin.group_votes && scrutin.group_votes.length > 0 && (
+              <View style={styles.groupVotesSection}>
+                <Text style={styles.sectionTitle}>
+                  Comment chaque groupe a voté
+                </Text>
+                <Text style={styles.groupVotesHint}>
+                  Répartition par groupe politique (votes nominatifs).
+                </Text>
+                {scrutin.group_votes.map((g) => (
+                  <TouchableOpacity
+                    key={g.groupe_politique}
+                    style={styles.groupVotesRow}
+                    onPress={() =>
+                      router.push(
+                        `/groupes/${encodeURIComponent(slugify(g.groupe_politique))}`
+                      )
+                    }
+                  >
+                    <Text style={styles.groupVotesGroupLabel}>
+                      {g.groupe_politique}
+                    </Text>
+                    <Text style={styles.groupVotesStats}>
+                      Pour {g.pour} ({g.pour_pct.toFixed(0)} %) · Contre {g.contre}{" "}
+                      ({g.contre_pct.toFixed(0)} %) · Abst. {g.abstention} · NV{" "}
+                      {g.non_votant}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+                {scrutin.group_votes.filter(
+                  (gr) => typeof gr.pct_voted_like_assembly === "number"
+                ).length > 0 && (
+                  <View style={styles.likeAssemblyBlock}>
+                    {scrutin.group_votes
+                      .filter(
+                        (gr) => typeof gr.pct_voted_like_assembly === "number"
+                      )
+                      .map((gr) => (
+                        <Text
+                          key={gr.groupe_politique}
+                          style={styles.likeAssemblyText}
+                        >
+                          Sur ce scrutin, {gr.pct_voted_like_assembly!.toFixed(0)} %
+                          des députés du groupe {gr.groupe_politique} ont voté
+                          comme l{"'"}Assemblée.
+                        </Text>
+                      ))}
+                  </View>
+                )}
+              </View>
+            )}
+
             {scrutin.sitting_id && (
               <TouchableOpacity
                 style={styles.linkButton}
@@ -180,21 +231,41 @@ export default function ScrutinDetailScreen() {
                         <Text style={styles.positionTitle}>
                           {POSITION_LABELS[pos]} ({list.length})
                         </Text>
-                        {list.map((v) => (
-                          <TouchableOpacity
-                            key={v.id}
-                            style={styles.deputyRow}
-                            onPress={() =>
-                              router.push(
-                                `/deputy/${encodeURIComponent(v.acteur_ref)}`
-                              )
-                            }
-                          >
-                            <Text style={styles.deputyLink}>
-                              {v.acteur_nom ?? v.acteur_ref}
-                            </Text>
-                          </TouchableOpacity>
-                        ))}
+                        {list.map((v) => {
+                          const groupForVote =
+                            v.groupe_politique && scrutin.group_votes
+                              ? scrutin.group_votes.find(
+                                  (g) => g.groupe_politique === v.groupe_politique
+                                )
+                              : undefined;
+                          const assemblyLabel =
+                            scrutin.sort_code === "adopté" ? "Adopté" : "Rejeté";
+                          return (
+                            <TouchableOpacity
+                              key={v.id}
+                              style={styles.deputyRow}
+                              onPress={() =>
+                                router.push(
+                                  `/deputy/${encodeURIComponent(v.acteur_ref)}`
+                                )
+                              }
+                            >
+                              <Text style={styles.deputyLink}>
+                                {v.acteur_nom ?? v.acteur_ref}
+                                {v.groupe_politique
+                                  ? ` (${v.groupe_politique})`
+                                  : ""}
+                              </Text>
+                              {v.groupe_politique && groupForVote && (
+                                <Text style={styles.voteComparisonLine}>
+                                  Député : {POSITION_LABELS[v.position]} ·
+                                  Groupe : {groupForVote.pour_pct.toFixed(0)} %
+                                  pour · Assemblée : {assemblyLabel}
+                                </Text>
+                              )}
+                            </TouchableOpacity>
+                          );
+                        })}
                       </View>
                     );
                   }
@@ -366,6 +437,44 @@ const styles = StyleSheet.create({
     color: "#0055a4",
     fontWeight: "500"
   },
+  groupVotesSection: {
+    marginBottom: 20,
+    padding: 12,
+    backgroundColor: "#f5f5f5",
+    borderRadius: 8
+  },
+  groupVotesHint: {
+    fontSize: 12,
+    color: "#666",
+    marginBottom: 12
+  },
+  groupVotesRow: {
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e0e0e0"
+  },
+  groupVotesGroupLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#0055a4",
+    marginBottom: 4
+  },
+  groupVotesStats: {
+    fontSize: 12,
+    color: "#666"
+  },
+  likeAssemblyBlock: {
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: "#e0e0e0"
+  },
+  likeAssemblyText: {
+    fontSize: 12,
+    color: "#333",
+    marginBottom: 6
+  },
   votesSection: {
     marginBottom: 20
   },
@@ -379,13 +488,19 @@ const styles = StyleSheet.create({
     marginBottom: 8
   },
   deputyRow: {
-    paddingVertical: 6,
+    paddingVertical: 8,
     paddingLeft: 8
   },
   deputyLink: {
     fontSize: 14,
     color: "#0055a4",
     fontWeight: "500"
+  },
+  voteComparisonLine: {
+    fontSize: 11,
+    color: "#666",
+    marginTop: 4,
+    marginLeft: 0
   },
   sourceButton: {
     marginTop: 16,

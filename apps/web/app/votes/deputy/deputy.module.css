@@ -208,6 +208,12 @@
   text-decoration: underline;
 }
 
+.voteComparisonLine {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  margin: var(--spacing-xs) 0 0 0;
+}
+
 .deputyList {
   list-style: none;
   padding: 0;

@@ -268,33 +268,250 @@
   text-decoration: underline;
 }
 
+.thLikeAssembly {
+  white-space: nowrap;
+  font-weight: 600;
+  min-width: 8rem;
+}
+
+.tdLikeAssembly {
+  vertical-align: middle;
+}
+
+.likeAssemblyCell {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-width: 6rem;
+}
+
+.likeAssemblyBarWrap {
+  display: inline-block;
+  width: 56px;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.likeAssemblyBar {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--color-success, #0d7d0d);
+  transition: width 0.2s ease;
+}
+
+.likeAssemblyPct {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  min-width: 2.5rem;
+}
+
 .votesSection {
   margin-bottom: var(--spacing-xl);
 }
 
 .votesSection h2 {
   font-size: 1.25rem;
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-xs);
   color: var(--color-text);
+}
+
+.votesSectionHint {
+  font-size: 0.8125rem;
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-md);
 }
 
 .positionBlock {
   margin-bottom: var(--spacing-lg);
 }
 
-.positionBlock h3 {
-  font-size: 1rem;
-  color: var(--color-text-light);
+.positionGroupSubsection {
   margin-bottom: var(--spacing-xs);
+}
+
+.positionGroupSubsection:last-child {
+  margin-bottom: 0;
+}
+
+.positionGroupSubsection summary {
+  list-style: none;
+}
+
+.positionGroupSubsection summary::-webkit-details-marker {
+  display: none;
+}
+
+.positionGroupHeading {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+  padding: var(--spacing-sm) var(--spacing-xs);
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  user-select: none;
+  border-radius: var(--border-radius);
+}
+
+.positionGroupHeading:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.positionGroupChevron {
+  display: inline-block;
+  font-size: 0.6rem;
+  color: var(--color-text-light);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.positionGroupSubsection:not([open]) .positionGroupChevron {
+  transform: rotate(-90deg);
+}
+
+.positionGroupBadge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  background: white;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.positionGroupCount {
+  font-weight: 500;
+  color: var(--color-text-light);
+  font-size: 0.8125rem;
+}
+
+.positionGroupSubsection .voteList {
+  margin-top: var(--spacing-xs);
+  padding-left: 0;
+}
+
+.positionBlockTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-sm);
+}
+
+.positionDotPour,
+.positionDotContre,
+.positionDotAbstention,
+.positionDotNonVotant {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.positionDotPour {
+  background: var(--color-success, #0d7d0d);
+}
+
+.positionDotContre {
+  background: var(--color-error, #c00);
+}
+
+.positionDotAbstention {
+  background: #b8860b;
+}
+
+.positionDotNonVotant {
+  background: #666;
 }
 
 .voteList {
   list-style: none;
   padding: 0;
   margin: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: var(--spacing-xs);
+}
+
+.voteCard {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius);
+  border-left: 3px solid transparent;
+  min-height: 2.5rem;
+}
+
+.voteCard:nth-child(odd) {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.positionBlockPour .voteCard {
+  border-left-color: var(--color-success, #0d7d0d);
+}
+
+.positionBlockContre .voteCard {
+  border-left-color: var(--color-error, #c00);
+}
+
+.positionBlockAbstention .voteCard {
+  border-left-color: #b8860b;
+}
+
+.positionBlockNonVotant .voteCard {
+  border-left-color: #666;
+}
+
+.deputyName {
+  font-size: 0.9375rem;
+  color: var(--color-primary);
+  font-weight: 500;
+  text-decoration: none;
+  flex: 1;
+  min-width: 0;
+}
+
+.deputyName:hover {
+  text-decoration: underline;
+}
+
+.groupBarWrap {
+  display: flex;
+  flex-direction: row;
+  width: 48px;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.groupBarPour {
+  height: 100%;
+  background: var(--color-success, #0d7d0d);
+  flex-shrink: 0;
+  min-width: 0;
+  transition: width 0.15s ease;
+}
+
+.groupBarContre {
+  height: 100%;
+  background: var(--color-error, #c00);
+  flex-shrink: 0;
+  min-width: 0;
+  transition: width 0.15s ease;
 }
 
 .voteList li code {
@@ -302,17 +519,6 @@
   background: var(--color-background-alt);
   padding: 2px 6px;
   border-radius: 4px;
-}
-
-.deputyLink {
-  font-size: 0.9375rem;
-  color: var(--color-primary);
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.deputyLink:hover {
-  text-decoration: underline;
 }
 
 .source {

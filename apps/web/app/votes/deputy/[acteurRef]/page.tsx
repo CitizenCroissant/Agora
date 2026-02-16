@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { DeputyVotesResponse, DeputyVoteRecord } from "@agora/shared";
+import {
+  DeputyVotesResponse,
+  DeputyVoteRecord,
+  DeputyVoteRecordWithComparison
+} from "@agora/shared";
 import { formatDate } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import Link from "next/link";
@@ -34,7 +38,9 @@ export default function DeputyVotesByRefPage() {
     setLoading(true);
     setError(null);
     try {
-      const result = await apiClient.getDeputyVotes(ref);
+      const result = await apiClient.getDeputyVotes(ref, {
+        enrich: "comparison"
+      });
       setData(result);
     } catch (err) {
       setError(
@@ -80,32 +86,44 @@ export default function DeputyVotesByRefPage() {
             </p>
           ) : (
             <ul className={styles.voteList}>
-              {data.votes.map((v: DeputyVoteRecord) => (
-                <li key={v.scrutin_id} className={styles.voteItem}>
-                  <span
-                    className={
-                      v.position === "pour"
-                        ? styles.badgePour
-                        : v.position === "contre"
-                          ? styles.badgeContre
-                          : v.position === "abstention"
-                            ? styles.badgeAbstention
-                            : styles.badgeNonVotant
-                    }
-                  >
-                    {POSITION_LABELS[v.position]}
-                  </span>
-                  <span className={styles.voteDate}>
-                    {formatDate(v.date_scrutin)}
-                  </span>
-                  <Link
-                    href={`/votes/${v.scrutin_id}`}
-                    className={styles.voteTitre}
-                  >
-                    {v.scrutin_titre}
-                  </Link>
-                </li>
-              ))}
+              {data.votes.map((v: DeputyVoteRecord | DeputyVoteRecordWithComparison) => {
+                const withComp = v as DeputyVoteRecordWithComparison;
+                const comp = withComp.comparison;
+                return (
+                  <li key={v.scrutin_id} className={styles.voteItem}>
+                    <span
+                      className={
+                        v.position === "pour"
+                          ? styles.badgePour
+                          : v.position === "contre"
+                            ? styles.badgeContre
+                            : v.position === "abstention"
+                              ? styles.badgeAbstention
+                              : styles.badgeNonVotant
+                      }
+                    >
+                      {POSITION_LABELS[v.position]}
+                    </span>
+                    <span className={styles.voteDate}>
+                      {formatDate(v.date_scrutin)}
+                    </span>
+                    <Link
+                      href={`/votes/${v.scrutin_id}`}
+                      className={styles.voteTitre}
+                    >
+                      {v.scrutin_titre}
+                    </Link>
+                    {comp && (
+                      <p className={styles.voteComparisonLine}>
+                        Votre député : {POSITION_LABELS[v.position]} · Groupe (
+                        {comp.group_label}) : {comp.group_pour_pct.toFixed(0)} %
+                        pour · Assemblée :{" "}
+                        {comp.assembly_result === "adopté" ? "Adopté" : "Rejeté"}
+                      </p>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
