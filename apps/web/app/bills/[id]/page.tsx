@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { BillDetailResponse } from "@agora/shared";
-import { formatDate } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import styles from "./bill.module.css";
 import { PageHelp } from "@/components/PageHelp";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { ShareBar } from "@/components/ShareBar";
+import { BillLifecycle } from "@/components/BillLifecycle";
 
 function formatTypeLabel(type?: string | null): string | null {
   if (!type) return null;
@@ -77,8 +77,7 @@ export default function BillPage() {
         title="Comment lire cette page ?"
         points={[
           "Le bandeau en haut présente le titre officiel du texte et, lorsque disponible, son type (projet/proposition) et son origine.",
-          "La section « Scrutins associés » liste les votes de l\u2019Assemblée nationale concernant ce texte.",
-          "Vous pouvez ouvrir chaque scrutin pour voir le détail des résultats et le vote des députés."
+          "« Parcours du texte » montre la vie du texte : séances et scrutins dans l'ordre, avec pour chaque scrutin le résultat (pour, contre, abst.) et un lien vers le détail du vote des députés."
         ]}
       />
 
@@ -107,7 +106,17 @@ export default function BillPage() {
               {originLabel && (
                 <span className={styles.pill}>{originLabel}</span>
               )}
-              <span className={styles.pillMuted}>Réf. {bill.official_id}</span>
+              {encodeURIComponent(bill.official_id) !== encodeURIComponent(id) ? (
+                <Link
+                  href={`/bills/${encodeURIComponent(bill.official_id)}`}
+                  className={styles.pillMutedLink}
+                  title={`Voir le texte (réf. ${bill.official_id})`}
+                >
+                  Réf. {bill.official_id}
+                </Link>
+              ) : (
+                <span className={styles.pillMuted}>Réf. {bill.official_id}</span>
+              )}
             </div>
           </section>
 
@@ -183,87 +192,12 @@ export default function BillPage() {
             </section>
           )}
 
-          {/* ── Scrutins section ── */}
-          <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>Scrutins associés</h2>
-            {bill.scrutins.length === 0 ? (
-              <div className={styles.emptyState}>
-                <div className={styles.emptyIcon}>🗳️</div>
-                <p className={styles.emptyTitle}>
-                  Aucun scrutin pour le moment
-                </p>
-                <p className={styles.emptyDescription}>
-                  Ce texte législatif n&apos;a pas encore fait l&apos;objet
-                  d&apos;un vote en séance publique à l&apos;Assemblée
-                  nationale. Les scrutins apparaîtront ici dès qu&apos;un vote
-                  sera organisé.
-                </p>
-                <div className={styles.emptyHints}>
-                  <div className={styles.emptyHint}>
-                    <span className={styles.emptyHintIcon}>📋</span>
-                    <span>
-                      Le texte peut être en cours d&apos;examen en commission
-                    </span>
-                  </div>
-                  <div className={styles.emptyHint}>
-                    <span className={styles.emptyHintIcon}>🔄</span>
-                    <span>Les données sont mises à jour quotidiennement</span>
-                  </div>
-                  {bill.official_url && (
-                    <div className={styles.emptyHint}>
-                      <span className={styles.emptyHintIcon}>🔗</span>
-                      <a
-                        href={bill.official_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.emptyHintLink}
-                      >
-                        Suivre l&apos;avancement sur assemblee-nationale.fr
-                      </a>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className={styles.scrutinsList}>
-                {bill.scrutins.map((scrutin) => (
-                  <Link
-                    key={scrutin.id}
-                    href={`/votes/${scrutin.id}`}
-                    className={styles.scrutinItem}
-                  >
-                    <div className={styles.scrutinHeader}>
-                      <span
-                        className={
-                          scrutin.sort_code === "adopté"
-                            ? styles.badgeAdopte
-                            : styles.badgeRejete
-                        }
-                      >
-                        {scrutin.sort_code === "adopté" ? "Adopté" : "Rejeté"}
-                      </span>
-                      <span className={styles.scrutinMeta}>
-                        {formatDate(scrutin.date_scrutin)} · Scrutin n°
-                        {scrutin.numero}
-                      </span>
-                    </div>
-                    <div className={styles.scrutinTitle}>{scrutin.titre}</div>
-                    <div className={styles.scrutinStats}>
-                      <span className={styles.statPour}>
-                        {scrutin.synthese_pour} pour
-                      </span>
-                      <span className={styles.statContre}>
-                        {scrutin.synthese_contre} contre
-                      </span>
-                      <span className={styles.statAbstention}>
-                        {scrutin.synthese_abstentions} abst.
-                      </span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </section>
+          {/* ── Lifecycle (parcours du texte) ── */}
+          <BillLifecycle
+            scrutins={bill.scrutins}
+            sittings={bill.sittings}
+            officialUrl={bill.official_url}
+          />
         </>
       )}
     </div>

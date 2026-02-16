@@ -26,7 +26,7 @@ import {
   SearchResponse,
   SearchType,
   ApiError,
-  BillSummary,
+  BillsListResponse,
   BillDetailResponse,
   IngestionStatusResponse
 } from "./types";
@@ -447,14 +447,17 @@ export class ApiClient {
   }
 
   /**
-   * Fetch list of bills (legislative texts) with basic summary information
+   * Fetch list of bills (legislative texts) with basic summary information.
+   * Returns paginated results; use limit/offset and has_more for "load more".
    */
   async getBills(params?: {
     q?: string;
     type?: string;
     tag?: string;
     has_votes?: boolean;
-  }): Promise<BillSummary[]> {
+    limit?: number;
+    offset?: number;
+  }): Promise<BillsListResponse> {
     const searchParams = new URLSearchParams();
     if (params?.q) {
       searchParams.set("q", params.q.trim());
@@ -468,6 +471,12 @@ export class ApiClient {
     if (params?.has_votes) {
       searchParams.set("has_votes", "true");
     }
+    if (params?.limit != null) {
+      searchParams.set("limit", String(params.limit));
+    }
+    if (params?.offset != null) {
+      searchParams.set("offset", String(params.offset));
+    }
     const query = searchParams.toString();
     const url =
       query.length > 0
@@ -475,16 +484,14 @@ export class ApiClient {
         : `${this.baseUrl}/bills`;
 
     const response = await fetch(url);
-    const data = await parseJsonOrThrow<{ bills: BillSummary[] } | ApiError>(
-      response
-    );
+    const data = await parseJsonOrThrow<BillsListResponse | ApiError>(response);
 
     if (!response.ok) {
       const error = data as ApiError;
       throw new Error(error.message || "Failed to fetch bills");
     }
 
-    return (data as { bills: BillSummary[] }).bills;
+    return data as BillsListResponse;
   }
 
   /**

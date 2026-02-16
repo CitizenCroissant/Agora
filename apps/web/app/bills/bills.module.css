@@ -208,4 +208,28 @@
   background: var(--color-background-hover);
 }
 
+.loadMoreSection {
+  margin-top: var(--spacing-lg);
+  text-align: center;
+}
 
+.loadMoreButton {
+  padding: 10px 24px;
+  border-radius: var(--border-radius-pill);
+  border: 1px solid var(--color-border);
+  background: var(--color-background-input);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--color-primary);
+}
+
+.loadMoreButton:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  background: var(--color-background-hover);
+}
+
+.loadMoreButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

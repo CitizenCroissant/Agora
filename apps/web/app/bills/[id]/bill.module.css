@@ -47,6 +47,24 @@
   font-family: monospace, monospace;
 }
 
+.pillMutedLink {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: var(--border-radius-pill);
+  background: var(--color-background-alt);
+  color: var(--color-text-light);
+  font-size: 0.78rem;
+  font-weight: 500;
+  font-family: monospace, monospace;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.pillMutedLink:hover {
+  background: var(--color-primary-tint);
+  color: var(--color-primary);
+}
+
 /* ── Tags section ── */
 .tagsSection {
   margin-bottom: var(--spacing-lg);
@@ -164,148 +182,6 @@
   margin-bottom: var(--spacing-sm);
 }
 
-/* ── Scrutins list ── */
-.scrutinsList {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-.scrutinItem {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: var(--spacing-md);
-  border-radius: 10px;
-  border: 1px solid var(--color-border);
-  background: var(--color-background);
-  transition: box-shadow 0.2s, border-color 0.2s, transform 0.1s;
-}
-
-.scrutinItem:hover {
-  box-shadow: var(--shadow);
-  border-color: var(--color-primary);
-  transform: translateY(-1px);
-}
-
-.scrutinHeader {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.scrutinTitle {
-  font-weight: 500;
-  color: var(--color-text);
-}
-
-.scrutinStats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  margin-top: 2px;
-}
-
-.statPour {
-  color: var(--color-success);
-}
-
-.statContre {
-  color: var(--color-error);
-}
-
-.statAbstention {
-  color: var(--color-warning);
-}
-
-.badgeAdopte,
-.badgeRejete {
-  padding: 3px 8px;
-  border-radius: var(--border-radius-pill);
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: white;
-}
-
-.badgeAdopte {
-  background: var(--color-success);
-}
-
-.badgeRejete {
-  background: var(--color-error);
-}
-
-.scrutinMeta {
-  font-size: 0.8rem;
-  color: var(--color-text-light);
-}
-
-/* ── Empty state (no scrutins) ── */
-.emptyState {
-  border: 1px dashed var(--color-border);
-  border-radius: var(--border-radius-lg);
-  padding: var(--spacing-xl) var(--spacing-lg);
-  text-align: center;
-  background: var(--color-background-alt);
-}
-
-.emptyIcon {
-  font-size: 2.5rem;
-  margin-bottom: var(--spacing-sm);
-}
-
-.emptyTitle {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--color-text);
-  margin-bottom: var(--spacing-xs);
-}
-
-.emptyDescription {
-  font-size: 0.9rem;
-  color: var(--color-text-light);
-  line-height: 1.6;
-  max-width: 540px;
-  margin: 0 auto var(--spacing-lg);
-}
-
-.emptyHints {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-width: 400px;
-  margin: 0 auto;
-  text-align: left;
-}
-
-.emptyHint {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  font-size: 0.85rem;
-  color: var(--color-text-light);
-}
-
-.emptyHintIcon {
-  font-size: 1rem;
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-
-.emptyHintLink {
-  color: var(--color-primary);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.emptyHintLink:hover {
-  text-decoration-thickness: 2px;
-}
-
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .billTitle {
@@ -314,9 +190,5 @@
 
   .factsGrid {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .emptyState {
-    padding: var(--spacing-lg) var(--spacing-sm);
   }
 }

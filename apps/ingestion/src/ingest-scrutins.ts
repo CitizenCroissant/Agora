@@ -59,6 +59,7 @@ function getDefaultDateRange(): { from: string; to: string } {
  * Very simple slug generator for grouping scrutins by underlying text.
  * Keeps it local to ingestion to avoid extra dependencies.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for future bill key/title use
 function slugify(input: string): string {
   return input
     .normalize("NFD")
@@ -73,6 +74,7 @@ function slugify(input: string): string {
  * Heuristic: keep from "proposition de loi", "projet de loi" or "résolution"
  * onward, and strip trailing lecture/parenthesis info.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for future bill key/title use
 function extractBillTitle(raw: AssembleeScrutin): string | null {
   const source = raw.objet?.libelle ?? raw.titre ?? null;
   if (!source) return null;
@@ -99,19 +101,37 @@ function extractBillTitle(raw: AssembleeScrutin): string | null {
 }
 
 /**
- * Compute a stable internal key + human title for the bill this scrutin belongs to.
+ * Extract a dossier/bill official_id from referenceLegislative or similar.
+ * Handles formats like "DLR5L17N53735" or URLs containing the id.
  */
-function getBillKey(
-  raw: AssembleeScrutin
-): { key: string; title: string } | null {
-  const title = extractBillTitle(raw);
-  if (!title) return null;
-  const key = slugify(title);
-  if (!key) return null;
-  return { key, title };
+function extractDossierRefFromReference(ref: string | null | undefined): string | null {
+  if (!ref || typeof ref !== "string") return null;
+  const trimmed = ref.trim();
+  if (!trimmed) return null;
+  // Match Assemblée dossier ID pattern: letters + digits (e.g. DLR5L17N53735)
+  const match = trimmed.match(/([A-Z]{2,}[A-Z0-9]*\d{4,})/i);
+  if (match) return match[1];
+  // URL pattern: .../dossiers/XXXXX or .../dossier/...
+  const urlMatch = trimmed.match(/dossiers?[/\-_]?([A-Za-z0-9]+)/i);
+  if (urlMatch) return urlMatch[1];
+  return null;
+}
+
+/**
+ * Normalize text for title matching: lowercase, collapse spaces, remove lecture parentheticals.
+ */
+function normalizeForTitleMatch(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .replace(/\s*\([^)]*lecture[^)]*\)\.?/gi, "")
+    .trim();
 }
 
 /** True if the scrutin is about an amendment (vote on an amendement). */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for future amendment handling
 function isAmendmentScrutin(raw: AssembleeScrutin): boolean {
   const text = [
     raw.titre,
@@ -138,6 +158,27 @@ export async function ingestScrutins(options: IngestScrutinsOptions = {}) {
   }
 
   console.log(`Processing ${rawList.length} scrutin(s)`);
+
+  // Load all bills once for title-based fallback (open data often has dossierLegislatif = null)
+  type BillRow = { id: string; title: string | null; short_title: string | null };
+  const allBills: BillRow[] = [];
+  const PAGE = 1000;
+  let offset = 0;
+  while (true) {
+    const { data: page, error } = await supabase
+      .from("bills")
+      .select("id, title, short_title")
+      .range(offset, offset + PAGE - 1);
+    if (error) {
+      console.error("Failed to fetch bills for title matching:", error);
+      break;
+    }
+    if (!page?.length) break;
+    allBills.push(...(page as BillRow[]));
+    if (page.length < PAGE) break;
+    offset += PAGE;
+  }
+  console.log(`Loaded ${allBills.length} bill(s) for title matching`);
 
   let inserted = 0;
   let votesInserted = 0;
@@ -175,26 +216,49 @@ export async function ingestScrutins(options: IngestScrutinsOptions = {}) {
     // We never create or update bills here; only the dossiers ingestion does that.
     // For amendments we only link the scrutin to the main bill; we never create a bill row for the amendment.
     let bill: { id: string } | null = null;
-    const dossierRef = raw.objet?.dossierLegislatif?.trim();
-    if (dossierRef) {
-      const { data: byDossier } = await supabase
+
+    const tryBillByOfficialId = async (officialId: string): Promise<{ id: string } | null> => {
+      const { data } = await supabase
         .from("bills")
         .select("id")
-        .eq("official_id", dossierRef)
+        .eq("official_id", officialId)
         .maybeSingle();
-      if (byDossier) bill = byDossier;
+      return data ?? null;
+    };
+
+    // 1) objet.dossierLegislatif (primary)
+    const dossierRef = raw.objet?.dossierLegislatif?.trim();
+    if (dossierRef) bill = await tryBillByOfficialId(dossierRef);
+
+    // 2) objet.referenceLegislative or demandeur.referenceLegislative (may contain dossier id or URL)
+    if (!bill) {
+      const refFromObjet = extractDossierRefFromReference(raw.objet?.referenceLegislative);
+      if (refFromObjet) bill = await tryBillByOfficialId(refFromObjet);
     }
     if (!bill) {
-      const billKey = getBillKey(raw);
-      if (billKey) {
-        const { data: existing } = await supabase
-          .from("bills")
-          .select("id")
-          .eq("official_id", billKey.key)
-          .maybeSingle();
-        if (existing) bill = existing;
+      const refFromDemandeur = extractDossierRefFromReference(raw.demandeur?.referenceLegislative);
+      if (refFromDemandeur) bill = await tryBillByOfficialId(refFromDemandeur);
+    }
+
+    // 3) Fallback: match by title when open data has no dossier ref (dossierLegislatif/referenceLegislative often null)
+    if (!bill) {
+      const libelle = (raw.objet?.libelle ?? raw.titre ?? "").trim();
+      if (libelle.length >= 20) {
+        const libelleNorm = normalizeForTitleMatch(libelle);
+        let best: { id: string; len: number } | null = null;
+        for (const b of allBills) {
+          const title = (b.title || b.short_title || "").trim();
+          if (title.length < 15) continue;
+          const titleNorm = normalizeForTitleMatch(title);
+          if (titleNorm.length < 15) continue;
+          if (libelleNorm.includes(titleNorm) && (!best || titleNorm.length > best.len)) {
+            best = { id: b.id, len: titleNorm.length };
+          }
+        }
+        if (best) bill = { id: best.id };
       }
     }
+
     if (bill?.id) {
       const { error: linkError } = await supabase.from("bill_scrutins")
         .upsert(

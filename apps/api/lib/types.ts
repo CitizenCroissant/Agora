@@ -70,6 +70,7 @@ export interface DbBill {
   type: string | null;
   origin: string | null;
   official_url: string | null;
+  amends_bill_id: string | null;
   created_at: string;
   updated_at: string;
 }

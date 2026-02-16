@@ -7,8 +7,14 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { supabase } from "../supabase";
 import { ApiError, handleError } from "../errors";
-import type { BillDetailResponse, Scrutin, ThematicTag } from "@agora/shared";
-import type { DbBill, DbBillScrutin, DbScrutin } from "../types";
+import type {
+  BillDetailResponse,
+  BillAmendsBill,
+  Scrutin,
+  ThematicTag,
+  SittingWithItems
+} from "@agora/shared";
+import type { DbBill, DbBillScrutin, DbScrutin, DbSitting } from "../types";
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -117,6 +123,37 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }));
     }
 
+    // Fetch sittings for timeline (lifecycle): sittings where these scrutins took place
+    const sittingIds = [
+      ...new Set(
+        scrutins.map((s) => s.sitting_id).filter((id): id is string => id != null)
+      )
+    ];
+    let sittings: SittingWithItems[] = [];
+    if (sittingIds.length > 0) {
+      const { data: sittingRows, error: sittingsError } = await supabase
+        .from("sittings")
+        .select("id, official_id, date, start_time, end_time, type, title, description, location, organe_ref")
+        .in("id", sittingIds)
+        .order("date", { ascending: true });
+
+      if (!sittingsError && sittingRows && sittingRows.length > 0) {
+        sittings = (sittingRows as DbSitting[]).map((row) => ({
+          id: row.id,
+          official_id: row.official_id,
+          date: row.date,
+          start_time: row.start_time ?? undefined,
+          end_time: row.end_time ?? undefined,
+          type: row.type,
+          title: row.title,
+          description: row.description,
+          location: row.location ?? undefined,
+          organe_ref: row.organe_ref ?? undefined,
+          agenda_items: []
+        }));
+      }
+    }
+
     // Fetch tags for this bill
     const { data: billTags, error: tagsError } = await supabase
       .from("bill_thematic_tags")
@@ -145,6 +182,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
+    let amends_bill: BillAmendsBill | null = null;
+    if (bill.amends_bill_id) {
+      const { data: parentRow } = await supabase
+        .from("bills")
+        .select("id, official_id, title, short_title")
+        .eq("id", bill.amends_bill_id)
+        .maybeSingle();
+      if (parentRow) {
+        amends_bill = {
+          id: parentRow.id,
+          official_id: parentRow.official_id,
+          title: parentRow.title,
+          short_title: parentRow.short_title ?? undefined
+        };
+      }
+    }
+
     const response: BillDetailResponse = {
       id: bill.id,
       official_id: bill.official_id,
@@ -154,8 +208,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       origin: bill.origin ?? undefined,
       official_url: bill.official_url ?? undefined,
       tags,
-      scrutins
-      // sittings can be derived client-side from scrutins.sitting_id if needed
+      scrutins,
+      sittings: sittings.length > 0 ? sittings : undefined,
+      amends_bill: amends_bill ?? undefined
     };
 
     res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate");

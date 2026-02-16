@@ -105,7 +105,9 @@ export default function ScrutinPage() {
                   {linkedBill && (
                     <div className={styles.billLink}>
                       <Link href={`/bills/${linkedBill.id}`}>
-                        Texte concerné :{" "}
+                        {scrutin.titre?.toLowerCase().includes("amendement")
+                          ? "Amendement au texte : "
+                          : "Texte concerné : "}
                         {linkedBill.short_title || linkedBill.title} →
                       </Link>
                     </div>

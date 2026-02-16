@@ -114,6 +114,14 @@ export interface BillSummary extends Bill {
   scrutins_count?: number | null;
 }
 
+/** Paginated list of bills from GET /api/bills */
+export interface BillsListResponse {
+  bills: BillSummary[];
+  limit: number;
+  offset: number;
+  has_more: boolean;
+}
+
 /** Minimal bill info for "amended" (parent) bill when this bill is an amendment */
 export interface BillAmendsBill {
   id: string;

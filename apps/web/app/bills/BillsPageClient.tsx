@@ -10,6 +10,8 @@ import { PageHelp } from "@/components/PageHelp";
 import { Breadcrumb } from "@/components/Breadcrumb";
 
 // Available thematic tags (could be fetched from API in the future)
+const BILLS_PAGE_SIZE = 50;
+
 const THEMATIC_TAGS = [
   { slug: "sante", label: "Santé" },
   { slug: "economie", label: "Économie" },
@@ -34,19 +36,38 @@ export default function BillsPageClient() {
   const initialTag = searchParams.get("tag");
 
   const [bills, setBills] = useState<BillSummary[]>([]);
+  const [hasMore, setHasMore] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState<string>("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [onlyWithVotes, setOnlyWithVotes] = useState<boolean>(false);
   const [selectedTag, setSelectedTag] = useState<string | null>(initialTag);
 
+  const billsLength = (bills ?? []).length;
   const loadBills = useCallback(
-    async (options?: { search?: string; hasVotes?: boolean; tag?: string | null }) => {
-      setLoading(true);
-      setError(null);
+    async (options?: {
+      search?: string;
+      hasVotes?: boolean;
+      tag?: string | null;
+      append?: boolean;
+    }) => {
+      const append = options?.append === true;
+      if (!append) {
+        setLoading(true);
+        setError(null);
+      } else {
+        setLoadingMore(true);
+      }
       try {
-        const params: { q?: string; tag?: string } = {};
+        const params: {
+          q?: string;
+          tag?: string;
+          has_votes?: boolean;
+          limit?: number;
+          offset?: number;
+        } = { limit: BILLS_PAGE_SIZE };
         const search = options?.search;
         if (search && search.trim().length >= 2) {
           params.q = search.trim();
@@ -55,33 +76,45 @@ export default function BillsPageClient() {
         if (tagParam) {
           params.tag = tagParam;
         }
-        const results = await apiClient.getBills(
-          Object.keys(params).length > 0 ? params : undefined
-        );
-        setBills(results);
+        const hasVotes = options?.hasVotes ?? onlyWithVotes;
+        if (hasVotes) {
+          params.has_votes = true;
+        }
+        if (append) {
+          params.offset = billsLength;
+        } else {
+          params.offset = 0;
+        }
+        const data = await apiClient.getBills(params);
+        const nextBills = data.bills ?? [];
+        if (append) {
+          setBills((prev) => [...(prev ?? []), ...nextBills]);
+        } else {
+          setBills(nextBills);
+        }
+        setHasMore(data.has_more ?? false);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Impossible de charger les textes"
         );
-        setBills([]);
+        if (!append) setBills([]);
       } finally {
         setLoading(false);
+        setLoadingMore(false);
       }
     },
-    [selectedTag]
+    [selectedTag, onlyWithVotes, billsLength]
   );
 
-  // Re-fetch from API whenever the votes toggle or tag changes
+  const loadMore = useCallback(() => {
+    void loadBills({ search: query, hasVotes: onlyWithVotes, append: true });
+  }, [loadBills, query, onlyWithVotes]);
+
+  // Initial load and re-fetch when votes toggle or tag changes (single effect to avoid double fetch on mount)
   useEffect(() => {
     void loadBills({ search: query, hasVotes: onlyWithVotes });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onlyWithVotes, selectedTag]);
-
-  // Initial load
-  useEffect(() => {
-    void loadBills();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -141,8 +174,8 @@ export default function BillsPageClient() {
     [filteredBills]
   );
 
-  // Stats derived from the current (filtered) result set
-  const totalDisplayed = filteredBills.length;
+  // Stats: when "only with votes" is on, displayed count is billsWithVotes only
+  const totalDisplayed = onlyWithVotes ? billsWithVotes.length : filteredBills.length;
   const totalWithVotes = billsWithVotes.length;
   const latestScrutinDate = filteredBills
     .map((b) => b.latest_scrutin_date)
@@ -253,7 +286,7 @@ export default function BillsPageClient() {
           <span>
             <strong>{totalDisplayed}</strong> texte(s)
           </span>
-          {totalWithVotes > 0 && (
+          {totalWithVotes > 0 && !onlyWithVotes && (
             <span>
               <strong>{totalWithVotes}</strong> avec au moins un scrutin
             </span>
@@ -278,10 +311,14 @@ export default function BillsPageClient() {
 
       {!loading && !error && (
         <>
-          {filteredBills.length === 0 ? (
+          {filteredBills.length === 0 || (onlyWithVotes && billsWithVotes.length === 0) ? (
             <section className={styles.list}>
               <div className="stateEmpty">
-                <p>Aucun texte trouvé pour ces critères.</p>
+                <p>
+                  {onlyWithVotes && filteredBills.length > 0
+                    ? "Aucun texte avec scrutin pour ces critères."
+                    : "Aucun texte trouvé pour ces critères."}
+                </p>
                 <button
                   type="button"
                   className={styles.resetButton}
@@ -388,6 +425,22 @@ export default function BillsPageClient() {
                       </p>
                     </Link>
                   ))}
+                </section>
+              )}
+
+              {hasMore && (
+                <section className={styles.loadMoreSection}>
+                  <button
+                    type="button"
+                    className={styles.loadMoreButton}
+                    onClick={loadMore}
+                    disabled={loadingMore}
+                    aria-busy={loadingMore}
+                  >
+                    {loadingMore
+                      ? "Chargement…"
+                      : "Afficher plus de textes"}
+                  </button>
                 </section>
               )}
             </>

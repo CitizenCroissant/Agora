@@ -1,0 +1,380 @@
+/* Bill lifecycle timeline (feature: "From proposal to law") */
+
+.section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+}
+
+/* ── Status strip (at-a-glance) ── */
+.statusStrip {
+  display: block;
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  border-radius: var(--border-radius);
+  background: var(--color-background-alt);
+  border-left: 4px solid var(--color-primary);
+  font-size: 0.9rem;
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+.statusStrip strong {
+  font-weight: 600;
+}
+
+/* ── Horizontal stepper ── */
+.stepper {
+  margin-bottom: var(--spacing-md);
+}
+
+.stepperList {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 0;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.stepperItem,
+.stepperItemDone,
+.stepperItemCurrent {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.stepperItem .stepperDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-border);
+  border: 2px solid var(--color-background);
+}
+
+.stepperItemDone .stepperDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  border: 2px solid var(--color-primary);
+}
+
+.stepperItemCurrent .stepperDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-background);
+  border: 3px solid var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-tint);
+}
+
+.stepperLabel {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--color-text-light);
+  margin-right: 6px;
+}
+
+.stepperItemDone .stepperLabel {
+  color: var(--color-text);
+}
+
+.stepperItemCurrent .stepperLabel {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* Connector between steps (optional line) */
+.stepperList li:not(:last-child)::after {
+  content: "";
+  width: 8px;
+  height: 2px;
+  margin: 0 2px;
+  background: var(--color-border);
+  flex-shrink: 0;
+}
+
+.stepperList li.stepperItemDone:not(:last-child)::after {
+  background: var(--color-primary);
+}
+
+.stepperCurrentLabel {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  margin: 0;
+  padding-left: 0;
+  line-height: 1.4;
+}
+
+.stepperCurrentLabel strong {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.intro {
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+  line-height: 1.5;
+  margin-bottom: var(--spacing-md);
+}
+
+.timeline {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  padding-left: 1.25rem;
+  border-left: 2px solid var(--color-border);
+  margin-left: 6px;
+}
+
+.step {
+  position: relative;
+  padding-bottom: var(--spacing-md);
+}
+
+.step:last-child {
+  padding-bottom: 0;
+}
+
+/* Last step in timeline = "current known position" */
+.stepLast .stepMarker {
+  width: 14px;
+  height: 14px;
+  top: 0.2rem;
+  box-shadow: 0 0 0 3px var(--color-primary-tint);
+}
+
+.stepLast .stepContent {
+  font-weight: 500;
+}
+
+.stepMarker {
+  position: absolute;
+  left: -1.25rem;
+  top: 0.35rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  transform: translateX(-50%);
+  margin-left: -1px;
+}
+
+.stepContent {
+  margin-left: 0;
+}
+
+.stepLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-light);
+}
+
+.sittingLink {
+  display: inline-block;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+  transition: color 0.2s, text-decoration-color 0.2s;
+}
+
+.sittingLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.sittingTitle {
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+  margin: 4px 0 8px 0;
+  line-height: 1.4;
+}
+
+.scrutinsInStep {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0 8px;
+  border-left: 1px solid var(--color-border);
+  padding-left: var(--spacing-sm);
+}
+
+.scrutinRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 12px;
+  margin-bottom: 6px;
+}
+
+.scrutinsInStep li:last-child .scrutinRow {
+  margin-bottom: 0;
+}
+
+.scrutinStats {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-light);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.scrutinStats .statPour {
+  color: var(--color-success);
+}
+
+.scrutinStats .statContre {
+  color: var(--color-error);
+}
+
+.scrutinStats .statAbstention {
+  color: var(--color-warning);
+}
+
+.scrutinsInStep li {
+  margin-bottom: 6px;
+}
+
+.scrutinsInStep li:last-child {
+  margin-bottom: 0;
+}
+
+.scrutinLink {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  transition: color 0.2s;
+}
+
+.scrutinLink:hover {
+  color: var(--color-primary);
+}
+
+.badgeAdopte,
+.badgeRejete {
+  padding: 2px 6px;
+  border-radius: var(--border-radius-pill);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: white;
+}
+
+.badgeAdopte {
+  background: var(--color-success);
+}
+
+.badgeRejete {
+  background: var(--color-error);
+}
+
+.nextStep {
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-md);
+  border-radius: 10px;
+  background: var(--color-background-alt);
+  border: 1px solid var(--color-border);
+}
+
+.nextStep p {
+  font-size: 0.9rem;
+  color: var(--color-text);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.externalLink {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.externalLink:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* Empty state (no scrutins yet) */
+.empty {
+  padding: var(--spacing-md) 0;
+}
+
+.empty p {
+  font-size: 0.95rem;
+  color: var(--color-text-light);
+  line-height: 1.6;
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.links li {
+  margin-bottom: 8px;
+}
+
+.links a {
+  color: var(--color-primary);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.links a:hover {
+  text-decoration-thickness: 2px;
+}
+
+@media (max-width: 768px) {
+  .statusStrip {
+    font-size: 0.85rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  .stepperList {
+    gap: 2px 0;
+  }
+
+  .stepperLabel {
+    font-size: 0.65rem;
+    margin-right: 4px;
+  }
+
+  .stepperCurrentLabel {
+    font-size: 0.75rem;
+  }
+
+  .timeline {
+    padding-left: 1rem;
+    margin-left: 4px;
+  }
+
+  .stepMarker {
+    left: -1rem;
+    width: 8px;
+    height: 8px;
+  }
+
+  .stepLast .stepMarker {
+    width: 12px;
+    height: 12px;
+  }
+
+  .scrutinLink {
+    font-size: 0.85rem;
+  }
+}
