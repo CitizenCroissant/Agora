@@ -111,6 +111,19 @@ function getBillKey(
   return { key, title };
 }
 
+/** True if the scrutin is about an amendment (vote on an amendement). */
+function isAmendmentScrutin(raw: AssembleeScrutin): boolean {
+  const text = [
+    raw.titre,
+    raw.objet?.libelle,
+    raw.demandeur?.texte
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+  return text.includes("amendement");
+}
+
 export async function ingestScrutins(options: IngestScrutinsOptions = {}) {
   const { fromDate, toDate, dryRun = false } = options;
 
@@ -158,60 +171,50 @@ export async function ingestScrutins(options: IngestScrutinsOptions = {}) {
 
     inserted++;
 
-    // Link scrutin to its bill (text) when we can infer a stable key from the title
-    const billKey = getBillKey(raw);
-    if (billKey) {
-      const shortTitle = raw.titre ?? row.titre ?? null;
-
-      const { data: bill, error: billError } = await supabase
+    // Link scrutin to its bill only when a bill already exists (from dossiers ingestion).
+    // We never create or update bills here; only the dossiers ingestion does that.
+    // For amendments we only link the scrutin to the main bill; we never create a bill row for the amendment.
+    let bill: { id: string } | null = null;
+    const dossierRef = raw.objet?.dossierLegislatif?.trim();
+    if (dossierRef) {
+      const { data: byDossier } = await supabase
         .from("bills")
+        .select("id")
+        .eq("official_id", dossierRef)
+        .maybeSingle();
+      if (byDossier) bill = byDossier;
+    }
+    if (!bill) {
+      const billKey = getBillKey(raw);
+      if (billKey) {
+        const { data: existing } = await supabase
+          .from("bills")
+          .select("id")
+          .eq("official_id", billKey.key)
+          .maybeSingle();
+        if (existing) bill = existing;
+      }
+    }
+    if (bill?.id) {
+      const { error: linkError } = await supabase.from("bill_scrutins")
         .upsert(
           {
-            official_id: billKey.key,
-            title: billKey.title,
-            short_title: shortTitle,
-            // type, origin, official_url can be enriched later from other datasets
-            type: null,
-            origin: null,
-            official_url: null
+            bill_id: bill.id,
+            scrutin_id: scrutin.id,
+            role: null
           },
           {
-            onConflict: "official_id",
+            onConflict: "bill_id,scrutin_id",
             ignoreDuplicates: false
           }
-        )
-        .select()
-        .maybeSingle();
-
-      if (billError) {
-        console.error(
-          "Error upserting bill for scrutin",
-          raw.uid,
-          billKey.key,
-          billError
         );
-      } else if (bill?.id) {
-        const { error: linkError } = await supabase.from("bill_scrutins")
-          .upsert(
-            {
-              bill_id: bill.id,
-              scrutin_id: scrutin.id,
-              role: null
-            },
-            {
-              onConflict: "bill_id,scrutin_id",
-              ignoreDuplicates: false
-            }
-          );
-
-        if (linkError) {
-          console.error(
-            "Error linking bill to scrutin",
-            bill.id,
-            scrutin.id,
-            linkError
-          );
-        }
+      if (linkError) {
+        console.error(
+          "Error linking bill to scrutin",
+          bill.id,
+          scrutin.id,
+          linkError
+        );
       }
     }
 
