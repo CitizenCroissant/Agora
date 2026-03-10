@@ -44,15 +44,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const enrichComparison =
       (req.query?.enrich as string)?.toLowerCase() === "comparison";
 
-    const { data: votes, error: votesError } = await supabase
-      .from("scrutin_votes")
-      .select("scrutin_id, position")
-      .eq("acteur_ref", acteurRef)
-      .order("scrutin_id", { ascending: false });
+    // Supabase returns at most 1000 rows per query; paginate to get all votes for this deputy.
+    const PAGE_SIZE = 1000;
+    type VoteRow = { scrutin_id: string; position: string };
+    const votes: VoteRow[] = [];
+    let offset = 0;
+    while (true) {
+      const { data: page, error: votesError } = await supabase
+        .from("scrutin_votes")
+        .select("scrutin_id, position")
+        .eq("acteur_ref", acteurRef)
+        .order("scrutin_id", { ascending: false })
+        .range(offset, offset + PAGE_SIZE - 1);
 
-    if (votesError) {
-      console.error("Supabase error:", votesError);
-      throw new ApiError(500, "Failed to fetch deputy votes", "DatabaseError");
+      if (votesError) {
+        console.error("Supabase error:", votesError);
+        throw new ApiError(500, "Failed to fetch deputy votes", "DatabaseError");
+      }
+      if (!page?.length) break;
+      votes.push(...(page as VoteRow[]));
+      if (page.length < PAGE_SIZE) break;
+      offset += PAGE_SIZE;
     }
 
     const { data: deputy } = await supabase
@@ -73,7 +85,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       ? d.groupe_politique.trim()
       : null;
 
-    if (!votes || votes.length === 0) {
+    if (votes.length === 0) {
       const response: DeputyVotesResponse = {
         acteur_ref: acteurRef,
         acteur_nom: acteurNom,

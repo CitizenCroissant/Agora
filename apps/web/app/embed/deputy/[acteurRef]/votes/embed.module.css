@@ -1,0 +1,127 @@
+.widget {
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--color-text);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  max-width: 100%;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--color-text);
+}
+
+.brand {
+  font-size: 0.8125rem;
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.brand:hover {
+  text-decoration: underline;
+}
+
+.loading,
+.error,
+.empty {
+  margin: 0;
+  padding: var(--spacing-sm) 0;
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+}
+
+.error {
+  color: var(--color-error);
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  background: var(--color-background-alt);
+  border-radius: 4px;
+}
+
+.badgePour {
+  padding: 2px 6px;
+  background: var(--color-success);
+  color: white;
+  border-radius: 4px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  min-width: 52px;
+  text-align: center;
+}
+
+.badgeContre {
+  padding: 2px 6px;
+  background: var(--color-secondary);
+  color: white;
+  border-radius: 4px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  min-width: 52px;
+  text-align: center;
+}
+
+.badgeAbstention,
+.badgeNonVotant {
+  padding: 2px 6px;
+  background: var(--color-text-light);
+  color: white;
+  border-radius: 4px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  min-width: 52px;
+  text-align: center;
+}
+
+.date {
+  font-size: 0.8125rem;
+  color: var(--color-text-light);
+  text-transform: capitalize;
+  flex-shrink: 0;
+}
+
+.link {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.875rem;
+  color: var(--color-primary);
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.link:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}

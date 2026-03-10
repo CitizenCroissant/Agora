@@ -1,5 +1,13 @@
 /* ── Bill detail page ── */
 
+.actionsRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
 /* ── Bill header ── */
 .billHeader {
   margin-bottom: var(--spacing-lg);
@@ -110,6 +118,16 @@
   margin-bottom: var(--spacing-lg);
 }
 
+.factCardLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.factCardLink:hover .factCard {
+  border-color: var(--color-primary);
+  background: var(--color-background-alt);
+}
+
 .factCard {
   display: flex;
   flex-direction: column;
@@ -135,6 +153,113 @@
   color: var(--color-text-light);
   text-transform: uppercase;
   letter-spacing: 0.02em;
+}
+
+.factSub {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--color-text-light);
+  margin-top: 2px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* ── Amendments synthetic note ── */
+.amendmentsNote {
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-sm);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-background-alt);
+}
+
+.amendmentsNoteText {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.amendmentsListLink {
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.amendmentsListLink:hover {
+  text-decoration: underline;
+}
+
+/* ── Text versions (textes) ── */
+.textesSection {
+  margin-bottom: var(--spacing-lg);
+}
+
+.textesTitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: var(--spacing-xs);
+}
+
+.textesIntro {
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+  line-height: 1.5;
+  margin-bottom: var(--spacing-sm);
+}
+
+.textesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.texteItem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-background-alt);
+}
+
+.texteLabel {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.texteMeta {
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+}
+
+.texteLink {
+  margin-left: auto;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.texteLink:hover {
+  text-decoration: underline;
+}
+
+.textesMissingNote {
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+  font-style: italic;
+  margin-top: var(--spacing-sm);
+  margin-bottom: 0;
 }
 
 /* ── Official source link ── */

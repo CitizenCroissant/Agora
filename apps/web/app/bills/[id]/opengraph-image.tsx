@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { apiClient } from "@/lib/api";
 
-export const alt = "Texte législatif – Agora";
+export const alt = "Dossier législatif – Agora";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -16,7 +16,7 @@ export default async function Image({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  let title = "Texte législatif";
+  let title = "Dossier législatif";
   let subtitle = "";
 
   try {
@@ -69,7 +69,7 @@ export default async function Image({
               marginBottom: 12
             }}
           >
-            Texte législatif
+            Dossier législatif
           </div>
           <div
             style={{

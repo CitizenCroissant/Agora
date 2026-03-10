@@ -59,8 +59,8 @@ next-env.d.ts
 web-build/
 
 # Firebase
-# Note: google-services.json is safe to commit (contains only public identifiers)
-# But we keep the service account key private
+# google-services.json contains API keys; do not commit (regenerate if leaked)
+apps/mobile/google-services.json
 **/GoogleService-Info.plist
 **/*firebase-adminsdk*.json
 

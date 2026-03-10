@@ -6,7 +6,7 @@ export default function BillsPage() {
     <Suspense
       fallback={
         <div className="container">
-          <div>Chargement des textes...</div>
+          <div>Chargement des dossiers...</div>
         </div>
       }
     >

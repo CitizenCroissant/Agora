@@ -96,6 +96,8 @@ When deployed to Vercel (configured in `vercel.json`):
 
 **Now integrated with real Assemblée nationale data!**
 
+For official documentation links, file formats, and how the publisher links amendments to bills (and why scrutins have no official bill/amendment IDs), see **[docs/OPEN_DATA_SOURCES.md](../../docs/OPEN_DATA_SOURCES.md)**.
+
 The ingestion system fetches live parliamentary data from:
 
 - **Source**: `http://data.assemblee-nationale.fr/static/openData/repository/17/vp/reunions/Agenda.json.zip`
@@ -172,7 +174,36 @@ npm run ingest:deputy-organes
 npm run ingest:deputy-organes -- --dry-run
 ```
 
-Scrutins are linked to sittings by `seanceRef` (matching `sittings.official_id`) or by date when no match is found.
+Scrutins are linked to sittings by `seanceRef` (matching `sittings.official_id`) or by date when no match is found. When the scrutin text mentions "amendement n° X" and we have that amendment for the linked bill, **scrutin → amendment** links are stored in `scrutin_amendments` (requires amendments to be ingested first).
+
+### Dossiers législatifs (bills + bill textes)
+
+Dossier ingestion creates dossiers, actes, initiateurs, and **bill_texts** (one per “version de texte” from the actes: dossier uid + `texte_associe` / `texte_adopte` from the actes tree).
+
+- **Source**: `Dossiers_Legislatifs.json.zip`
+- **Tables**: `dossiers_legislatifs`, `actes_legislatifs`, `dossiers_initiateurs`, `bill_texts` (bill_id, texte_ref)
+- **CLI**: `npm run ingest:dossiers` (optionally `--legislature 17` or `--legislature all`, `--dry-run`)
+
+**Order**: Run `ingest:dossiers` first so that bills and bill_texts exist before amendments and scrutins.
+
+### Amendments (lightweight list per texte)
+
+Amendment list is ingested from the Amendements JSON ZIP. **Bill textes are created by dossier ingestion**; this job only inserts amendment rows into existing `bill_texts`. Scrutins ingestion then links scrutins to amendments by parsing amendment numbers from the vote title/objet.
+
+- **Source**: `https://data.assemblee-nationale.fr/static/openData/repository/{leg}/loi/amendements_div_legis/Amendements.json.zip`
+- **Run after**: `ingest:dossiers` (so bills and bill_texts exist)
+- **Tables**: `amendments` (bill_text_id, official_id, numero, official_url), `scrutin_amendments` (scrutin_id, amendment_id)
+
+**CLI**:
+
+```bash
+# Ingest amendment list (default legislature 17); uses existing bill_texts from dossier ingestion
+npm run ingest:amendments
+
+npm run ingest:amendments -- --legislature 17 --dry-run
+```
+
+**Order for full linking**: Run `ingest:dossiers`, then `ingest:amendments`, then `ingest:scrutins` so that scrutins can be linked to both bills and amendments.
 
 ### Deputies (députés)
 

@@ -107,7 +107,12 @@ export const DEMOCRATIE = {
     summaryTitle: "En résumé",
     summary:
       "348 sénateurs, élus pour 6 ans au suffrage indirect. Ils participent au vote des lois et représentent les territoires. En cas de désaccord, navette ou dernier mot à l’Assemblée.",
-    links: [{ label: "Comment une loi est votée", href: "/democratie#loi" }]
+    links: [
+      {
+        label: "Comment une loi est votée",
+        href: "/democratie/comment-une-loi-est-votee"
+      }
+    ]
   },
 
   citoyen: {
@@ -229,4 +234,13 @@ export const DEMOCRATIE = {
       { label: "Calendrier des séances et réunions", href: "/timeline" }
     ]
   }
+} as const;
+
+/** Slug for each democratie sub-page (id -> path segment). Used for routing and hub links. */
+export const DEMOCRATIE_SUBPAGE_SLUGS: Record<string, string> = {
+  loi: "comment-une-loi-est-votee",
+  assemblee: "assemblee-nationale",
+  senat: "senat",
+  citoyen: "votre-role-citoyen",
+  commissions: "commissions"
 } as const;

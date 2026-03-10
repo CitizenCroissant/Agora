@@ -126,9 +126,7 @@ export class DossiersClient {
     }
 
     const url = zipUrlForLegislature(legislature);
-    console.log(
-      `Downloading Dossiers_Legislatifs for legislature ${legislature}...`
-    );
+    console.log(`[dossiers-client] Downloading Dossiers_Legislatifs for legislature ${legislature}...`);
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -175,9 +173,7 @@ export class DossiersClient {
       });
     }
 
-    console.log(
-      `Loaded ${dossiers.length} dossiers from archive (legislature ${legislature})`
-    );
+    console.log(`[dossiers-client] Loaded ${dossiers.length} dossiers from archive (legislature ${legislature})`);
     this.cacheByLegislature.set(legislature, {
       dossiers,
       expiry: new Date(Date.now() + this.CACHE_DURATION_MS)

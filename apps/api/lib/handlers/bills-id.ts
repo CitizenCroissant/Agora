@@ -10,6 +10,8 @@ import { ApiError, handleError } from "../errors";
 import type {
   BillDetailResponse,
   BillAmendsBill,
+  BillAmendmentsSummary,
+  BillTextWithCount,
   Scrutin,
   ThematicTag,
   SittingWithItems
@@ -199,6 +201,80 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
+    // Bill textes (document versions) with amendment count per texte
+    const { data: billTextRows } = await supabase
+      .from("bill_texts")
+      .select("id, texte_ref, numero, label, official_url")
+      .eq("bill_id", bill.id)
+      .order("texte_ref", { ascending: true });
+    const billTextsList = (billTextRows ?? []) as Array<{
+      id: string;
+      texte_ref: string;
+      numero: string | null;
+      label: string | null;
+      official_url: string | null;
+    }>;
+    const billTextIds = billTextsList.map((r) => r.id);
+
+    // Amendment counts per bill_text_id (one query: get all then count in JS)
+    const countByBillTextId = new Map<string, number>();
+    billTextIds.forEach((id) => countByBillTextId.set(id, 0));
+    if (billTextIds.length > 0) {
+      const pageSize = 1000;
+      for (let off = 0; ; off += pageSize) {
+        const { data: amRows } = await supabase
+          .from("amendments")
+          .select("bill_text_id")
+          .in("bill_text_id", billTextIds)
+          .range(off, off + pageSize - 1);
+        if (!amRows || amRows.length === 0) break;
+        (amRows as { bill_text_id: string }[]).forEach((row) => {
+          countByBillTextId.set(
+            row.bill_text_id,
+            (countByBillTextId.get(row.bill_text_id) ?? 0) + 1
+          );
+        });
+        if (amRows.length < pageSize) break;
+      }
+    }
+
+    const textes: BillTextWithCount[] = billTextsList.map((row) => ({
+      id: row.id,
+      texte_ref: row.texte_ref,
+      numero: row.numero ?? undefined,
+      label: row.label ?? undefined,
+      official_url: row.official_url ?? undefined,
+      amendments_count: countByBillTextId.get(row.id) ?? 0
+    }));
+
+    // Synthetic amendments summary (counts only; amendments are per texte, we aggregate across bill's textes)
+    let amendments_summary: BillAmendmentsSummary | null = null;
+    const amendmentsTotal = textes.reduce((s, t) => s + t.amendments_count, 0);
+    if (amendmentsTotal > 0) {
+      const votedAmendmentIds = new Set<string>();
+      const batchSize = 1000;
+      for (let offset = 0; offset < amendmentsTotal; offset += batchSize) {
+        const { data: amendmentRows } = await supabase
+          .from("amendments")
+          .select("id")
+          .in("bill_text_id", billTextIds)
+          .range(offset, offset + batchSize - 1);
+        const ids = (amendmentRows ?? []).map((r: { id: string }) => r.id);
+        if (ids.length === 0) break;
+        const { data: linked } = await supabase
+          .from("scrutin_amendments")
+          .select("amendment_id")
+          .in("amendment_id", ids);
+        (linked ?? []).forEach((row: { amendment_id: string }) =>
+          votedAmendmentIds.add(row.amendment_id)
+        );
+      }
+      amendments_summary = {
+        total: amendmentsTotal,
+        with_scrutin_count: votedAmendmentIds.size
+      };
+    }
+
     const response: BillDetailResponse = {
       id: bill.id,
       official_id: bill.official_id,
@@ -210,7 +286,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       tags,
       scrutins,
       sittings: sittings.length > 0 ? sittings : undefined,
-      amends_bill: amends_bill ?? undefined
+      amends_bill: amends_bill ?? undefined,
+      amendments_summary: amendments_summary ?? undefined,
+      textes: textes.length > 0 ? textes : undefined
     };
 
     res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate");

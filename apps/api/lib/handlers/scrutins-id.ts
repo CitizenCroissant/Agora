@@ -16,6 +16,115 @@ function isUuid(id: string): boolean {
   return UUID_REGEX.test(id);
 }
 
+/** Normalize text for title matching: lowercase, collapse spaces, remove accents, normalize apostrophes, strip lecture parentheticals. */
+function normalizeForTitleMatch(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\u2018\u2019\u201A\u201B\u2032]/g, "'") // curly/smart quotes -> straight apostrophe
+    .replace(/\s+/g, " ")
+    .replace(/\s*\([^)]*lecture[^)]*\)\.?/gi, "")
+    .trim();
+}
+
+/** Extract "projet de loi ..." / "proposition de loi ..." from libelle for matching (same logic as ingestion). */
+function extractBillSegmentFromLibelle(libelle: string): string | null {
+  const trimmed = libelle.trim();
+  if (trimmed.length < 10) return null;
+  const patterns = [
+    /(proposition de loi.*)$/i,
+    /(projet de loi.*)$/i,
+    /(résolution.*)$/i
+  ];
+  for (const re of patterns) {
+    const m = trimmed.match(re);
+    if (m && m[1]) {
+      const segment = m[1]
+        .replace(/\s*\([^)]*lecture[^)]*\)\.?$/i, "")
+        .trim();
+      if (segment.length >= 15) return segment;
+    }
+  }
+  return null;
+}
+
+/**
+ * Strip "proposition de loi ... visant à" / "projet de loi ..." prefix to get the substantive part.
+ * Dossier titles are often just "Empêcher la constitution..." while amendment text says "proposition de loi visant à empêcher...".
+ */
+function coreSubstantiveTitle(segmentNorm: string): string {
+  return segmentNorm
+    .replace(
+      /^(?:proposition de loi|projet de loi)(?:\s+visant a|\s+portant sur|\s+relatif a)?\s+/i,
+      ""
+    )
+    .trim();
+}
+
+/** For amendment scrutins with no bill_scrutins link, try to resolve the main bill by title match. */
+async function resolveBillByTitleMatch(
+  titre: string,
+  objetLibelle: string | null
+): Promise<DbBill | null> {
+  const scrutinText = `${titre || ""} ${objetLibelle || ""}`.trim();
+  if (scrutinText.length < 20) return null;
+  const scrutinNorm = normalizeForTitleMatch(scrutinText);
+  const segment = extractBillSegmentFromLibelle(scrutinText);
+  const segmentNorm = segment ? normalizeForTitleMatch(segment) : null;
+  const coreNorm =
+    segmentNorm && segmentNorm.length >= 20 ? coreSubstantiveTitle(segmentNorm) : null;
+
+  const PAGE = 500;
+  let offset = 0;
+  let best: { bill: DbBill; titleLen: number } | null = null;
+  const PREFIX_LEN = 38; // e.g. "empêcher la constitution de monopoles econom"
+
+  while (true) {
+    const { data: page, error } = await supabase
+      .from("bills")
+      .select("id, official_id, title, short_title")
+      .range(offset, offset + PAGE - 1);
+
+    if (error || !page?.length) break;
+
+    for (const row of page as DbBill[]) {
+      const title = (row.title || row.short_title || "").trim();
+      if (title.length < 15) continue;
+      const titleNorm = normalizeForTitleMatch(title);
+      if (titleNorm.length < 15) continue;
+      const fullMatch = scrutinNorm.includes(titleNorm);
+      const segmentMatch =
+        segmentNorm &&
+        (segmentNorm.includes(titleNorm) || titleNorm.includes(segmentNorm));
+      const prefixLen = 50;
+      const prefixMatch =
+        segmentNorm &&
+        segmentNorm.length >= prefixLen &&
+        titleNorm.length >= prefixLen &&
+        (segmentNorm.startsWith(titleNorm.slice(0, prefixLen)) ||
+          titleNorm.startsWith(segmentNorm.slice(0, prefixLen)));
+      const corePrefixMatch =
+        coreNorm &&
+        coreNorm.length >= PREFIX_LEN &&
+        titleNorm.length >= PREFIX_LEN &&
+        (coreNorm.slice(0, PREFIX_LEN) === titleNorm.slice(0, PREFIX_LEN) ||
+          coreNorm.includes(titleNorm) ||
+          titleNorm.includes(coreNorm));
+      if (
+        (fullMatch || segmentMatch || prefixMatch || corePrefixMatch) &&
+        (!best || titleNorm.length > best.titleLen)
+      ) {
+        best = { bill: row, titleLen: titleNorm.length };
+      }
+    }
+    if (page.length < PAGE) break;
+    offset += PAGE;
+  }
+
+  return best?.bill ?? null;
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
@@ -251,6 +360,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             title: bill.title,
             short_title: bill.short_title
           };
+      }
+    }
+
+    // Amendment fallback: when no bill_scrutins link but titre/objet mention "amendement", resolve main bill by title match
+    const respWithBill = response as unknown as {
+      bill?: ScrutinDetailResponse["bill"];
+      bill_suggestion?: ScrutinDetailResponse["bill_suggestion"];
+    };
+    if (!respWithBill.bill) {
+      const amendmentHint = `${dbScrutin.titre ?? ""} ${dbScrutin.objet_libelle ?? ""}`.toLowerCase();
+      if (amendmentHint.includes("amendement")) {
+        const scrutinText = `${dbScrutin.titre ?? ""} ${dbScrutin.objet_libelle ?? ""}`.trim();
+        const segment = extractBillSegmentFromLibelle(scrutinText);
+        const resolved = await resolveBillByTitleMatch(
+          dbScrutin.titre,
+          dbScrutin.objet_libelle
+        );
+        if (resolved) {
+          respWithBill.bill = {
+            id: resolved.id,
+            official_id: resolved.official_id,
+            title: resolved.title,
+            short_title: resolved.short_title
+          };
+        } else if (segment && segment.length >= 15) {
+          respWithBill.bill_suggestion = { title: segment };
+        }
       }
     }
 

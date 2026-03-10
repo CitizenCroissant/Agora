@@ -75,6 +75,17 @@ export interface DbBill {
   updated_at: string;
 }
 
+export interface DbBillText {
+  id: string;
+  bill_id: string;
+  texte_ref: string;
+  numero: string | null;
+  label: string | null;
+  official_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface DbBillScrutin {
   bill_id: string;
   scrutin_id: string;

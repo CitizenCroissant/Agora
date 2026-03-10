@@ -28,7 +28,10 @@ import {
   ApiError,
   BillsListResponse,
   BillDetailResponse,
-  IngestionStatusResponse
+  BillAmendmentsListResponse,
+  IngestionStatusResponse,
+  FollowsListResponse,
+  FollowType
 } from "./types";
 
 const API_NOT_JSON_MESSAGE =
@@ -274,6 +277,33 @@ export class ApiClient {
     if (!response.ok) {
       const error = (await response.json()) as ApiError;
       throw new Error(error.message || "Failed to fetch deputy votes");
+    }
+
+    return (await response.json()) as DeputyVotesResponse;
+  }
+
+  /**
+   * Fetch last N votes for a deputy (embed/widget endpoint; no comparison).
+   * @param options.limit - Number of votes (default 5, max 20).
+   */
+  async getEmbedDeputyVotes(
+    acteurRef: string,
+    options?: { limit?: number }
+  ): Promise<DeputyVotesResponse> {
+    const encoded = encodeURIComponent(acteurRef);
+    const params = new URLSearchParams();
+    if (options?.limit != null) {
+      params.set("limit", String(options.limit));
+    }
+    const query = params.toString();
+    const url = query
+      ? `${this.baseUrl}/embed/deputy/${encoded}/votes?${query}`
+      : `${this.baseUrl}/embed/deputy/${encoded}/votes`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      const error = (await response.json()) as ApiError;
+      throw new Error(error.message || "Failed to fetch embed deputy votes");
     }
 
     return (await response.json()) as DeputyVotesResponse;
@@ -526,6 +556,75 @@ export class ApiClient {
   }
 
   /**
+   * Fetch paginated list of amendments for a bill (drill-down).
+   * Bill id can be UUID or official_id.
+   */
+  async getBillAmendments(
+    billId: string,
+    params?: {
+      limit?: number;
+      offset?: number;
+      bill_text_id?: string;
+    }
+  ): Promise<BillAmendmentsListResponse> {
+    const encoded = encodeURIComponent(billId);
+    const searchParams = new URLSearchParams();
+    if (params?.limit != null)
+      searchParams.set("limit", String(params.limit));
+    if (params?.offset != null)
+      searchParams.set("offset", String(params.offset));
+    if (params?.bill_text_id != null && params.bill_text_id !== "")
+      searchParams.set("bill_text_id", params.bill_text_id);
+    const qs = searchParams.toString();
+    const url = `${this.baseUrl}/bills/${encoded}/amendments${qs ? `?${qs}` : ""}`;
+    const response = await fetch(url);
+
+    const data = await parseJsonOrThrow<
+      BillAmendmentsListResponse | ApiError
+    >(response);
+
+    if (!response.ok) {
+      const error = data as ApiError;
+      throw new Error(error.message || "Failed to fetch bill amendments");
+    }
+
+    return data as BillAmendmentsListResponse;
+  }
+
+  /**
+   * Subscribe to the weekly "My deputy this week" email digest.
+   * Provide either departement (e.g. "Paris") or acteur_ref (e.g. "PA842279"), not both.
+   */
+  async subscribeDigest(options: {
+    email: string;
+    departement?: string;
+    acteur_ref?: string;
+  }): Promise<{ ok: boolean; message: string; subscription_id?: string }> {
+    const body: { email: string; departement?: string; acteur_ref?: string } = {
+      email: options.email.trim()
+    };
+    if (options.departement != null && options.departement !== "") {
+      body.departement = options.departement.trim();
+    }
+    if (options.acteur_ref != null && options.acteur_ref !== "") {
+      body.acteur_ref = options.acteur_ref.trim();
+    }
+    const response = await fetch(`${this.baseUrl}/digest/subscribe`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    const data = (await response.json()) as
+      | { ok: boolean; message: string; subscription_id?: string }
+      | ApiError;
+    if (!response.ok) {
+      const err = data as ApiError;
+      throw new Error(err.message ?? "Subscription failed");
+    }
+    return data as { ok: boolean; message: string; subscription_id?: string };
+  }
+
+  /**
    * Fetch ingestion status (data freshness) for transparency
    */
   async getIngestionStatus(): Promise<IngestionStatusResponse> {
@@ -538,6 +637,76 @@ export class ApiClient {
       throw new Error(error.message || "Failed to fetch ingestion status");
     }
     return data as IngestionStatusResponse;
+  }
+
+  /**
+   * List follows for a device (deputy, bill, group). Requires X-Device-Id.
+   */
+  async getFollows(deviceId: string): Promise<FollowsListResponse> {
+    const response = await fetch(`${this.baseUrl}/follows`, {
+      headers: { "X-Device-Id": deviceId }
+    });
+    const data = await parseJsonOrThrow<FollowsListResponse | ApiError>(
+      response
+    );
+    if (!response.ok) {
+      const error = data as ApiError;
+      throw new Error(error.message || "Failed to fetch follows");
+    }
+    return data as FollowsListResponse;
+  }
+
+  /**
+   * Add a follow (deputy, bill, or group). Requires X-Device-Id.
+   */
+  async follow(
+    deviceId: string,
+    followType: FollowType,
+    followId: string
+  ): Promise<{ ok: boolean; message: string }> {
+    const response = await fetch(`${this.baseUrl}/follows`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Device-Id": deviceId
+      },
+      body: JSON.stringify({ follow_type: followType, follow_id: followId })
+    });
+    const data = (await response.json()) as
+      | { ok: boolean; message: string }
+      | ApiError;
+    if (!response.ok) {
+      const err = data as ApiError;
+      throw new Error(err.message ?? "Failed to follow");
+    }
+    return data as { ok: boolean; message: string };
+  }
+
+  /**
+   * Remove a follow. Requires X-Device-Id.
+   */
+  async unfollow(
+    deviceId: string,
+    followType: FollowType,
+    followId: string
+  ): Promise<{ ok: boolean; message: string }> {
+    const encType = encodeURIComponent(followType);
+    const encId = encodeURIComponent(followId);
+    const response = await fetch(
+      `${this.baseUrl}/follows/${encType}/${encId}`,
+      {
+        method: "DELETE",
+        headers: { "X-Device-Id": deviceId }
+      }
+    );
+    const data = (await response.json()) as
+      | { ok: boolean; message: string }
+      | ApiError;
+    if (!response.ok) {
+      const err = data as ApiError;
+      throw new Error(err.message ?? "Failed to unfollow");
+    }
+    return data as { ok: boolean; message: string };
   }
 }
 

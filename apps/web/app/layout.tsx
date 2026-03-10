@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { AppHeader } from '@/components/AppHeader'
-import { AppFooter } from '@/components/AppFooter'
+import { Shell } from '@/components/Shell'
 
 export const metadata: Metadata = {
   title: 'Agora - Agenda de l\'Assemblée nationale',
@@ -24,11 +23,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body>
-        <div className="pageLayout">
-          <AppHeader />
-          <main className="pageMain">{children}</main>
-          <AppFooter />
-        </div>
+        <Shell>{children}</Shell>
       </body>
     </html>
   )

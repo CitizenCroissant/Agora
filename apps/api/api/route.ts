@@ -135,6 +135,44 @@ export default async function handler(
     routeHandler = m.default;
     matched = true;
   }
+  if (
+    path === "cron/digest-deputy-week" &&
+    (method === "GET" || method === "POST")
+  ) {
+    const m = await import("../lib/handlers/cron-digest-deputy-week");
+    routeHandler = m.default;
+    matched = true;
+  }
+  if (path === "digest/subscribe" && method === "POST") {
+    const m = await import("../lib/handlers/digest-subscribe");
+    routeHandler = m.default;
+    matched = true;
+  }
+  if (path === "digest/unsubscribe" && method === "GET") {
+    const m = await import("../lib/handlers/digest-unsubscribe");
+    routeHandler = m.default;
+    matched = true;
+  }
+  if (path === "follows" && (method === "GET" || method === "POST")) {
+    const m = await import("../lib/handlers/follows");
+    routeHandler = m.default;
+    matched = true;
+  }
+
+  // Dynamic: follows/:follow_type/:follow_id (DELETE)
+  if (
+    !matched &&
+    segments[0] === "follows" &&
+    segments.length === 3 &&
+    segments[1] &&
+    segments[2] &&
+    method === "DELETE"
+  ) {
+    withParams(req, { follow_type: segments[1], follow_id: segments[2] });
+    const m = await import("../lib/handlers/follows-delete");
+    routeHandler = m.default;
+    matched = true;
+  }
 
   // Dynamic: sittings/:id (require non-empty id)
   if (
@@ -158,6 +196,19 @@ export default async function handler(
   ) {
     withParams(req, { id: segments[1] });
     const m = await import("../lib/handlers/scrutins-id");
+    routeHandler = m.default;
+    matched = true;
+  }
+  // Dynamic: bills/:id/amendments (must be before bills/:id)
+  if (
+    !matched &&
+    segments[0] === "bills" &&
+    segments.length === 3 &&
+    segments[2] === "amendments" &&
+    method === "GET"
+  ) {
+    withParams(req, { id: segments[1] });
+    const m = await import("../lib/handlers/bills-id-amendments");
     routeHandler = m.default;
     matched = true;
   }
@@ -195,6 +246,20 @@ export default async function handler(
   ) {
     withParams(req, { acteurRef: segments[1] });
     const m = await import("../lib/handlers/deputies-attendance");
+    routeHandler = m.default;
+    matched = true;
+  }
+  // Embed: embed/deputy/:acteurRef/votes (last N votes for iframe/widget)
+  if (
+    !matched &&
+    segments[0] === "embed" &&
+    segments[1] === "deputy" &&
+    segments.length === 4 &&
+    segments[3] === "votes" &&
+    method === "GET"
+  ) {
+    withParams(req, { acteurRef: segments[2] });
+    const m = await import("../lib/handlers/embed-deputy-votes");
     routeHandler = m.default;
     matched = true;
   }

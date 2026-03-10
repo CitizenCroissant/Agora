@@ -44,12 +44,39 @@ After running `eas build:configure`, it will add a `projectId` to `app.json`. Th
 
 1. In Firebase Console, go to Project Settings > Your Android App
 2. Download `google-services.json`
-3. Place it in `apps/mobile/google-services.json`
-4. Commit the file (it's safe to commit - contains only public identifiers per Expo docs)
+3. **Local dev**: Place it in `apps/mobile/google-services.json` (the path is gitignored).
 
-### 4c. Configure app.json
+**Security**: Do **not** commit `google-services.json`. It contains API keys. Use `google-services.json.example` as a structure reference only.
 
-The `google-services.json` file is automatically detected by Expo. No manual configuration needed in `app.json` for SDK 54+.
+### 4b.1 EAS Build: inject the file via environment variable (required for cloud builds)
+
+EAS Build runs in the cloud and does not have your local file. Provide it as an EAS **environment variable of type “file”**.
+
+**Option A – CLI (recommended)**
+
+From the project root, with `google-services.json` in `apps/mobile/`:
+
+```bash
+cd apps/mobile
+npx eas env:create --scope project --name GOOGLE_SERVICES_JSON --type file --value ./google-services.json --environment development --environment preview --environment production --visibility secret
+```
+
+Repeat for each environment (development, preview, production) if your CLI doesn’t support multiple `--environment` flags; or set them once and assign to all environments in the dashboard.
+
+**Option B – Dashboard**
+
+1. Go to [expo.dev](https://expo.dev) and open your **account** (e.g. citizencroissant).
+2. Open the **Agora** project.
+3. In the left sidebar, go to **Environment variables** (or **Variables**). If you don’t see it, check **Project settings** or the **•••** menu for the project.
+4. Click **Create** / **Add variable**.
+5. Name: `GOOGLE_SERVICES_JSON`, type: **File**, then upload `google-services.json`.
+6. Assign the variable to the environments your build profiles use (e.g. development, preview, production).
+
+`app.config.js` reads `process.env.GOOGLE_SERVICES_JSON` on EAS (the path where the file was written) and falls back to `./google-services.json` for local runs.
+
+### 4c. Config (app.config.js)
+
+The `google-services.json` path is set in `app.config.js`: it uses the EAS secret path when `GOOGLE_SERVICES_JSON` is set, otherwise the local file. No change needed in `app.json` for SDK 54+.
 
 ### 4d. Upload FCM V1 Service Account Key to EAS
 
@@ -150,7 +177,7 @@ This builds on your machine but requires:
   1. ✅ `google-services.json` exists in `apps/mobile/` directory
   2. ✅ FCM V1 service account key is uploaded to EAS (check via `eas credentials`)
   3. ✅ **CRITICAL: You rebuilt the app after adding credentials** (credentials are baked into the build)
-  4. ✅ `app.json` has `"googleServicesFile": "./google-services.json"` in android section
+  4. ✅ Local: `google-services.json` in `apps/mobile/`; EAS: secret `GOOGLE_SERVICES_JSON` (file) set in Expo dashboard
   5. ✅ Package name matches: `com.agora.app` in both Firebase and `app.json`
 - **Build fails**: Check EAS build logs at https://expo.dev
 - **Can't install APK**: Enable "Install from unknown sources" in Android settings

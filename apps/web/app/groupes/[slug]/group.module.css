@@ -29,6 +29,14 @@
   color: var(--color-text-light);
 }
 
+.actionsRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
 /* Metadata card (dates, position, orientation, president) */
 .metaCard {
   margin-bottom: var(--spacing-lg);

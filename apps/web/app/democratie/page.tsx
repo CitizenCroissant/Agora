@@ -4,7 +4,8 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import { LegislativeProcessSteps } from "@/components/LegislativeProcessSteps";
 import { DemocracyDiagram } from "@/components/DemocracyDiagram";
 import { ScrollToTopOnLanding } from "@/components/ScrollToTopOnLanding";
-import { DEMOCRATIE } from "@/content/democratie";
+import { DEMOCRATIE, DEMOCRATIE_SUBPAGE_SLUGS } from "@/content/democratie";
+import { getBaseUrl } from "@/lib/url";
 import styles from "./democratie.module.css";
 
 export const metadata: Metadata = {
@@ -16,7 +17,8 @@ export const metadata: Metadata = {
     description:
       "Comment une loi est votée, l'Assemblée nationale, le Sénat et votre rôle de citoyen.",
     type: "website"
-  }
+  },
+  alternates: { canonical: `${getBaseUrl()}/democratie` }
 };
 
 export default function DemocratiePage() {
@@ -36,17 +38,23 @@ export default function DemocratiePage() {
 
       <nav className={styles.cards} aria-label="Sections de la page">
         {hub.cards.map((card) => {
+          const slug = DEMOCRATIE_SUBPAGE_SLUGS[card.id];
           const href =
             "externalHref" in card && card.externalHref
               ? card.externalHref
-              : `#${card.id}`;
-          const isExternalUrl = href.startsWith("http://") || href.startsWith("https://");
+              : slug
+                ? `/democratie/${slug}`
+                : `#${card.id}`;
+          const isExternalUrl =
+            href.startsWith("http://") || href.startsWith("https://");
           return (
             <a
               key={card.id}
               href={href}
               className={styles.card}
-              {...(isExternalUrl ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              {...(isExternalUrl
+                ? { target: "_blank", rel: "noopener noreferrer" }
+                : {})}
             >
               <h2 className={styles.cardTitle}>{card.title}</h2>
               <p className={styles.cardDescription}>{card.description}</p>

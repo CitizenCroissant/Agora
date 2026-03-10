@@ -108,11 +108,11 @@ export function BillLifecycle({
     return (
       <section className={styles.section} aria-labelledby="lifecycle-title">
         <h2 id="lifecycle-title" className={styles.sectionTitle}>
-          Parcours du texte
+          Parcours du dossier
         </h2>
         <div className={styles.empty}>
           <p>
-            Ce texte n&apos;a pas encore fait l&apos;objet d&apos;un vote en
+            Ce dossier n&apos;a pas encore fait l&apos;objet d&apos;un vote en
             séance à l&apos;Assemblée nationale. Il peut être en cours
             d&apos;examen en commission ou en attente de discussion.
           </p>
@@ -147,14 +147,14 @@ export function BillLifecycle({
   return (
     <section className={styles.section} aria-labelledby="lifecycle-title">
       <h2 id="lifecycle-title" className={styles.sectionTitle}>
-        Parcours du texte
+        Parcours du dossier
       </h2>
 
       {/* At-a-glance status. Do not show adopté/rejeté for "last vote" — it's often an amendment, not the bill. */}
       <div className={styles.statusStrip} role="status" aria-live="polite">
         {scrutins.length === 0 ? (
           <span>
-            <strong>Pas encore de scrutin en séance</strong> — le texte peut
+            <strong>Pas encore de scrutin en séance</strong> — le dossier peut
             être en commission ou en débat à l&apos;Assemblée.
           </span>
         ) : (
@@ -207,7 +207,7 @@ export function BillLifecycle({
       </nav>
 
       <p className={styles.intro}>
-        Étapes connues pour ce texte à l&apos;Assemblée nationale : séances
+        Étapes connues pour ce dossier à l&apos;Assemblée nationale : séances
         publiques et votes. Pour le détail du processus (commission, navette,
         promulgation), voir{" "}
         <Link href="/democratie#loi">Comment une loi est votée</Link>.

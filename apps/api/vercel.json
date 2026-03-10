@@ -21,6 +21,10 @@
     {
       "path": "/api/cron/notify-scrutins",
       "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/digest-deputy-week",
+      "schedule": "0 8 * * 1"
     }
   ],
   "headers": [
@@ -37,7 +41,7 @@
         },
         {
           "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization"
+          "value": "Content-Type, Authorization, X-Device-Id"
         }
       ]
     }

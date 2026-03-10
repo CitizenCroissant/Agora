@@ -32,6 +32,9 @@ export default function MonDeputePage() {
   const [comboQuery, setComboQuery] = useState("");
   const [comboOpen, setComboOpen] = useState(false);
   const comboRef = useRef<HTMLDivElement>(null);
+  const [digestEmail, setDigestEmail] = useState("");
+  const [digestStatus, setDigestStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [digestMessage, setDigestMessage] = useState("");
 
   useEffect(() => {
     loadDepartements();
@@ -103,6 +106,23 @@ export default function MonDeputePage() {
   const pastDeputies = deputies.filter(
     (d) => !isCurrentlySitting(d.date_fin_mandat)
   );
+
+  const handleDigestSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const email = digestEmail.trim();
+    if (!email || !selectedDepartement) return;
+    setDigestStatus("loading");
+    setDigestMessage("");
+    try {
+      await apiClient.subscribeDigest({ email, departement: selectedDepartement });
+      setDigestStatus("success");
+      setDigestMessage("Inscrit ! Vous recevrez un e-mail chaque semaine avec le récapitulatif des votes de votre député.");
+      setDigestEmail("");
+    } catch (err) {
+      setDigestStatus("error");
+      setDigestMessage(err instanceof Error ? err.message : "Erreur lors de l'inscription.");
+    }
+  };
 
   return (
     <div className="container">
@@ -241,10 +261,48 @@ export default function MonDeputePage() {
                   </div>
 
                   {currentDeputies.length > 0 && (
-                    <div className={styles.sectionBlock}>
-                      <h2 className={styles.sectionTitle}>
-                        Députés en mandat ({currentDeputies.length})
-                      </h2>
+                    <>
+                      <div className={styles.digestSection}>
+                        <h2 className={styles.digestTitle}>
+                          Recevoir le récapitulatif hebdo
+                        </h2>
+                        <p className={styles.digestDesc}>
+                          Chaque lundi, recevez par e-mail un récapitulatif des votes de votre député du {selectedDepartement} sur la semaine écoulée.
+                        </p>
+                        <form onSubmit={handleDigestSubmit} className={styles.digestForm}>
+                          <input
+                            type="email"
+                            value={digestEmail}
+                            onChange={(e) => setDigestEmail(e.target.value)}
+                            placeholder="votre@email.fr"
+                            className={styles.digestInput}
+                            required
+                            disabled={digestStatus === "loading"}
+                            aria-label="Adresse e-mail"
+                          />
+                          <button
+                            type="submit"
+                            className={styles.digestButton}
+                            disabled={digestStatus === "loading"}
+                          >
+                            {digestStatus === "loading" ? "Inscription…" : "S'inscrire"}
+                          </button>
+                        </form>
+                        {digestStatus === "success" && (
+                          <p className={styles.digestSuccess} role="status">
+                            {digestMessage}
+                          </p>
+                        )}
+                        {digestStatus === "error" && (
+                          <p className={styles.digestError} role="alert">
+                            {digestMessage}
+                          </p>
+                        )}
+                      </div>
+                      <div className={styles.sectionBlock}>
+                        <h2 className={styles.sectionTitle}>
+                          Députés en mandat ({currentDeputies.length})
+                        </h2>
                       <ul className={styles.deputyList}>
                         {currentDeputies.map((d) => (
                           <li key={d.acteur_ref}>
@@ -289,6 +347,7 @@ export default function MonDeputePage() {
                         ))}
                       </ul>
                     </div>
+                    </>
                   )}
 
                   {pastDeputies.length > 0 && (

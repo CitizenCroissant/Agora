@@ -7,6 +7,7 @@
     "build": "node ../../node_modules/typescript/bin/tsc",
     "ingest": "ts-node src/ingest.ts",
     "ingest:dossiers": "ts-node src/ingest-dossiers.ts",
+    "ingest:amendments": "ts-node src/ingest-amendments-cli.ts",
     "ingest:scrutins": "ts-node src/ingest-scrutins-cli.ts",
     "ingest:deputies": "ts-node src/ingest-deputies-cli.ts",
     "ingest:organes": "ts-node src/ingest-organes-cli.ts",

@@ -2,13 +2,25 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AgendaResponse } from "@agora/shared";
+import { AgendaResponse, Scrutin } from "@agora/shared";
 import { getTodayDate, formatDate, addDays, subtractDays } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./page.module.css";
 import { PageHelp } from "@/components/PageHelp";
 import { ShareBar } from "@/components/ShareBar";
+import { SittingReminderButton } from "@/components/SittingReminderButton";
+import { StreakBadge } from "@/components/StreakBadge";
+
+const VOTE_OF_THE_DAY_DAYS = 14;
+const OPINION_STORAGE_KEY_PREFIX = "agora_vote_opinion_";
+
+/** Pick a deterministic scrutin index for "vote of the day" from the current date. */
+function getVoteOfTheDayIndex(scrutins: Scrutin[], dateStr: string): number {
+  if (scrutins.length === 0) return 0;
+  const seed = new Date(dateStr + "T12:00:00Z").getTime();
+  return Math.abs(Math.floor(seed / 86400000) % scrutins.length);
+}
 
 const AGENDA_SHARE_TITLE = "L'agenda du jour à l'Assemblée nationale";
 const AGENDA_SHARE_MESSAGE =
@@ -16,10 +28,15 @@ const AGENDA_SHARE_MESSAGE =
 
 export default function HomePageClient() {
   const router = useRouter();
-  const [currentDate, setCurrentDate] = useState<string>(getTodayDate());
+  const today = getTodayDate();
+  const [currentDate, setCurrentDate] = useState<string>(today);
   const [agenda, setAgenda] = useState<AgendaResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [voteOfTheDay, setVoteOfTheDay] = useState<Scrutin | null>(null);
+  const [voteOfTheDayLoading, setVoteOfTheDayLoading] = useState<boolean>(true);
+  const [voteOfTheDayError, setVoteOfTheDayError] = useState<string | null>(null);
+  const [voteOpinion, setVoteOpinion] = useState<"pour" | "contre" | null>(null);
 
   const handleCommissionClick = (
     e: React.MouseEvent | React.KeyboardEvent,
@@ -33,6 +50,49 @@ export default function HomePageClient() {
   useEffect(() => {
     loadAgenda(currentDate);
   }, [currentDate]);
+
+  // Vote of the day: fetch recent scrutins and pick one deterministically by date
+  useEffect(() => {
+    let cancelled = false;
+    setVoteOfTheDayLoading(true);
+    setVoteOfTheDayError(null);
+    const from = subtractDays(today, VOTE_OF_THE_DAY_DAYS);
+    apiClient
+      .getScrutins(from, today)
+      .then((res) => {
+        if (cancelled) return;
+        const list = res.scrutins ?? [];
+        if (list.length === 0) {
+          setVoteOfTheDay(null);
+        } else {
+          const index = getVoteOfTheDayIndex(list, today);
+          setVoteOfTheDay(list[index]);
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setVoteOfTheDayError(err instanceof Error ? err.message : "Failed to load vote of the day");
+          setVoteOfTheDay(null);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setVoteOfTheDayLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [today]);
+
+  // Restore anonymous "agree/disagree" from localStorage when vote of the day is set
+  useEffect(() => {
+    if (!voteOfTheDay?.id) return;
+    try {
+      const stored = localStorage.getItem(OPINION_STORAGE_KEY_PREFIX + voteOfTheDay.id);
+      setVoteOpinion(stored === "pour" || stored === "contre" ? stored : null);
+    } catch {
+      setVoteOpinion(null);
+    }
+  }, [voteOfTheDay?.id]);
 
   const loadAgenda = async (date: string) => {
     setLoading(true);
@@ -67,6 +127,16 @@ export default function HomePageClient() {
     }
   };
 
+  const handleVoteOpinion = (opinion: "pour" | "contre") => {
+    if (!voteOfTheDay?.id) return;
+    try {
+      localStorage.setItem(OPINION_STORAGE_KEY_PREFIX + voteOfTheDay.id, opinion);
+      setVoteOpinion(opinion);
+    } catch {
+      // ignore
+    }
+  };
+
   return (
     <div className="container">
       <ShareBar
@@ -88,6 +158,92 @@ export default function HomePageClient() {
       >
         Comprendre les votes d&apos;aujourd&apos;hui →
       </Link>
+
+      <StreakBadge />
+
+      <section className={styles.voteOfTheDaySection} aria-labelledby="vote-du-jour-heading">
+        <h2 id="vote-du-jour-heading" className={styles.voteOfTheDayHeading}>
+          Vote du jour
+        </h2>
+        {voteOfTheDayLoading && (
+          <div className={styles.voteOfTheDayLoading}>Chargement du vote du jour...</div>
+        )}
+        {!voteOfTheDayLoading && voteOfTheDayError && (
+          <div className={styles.voteOfTheDayError} role="alert">
+            {voteOfTheDayError}
+          </div>
+        )}
+        {!voteOfTheDayLoading && !voteOfTheDayError && voteOfTheDay && (
+          <div className={styles.voteOfTheDayCard}>
+            <div className={styles.voteOfTheDayBadgeWrapper}>
+              <span
+                className={
+                  voteOfTheDay.sort_code === "adopté"
+                    ? styles.voteOfTheDayBadgeAdopte
+                    : styles.voteOfTheDayBadgeRejete
+                }
+              >
+                {voteOfTheDay.sort_code === "adopté" ? "Adopté" : "Rejeté"}
+              </span>
+            </div>
+            <h3 className={styles.voteOfTheDayTitle}>{voteOfTheDay.titre}</h3>
+            <p className={styles.voteOfTheDayMeta}>
+              {formatDate(voteOfTheDay.date_scrutin)} · Scrutin n°{voteOfTheDay.numero}
+            </p>
+            {(voteOfTheDay.objet_libelle || voteOfTheDay.demandeur_texte) && (
+              <p className={styles.voteOfTheDayContext}>
+                {voteOfTheDay.objet_libelle ?? voteOfTheDay.demandeur_texte}
+              </p>
+            )}
+            <div className={styles.voteOfTheDaySynthese}>
+              <span>{voteOfTheDay.synthese_pour} pour</span>
+              <span>{voteOfTheDay.synthese_contre} contre</span>
+              <span>{voteOfTheDay.synthese_abstentions} abst.</span>
+            </div>
+            <div className={styles.voteOfTheDayPoll}>
+              <p className={styles.voteOfTheDayPollQuestion}>
+                Vous êtes plutôt d&apos;accord ou pas d&apos;accord avec ce vote ?
+              </p>
+              {voteOpinion ? (
+                <p className={styles.voteOfTheDayPollThanks}>
+                  Merci pour votre avis
+                  {voteOpinion === "pour" ? " (d'accord)" : " (pas d'accord)"}.
+                </p>
+              ) : (
+                <div className={styles.voteOfTheDayPollButtons}>
+                  <button
+                    type="button"
+                    className={styles.voteOfTheDayPollBtn}
+                    onClick={() => handleVoteOpinion("pour")}
+                    aria-pressed={voteOpinion === "pour"}
+                  >
+                    D&apos;accord
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.voteOfTheDayPollBtn}
+                    onClick={() => handleVoteOpinion("contre")}
+                    aria-pressed={voteOpinion === "contre"}
+                  >
+                    Pas d&apos;accord
+                  </button>
+                </div>
+              )}
+            </div>
+            <Link
+              href={`/votes/${voteOfTheDay.id}`}
+              className={styles.voteOfTheDayCta}
+            >
+              Voir le scrutin →
+            </Link>
+          </div>
+        )}
+        {!voteOfTheDayLoading && !voteOfTheDayError && !voteOfTheDay && (
+          <p className={styles.voteOfTheDayEmpty}>
+            Aucun vote du jour pour le moment.
+          </p>
+        )}
+      </section>
 
       <div className={`controlBar ${styles.controlBar}`}>
         <div className={styles.leftControls}>
@@ -179,6 +335,9 @@ export default function HomePageClient() {
                             {sitting.time_range}
                           </span>
                         )}
+                        <span onClick={(e) => e.stopPropagation()} className={styles.reminderWrap}>
+                          <SittingReminderButton sitting={{ id: sitting.id, date: agenda.date, time_range: sitting.time_range, title: sitting.title }} compact />
+                        </span>
                       </div>
                     </div>
 

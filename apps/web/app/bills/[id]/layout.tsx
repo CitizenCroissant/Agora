@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const description =
       bill.title !== shortTitle
         ? `${bill.title.slice(0, 157)}… – ${SITE_NAME}`
-        : `Texte législatif – ${SITE_NAME}`;
+        : `Dossier législatif – ${SITE_NAME}`;
     const url = `${getBaseUrl()}/bills/${id}`;
 
     return {
@@ -42,8 +42,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   } catch {
     return {
-      title: `Texte | ${SITE_NAME}`,
-      description: `Détail du texte – ${SITE_NAME}`
+      title: `Dossier | ${SITE_NAME}`,
+      description: `Détail du dossier – ${SITE_NAME}`
     };
   }
 }

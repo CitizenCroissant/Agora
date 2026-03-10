@@ -17,10 +17,12 @@ import {
   formatMonth
 } from "@agora/shared";
 import { apiClient } from "@/lib/api";
+import { recordVotePageVisit } from "@/lib/streaks";
 import Link from "next/link";
 import styles from "./votes.module.css";
 import { PageHelp } from "@/components/PageHelp";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { StreakBadge } from "@/components/StreakBadge";
 
 type GroupPosition = "pour" | "contre" | "abstention";
 
@@ -88,6 +90,11 @@ function VotesPageContent() {
   // Fetch political groups once
   useEffect(() => {
     apiClient.getPoliticalGroups().then((r) => setPoliticalGroups(r.groups)).catch(() => {});
+  }, []);
+
+  // Engagement: record that user visited the votes section (for streaks)
+  useEffect(() => {
+    recordVotePageVisit();
   }, []);
 
   // Keep state in sync with URL (e.g. back/forward, shared link, ?date=)
@@ -226,6 +233,7 @@ function VotesPageContent() {
   return (
     <div className="container">
       <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Scrutins" }]} />
+      <StreakBadge />
           <PageHelp
             title="Comment lire cette page ?"
             points={[

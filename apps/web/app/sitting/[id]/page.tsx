@@ -10,6 +10,7 @@ import styles from "./sitting.module.css";
 import { PageHelp } from "@/components/PageHelp";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { ShareBar } from "@/components/ShareBar";
+import { SittingReminderButton } from "@/components/SittingReminderButton";
 
 function AttendanceSummary({ attendance }: { attendance: SittingAttendanceEntry[] }) {
   const present = attendance.filter((a) => a.presence === "présent");
@@ -146,6 +147,16 @@ export default function SittingPage() {
                     <span className={styles.time}>{sitting.time_range}</span>
                   </div>
                 )}
+                <div className={styles.reminderWrap}>
+                  <SittingReminderButton
+                    sitting={{
+                      id: sitting.id,
+                      date: sitting.date,
+                      time_range: sitting.time_range,
+                      title: sitting.title
+                    }}
+                  />
+                </div>
               </div>
 
               {sitting.location && (

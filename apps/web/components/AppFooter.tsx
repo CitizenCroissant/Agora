@@ -13,6 +13,7 @@ export function AppFooter() {
           <Link href="/about">En savoir plus</Link>
           <Link href="/democratie">Comprendre la démocratie</Link>
           <Link href="/sources">Sources</Link>
+          <Link href="/embed">Intégrer le widget</Link>
           <Link href="/votes">Scrutins</Link>
           <Link href="/timeline">Calendrier</Link>
         </div>

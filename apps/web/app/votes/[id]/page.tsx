@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { ScrutinDetailResponse, slugify } from "@agora/shared";
 import { formatDate } from "@agora/shared";
 import { apiClient } from "@/lib/api";
+import { recordScrutinView } from "@/lib/streaks";
 import Link from "next/link";
 import styles from "./scrutin.module.css";
 import { GlossaryTooltip } from "@/components/GlossaryTooltip";
@@ -30,6 +31,11 @@ export default function ScrutinPage() {
     if (id) {
       loadScrutin(id);
     }
+  }, [id]);
+
+  // Engagement: record scrutin view for streaks (localStorage only)
+  useEffect(() => {
+    if (id) recordScrutinView(id);
   }, [id]);
 
   const loadScrutin = async (scrutinId: string) => {
@@ -61,6 +67,9 @@ export default function ScrutinPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const linkedBill = (scrutin as any)?.bill as
     | ScrutinDetailResponse["bill"]
+    | undefined;
+  const billSuggestion = (scrutin as any)?.bill_suggestion as
+    | ScrutinDetailResponse["bill_suggestion"]
     | undefined;
 
   const hasGroupVotes = Array.isArray(scrutin?.group_votes) && scrutin.group_votes.length > 0;
@@ -109,6 +118,16 @@ export default function ScrutinPage() {
                           ? "Amendement au texte : "
                           : "Texte concerné : "}
                         {linkedBill.short_title || linkedBill.title} →
+                      </Link>
+                    </div>
+                  )}
+                  {!linkedBill && billSuggestion?.title && (
+                    <div className={styles.billLink}>
+                      <Link
+                        href={`/bills?q=${encodeURIComponent(billSuggestion.title)}`}
+                      >
+                        Amendement au texte : {billSuggestion.title} (rechercher)
+                        →
                       </Link>
                     </div>
                   )}

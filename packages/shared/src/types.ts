@@ -94,7 +94,9 @@ export interface AgendaRangeResponse {
 }
 
 /**
- * Legislative text / bill (dossier législatif)
+ * Legislative dossier / bill (dossier législatif).
+ * One per bill initiative; the Assemblée also has "textes" (document versions) per dossier.
+ * @see docs/DOSSIER_VS_TEXTE.md
  */
 export interface Bill {
   id: string;
@@ -130,12 +132,65 @@ export interface BillAmendsBill {
   short_title?: string | null;
 }
 
+/** Synthetic summary of amendments for a bill (no full list; bills can have hundreds). */
+export interface BillAmendmentsSummary {
+  /** Total number of amendments deposited for this bill */
+  total: number;
+  /** Number of those amendments that have been put to a vote (linked to at least one scrutin) */
+  with_scrutin_count?: number;
+}
+
+/** One document version (texte) of a bill with its amendment count. */
+export interface BillTextWithCount {
+  id: string;
+  texte_ref: string;
+  numero?: string | null;
+  label?: string | null;
+  official_url?: string | null;
+  /** Number of amendments deposited on this version. */
+  amendments_count: number;
+}
+
+/** Minimal scrutin info for "vote(s) on this amendment" links in amendment list */
+export interface AmendmentScrutinRef {
+  id: string;
+  date_scrutin: string;
+  titre: string;
+  sort_code: string;
+  official_url: string | null;
+}
+
+/** One amendment in a bill's paginated amendment list (drill-down). */
+export interface AmendmentListItem {
+  id: string;
+  official_id: string;
+  numero: string;
+  official_url: string | null;
+  /** Scrutin(s) that voted on this amendment, when linked */
+  scrutins?: AmendmentScrutinRef[];
+}
+
+/** Paginated list of amendments for a bill (GET /api/bills/:id/amendments). */
+export interface BillAmendmentsListResponse {
+  /** Bill context so the page can show title without a separate request */
+  bill: { id: string; official_id: string; title: string; short_title?: string | null };
+  amendments: AmendmentListItem[];
+  total: number;
+  limit: number;
+  offset: number;
+  has_more: boolean;
+}
+
 export interface BillDetailResponse extends Bill {
   scrutins: Scrutin[];
   /** Optional sittings where this bill appears on the agenda */
   sittings?: SittingWithItems[];
   /** When this bill is an amendment, the main bill it amends */
   amends_bill?: BillAmendsBill | null;
+  /** Synthetic amendments summary (counts only; full list on official site) */
+  amendments_summary?: BillAmendmentsSummary | null;
+  /** Document versions (textes) of this dossier with amendment count per version */
+  textes?: BillTextWithCount[];
 }
 
 /** One attendance record for a commission reunion (présent / absent / excusé) */
@@ -263,6 +318,10 @@ export interface ScrutinDetailResponse extends Scrutin {
     title: string;
     short_title?: string | null;
   } | null;
+  /**
+   * When this is an amendment and no bill link exists, the API may suggest a title (extracted from the amendment text) so the UI can link to bill search.
+   */
+  bill_suggestion?: { title: string } | null;
 }
 
 /** Single vote record for deputy voting record */
@@ -450,6 +509,25 @@ export interface IngestionStatusResponse {
     is_fresh: boolean;
   };
   checked_at: string;
+}
+
+/**
+ * Follows ("I'm following this") - deputy, bill, or group
+ */
+export type FollowType = "deputy" | "bill" | "group";
+
+export interface FollowItem {
+  follow_type: FollowType;
+  follow_id: string;
+}
+
+/** Response from GET /api/follows: list of followed entities by type */
+export interface FollowsListResponse {
+  follows: {
+    deputy: string[];
+    bill: string[];
+    group: string[];
+  };
 }
 
 /**

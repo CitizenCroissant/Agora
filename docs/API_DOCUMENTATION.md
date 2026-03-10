@@ -366,6 +366,30 @@ When `enrich=comparison` is used, each vote object may include a `comparison` ob
 
 ---
 
+### Embed: Last N votes for a deputy
+
+Lightweight endpoint for embeddable widgets (e.g. "Last 5 votes for deputy X"). Same response shape as Deputy Voting Record but without comparison data and with a configurable limit. CORS allows embedding on any origin.
+
+**Endpoint**: `GET /embed/deputy/:acteurRef/votes`
+
+**Query Parameters**:
+
+- `limit` (optional): Number of votes to return (default 5, max 20).
+
+**Path Parameters**:
+
+- `acteurRef` (required): Deputy acteur reference (e.g. PA842279)
+
+**Success Response** (200): Same as Deputy Voting Record (no `comparison` on votes).
+
+**Embedding in a page**:
+
+- **Iframe**: Use the widget page so partners get a ready-made UI:
+  `https://your-agora-domain/embed/deputy/PA842279/votes` (optional: `?limit=10`, default 5, max 20).
+- **API only**: Call `GET /api/embed/deputy/PA842279/votes?limit=5` from your backend or frontend and render the list yourself.
+
+---
+
 ### Get Departements List
 
 Retrieve list of départements (from `deputies.departement`) with deputy count for deputies currently in mandate. Used by "Mon député" / "Trouver mon député" to let users choose their département.
@@ -423,6 +447,108 @@ GET /api/deputies?departement=Paris
 ```
 
 **Error Response** (400): Missing or empty `departement` query parameter.
+
+---
+
+### Subscribe to weekly digest (Mon député)
+
+Subscribe an email address to the weekly "My deputy this week" digest. The digest is sent every Monday and summarizes the deputy's votes over the past week. Provide either `departement` (resolves to the current deputy for that département) or `acteur_ref` (direct deputy), not both.
+
+**Endpoint**: `POST /digest/subscribe`
+
+**Request Body** (JSON):
+
+- `email` (required): Valid email address.
+- `departement` (optional): Department name (e.g. `Paris`). Use with "Mon député" flow.
+- `acteur_ref` (optional): Deputy acteur_ref (e.g. `PA842279`). Exactly one of `departement` or `acteur_ref` is required.
+
+**Example Request**:
+
+```
+POST /api/digest/subscribe
+Content-Type: application/json
+
+{"email": "user@example.com", "departement": "Paris"}
+```
+
+**Success Response** (201):
+
+```json
+{
+  "ok": true,
+  "message": "Subscribed to the weekly digest",
+  "subscription_id": "uuid"
+}
+```
+
+**Success Response** (200): Already subscribed for this email and target.
+
+**Error Response** (400): Invalid email, or both/neither of `departement` and `acteur_ref` provided.  
+**Error Response** (404): Deputy or department not found.
+
+---
+
+### Unsubscribe from digest
+
+One-click unsubscribe using the token sent in each digest email. Renders an HTML confirmation page.
+
+**Endpoint**: `GET /digest/unsubscribe`
+
+**Query Parameters**:
+
+- `token` (required): Unsubscribe token (in the link in the digest email).
+
+**Example**: `GET /api/digest/unsubscribe?token=abc123...`
+
+Returns HTML: "Vous êtes bien désinscrit de la lettre « Mon député cette semaine »."
+
+---
+
+### Follows ("I'm following this")
+
+Lightweight subscriptions to a deputy, bill, or group. No account required: identity is a client-generated `device_id` (e.g. stored in localStorage and sent as `X-Device-Id` header). Used for recurring use and future push/email.
+
+**Endpoints**:
+
+- `GET /follows` — List follows for the device. Header: `X-Device-Id` (required).
+- `POST /follows` — Add a follow. Header: `X-Device-Id`. Body: `{ "follow_type": "deputy" | "bill" | "group", "follow_id": "<acteur_ref | bill UUID | group slug>" }`.
+- `DELETE /follows/:follow_type/:follow_id` — Remove a follow. Header: `X-Device-Id`.
+
+**List follows** — `GET /follows`
+
+**Headers**: `X-Device-Id` (required).
+
+**Success Response** (200):
+
+```json
+{
+  "follows": {
+    "deputy": ["PA842279"],
+    "bill": ["550e8400-e29b-41d4-a716-446655440000"],
+    "group": ["renaissance"]
+  }
+}
+```
+
+**Add follow** — `POST /follows`
+
+**Headers**: `Content-Type: application/json`, `X-Device-Id`.
+
+**Request Body** (JSON):
+
+- `follow_type` (required): `"deputy"`, `"bill"`, or `"group"`.
+- `follow_id` (required): For deputy: `acteur_ref` (e.g. `PA842279`). For bill: dossier UUID. For group: slug (e.g. `renaissance`).
+
+**Success Response** (201): `{ "ok": true, "message": "Following", "follow_type": "...", "follow_id": "..." }`  
+**Success Response** (200): Already following.  
+**Error Response** (400): Missing `X-Device-Id` or invalid body.  
+**Error Response** (404): Deputy, bill, or group not found.
+
+**Remove follow** — `DELETE /follows/:follow_type/:follow_id`
+
+**Headers**: `X-Device-Id`.
+
+**Success Response** (200): `{ "ok": true, "message": "Unfollowed", "follow_type": "...", "follow_id": "..." }`.
 
 ---
 

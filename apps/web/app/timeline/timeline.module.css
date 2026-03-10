@@ -304,6 +304,11 @@
   flex-wrap: wrap;
 }
 
+.reminderWrap {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
 .typeBadgeSeance,
 .typeBadgeCommission {
   font-size: 0.7rem;

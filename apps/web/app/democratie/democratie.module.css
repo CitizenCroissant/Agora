@@ -170,6 +170,20 @@
   font-size: 0.85em;
 }
 
+.backLink {
+  margin-top: var(--spacing-xl);
+  font-size: 1rem;
+}
+
+.backLink a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.backLink a:hover {
+  color: var(--color-primary-dark);
+}
+
 @media (max-width: 768px) {
   .section h2 {
     font-size: 1.5rem;

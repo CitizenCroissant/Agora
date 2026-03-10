@@ -34,13 +34,14 @@ const THEMATIC_TAGS = [
 export default function BillsPageClient() {
   const searchParams = useSearchParams();
   const initialTag = searchParams.get("tag");
+  const initialQuery = searchParams.get("q") ?? "";
 
   const [bills, setBills] = useState<BillSummary[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [query, setQuery] = useState<string>("");
+  const [query, setQuery] = useState<string>(initialQuery);
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [onlyWithVotes, setOnlyWithVotes] = useState<boolean>(false);
   const [selectedTag, setSelectedTag] = useState<string | null>(initialTag);
@@ -95,7 +96,7 @@ export default function BillsPageClient() {
         setHasMore(data.has_more ?? false);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Impossible de charger les textes"
+          err instanceof Error ? err.message : "Impossible de charger les dossiers"
         );
         if (!append) setBills([]);
       } finally {
@@ -200,13 +201,13 @@ export default function BillsPageClient() {
 
   return (
     <div className="container">
-      <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Textes législatifs" }]} />
+      <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Dossiers législatifs" }]} />
       <PageHelp
         title="Comment lire cette page ?"
         points={[
-          "Chaque carte correspond à un texte législatif (projet ou proposition de loi).",
-          "Vous pouvez filtrer la liste en recherchant par mots-clés dans le titre du texte.",
-          "Le filtre « Avec votes uniquement » permet d'afficher seulement les textes qui ont donné lieu à au moins un scrutin."
+          "Chaque carte correspond à un dossier législatif (projet ou proposition de loi).",
+          "Vous pouvez filtrer la liste en recherchant par mots-clés dans le titre du dossier.",
+          "Le filtre « Avec votes uniquement » permet d'afficher seulement les dossiers qui ont donné lieu à au moins un scrutin."
         ]}
       />
 
@@ -215,10 +216,10 @@ export default function BillsPageClient() {
           <input
             type="search"
             className="searchInput"
-            placeholder="Rechercher un texte (min. 2 caractères)"
+            placeholder="Rechercher un dossier (min. 2 caractères)"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            aria-label="Rechercher un texte législatif"
+            aria-label="Rechercher un dossier législatif"
           />
         </form>
 
@@ -228,7 +229,7 @@ export default function BillsPageClient() {
               className={styles.typeSelect}
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              aria-label="Filtrer par type de texte"
+              aria-label="Filtrer par type de dossier"
             >
               <option value="all">Tous les types</option>
               {availableTypes.map((type) => (
@@ -247,7 +248,7 @@ export default function BillsPageClient() {
           }`}
           onClick={() => setOnlyWithVotes((v) => !v)}
         >
-          {onlyWithVotes ? "Avec votes uniquement" : "Inclure les textes sans vote"}
+          {onlyWithVotes ? "Avec votes uniquement" : "Inclure les dossiers sans vote"}
         </button>
 
         <div className={styles.tagFilter}>
@@ -282,9 +283,9 @@ export default function BillsPageClient() {
       </section>
 
       {!loading && !error && totalDisplayed > 0 && (
-        <section className={styles.statsBar} aria-label="Statistiques des textes">
+        <section className={styles.statsBar} aria-label="Statistiques des dossiers">
           <span>
-            <strong>{totalDisplayed}</strong> texte(s)
+            <strong>{totalDisplayed}</strong> dossier(s)
           </span>
           {totalWithVotes > 0 && !onlyWithVotes && (
             <span>
@@ -300,7 +301,7 @@ export default function BillsPageClient() {
       )}
 
       {loading && (
-        <div className="stateLoading">Chargement des textes...</div>
+        <div className="stateLoading">Chargement des dossiers...</div>
       )}
 
       {error && !loading && (
@@ -316,8 +317,8 @@ export default function BillsPageClient() {
               <div className="stateEmpty">
                 <p>
                   {onlyWithVotes && filteredBills.length > 0
-                    ? "Aucun texte avec scrutin pour ces critères."
-                    : "Aucun texte trouvé pour ces critères."}
+                    ? "Aucun dossier avec scrutin pour ces critères."
+                    : "Aucun dossier trouvé pour ces critères."}
                 </p>
                 <button
                   type="button"
@@ -332,7 +333,7 @@ export default function BillsPageClient() {
             <>
               {billsWithVotes.length > 0 && (
                 <section className={styles.list}>
-                  <h2 className={styles.sectionTitle}>Textes avec votes récents</h2>
+                  <h2 className={styles.sectionTitle}>Dossiers avec votes récents</h2>
                   {billsWithVotes.map((bill) => (
                     <Link
                       key={bill.id}
@@ -387,7 +388,7 @@ export default function BillsPageClient() {
 
               {billsWithoutVotes.length > 0 && !onlyWithVotes && (
                 <section className={styles.list}>
-                  <h2 className={styles.sectionTitle}>Textes sans scrutin</h2>
+                  <h2 className={styles.sectionTitle}>Dossiers sans scrutin</h2>
                   {billsWithoutVotes.map((bill) => (
                     <Link
                       key={bill.id}
@@ -439,7 +440,7 @@ export default function BillsPageClient() {
                   >
                     {loadingMore
                       ? "Chargement…"
-                      : "Afficher plus de textes"}
+                      : "Afficher plus de dossiers"}
                   </button>
                 </section>
               )}

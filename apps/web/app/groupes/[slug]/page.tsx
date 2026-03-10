@@ -8,6 +8,7 @@ import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./group.module.css";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { FollowButton } from "@/components/FollowButton";
 
 const POSITION_LABELS: Record<string, string> = {
   majoritaire: "Majorité présidentielle",
@@ -80,6 +81,9 @@ export default function GroupPage() {
               const meta = group.metadata;
               return (
                 <>
+                  <div className={styles.actionsRow}>
+                    <FollowButton followType="group" followId={group.slug} />
+                  </div>
                   {meta && (
                     <section
                       className={styles.metaCard}

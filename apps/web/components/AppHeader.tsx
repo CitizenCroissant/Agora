@@ -42,7 +42,7 @@ const NAV_SECTIONS: NavSection[] = [
     label: "Explorer",
     href: "/bills",
     children: [
-      { label: "Textes", href: "/bills" },
+      { label: "Dossiers législatifs", href: "/bills" },
       { label: "Commissions", href: "/commissions" },
       { label: "Groupes politiques", href: "/groupes" },
       { label: "Mon député", href: "/mon-depute" },

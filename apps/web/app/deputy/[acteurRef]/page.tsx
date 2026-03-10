@@ -20,6 +20,7 @@ import Link from "next/link";
 import styles from "./deputy.module.css";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { ShareBar } from "@/components/ShareBar";
+import { FollowButton } from "@/components/FollowButton";
 
 const POSITION_LABELS: Record<string, string> = {
   pour: "Pour",
@@ -147,7 +148,10 @@ export default function DeputyPage() {
 
       {!loading && !error && deputy && (
         <>
-          <ShareBar title={displayName} />
+          <div className={styles.actionsRow}>
+            <ShareBar title={displayName} />
+            <FollowButton followType="deputy" followId={deputy.acteur_ref} />
+          </div>
           <header className={styles.profileHeader}>
             <div className={styles.profileTitleRow}>
               <h1 className={styles.title}>{displayName}</h1>

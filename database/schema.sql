@@ -139,29 +139,108 @@ CREATE INDEX idx_scrutins_sitting_id ON scrutins(sitting_id);
 CREATE TRIGGER update_scrutins_updated_at BEFORE UPDATE ON scrutins
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
--- Table: bills
--- Legislative texts (dossiers) linked to agenda items and scrutins
-CREATE TABLE bills (
+-- Table: dossiers_legislatifs (mirror of open data)
+-- One row per dossier from Dossiers_Legislatifs.json.zip. bills view is derived from this.
+-- See docs/DOSSIER_OPEN_DATA_JSON_STRUCTURE.md.
+CREATE TABLE dossiers_legislatifs (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    official_id TEXT UNIQUE NOT NULL,
-    title TEXT NOT NULL,
-    short_title TEXT,
-    type TEXT,
-    origin TEXT,
-    official_url TEXT,
+    uid TEXT UNIQUE NOT NULL,
+    legislature TEXT,
+    xsi_type TEXT,
+    procedure_code TEXT,
+    procedure_libelle TEXT,
+    titre TEXT NOT NULL,
+    titre_chemin TEXT,
+    senat_chemin TEXT,
+    fusion_dossier_uid TEXT,
+    plf JSONB,
+    indexation JSONB,
+    amends_dossier_id UUID REFERENCES dossiers_legislatifs(id) ON DELETE SET NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_bills_official_id ON bills(official_id);
+CREATE INDEX idx_dossiers_legislatifs_uid ON dossiers_legislatifs(uid);
+CREATE INDEX idx_dossiers_legislatifs_legislature ON dossiers_legislatifs(legislature);
+CREATE INDEX idx_dossiers_legislatifs_amends ON dossiers_legislatifs(amends_dossier_id);
 
-CREATE TRIGGER update_bills_updated_at BEFORE UPDATE ON bills
+CREATE TRIGGER update_dossiers_legislatifs_updated_at
+    BEFORE UPDATE ON dossiers_legislatifs
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+-- Table: dossiers_initiateurs (initiateur.acteurs from dossier JSON)
+CREATE TABLE dossiers_initiateurs (
+    dossier_id UUID NOT NULL REFERENCES dossiers_legislatifs(id) ON DELETE CASCADE,
+    ordre INT NOT NULL DEFAULT 0,
+    acteur_ref TEXT,
+    mandat_ref TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (dossier_id, ordre)
+);
+
+CREATE INDEX idx_dossiers_initiateurs_dossier ON dossiers_initiateurs(dossier_id);
+CREATE INDEX idx_dossiers_initiateurs_acteur ON dossiers_initiateurs(acteur_ref);
+
+-- Table: actes_legislatifs (actesLegislatifs tree from dossier JSON)
+CREATE TABLE actes_legislatifs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    dossier_id UUID NOT NULL REFERENCES dossiers_legislatifs(id) ON DELETE CASCADE,
+    parent_id UUID REFERENCES actes_legislatifs(id) ON DELETE CASCADE,
+    parent_uid TEXT,
+    ordre INT NOT NULL DEFAULT 0,
+    uid TEXT,
+    xsi_type TEXT,
+    code_acte TEXT,
+    libelle_nom_canonique TEXT,
+    libelle_court TEXT,
+    date_acte TIMESTAMPTZ,
+    organe_ref TEXT,
+    texte_associe TEXT,
+    texte_adopte TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_actes_legislatifs_dossier ON actes_legislatifs(dossier_id);
+CREATE INDEX idx_actes_legislatifs_parent ON actes_legislatifs(parent_id);
+CREATE INDEX idx_actes_legislatifs_uid ON actes_legislatifs(uid);
+CREATE INDEX idx_actes_legislatifs_date ON actes_legislatifs(date_acte);
+
+CREATE TRIGGER update_actes_legislatifs_updated_at
+    BEFORE UPDATE ON actes_legislatifs
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- View: bills (app-facing; derived from dossiers_legislatifs)
+CREATE VIEW bills AS
+SELECT
+    d.id,
+    d.uid AS official_id,
+    d.titre AS title,
+    CASE WHEN length(d.titre) > 160 THEN left(d.titre, 157) || '…' ELSE d.titre END AS short_title,
+    CASE
+        WHEN d.procedure_libelle ILIKE '%projet de loi%' OR d.procedure_libelle = 'projet_de_loi' THEN 'projet_de_loi'
+        WHEN d.procedure_libelle ILIKE '%proposition de loi%' OR d.procedure_libelle = 'proposition_de_loi' THEN 'proposition_de_loi'
+        WHEN d.procedure_libelle ILIKE '%résolution%' THEN 'resolution'
+        ELSE NULL
+    END AS type,
+    CASE
+        WHEN d.procedure_libelle ILIKE '%projet de loi%' OR d.procedure_libelle = 'projet_de_loi' THEN 'gouvernement'
+        WHEN d.procedure_libelle ILIKE '%proposition de loi%' OR d.procedure_libelle = 'proposition_de_loi' THEN 'parlementaire'
+        ELSE NULL
+    END AS origin,
+    CASE WHEN d.titre_chemin IS NOT NULL AND d.legislature IS NOT NULL
+        THEN 'https://www.assemblee-nationale.fr/dyn/' || d.legislature || '/dossiers/' || d.titre_chemin
+        ELSE NULL
+    END AS official_url,
+    d.amends_dossier_id AS amends_bill_id,
+    d.created_at,
+    d.updated_at
+FROM dossiers_legislatifs d;
+
 -- Table: bill_scrutins
--- Link table between bills and scrutins (one bill can have many scrutins)
+-- Link table between bills (dossiers) and scrutins
 CREATE TABLE bill_scrutins (
-    bill_id UUID NOT NULL REFERENCES bills(id) ON DELETE CASCADE,
+    bill_id UUID NOT NULL REFERENCES dossiers_legislatifs(id) ON DELETE CASCADE,
     scrutin_id UUID NOT NULL REFERENCES scrutins(id) ON DELETE CASCADE,
     role TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -169,6 +248,58 @@ CREATE TABLE bill_scrutins (
 );
 
 CREATE INDEX idx_bill_scrutins_scrutin_id ON bill_scrutins(scrutin_id);
+
+-- Table: bill_texts (textes – document versions of a bill)
+-- One row per "texte" (e.g. texte initial, texte de la commission). Amendments link to a texte, not to the bill.
+-- See docs/DOSSIER_VS_TEXTE.md.
+CREATE TABLE bill_texts (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    bill_id UUID NOT NULL REFERENCES dossiers_legislatifs(id) ON DELETE CASCADE,
+    texte_ref TEXT NOT NULL,
+    numero TEXT,
+    label TEXT,
+    official_url TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(bill_id, texte_ref)
+);
+
+CREATE INDEX idx_bill_texts_bill_id ON bill_texts(bill_id);
+
+CREATE TRIGGER update_bill_texts_updated_at BEFORE UPDATE ON bill_texts
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Table: amendments (lightweight list per texte; for scrutin→amendment linking)
+-- One row per (bill_text_id, numero). Amendments belong to a texte (bill_text), not directly to the bill.
+CREATE TABLE amendments (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    bill_text_id UUID NOT NULL REFERENCES bill_texts(id) ON DELETE CASCADE,
+    official_id TEXT NOT NULL,
+    numero TEXT NOT NULL,
+    official_url TEXT,
+    numero_sort INTEGER,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(bill_text_id, numero)
+);
+
+CREATE INDEX idx_amendments_bill_text_id ON amendments(bill_text_id);
+CREATE INDEX idx_amendments_bill_text_numero ON amendments(bill_text_id, numero);
+CREATE INDEX idx_amendments_bill_text_numero_sort ON amendments(bill_text_id, numero_sort NULLS LAST, numero);
+
+CREATE TRIGGER update_amendments_updated_at BEFORE UPDATE ON amendments
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Table: scrutin_amendments (links scrutins to amendments when vote mentions amendment number)
+CREATE TABLE scrutin_amendments (
+    scrutin_id UUID NOT NULL REFERENCES scrutins(id) ON DELETE CASCADE,
+    amendment_id UUID NOT NULL REFERENCES amendments(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (scrutin_id, amendment_id)
+);
+
+CREATE INDEX idx_scrutin_amendments_scrutin_id ON scrutin_amendments(scrutin_id);
+CREATE INDEX idx_scrutin_amendments_amendment_id ON scrutin_amendments(amendment_id);
 
 -- Table: scrutin_votes
 -- Per-deputy vote position for each scrutin (for deputy voting record)
@@ -285,4 +416,48 @@ CREATE INDEX idx_deputy_organes_acteur_ref ON deputy_organes(acteur_ref);
 CREATE INDEX idx_deputy_organes_organe_ref ON deputy_organes(organe_ref);
 
 CREATE TRIGGER update_deputy_organes_updated_at BEFORE UPDATE ON deputy_organes
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Table: digest_subscriptions
+-- Email subscriptions for "My deputy this week" weekly digest (Mon député flow).
+CREATE TABLE digest_subscriptions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email TEXT NOT NULL,
+    departement TEXT NULL,
+    acteur_ref TEXT NULL,
+    unsubscribe_token TEXT UNIQUE NOT NULL DEFAULT encode(gen_random_bytes(24), 'hex'),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    CONSTRAINT digest_sub_one_target CHECK (
+        (departement IS NOT NULL AND acteur_ref IS NULL) OR
+        (departement IS NULL AND acteur_ref IS NOT NULL)
+    )
+);
+
+CREATE INDEX idx_digest_subscriptions_email ON digest_subscriptions(email);
+CREATE INDEX idx_digest_subscriptions_unsubscribe_token ON digest_subscriptions(unsubscribe_token);
+CREATE INDEX idx_digest_subscriptions_departement ON digest_subscriptions(departement) WHERE departement IS NOT NULL;
+CREATE INDEX idx_digest_subscriptions_acteur_ref ON digest_subscriptions(acteur_ref) WHERE acteur_ref IS NOT NULL;
+
+CREATE TRIGGER update_digest_subscriptions_updated_at
+    BEFORE UPDATE ON digest_subscriptions
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Table: follows
+-- "I'm following this": user (by device_id) subscribes to a deputy, bill, or group.
+CREATE TABLE follows (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    device_id TEXT NOT NULL,
+    follow_type TEXT NOT NULL CHECK (follow_type IN ('deputy', 'bill', 'group')),
+    follow_id TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(device_id, follow_type, follow_id)
+);
+
+CREATE INDEX idx_follows_device_id ON follows(device_id);
+CREATE INDEX idx_follows_type_id ON follows(follow_type, follow_id);
+
+CREATE TRIGGER update_follows_updated_at
+    BEFORE UPDATE ON follows
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

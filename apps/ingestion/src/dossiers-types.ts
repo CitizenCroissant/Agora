@@ -1,15 +1,51 @@
 /**
- * Minimal types for Assemblée nationale Dossiers_Legislatifs JSON.
- * We only model the fields we actually use for ingestion.
+ * Types for Assemblée nationale Dossiers_Legislatifs JSON.
+ * Mirrors the original export structure so we can store it relationally without loss.
  */
 
 export interface AssembleeDossierWrapper {
   dossierParlementaire: AssembleeDossierParlementaire;
 }
 
+/** One acte in the actesLegislatifs tree (recursive). */
+export interface AssembleeActeLegislatif {
+  "@xsi:type"?: string;
+  uid?: string;
+  codeActe?: string;
+  libelleActe?: {
+    nomCanonique?: string;
+    libelleCourt?: string;
+  };
+  dateActe?: string | null;
+  organeRef?: string | null;
+  actesLegislatifs?: AssembleeActesLegislatifs | null;
+  texteAssocie?: string | null;
+  texteAdopte?: string | null;
+}
+
+/** Wrapper: acteLegislatif can be one object or array. */
+export interface AssembleeActesLegislatifs {
+  acteLegislatif?: AssembleeActeLegislatif | AssembleeActeLegislatif[] | null;
+}
+
+/** One initiator actor (acteurRef + mandatRef). */
+export interface AssembleeInitiateurActeur {
+  acteurRef?: string;
+  mandatRef?: string;
+}
+
+export interface AssembleeInitiateur {
+  acteurs?: {
+    acteur?: AssembleeInitiateurActeur | AssembleeInitiateurActeur[];
+  };
+}
+
 export interface AssembleeDossierParlementaire {
   uid: string;
   legislature?: string;
+  "@xmlns"?: string;
+  "@xmlns:xsi"?: string;
+  "@xsi:type"?: string;
   titreDossier?: {
     titre?: string;
     titreChemin?: string | null;
@@ -19,6 +55,11 @@ export interface AssembleeDossierParlementaire {
     code?: string;
     libelle?: string;
   };
+  actesLegislatifs?: AssembleeActesLegislatifs | null;
+  initiateur?: AssembleeInitiateur | null;
+  fusionDossier?: unknown | null;
+  PLF?: unknown;
+  indexation?: unknown;
 }
 
 /**
@@ -45,4 +86,3 @@ export interface DossiersXIVDocument {
     type?: { code?: string; libelle?: string };
   };
 }
-

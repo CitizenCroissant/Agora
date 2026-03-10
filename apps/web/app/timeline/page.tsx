@@ -20,6 +20,7 @@ import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./timeline.module.css";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { SittingReminderButton } from "@/components/SittingReminderButton";
 
 type ViewMode = "week" | "month";
 
@@ -260,6 +261,9 @@ export default function TimelinePage() {
                                         {sitting.time_range}
                                       </span>
                                     )}
+                                    <span onClick={(e) => e.stopPropagation()} className={styles.reminderWrap}>
+                                      <SittingReminderButton sitting={sitting} compact />
+                                    </span>
                                   </div>
                                 </div>
                                 {(sitting.organe || sitting.organe_ref || sitting.type === "seance_type") && (

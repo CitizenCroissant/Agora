@@ -11,7 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#0055a4"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.agora.app",

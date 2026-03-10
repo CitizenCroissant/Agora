@@ -77,6 +77,11 @@
   color: var(--color-primary);
 }
 
+.reminderWrap {
+  flex-shrink: 0;
+  align-self: center;
+}
+
 .location {
   display: flex;
   align-items: center;

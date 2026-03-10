@@ -14,6 +14,14 @@
   color: var(--color-text-light);
 }
 
+.actionsRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
 /* Header: name, group, official link */
 .profileHeader {
   margin-bottom: var(--spacing-lg);

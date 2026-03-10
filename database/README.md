@@ -93,3 +93,14 @@ To add the **push_tokens** table (for mobile push notifications):
 
 1. In the Supabase SQL Editor, run the contents of `migrations/push_tokens.sql`.
 2. Ensure the API has `CRON_SECRET` (or `PUSH_NOTIFY_SECRET`) set in Vercel for the `/api/cron/notify-scrutins` endpoint.
+
+To add the **digest_subscriptions** table (for the weekly "My deputy this week" email digest):
+
+1. In the Supabase SQL Editor, run the contents of `migrations/add_digest_subscriptions.sql`.
+2. Set in Vercel (API): `RESEND_API_KEY` (required for sending), and optionally `RESEND_FROM` (e.g. `Agora <digest@yourdomain.com>`) and `DIGEST_BASE_URL` (for unsubscribe links, defaults to `https://${VERCEL_URL}`).
+3. The cron `/api/cron/digest-deputy-week` runs every Monday at 08:00 UTC (Vercel cron); it uses the same `CRON_SECRET` (or `PUSH_NOTIFY_SECRET`) as notify-scrutins.
+
+To add the **follows** table (for "I'm following this" — deputy, bill, or group):
+
+1. In the Supabase SQL Editor, run the contents of `migrations/add_follows.sql`.
+2. The API endpoints `GET /api/follows`, `POST /api/follows`, and `DELETE /api/follows/:follow_type/:follow_id` use this table; clients identify via `X-Device-Id` header (e.g. a UUID stored in localStorage).

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import styles from './about.module.css'
 import { Breadcrumb } from "@/components/Breadcrumb"
+import { getBaseUrl } from "@/lib/url"
 
 export const metadata: Metadata = {
   title: 'À propos | Agora - Agenda de l\'Assemblée nationale',
@@ -12,7 +13,8 @@ export const metadata: Metadata = {
     description:
       'Agora rend l\'activité de l\'Assemblée nationale accessible et transparente.',
     type: 'website'
-  }
+  },
+  alternates: { canonical: `${getBaseUrl()}/about` }
 }
 
 export default function AboutPage() {
