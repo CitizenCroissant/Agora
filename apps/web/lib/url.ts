@@ -1,8 +1,10 @@
 /**
  * Base URL for the web app (server-side only). Used for sitemap, metadata, and share links.
- * Set NEXT_PUBLIC_APP_URL in production (e.g. https://agora.example.com).
+ * Set NEXT_PUBLIC_APP_URL in production (e.g. https://agora-citoyens.fr).
  * For client-side canonical URL use window.location.origin or pass url into ShareBar.
  */
+export const PRODUCTION_APP_URL = "https://agora-citoyens.fr";
+
 export function getBaseUrl(): string {
   if (process.env.NEXT_PUBLIC_APP_URL) {
     return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
@@ -10,5 +12,5 @@ export function getBaseUrl(): string {
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
   }
-  return "https://agora.example.com";
+  return PRODUCTION_APP_URL;
 }

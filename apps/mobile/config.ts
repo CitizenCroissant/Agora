@@ -3,7 +3,7 @@ import Constants from "expo-constants";
 import { Platform } from "react-native";
 
 // Production API URL - used for store builds
-const PRODUCTION_API_URL = "https://api-beryl-zeta-77.vercel.app/api";
+const PRODUCTION_API_URL = "https://api.agora-citoyens.fr/api";
 
 // Get API URL with the following priority:
 // 1. EXPO_PUBLIC_API_URL env var (set by EAS build profiles for preview/production)

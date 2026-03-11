@@ -127,6 +127,13 @@ export default function MonDeputePage() {
   return (
     <div className="container">
       <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Trouver mon député" }]} />
+          <p className={styles.subtitle}>
+            Vous ne connaissez que votre code postal ?{" "}
+            <Link href="/ma-circo" className={styles.link}>
+              Essayez la page « Ma circonscription »
+            </Link>{" "}
+            pour retrouver rapidement votre département.
+          </p>
           {loadingDepts && (
             <div className="stateLoading">Chargement des départements...</div>
           )}

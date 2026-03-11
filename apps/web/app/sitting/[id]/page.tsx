@@ -246,6 +246,22 @@ export default function SittingPage() {
                           </span>
                         </div>
                         <h3 className={styles.itemTitle}>{item.title}</h3>
+                        {item.campaign_topics &&
+                          item.campaign_topics.length > 0 && (
+                            <div className={styles.itemCampaignTopics}>
+                              <span className={styles.itemCampaignLabel}>
+                                Sujet de campagne :
+                              </span>
+                              {item.campaign_topics.map((topic) => (
+                                <span
+                                  key={topic.slug}
+                                  className={styles.itemCampaignBadge}
+                                >
+                                  {topic.label}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         {item.description !== item.title && (
                           <p className={styles.itemDescription}>
                             {item.description}

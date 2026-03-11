@@ -5,6 +5,12 @@ import styles from "./embed-doc.module.css";
 
 const DEFAULT_ACTEUR_REF = "PA842279";
 
+/** Base URL for embed snippet (canonical production domain). */
+function getEmbedBaseUrl(): string {
+  if (typeof window !== "undefined") return window.location.origin;
+  return process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ?? "https://agora-citoyens.fr";
+}
+
 export function EmbedDocClient() {
   const [acteurRef, setActeurRef] = useState(DEFAULT_ACTEUR_REF);
   const [limit, setLimit] = useState(5);
@@ -14,7 +20,7 @@ export function EmbedDocClient() {
   const query = limit !== 5 ? `?limit=${limit}` : "";
   const iframeSrc = `/embed/deputy/${encoded}/votes${query}`;
 
-  const baseUrl = "https://agora.gouv.fm";
+  const baseUrl = getEmbedBaseUrl();
   const snippet = `<iframe
   title="Derniers votes - Député"
   src="${baseUrl}${iframeSrc}"

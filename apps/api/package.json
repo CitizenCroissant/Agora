@@ -9,14 +9,16 @@
     "lint": "eslint . && node ../../node_modules/typescript/bin/tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "post-daily-digest": "ts-node scripts/post-daily-digest.ts"
   },
   "dependencies": {
     "@agora/shared": "*",
     "@supabase/supabase-js": "^2.48.1",
     "dotenv": "^16.6.1",
     "expo-server-sdk": "^4.0.0",
-    "resend": "^6.9.3"
+    "resend": "^6.9.3",
+    "twitter-api-v2": "^1.29.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",

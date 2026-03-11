@@ -25,6 +25,7 @@ import {
   DeputiesListResponse,
   SearchResponse,
   SearchType,
+  CirconscriptionElectionCandidatesResponse,
   ApiError,
   BillsListResponse,
   BillDetailResponse,
@@ -414,6 +415,36 @@ export class ApiClient {
     }
 
     return data as CirconscriptionDetail;
+  }
+
+  /**
+   * Fetch election candidates for a circonscription and year.
+   * This endpoint is planned for future legislative elections
+   * and may return 404 or an API error until the data is available.
+   */
+  async getCirconscriptionElectionCandidates(
+    year: number,
+    circonscriptionId: string
+  ): Promise<CirconscriptionElectionCandidatesResponse> {
+    const encodedId = encodeURIComponent(circonscriptionId);
+    const encodedYear = encodeURIComponent(String(year));
+    const response = await fetch(
+      `${this.baseUrl}/elections/${encodedYear}/circonscriptions/${encodedId}`
+    );
+
+    const data = await parseJsonOrThrow<
+      CirconscriptionElectionCandidatesResponse | ApiError
+    >(response);
+
+    if (!response.ok) {
+      const error = data as ApiError;
+      throw new Error(
+        error.message ||
+          "Les données de candidats pour cette circonscription ne sont pas encore disponibles."
+      );
+    }
+
+    return data as CirconscriptionElectionCandidatesResponse;
   }
 
   /**

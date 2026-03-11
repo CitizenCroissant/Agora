@@ -59,6 +59,14 @@ export interface AgendaItem {
   category: string;
   reference_code?: string;
   official_url?: string;
+  /** Campaign themes matched from title/description (e.g. for election hub). */
+  campaign_topics?: CampaignTopic[];
+}
+
+/** Campaign theme for election-related tagging of agenda items */
+export interface CampaignTopic {
+  slug: string;
+  label: string;
 }
 
 export interface SourceMetadata {
@@ -451,6 +459,42 @@ export interface CirconscriptionDetail {
 
 export interface CirconscriptionsListResponse {
   circonscriptions: CirconscriptionSummary[];
+}
+
+/**
+ * Elections - candidates by circonscription (for legislative elections).
+ * Designed so we can plug in the official data.gouv.fr dataset when available.
+ */
+export interface ElectionCandidate {
+  id: string;
+  /** Election year, e.g. 2026. */
+  year: number;
+  /** Canonical circonscription ID (e.g. "7505", "0101"). */
+  circonscription_id: string;
+  nom: string;
+  prenom: string;
+  sexe?: string | null;
+  /** Short party/nuance code when available (e.g. "REN", "RN"). */
+  nuance?: string | null;
+  /** Human-readable label for the nuance when available. */
+  nuance_label?: string | null;
+  /** Whether this candidate is the incumbent deputy for this circonscription. */
+  is_incumbent?: boolean | null;
+  /** Optional reference to the current deputy in deputies table when matched. */
+  current_deputy_ref?: string | null;
+  /** Optional embedded deputy details when joined (for richer UI without extra request). */
+  current_deputy?: Deputy | null;
+  /** Optional rough count of past mandates when derivable from data. */
+  past_mandates_count?: number | null;
+}
+
+export interface CirconscriptionElectionCandidatesResponse {
+  year: number;
+  circonscription: {
+    id: string;
+    label: string;
+  };
+  candidates: ElectionCandidate[];
 }
 
 /** Department (département) summary for "Mon député" selector */

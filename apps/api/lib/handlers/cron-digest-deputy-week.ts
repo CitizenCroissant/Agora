@@ -33,7 +33,7 @@ function getBaseUrl(): string {
   if (url) {
     return url.startsWith("http") ? url : `https://${url}`;
   }
-  return "https://agora.vercel.app";
+  return "https://agora-citoyens.fr";
 }
 
 type ScrutinRow = {

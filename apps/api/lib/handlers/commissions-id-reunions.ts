@@ -7,6 +7,7 @@ import { VercelRequest, VercelResponse } from "@vercel/node";
 import { supabase } from "../supabase";
 import { ApiError, handleError, validateDateFormat } from "../errors";
 import type { SittingWithItems } from "@agora/shared";
+import { getCampaignTopicsForAgendaItem } from "@agora/shared";
 import type { DbSitting, DbAgendaItem } from "../types";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -105,7 +106,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             description: item.description,
             category: item.category,
             reference_code: item.reference_code ?? undefined,
-            official_url: item.official_url ?? undefined
+            official_url: item.official_url ?? undefined,
+            campaign_topics: getCampaignTopicsForAgendaItem(
+              item.title,
+              item.description
+            )
           }))
         };
       }

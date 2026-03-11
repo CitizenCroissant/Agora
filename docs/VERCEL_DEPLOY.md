@@ -2,6 +2,8 @@
 
 This monorepo has three Vercel projects: **web** (Next.js), **api** (serverless), and **ingestion** (serverless + crons). Deploy from the **repository root**. Web and Ingestion use Root Directory `.`; the **API project must use Root Directory `apps/api`** so Vercel applies `apps/api/vercel.json` (rewrites and functions)—otherwise /api/* returns 404.
 
+**Production domain:** **https://agora-citoyens.fr** (web). Add it in Vercel and set the env vars below.
+
 ## One-time dashboard setup
 
 For each project, in [Vercel Dashboard](https://vercel.com) → Project → Settings → General:
@@ -12,11 +14,15 @@ For each project, in [Vercel Dashboard](https://vercel.com) → Project → Sett
 - **Build Command:** `npm run build -- --filter=@agora/web`
 - **Install Command:** `npm ci`
 - **Output Directory:** `apps/web/.next`
-- **Headers / CSP:** Do not set a Content-Security-Policy header in the project that restricts `script-src-elem` to `'none'`. The app sets a suitable CSP in `next.config.js`. If you see “Failsafe &lt;meta&gt; CSP inserted” and `script-src-elem 'none'` in the console, that comes from a **browser extension** (e.g. Document CSP / DocumentCSP.js), not from the server: disable the extension for this site or whitelist `web-inky-pi.vercel.app` in the extension.
+- **Domains:** Add **agora-citoyens.fr** and **www.agora-citoyens.fr** in Settings → Domains (assign to this project; redirect www → apex or vice versa as preferred).
+- **Environment variables** (Settings → Environment Variables), for **Production** (and optionally Preview): see [Vercel environment variables](#vercel-environment-variables) below.
+- **Headers / CSP:** Do not set a Content-Security-Policy header in the project that restricts `script-src-elem` to `'none'`. The app sets a suitable CSP in `next.config.js`. If you see “Failsafe &lt;meta&gt; CSP inserted” and `script-src-elem 'none'` in the console, that comes from a **browser extension** (e.g. Document CSP / DocumentCSP.js), not from the server: disable the extension for this site or whitelist **agora-citoyens.fr** in the extension.
 
 ### API project
 
 - **Root Directory:** `apps/api` (required so Vercel uses `apps/api/vercel.json` for rewrites and the catch-all function; with root `.` the API returns 404).
+- **Domains:** Add **api.agora-citoyens.fr** in Settings → Domains.
+- **Environment variables:** see [Vercel environment variables](#vercel-environment-variables) below (optional **DIGEST_BASE_URL** for digest emails).
 - **Install Command:** `cd ../.. && npm ci` (run from repo root so the full monorepo is installed).
 - **Build Command:** `cd ../.. && npm run build -- --filter=@agora/api`
 - **Output Directory:** leave default (serverless functions from `apps/api/vercel.json`).
@@ -59,10 +65,35 @@ Or use the script (builds once, then deploys all three):
 
 ## Production URLs and env
 
-- **Web (production):** https://web-inky-pi.vercel.app
-- **API (production base):** https://api-citizencroissants-projects.vercel.app/api
+- **Web (production):** https://agora-citoyens.fr, https://www.agora-citoyens.fr
+- **API (production):** https://api.agora-citoyens.fr
 
-The web project must have **NEXT_PUBLIC_API_URL** set to the API base (e.g. `https://api-citizencroissants-projects.vercel.app/api`) for Development, Preview, and Production so the app can fetch agenda and other data.
+### Vercel environment variables
+
+Set these in the Vercel Dashboard (Project → Settings → Environment Variables) for the relevant environments (Production, and optionally Preview / Development).
+
+Alternatively, from the repo root (after `vercel login` and with the repo linked to the API project for the API step):
+
+```bash
+./scripts/set-vercel-env.sh
+```
+
+This sets **Web**: `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_API_URL` (production + preview). **API**: `DIGEST_BASE_URL` (production). To target a specific API project instead of the linked one, set `VERCEL_API_PROJECT_ID` before running.
+
+**Web project**
+
+| Name | Value | Environments |
+|------|--------|--------------|
+| `NEXT_PUBLIC_APP_URL` | `https://agora-citoyens.fr` | Production, Preview |
+| `NEXT_PUBLIC_API_URL` | `https://api.agora-citoyens.fr/api` | Production, Preview, Development |
+
+**API project**
+
+| Name | Value | Environments |
+|------|--------|--------------|
+| `DIGEST_BASE_URL` | `https://agora-citoyens.fr` | Production (optional; for digest email links) |
+
+Other API env vars (e.g. `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `CRON_SECRET`) are unchanged.
 
 ## Ingestion scripts (CLI, run locally or in CI)
 

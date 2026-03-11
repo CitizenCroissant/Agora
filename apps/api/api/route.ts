@@ -143,6 +143,14 @@ export default async function handler(
     routeHandler = m.default;
     matched = true;
   }
+  if (
+    path === "cron/daily-digest-x" &&
+    (method === "GET" || method === "POST")
+  ) {
+    const m = await import("../lib/handlers/cron-daily-digest-x");
+    routeHandler = m.default;
+    matched = true;
+  }
   if (path === "digest/subscribe" && method === "POST") {
     const m = await import("../lib/handlers/digest-subscribe");
     routeHandler = m.default;

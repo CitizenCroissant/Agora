@@ -6,5 +6,6 @@
 export * from "./types";
 export * from "./api-client";
 export * from "./utils";
+export * from "./campaign-topics";
 export * from "./circonscriptions";
 export * from "./glossary";

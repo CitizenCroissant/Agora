@@ -21,7 +21,7 @@
         "simulator": false
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api-beryl-zeta-77.vercel.app/api"
+        "EXPO_PUBLIC_API_URL": "https://api.agora-citoyens.fr/api"
       }
     },
     "production": {
@@ -33,7 +33,7 @@
         "image": "latest"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api-beryl-zeta-77.vercel.app/api"
+        "EXPO_PUBLIC_API_URL": "https://api.agora-citoyens.fr/api"
       }
     }
   },

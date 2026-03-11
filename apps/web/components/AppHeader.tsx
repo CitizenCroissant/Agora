@@ -46,6 +46,7 @@ const NAV_SECTIONS: NavSection[] = [
       { label: "Commissions", href: "/commissions" },
       { label: "Groupes politiques", href: "/groupes" },
       { label: "Mon député", href: "/mon-depute" },
+      { label: "Ma circonscription (code postal)", href: "/ma-circo" },
       { label: "Circonscriptions", href: "/circonscriptions" },
       { label: "Recherche", href: "/search" }
     ]

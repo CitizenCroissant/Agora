@@ -6,7 +6,7 @@ import { VercelRequest, VercelResponse } from "@vercel/node";
 import { supabase, getLastIngestionDate } from "../supabase";
 import { ApiError, handleError, validateDateFormat } from "../errors";
 import { DbSitting, DbAgendaItem, DbSourceMetadata } from "../types";
-import { SittingWithItems, Organe } from "@agora/shared";
+import { SittingWithItems, Organe, getCampaignTopicsForAgendaItem } from "@agora/shared";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -155,7 +155,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             description: item.description,
             category: item.category,
             reference_code: item.reference_code || undefined,
-            official_url: item.official_url || undefined
+            official_url: item.official_url || undefined,
+            campaign_topics: getCampaignTopicsForAgendaItem(
+              item.title,
+              item.description
+            )
           }))
         };
       }

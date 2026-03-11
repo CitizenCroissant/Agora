@@ -152,12 +152,20 @@ export default function HomePageClient() {
         ]}
       />
 
-      <Link
-        href={`/votes?date=${getTodayDate()}`}
-        className={styles.voteCta}
-      >
-        Comprendre les votes d&apos;aujourd&apos;hui →
-      </Link>
+      <div className={styles.ctaRow}>
+        <Link href="/elections-2026" className={styles.voteCta}>
+          Spécial élections 2026 : voir les prochaines séances clés →
+        </Link>
+        <Link
+          href={`/votes?date=${getTodayDate()}`}
+          className={styles.voteCta}
+        >
+          Comprendre les votes d&apos;aujourd&apos;hui →
+        </Link>
+        <Link href="/mon-depute" className={styles.digestCta}>
+          Recevoir le récap hebdo des votes de mon député →
+        </Link>
+      </div>
 
       <StreakBadge />
 
@@ -411,7 +419,23 @@ export default function HomePageClient() {
                                   {item.scheduled_time.substring(0, 5)}
                                 </span>
                               )}
-                              {item.title}
+                              <span>{item.title}</span>
+                              {item.campaign_topics &&
+                                item.campaign_topics.length > 0 && (
+                                  <div className={styles.campaignTopics}>
+                                    <span className={styles.campaignLabel}>
+                                      Sujet de campagne :
+                                    </span>
+                                    {item.campaign_topics.map((topic) => (
+                                      <span
+                                        key={topic.slug}
+                                        className={styles.campaignBadge}
+                                      >
+                                        {topic.label}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
                             </li>
                           ))}
                           {sitting.agenda_items.length > 3 && (

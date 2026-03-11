@@ -11,7 +11,8 @@ import {
   AgendaRangeResponse,
   AgendaResponse,
   SittingWithItems,
-  Organe
+  Organe,
+  getCampaignTopicsForAgendaItem
 } from "@agora/shared";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -220,7 +221,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 description: item.description,
                 category: item.category,
                 reference_code: item.reference_code || undefined,
-                official_url: item.official_url || undefined
+                official_url: item.official_url || undefined,
+                campaign_topics: getCampaignTopicsForAgendaItem(
+                  item.title,
+                  item.description
+                )
               }))
             };
           }
