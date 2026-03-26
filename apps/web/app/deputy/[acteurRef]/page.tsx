@@ -7,7 +7,8 @@ import {
   DeputyVotesResponse,
   DeputyVoteRecord,
   DeputyAttendanceResponse,
-  DeputyAttendanceEntry
+  DeputyAttendanceEntry,
+  DeputyAttendanceHeatmapCell
 } from "@agora/shared";
 import {
   formatDate,
@@ -21,6 +22,7 @@ import styles from "./deputy.module.css";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { ShareBar } from "@/components/ShareBar";
 import { FollowButton } from "@/components/FollowButton";
+import { AttendanceHeatmap } from "./AttendanceHeatmap";
 
 const POSITION_LABELS: Record<string, string> = {
   pour: "Pour",
@@ -71,6 +73,9 @@ export default function DeputyPage() {
   const [attendance, setAttendance] = useState<DeputyAttendanceResponse | null>(
     null
   );
+  const [heatmap, setHeatmap] = useState<DeputyAttendanceHeatmapCell[] | null>(
+    null
+  );
   const [showAllAttendance, setShowAllAttendance] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -86,6 +91,7 @@ export default function DeputyPage() {
       loadDeputy(acteurRef);
       loadVotes(acteurRef);
       loadAttendance(acteurRef);
+      loadHeatmap(acteurRef);
     }
   }, [acteurRef]);
 
@@ -118,6 +124,16 @@ export default function DeputyPage() {
       setAttendance(data);
     } catch {
       setAttendance(null);
+    }
+  };
+
+  const loadHeatmap = async (ref: string) => {
+    try {
+      // Let the API decide the default window (last 365 days)
+      const data = await apiClient.getDeputyAttendanceHeatmap(ref);
+      setHeatmap(data);
+    } catch {
+      setHeatmap(null);
     }
   };
 
@@ -324,6 +340,16 @@ export default function DeputyPage() {
                 </span>
               </div>
             </div>
+            <h3 className={styles.sectionSubtitle}>
+              Présence globale (derniers 12 mois)
+            </h3>
+            {heatmap && heatmap.length > 0 ? (
+              <AttendanceHeatmap cells={heatmap} />
+            ) : (
+              <p className={styles.attendanceState}>
+                Aucune donnée de présence disponible pour les 12 derniers mois.
+              </p>
+            )}
 
             <h3 id="section-reunions" className={styles.sectionSubtitle}>
               Présence aux réunions de commission

@@ -11,6 +11,7 @@ import {
   ScrutinDetailResponse,
   DeputyVotesResponse,
   DeputyAttendanceResponse,
+  DeputyAttendanceHeatmapCell,
   Deputy,
   Organe,
   CommissionMember,
@@ -329,6 +330,34 @@ export class ApiClient {
     }
 
     return (await response.json()) as DeputyAttendanceResponse;
+  }
+
+  /**
+   * Fetch daily attendance + voting activity heatmap for a deputy.
+   * Optional from/to (YYYY-MM-DD) default to the current year when omitted.
+   */
+  async getDeputyAttendanceHeatmap(
+    acteurRef: string,
+    options?: { from?: string; to?: string }
+  ): Promise<DeputyAttendanceHeatmapCell[]> {
+    const encoded = encodeURIComponent(acteurRef);
+    const params = new URLSearchParams();
+    if (options?.from) params.set("from", options.from);
+    if (options?.to) params.set("to", options.to);
+    const qs = params.toString();
+    const url = qs
+      ? `${this.baseUrl}/deputies/${encoded}/attendance-heatmap?${qs}`
+      : `${this.baseUrl}/deputies/${encoded}/attendance-heatmap`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      const error = (await response.json()) as ApiError;
+      throw new Error(
+        error.message || "Failed to fetch deputy attendance heatmap"
+      );
+    }
+
+    return (await response.json()) as DeputyAttendanceHeatmapCell[];
   }
 
   /**

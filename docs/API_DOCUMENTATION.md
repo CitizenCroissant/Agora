@@ -366,6 +366,76 @@ When `enrich=comparison` is used, each vote object may include a `comparison` ob
 
 ---
 
+### Get Deputy Attendance Heatmap
+
+Retrieve daily attendance and voting participation for one deputy, normalized for a GitHub-style heatmap.
+
+**Endpoint**: `GET /deputies/:acteurRef/attendance-heatmap`
+
+**Path Parameters**:
+
+- `acteurRef` (required): Deputy acteur reference (e.g. `PA842279`)
+
+**Query Parameters**:
+
+- `from` (optional): Start date in `YYYY-MM-DD` format
+- `to` (optional): End date in `YYYY-MM-DD` format
+
+If no date range is provided, the API defaults to the last 365 days.
+
+**Example Request**:
+
+```
+GET /api/deputies/PA842279/attendance-heatmap?from=2026-01-01&to=2026-12-31
+```
+
+**Success Response** (200):
+
+```json
+[
+  {
+    "date": "2026-03-04",
+    "score": 100,
+    "status": "FULL",
+    "totalSittings": 2,
+    "attendedSittings": 2,
+    "totalVotes": 5,
+    "participatedVotes": 5,
+    "hasExcusedAbsence": false,
+    "parliamentOpen": true
+  },
+  {
+    "date": "2026-03-05",
+    "score": 0,
+    "status": "EXCUSED",
+    "totalSittings": 1,
+    "attendedSittings": 0,
+    "totalVotes": 0,
+    "participatedVotes": 0,
+    "hasExcusedAbsence": true,
+    "parliamentOpen": true
+  }
+]
+```
+
+**Status values**:
+
+- `FULL`: High participation day (score >= 95)
+- `PARTIAL`: Partial participation
+- `ABSENT`: No sitting attendance and no vote participation while parliament had activity
+- `EXCUSED`: Day marked as excused absence
+- `NO_ACTIVITY`: No sitting and no vote activity that day
+
+**Scoring method** (transparency):
+
+- `sittingScore = attendedSittings / totalSittings` (or `1` when no sittings)
+- `voteScore = participatedVotes / totalVotes` (or `1` when no votes)
+- `score = 100 * (0.5 * sittingScore + 0.5 * voteScore)`, clamped to `0..100`
+
+This score is a simple participation indicator for civic transparency. It is not a legal or institutional sanction metric.
+
+---
+
 ### Embed: Last N votes for a deputy
 
 Lightweight endpoint for embeddable widgets (e.g. "Last 5 votes for deputy X"). Same response shape as Deputy Voting Record but without comparison data and with a configurable limit. CORS allows embedding on any origin.

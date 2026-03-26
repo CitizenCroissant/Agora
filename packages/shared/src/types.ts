@@ -378,6 +378,41 @@ export interface DeputyAttendanceResponse {
   attendance: DeputyAttendanceEntry[];
 }
 
+/**
+ * Daily aggregated attendance + voting activity for one deputy.
+ * Backed by the deputy_daily_attendance view in the database.
+ */
+export interface DeputyDailyAttendance {
+  acteur_ref: string;
+  date: string; // YYYY-MM-DD
+  total_sittings: number;
+  attended_sittings: number;
+  total_votes: number;
+  participated_votes: number;
+  has_excused_absence: boolean;
+  parliament_open: boolean;
+}
+
+export type DeputyHeatmapCellStatus =
+  | "FULL"
+  | "PARTIAL"
+  | "ABSENT"
+  | "EXCUSED"
+  | "NO_ACTIVITY";
+
+/** Normalized cell for GitHub-style attendance heatmap. */
+export interface DeputyAttendanceHeatmapCell {
+  date: string; // YYYY-MM-DD
+  score: number; // 0–100
+  status: DeputyHeatmapCellStatus;
+  totalSittings: number;
+  attendedSittings: number;
+  totalVotes: number;
+  participatedVotes: number;
+  hasExcusedAbsence: boolean;
+  parliamentOpen: boolean;
+}
+
 export interface Deputy {
   acteur_ref: string;
   civil_nom: string;

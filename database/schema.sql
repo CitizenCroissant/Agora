@@ -461,3 +461,66 @@ CREATE INDEX idx_follows_type_id ON follows(follow_type, follow_id);
 CREATE TRIGGER update_follows_updated_at
     BEFORE UPDATE ON follows
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Table: sitting_attendance
+-- Per-deputy presence for each sitting (commission reunions and, in future, séance publique if data becomes available)
+CREATE TABLE sitting_attendance (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    sitting_id UUID NOT NULL REFERENCES sittings(id) ON DELETE CASCADE,
+    acteur_ref TEXT NOT NULL REFERENCES deputies(acteur_ref) ON DELETE CASCADE,
+    presence TEXT NOT NULL CHECK (presence IN ('présent', 'absent', 'excusé')),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(sitting_id, acteur_ref)
+);
+
+CREATE INDEX idx_sitting_attendance_sitting_id ON sitting_attendance(sitting_id);
+CREATE INDEX idx_sitting_attendance_acteur_ref ON sitting_attendance(acteur_ref);
+
+CREATE TRIGGER update_sitting_attendance_updated_at
+    BEFORE UPDATE ON sitting_attendance
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- View: deputy_daily_attendance
+-- Aggregated daily attendance and voting participation per deputy, for heatmaps and metrics.
+CREATE VIEW deputy_daily_attendance AS
+WITH sitting_days AS (
+    SELECT
+        sa.acteur_ref,
+        s.date AS day,
+        COUNT(*) FILTER (WHERE sa.presence IS NOT NULL) AS total_sittings,
+        COUNT(*) FILTER (WHERE sa.presence = 'présent') AS attended_sittings,
+        BOOL_OR(sa.presence = 'excusé') AS has_excused_absence
+    FROM sitting_attendance sa
+    JOIN sittings s ON s.id = sa.sitting_id
+    GROUP BY sa.acteur_ref, s.date
+), vote_days AS (
+    SELECT
+        sv.acteur_ref,
+        sc.date_scrutin AS day,
+        COUNT(*) AS total_votes,
+        COUNT(*) FILTER (WHERE sv.position IN ('pour', 'contre', 'abstention')) AS participated_votes
+    FROM scrutin_votes sv
+    JOIN scrutins sc ON sc.id = sv.scrutin_id
+    GROUP BY sv.acteur_ref, sc.date_scrutin
+), all_days AS (
+    SELECT acteur_ref, day FROM sitting_days
+    UNION
+    SELECT acteur_ref, day FROM vote_days
+)
+SELECT
+    d.acteur_ref,
+    d.day AS date,
+    COALESCE(sd.total_sittings, 0) AS total_sittings,
+    COALESCE(sd.attended_sittings, 0) AS attended_sittings,
+    COALESCE(vd.total_votes, 0) AS total_votes,
+    COALESCE(vd.participated_votes, 0) AS participated_votes,
+    COALESCE(sd.has_excused_absence, FALSE) AS has_excused_absence,
+    -- Parliament considered "open" when at least one sitting or vote exists that day
+    (COALESCE(sd.total_sittings, 0) > 0 OR COALESCE(vd.total_votes, 0) > 0) AS parliament_open
+FROM all_days d
+LEFT JOIN sitting_days sd
+    ON sd.acteur_ref = d.acteur_ref AND sd.day = d.day
+LEFT JOIN vote_days vd
+    ON vd.acteur_ref = d.acteur_ref AND vd.day = d.day;
+

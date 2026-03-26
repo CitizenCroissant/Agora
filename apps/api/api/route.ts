@@ -257,6 +257,19 @@ export default async function handler(
     routeHandler = m.default;
     matched = true;
   }
+  // Dynamic: deputies/:acteurRef/attendance-heatmap
+  if (
+    !matched &&
+    segments[0] === "deputies" &&
+    segments.length === 3 &&
+    segments[2] === "attendance-heatmap" &&
+    method === "GET"
+  ) {
+    withParams(req, { acteurRef: segments[1] });
+    const m = await import("../lib/handlers/deputies-attendance-heatmap");
+    routeHandler = m.default;
+    matched = true;
+  }
   // Embed: embed/deputy/:acteurRef/votes (last N votes for iframe/widget)
   if (
     !matched &&
