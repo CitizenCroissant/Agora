@@ -117,6 +117,8 @@ export default function DeputyDetailScreen() {
                       )}`
                     )
                   }
+                  accessibilityLabel={`Voir le groupe ${deputy.groupe_politique}`}
+                  accessibilityRole="button"
                 >
                   <Text style={styles.badgeText}>
                     {deputy.groupe_politique}
@@ -168,6 +170,8 @@ export default function DeputyDetailScreen() {
                           )}`
                         )
                       }
+                      accessibilityLabel={`Voir la circonscription ${deputy.circonscription}`}
+                      accessibilityRole="button"
                     >
                       <Text style={styles.linkText}>
                         {deputy.circonscription}
@@ -215,6 +219,8 @@ export default function DeputyDetailScreen() {
                         )}`
                       )
                     }
+                    accessibilityLabel={`Voir le groupe ${deputy.groupe_politique}`}
+                    accessibilityRole="button"
                   >
                     <Text style={styles.linkText}>
                       {deputy.groupe_politique}
@@ -235,6 +241,8 @@ export default function DeputyDetailScreen() {
                 <TouchableOpacity
                   style={styles.notifyButton}
                   onPress={setAsFavoriteForNotifications}
+                  accessibilityLabel={`Recevoir les notifications pour ${displayName}`}
+                  accessibilityRole="button"
                 >
                   <Text style={styles.notifyButtonText}>
                     Recevoir les notifications pour ce député
@@ -254,6 +262,8 @@ export default function DeputyDetailScreen() {
                     `/votes/deputy/${encodeURIComponent(deputy.acteur_ref)}`
                   )
                 }
+                accessibilityLabel={`Voir l'historique des votes de ${displayName}`}
+                accessibilityRole="button"
               >
                 <Text style={styles.actionText}>
                   Voir l&apos;historique des votes →
@@ -263,6 +273,8 @@ export default function DeputyDetailScreen() {
                 <TouchableOpacity
                   style={styles.actionButton}
                   onPress={() => Linking.openURL(deputy.official_url!)}
+                  accessibilityLabel={`Voir la fiche de ${displayName} sur l'Assemblée nationale`}
+                  accessibilityRole="link"
                 >
                   <Text style={styles.actionText}>
                     Fiche sur assemblee-nationale.fr →

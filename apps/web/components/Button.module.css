@@ -30,7 +30,8 @@
   transform: translateY(0) scale(0.98);
 }
 
-.button:disabled {
+.button:disabled,
+.buttonDisabled {
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;

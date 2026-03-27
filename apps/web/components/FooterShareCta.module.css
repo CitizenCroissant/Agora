@@ -40,14 +40,14 @@
 }
 
 .dark .text {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-on-primary-muted);
   font-size: 0.82rem;
 }
 
 .dark .shareButton {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--color-text-on-primary);
 }
 
 .dark .shareButton:hover {
-  color: #ffffff;
+  color: var(--color-text-inverse);
 }

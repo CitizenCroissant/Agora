@@ -1,0 +1,219 @@
+/* Period navigation row (votes + timeline) — accent via data-accent */
+
+.row {
+  --period-accent: var(--color-accent-amber);
+  --period-accent-soft: rgba(240, 160, 48, 0.15);
+  --period-accent-ring: rgba(240, 160, 48, 0.15);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.row[data-accent="timeline"] {
+  --period-accent: var(--color-section-calendrier);
+  --period-accent-soft: rgba(43, 168, 158, 0.12);
+  --period-accent-ring: rgba(43, 168, 158, 0.15);
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.iconButton {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-background);
+  color: var(--color-text);
+  border-radius: var(--border-radius);
+  font-size: 1.375rem;
+  font-weight: 300;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  line-height: 1;
+  padding: 0;
+}
+
+.iconButton:hover {
+  background: var(--period-accent);
+  color: white;
+  border-color: var(--period-accent);
+}
+
+.todayButton {
+  padding: 7px 14px;
+  border: 1.5px solid var(--period-accent);
+  background: transparent;
+  color: var(--period-accent);
+  border-radius: var(--border-radius-pill);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  font-family: var(--font-body);
+}
+
+.todayButton:hover {
+  background: var(--period-accent);
+  color: white;
+}
+
+.center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.periodTitle {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  text-transform: capitalize;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.datePickerWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--color-background-alt);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: 6px 10px;
+  gap: 6px;
+  transition: border-color var(--duration-fast);
+}
+
+.datePickerWrapper:hover {
+  border-color: var(--period-accent);
+}
+
+.datePickerWrapper:focus-within {
+  border-color: var(--period-accent);
+  box-shadow: 0 0 0 3px var(--period-accent-ring);
+}
+
+.calendarIcon {
+  font-size: 1rem;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.datePicker {
+  border: none;
+  background: transparent;
+  font-size: 0.8125rem;
+  color: var(--color-text);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  padding: 0;
+  min-width: 110px;
+}
+
+.datePicker:focus {
+  outline: none;
+}
+
+.datePicker::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.viewToggle {
+  display: flex;
+  gap: 2px;
+  background: var(--color-background-alt);
+  padding: 3px;
+  border-radius: var(--border-radius);
+}
+
+.viewButton {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--color-text-light);
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  font-family: var(--font-body);
+}
+
+.viewButton:hover {
+  background: var(--period-accent-soft);
+  color: var(--period-accent);
+}
+
+.viewButton.activeView {
+  background: var(--color-background-card);
+  color: var(--period-accent);
+  box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+
+  .left {
+    order: 2;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .center {
+    order: 1;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .periodTitle {
+    font-size: 1rem;
+    text-align: center;
+    width: 100%;
+  }
+
+  .right {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .datePickerWrapper {
+    flex: 1;
+  }
+
+  .datePicker {
+    min-width: auto;
+    width: 100%;
+  }
+}

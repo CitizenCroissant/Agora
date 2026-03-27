@@ -86,13 +86,23 @@ export function DatePickerModal({
           style={StyleSheet.absoluteFill}
           activeOpacity={1}
           onPress={onCancel}
+          accessibilityLabel="Fermer le sélecteur de date"
+          accessibilityRole="button"
         />
         <View style={styles.modal}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={onCancel}>
+            <TouchableOpacity
+              onPress={onCancel}
+              accessibilityLabel={cancelLabel}
+              accessibilityRole="button"
+            >
               <Text style={styles.cancelText}>{cancelLabel}</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleConfirm}>
+            <TouchableOpacity
+              onPress={handleConfirm}
+              accessibilityLabel={confirmLabel}
+              accessibilityRole="button"
+            >
               <Text style={styles.confirmText}>{confirmLabel}</Text>
             </TouchableOpacity>
           </View>

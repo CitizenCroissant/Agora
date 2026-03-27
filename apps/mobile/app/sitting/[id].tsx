@@ -92,6 +92,9 @@ export default function SittingDetailScreen() {
                     key={scrutin.id}
                     style={styles.scrutinItem}
                     onPress={() => router.push(`/votes/${scrutin.id}`)}
+                    accessibilityLabel={`${scrutin.sort_code === "adopté" ? "Adopté" : "Rejeté"} — ${scrutin.titre}`}
+                    accessibilityHint="Voir les détails du scrutin"
+                    accessibilityRole="button"
                   >
                     <View
                       style={[
@@ -144,6 +147,8 @@ export default function SittingDetailScreen() {
                     {item.official_url && (
                       <TouchableOpacity
                         onPress={() => Linking.openURL(item.official_url!)}
+                        accessibilityLabel={`Consulter le document officiel : ${item.title}`}
+                        accessibilityRole="link"
                       >
                         <Text style={styles.itemLink}>
                           Consulter le document officiel →
@@ -174,6 +179,8 @@ export default function SittingDetailScreen() {
                         sitting.source_metadata!.original_source_url
                       )
                     }
+                    accessibilityLabel="Voir la source originale sur l'Assemblée nationale"
+                    accessibilityRole="link"
                   >
                     <Text style={styles.sourceLink}>
                       Voir la source originale →

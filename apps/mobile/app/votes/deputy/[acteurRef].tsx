@@ -98,6 +98,9 @@ export default function DeputyVotesScreen() {
                       key={`${v.scrutin_id}-${v.date_scrutin}-${v.position}`}
                       style={styles.voteCard}
                       onPress={() => router.push(`/votes/${v.scrutin_id}`)}
+                      accessibilityLabel={`${POSITION_LABELS[v.position]} — ${v.scrutin_titre}`}
+                      accessibilityHint="Voir les détails du scrutin"
+                      accessibilityRole="button"
                     >
                       <View style={styles.voteHeader}>
                         <View

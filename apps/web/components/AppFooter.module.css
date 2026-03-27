@@ -1,14 +1,14 @@
 /* ── Footer wrapper ── */
 .footer {
   background: var(--color-primary);
-  color: rgba(255, 255, 255, 0.82);
+  color: var(--color-text-on-primary);
   font-family: var(--font-body);
 }
 
 /* ── Main content area ── */
 .main {
   padding: var(--spacing-xxl) 0 var(--spacing-xl);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--color-border-on-primary);
 }
 
 /* ── 4-column grid: brand + 3 link sections ── */
@@ -31,7 +31,7 @@
   font-size: 2rem;
   font-weight: 800;
   letter-spacing: -0.05em;
-  color: #ffffff;
+  color: var(--color-text-inverse);
   text-decoration: none;
   line-height: 1;
   transition: opacity var(--duration-fast);
@@ -43,7 +43,7 @@
 
 .brandTagline {
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--color-text-on-primary-muted);
   line-height: 1.55;
   font-weight: 400;
   margin: 0;
@@ -67,7 +67,7 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--color-text-on-primary-faint);
   margin: 0;
 }
 
@@ -83,7 +83,7 @@
 .link {
   display: inline-block;
   padding: 5px 0;
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--color-text-on-primary-soft);
   font-size: 0.875rem;
   font-weight: 400;
   text-decoration: none;
@@ -92,7 +92,7 @@
 }
 
 .link:hover {
-  color: #ffffff;
+  color: var(--color-text-inverse);
 }
 
 /* ── Bottom bar ── */
@@ -110,20 +110,20 @@
 
 .legal {
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--color-text-on-primary-faint);
   margin: 0;
   line-height: 1.5;
 }
 
 .externalLink {
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--color-text-on-primary-muted);
   text-decoration: underline;
   text-underline-offset: 2px;
   transition: color var(--duration-fast);
 }
 
 .externalLink:hover {
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--color-text-inverse);
 }
 
 /* ── Responsive ── */

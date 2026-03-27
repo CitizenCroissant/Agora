@@ -62,12 +62,21 @@ a {
   --color-text-muted: #a0a0a0;
   --color-text-inverse: #ffffff;
 
+  /* On-primary surface text (for dark/navy backgrounds) */
+  --color-text-on-primary: rgba(255, 255, 255, 0.82);
+  --color-text-on-primary-soft: rgba(255, 255, 255, 0.72);
+  --color-text-on-primary-muted: rgba(255, 255, 255, 0.55);
+  --color-text-on-primary-faint: rgba(255, 255, 255, 0.4);
+  --color-border-on-primary: rgba(255, 255, 255, 0.1);
+
   /* Backgrounds -- warm, paper-like */
   --color-background: #fafaf7;
   --color-background-alt: #f4f2ee;
   --color-background-card: #ffffff;
   --color-background-input: #f4f2ee;
   --color-background-hover: rgba(30, 58, 95, 0.05);
+  --color-background-frosted: rgba(250, 250, 247, 0.9);
+  --color-background-frosted-strong: rgba(250, 250, 247, 0.96);
 
   /* Borders */
   --color-border: #e8e4dc;
@@ -197,20 +206,6 @@ a {
 .pageMain {
   flex: 1;
   padding: var(--spacing-xl) 0;
-}
-
-/* Control bar (filters, date picker, search) */
-.controlBar {
-  margin-bottom: var(--spacing-xl);
-  padding: var(--spacing-md) var(--spacing-lg);
-  background: var(--color-background);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--color-primary-tint);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-sm);
-  align-items: center;
 }
 
 /* Search input (shared pattern) */
@@ -344,9 +339,5 @@ a {
 @media (max-width: 768px) {
   .container {
     padding: 0 var(--spacing-sm);
-  }
-
-  .controlBar {
-    padding: var(--spacing-md);
   }
 }

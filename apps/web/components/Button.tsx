@@ -53,12 +53,18 @@ export function Button({
     .join(' ')
 
   if (href) {
+    if (disabled) {
+      return (
+        <span className={`${classNames} ${styles.buttonDisabled}`} aria-disabled="true">
+          {children}
+        </span>
+      )
+    }
     return (
       <Link
         href={href}
         className={classNames}
         onClick={onClick as React.MouseEventHandler<HTMLAnchorElement>}
-        aria-disabled={disabled}
       >
         {children}
       </Link>

@@ -60,6 +60,7 @@ export default function GroupesTabScreen() {
             placeholderTextColor={colors.textMuted}
             value={filterText}
             onChangeText={setFilterText}
+            accessibilityLabel="Filtrer les groupes politiques"
           />
         </View>
       )}
@@ -96,6 +97,9 @@ export default function GroupesTabScreen() {
                     onPress={() =>
                       router.push(`/groupes/${encodeURIComponent(g.slug)}`)
                     }
+                    accessibilityLabel={`${g.label}, ${g.deputy_count} député${g.deputy_count !== 1 ? "s" : ""}`}
+                    accessibilityHint="Voir les détails du groupe politique"
+                    accessibilityRole="button"
                   >
                     <Text style={styles.groupLabel}>{g.label}</Text>
                     <Text style={styles.groupCount}>

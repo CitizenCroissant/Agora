@@ -125,6 +125,9 @@ export default function MonDeputeTabScreen() {
                   key={d.name}
                   style={styles.deptCard}
                   onPress={() => setSelectedDepartement(d.name)}
+                  accessibilityLabel={`${d.name}, ${d.deputy_count} député${d.deputy_count !== 1 ? "s" : ""}`}
+                  accessibilityHint="Voir les députés de ce département"
+                  accessibilityRole="button"
                 >
                   <Text style={styles.deptName}>{d.name}</Text>
                   <Text style={styles.deptCount}>
@@ -137,6 +140,8 @@ export default function MonDeputeTabScreen() {
             <TouchableOpacity
               style={styles.circoLink}
               onPress={() => router.push("/(tabs)/circonscriptions")}
+              accessibilityLabel="Voir par circonscription"
+              accessibilityRole="button"
             >
               <Text style={styles.circoLinkText}>
                 Voir par circonscription →
@@ -190,6 +195,8 @@ export default function MonDeputeTabScreen() {
                             `/deputy/${encodeURIComponent(d.acteur_ref)}`
                           )
                         }
+                        accessibilityLabel={`Fiche du député ${d.civil_prenom} ${d.civil_nom}`}
+                        accessibilityRole="button"
                       >
                         <Text style={styles.primaryLink}>
                           Fiche du député →
@@ -201,6 +208,8 @@ export default function MonDeputeTabScreen() {
                             `/votes/deputy/${encodeURIComponent(d.acteur_ref)}`
                           )
                         }
+                        accessibilityLabel={`Votes de ${d.civil_prenom} ${d.civil_nom}`}
+                        accessibilityRole="button"
                       >
                         <Text style={styles.secondaryLink}>
                           Votes de mon député
@@ -224,6 +233,9 @@ export default function MonDeputeTabScreen() {
                             `/deputy/${encodeURIComponent(d.acteur_ref)}`
                           )
                         }
+                        accessibilityLabel={`${d.civil_prenom} ${d.civil_nom}, ancien député`}
+                        accessibilityHint="Voir la fiche du député"
+                        accessibilityRole="button"
                       >
                         <Text style={styles.deputyNameSmall}>
                           {d.civil_prenom} {d.civil_nom}

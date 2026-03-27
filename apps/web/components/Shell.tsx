@@ -69,9 +69,12 @@ export function Shell({ children }: { children: React.ReactNode }) {
         { "--current-section-color": sectionColor } as React.CSSProperties
       }
     >
+      <a href="#main-content" className={styles.skipLink}>
+        Aller au contenu
+      </a>
       <AppHeader />
       <SittingReminderBanner />
-      <main className="pageMain">
+      <main id="main-content" className="pageMain" tabIndex={-1}>
         {/* key forces remount on navigation, triggering the CSS entrance animation */}
         <div key={pathname} className={styles.pageTransition}>
           {children}

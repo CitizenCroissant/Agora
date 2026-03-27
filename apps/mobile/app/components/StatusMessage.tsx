@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   errorText: {
-    color: colors.secondary,
+    color: colors.error,
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.medium,
     marginBottom: spacing.sm

@@ -130,13 +130,25 @@ export default function TimelineScreen() {
             <TouchableOpacity
               style={styles.iconButton}
               onPress={handlePrevious}
+              accessibilityLabel={viewMode === "week" ? "Semaine précédente" : "Mois précédent"}
+              accessibilityRole="button"
             >
               <Text style={styles.iconButtonText}>‹</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.iconButton} onPress={handleNext}>
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={handleNext}
+              accessibilityLabel={viewMode === "week" ? "Semaine suivante" : "Mois suivant"}
+              accessibilityRole="button"
+            >
               <Text style={styles.iconButtonText}>›</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.todayButton} onPress={handleToday}>
+            <TouchableOpacity
+              style={styles.todayButton}
+              onPress={handleToday}
+              accessibilityLabel="Aller à aujourd'hui"
+              accessibilityRole="button"
+            >
               <Text style={styles.todayButtonText}>Aujourd&apos;hui</Text>
             </TouchableOpacity>
           </View>
@@ -145,6 +157,8 @@ export default function TimelineScreen() {
             <TouchableOpacity
               style={styles.dateButton}
               onPress={openDatePicker}
+              accessibilityLabel="Choisir une date"
+              accessibilityRole="button"
             >
               <Text style={styles.dateButtonText}>📅</Text>
             </TouchableOpacity>
@@ -155,6 +169,9 @@ export default function TimelineScreen() {
                   viewMode === "week" && styles.viewButtonActive
                 ]}
                 onPress={() => setViewMode("week")}
+                accessibilityLabel="Vue semaine"
+                accessibilityRole="button"
+                accessibilityState={{ selected: viewMode === "week" }}
               >
                 <Text
                   style={[
@@ -171,6 +188,9 @@ export default function TimelineScreen() {
                   viewMode === "month" && styles.viewButtonActive
                 ]}
                 onPress={() => setViewMode("month")}
+                accessibilityLabel="Vue mois"
+                accessibilityRole="button"
+                accessibilityState={{ selected: viewMode === "month" }}
               >
                 <Text
                   style={[
@@ -221,6 +241,8 @@ export default function TimelineScreen() {
                         onPress={() =>
                           router.push(`/votes?date=${agenda.date}`)
                         }
+                        accessibilityLabel={`Voir les scrutins du ${formatDate(agenda.date)}`}
+                        accessibilityRole="button"
                       >
                         <Text style={styles.dateLinkText}>
                           Voir les scrutins →
@@ -238,6 +260,9 @@ export default function TimelineScreen() {
                           key={sitting.id}
                           style={styles.sittingCard}
                           onPress={() => router.push(`/sitting/${sitting.id}`)}
+                          accessibilityLabel={sitting.title}
+                          accessibilityHint="Voir les détails de la séance"
+                          accessibilityRole="button"
                         >
                           <View style={styles.sittingHeader}>
                             <Text style={styles.sittingTitle}>

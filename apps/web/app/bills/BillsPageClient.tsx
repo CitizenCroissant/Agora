@@ -8,6 +8,7 @@ import { apiClient } from "@/lib/api";
 import styles from "./bills.module.css";
 import { PageHelp } from "@/components/PageHelp";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { FilterBar } from "@/components/FilterBar";
 
 // Available thematic tags (could be fetched from API in the future)
 const BILLS_PAGE_SIZE = 50;
@@ -221,7 +222,7 @@ export default function BillsPageClient() {
         ]}
       />
 
-      <section className="controlBar">
+      <FilterBar layout="wrap" aria-label="Filtres des dossiers législatifs">
         <form className={styles.searchForm} onSubmit={handleSubmit}>
           <input
             type="search"
@@ -290,7 +291,7 @@ export default function BillsPageClient() {
             </button>
           )}
         </div>
-      </section>
+      </FilterBar>
 
       {!loading && !error && totalDisplayed > 0 && (
         <section className={styles.statsBar} aria-label="Statistiques des dossiers">

@@ -62,6 +62,7 @@ export default function CirconscriptionsTabScreen() {
             placeholderTextColor={colors.textMuted}
             value={filterText}
             onChangeText={setFilterText}
+            accessibilityLabel="Filtrer les circonscriptions"
           />
         </View>
       )}
@@ -100,6 +101,9 @@ export default function CirconscriptionsTabScreen() {
                         `/circonscriptions/${encodeURIComponent(c.id)}`
                       )
                     }
+                    accessibilityLabel={`${c.label}, ${c.deputy_count} député${c.deputy_count !== 1 ? "s" : ""}`}
+                    accessibilityHint="Voir les députés de cette circonscription"
+                    accessibilityRole="button"
                   >
                     <Text style={styles.cardLabel}>{c.label}</Text>
                     <Text style={styles.cardCount}>

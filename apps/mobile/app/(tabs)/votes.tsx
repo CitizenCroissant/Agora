@@ -21,8 +21,13 @@ function VoteResultBar({ pour, contre, abstention }: { pour: number; contre: num
   const pourPct = (pour / total) * 100
   const contrePct = (contre / total) * 100
   const abstPct = (abstention / total) * 100
+  const label = `Résultat du vote : ${pourPct.toFixed(0)} % pour, ${contrePct.toFixed(0)} % contre${abstPct > 0 ? `, ${abstPct.toFixed(0)} % abstentions` : ""}`
   return (
-    <View style={barStyles.container}>
+    <View
+      style={barStyles.container}
+      accessibilityRole="image"
+      accessibilityLabel={label}
+    >
       <View style={[barStyles.segment, barStyles.pour, { flex: pourPct }]} />
       <View style={[barStyles.segment, barStyles.abstention, { flex: abstPct }]} />
       <View style={[barStyles.segment, barStyles.contre, { flex: contrePct }]} />
@@ -179,13 +184,25 @@ export default function VotesTabScreen() {
             <TouchableOpacity
               style={styles.iconButton}
               onPress={handlePrevious}
+              accessibilityLabel={viewMode === "week" ? "Semaine précédente" : "Mois précédent"}
+              accessibilityRole="button"
             >
               <Text style={styles.iconButtonText}>‹</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.iconButton} onPress={handleNext}>
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={handleNext}
+              accessibilityLabel={viewMode === "week" ? "Semaine suivante" : "Mois suivant"}
+              accessibilityRole="button"
+            >
               <Text style={styles.iconButtonText}>›</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.todayButton} onPress={handleToday}>
+            <TouchableOpacity
+              style={styles.todayButton}
+              onPress={handleToday}
+              accessibilityLabel="Aller à aujourd'hui"
+              accessibilityRole="button"
+            >
               <Text style={styles.todayButtonText}>Aujourd&apos;hui</Text>
             </TouchableOpacity>
           </View>
@@ -194,6 +211,8 @@ export default function VotesTabScreen() {
             <TouchableOpacity
               style={styles.dateButton}
               onPress={openDatePicker}
+              accessibilityLabel="Choisir une date"
+              accessibilityRole="button"
             >
               <Text style={styles.dateButtonText}>📅</Text>
             </TouchableOpacity>
@@ -204,6 +223,9 @@ export default function VotesTabScreen() {
                   viewMode === "week" && styles.viewButtonActive
                 ]}
                 onPress={() => setViewMode("week")}
+                accessibilityLabel="Vue semaine"
+                accessibilityRole="button"
+                accessibilityState={{ selected: viewMode === "week" }}
               >
                 <Text
                   style={[
@@ -220,6 +242,9 @@ export default function VotesTabScreen() {
                   viewMode === "month" && styles.viewButtonActive
                 ]}
                 onPress={() => setViewMode("month")}
+                accessibilityLabel="Vue mois"
+                accessibilityRole="button"
+                accessibilityState={{ selected: viewMode === "month" }}
               >
                 <Text
                   style={[
@@ -261,6 +286,9 @@ export default function VotesTabScreen() {
                       key={scrutin.id}
                       style={styles.scrutinCard}
                       onPress={() => router.push(`/votes/${scrutin.id}`)}
+                      accessibilityLabel={`${scrutin.sort_code === "adopté" ? "Adopté" : "Rejeté"} — ${scrutin.titre}`}
+                      accessibilityHint="Voir les détails du scrutin"
+                      accessibilityRole="button"
                     >
                       <View style={styles.scrutinHeader}>
                         <View

@@ -6,6 +6,7 @@ import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./circonscriptions.module.css";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { FilterBar, FilterBarGrow } from "@/components/FilterBar";
 
 /** Civic Warmth accent palette for circonscription cards */
 const ACCENT_COLORS = [
@@ -164,15 +165,17 @@ export default function CirconscriptionsPage() {
                 </p>
               ) : (
                 <>
-                  <div className={styles.toolbar}>
-                    <input
-                      type="search"
-                      placeholder="Rechercher un département ou une circonscription…"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="searchInput"
-                      aria-label="Rechercher"
-                    />
+                  <FilterBar layout="wrap" aria-label="Recherche et affichage des circonscriptions">
+                    <FilterBarGrow>
+                      <input
+                        type="search"
+                        placeholder="Rechercher un département ou une circonscription…"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="searchInput"
+                        aria-label="Rechercher"
+                      />
+                    </FilterBarGrow>
                     <div className={styles.expandButtons}>
                       <button
                         type="button"
@@ -182,7 +185,7 @@ export default function CirconscriptionsPage() {
                         {allExpanded ? "Tout replier" : "Tout déplier"}
                       </button>
                     </div>
-                  </div>
+                  </FilterBar>
                   <p className={styles.stats}>
                     {groups.length} département{groups.length !== 1 ? "s" : ""}
                     {searchQuery && (

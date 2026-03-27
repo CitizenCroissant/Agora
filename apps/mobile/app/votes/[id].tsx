@@ -28,9 +28,14 @@ function ResultBar({ pour, contre, abstention }: { pour: number; contre: number;
   const pourPct = (pour / total) * 100;
   const contrePct = (contre / total) * 100;
   const abstPct = (abstention / total) * 100;
+  const label = `Résultat : ${pourPct.toFixed(0)} % pour, ${contrePct.toFixed(0)} % contre${abstPct > 0 ? `, ${abstPct.toFixed(0)} % abstentions` : ""}`;
   return (
     <View style={resultBarStyles.wrap}>
-      <View style={resultBarStyles.bar}>
+      <View
+        style={resultBarStyles.bar}
+        accessibilityRole="image"
+        accessibilityLabel={label}
+      >
         <View style={[resultBarStyles.seg, resultBarStyles.pour, { flex: pourPct }]} />
         <View style={[resultBarStyles.seg, resultBarStyles.abst, { flex: abstPct }]} />
         <View style={[resultBarStyles.seg, resultBarStyles.contre, { flex: contrePct }]} />
@@ -160,6 +165,8 @@ export default function ScrutinDetailScreen() {
                         key={tag.id}
                         style={styles.tag}
                         onPress={() => router.push(`/votes?tag=${encodeURIComponent(tag.slug)}`)}
+                        accessibilityLabel={`Filtrer par thème : ${tag.label}`}
+                        accessibilityRole="button"
                       >
                         <Text style={styles.tagText}>{tag.label}</Text>
                       </TouchableOpacity>
@@ -170,6 +177,8 @@ export default function ScrutinDetailScreen() {
               <TouchableOpacity
                 style={styles.sourcesLink}
                 onPress={() => router.push("/sources")}
+                accessibilityLabel="Comment lire un scrutin ? Voir les sources"
+                accessibilityRole="button"
               >
                 <Text style={styles.sourcesLinkText}>
                   Comment lire un scrutin ? (Sources)
@@ -229,6 +238,9 @@ export default function ScrutinDetailScreen() {
                         `/groupes/${encodeURIComponent(slugify(g.groupe_politique))}`
                       )
                     }
+                    accessibilityLabel={`${g.groupe_politique} : ${g.pour} pour (${g.pour_pct.toFixed(0)} %), ${g.contre} contre (${g.contre_pct.toFixed(0)} %)`}
+                    accessibilityHint="Voir le groupe politique"
+                    accessibilityRole="button"
                   >
                     <Text style={styles.groupVotesGroupLabel}>
                       {g.groupe_politique}
@@ -267,6 +279,8 @@ export default function ScrutinDetailScreen() {
               <TouchableOpacity
                 style={styles.linkButton}
                 onPress={() => router.push(`/sitting/${scrutin.sitting_id}`)}
+                accessibilityLabel="Voir la séance associée"
+                accessibilityRole="button"
               >
                 <Text style={styles.linkText}>Voir la séance associée →</Text>
               </TouchableOpacity>
@@ -302,6 +316,9 @@ export default function ScrutinDetailScreen() {
                                   `/deputy/${encodeURIComponent(v.acteur_ref)}`
                                 )
                               }
+                              accessibilityLabel={`${v.acteur_nom ?? v.acteur_ref}${v.groupe_politique ? ` (${v.groupe_politique})` : ""} : ${POSITION_LABELS[v.position]}`}
+                              accessibilityHint="Voir la fiche du député"
+                              accessibilityRole="button"
                             >
                               <Text style={styles.deputyLink}>
                                 {v.acteur_nom ?? v.acteur_ref}
@@ -330,6 +347,8 @@ export default function ScrutinDetailScreen() {
               <TouchableOpacity
                 style={styles.sourceButton}
                 onPress={() => Linking.openURL(scrutin.official_url!)}
+                accessibilityLabel="Voir le scrutin sur le site de l'Assemblée nationale"
+                accessibilityRole="link"
               >
                 <Text style={styles.sourceLink}>
                   Voir le scrutin sur assemblee-nationale.fr →

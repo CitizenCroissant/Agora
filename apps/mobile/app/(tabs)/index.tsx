@@ -53,7 +53,12 @@ export default function TodayScreen() {
     <ScreenContainer>
       <View style={styles.heroBar}>
         <View style={styles.navigationRow}>
-          <TouchableOpacity style={styles.navButton} onPress={goToPreviousDay}>
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={goToPreviousDay}
+            accessibilityLabel="Jour précédent"
+            accessibilityRole="button"
+          >
             <Text style={styles.navButtonText}>‹</Text>
           </TouchableOpacity>
           <View style={styles.heroDateArea}>
@@ -64,12 +69,22 @@ export default function TodayScreen() {
               </View>
             )}
           </View>
-          <TouchableOpacity style={styles.navButton} onPress={goToNextDay}>
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={goToNextDay}
+            accessibilityLabel="Jour suivant"
+            accessibilityRole="button"
+          >
             <Text style={styles.navButtonText}>›</Text>
           </TouchableOpacity>
         </View>
         {!isToday && (
-          <TouchableOpacity style={styles.backTodayBtn} onPress={goToToday}>
+          <TouchableOpacity
+            style={styles.backTodayBtn}
+            onPress={goToToday}
+            accessibilityLabel="Revenir à aujourd'hui"
+            accessibilityRole="button"
+          >
             <Text style={styles.backTodayText}>← Revenir à aujourd&apos;hui</Text>
           </TouchableOpacity>
         )}
@@ -78,6 +93,8 @@ export default function TodayScreen() {
       <TouchableOpacity
         style={styles.voteCta}
         onPress={() => router.push(`/votes?date=${getTodayDate()}`)}
+        accessibilityLabel="Scrutins du jour — voir les votes"
+        accessibilityRole="button"
       >
         <View style={styles.voteCtaAccent} />
         <Text style={styles.voteCtaText}>
@@ -108,6 +125,9 @@ export default function TodayScreen() {
                   key={sitting.id}
                   style={styles.sittingCard}
                   onPress={() => router.push(`/sitting/${sitting.id}`)}
+                  accessibilityLabel={sitting.title}
+                  accessibilityHint="Voir les détails de la séance"
+                  accessibilityRole="button"
                 >
                   <View style={styles.sittingHeader}>
                     <Text style={styles.sittingTitle}>{sitting.title}</Text>

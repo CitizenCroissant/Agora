@@ -1,32 +1,21 @@
 import Link from "next/link";
+import styles from "./not-found.module.css";
 
 export default function NotFound() {
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "2rem",
-        background: "var(--color-background)"
-      }}
-    >
-      <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem", color: "var(--color-text)" }}>404</h1>
-      <p style={{ color: "var(--color-text-light)", marginBottom: "1.5rem" }}>
-        Cette page est introuvable.
+    <section className={styles.section} aria-labelledby="not-found-title">
+      <p className={styles.code} aria-hidden="true">
+        404
       </p>
-      <Link
-        href="/"
-        style={{
-          color: "var(--color-primary)",
-          fontWeight: 600,
-          textDecoration: "none"
-        }}
-      >
+      <h1 id="not-found-title" className={styles.title}>
+        Page introuvable
+      </h1>
+      <p className={styles.lead}>
+        Cette page n&apos;existe pas ou a été déplacée.
+      </p>
+      <Link href="/" className={styles.link}>
         ← Retour à l&apos;accueil
       </Link>
-    </div>
+    </section>
   );
 }

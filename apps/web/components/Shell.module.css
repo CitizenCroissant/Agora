@@ -1,3 +1,43 @@
+/* Skip link: off-screen until keyboard focus */
+.skipLink {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skipLink:focus {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 10000;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0.65rem 1rem;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  border-radius: var(--border-radius);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  box-shadow: var(--shadow-elevated);
+}
+
+.skipLink:focus-visible {
+  outline: 2px solid var(--color-accent-amber);
+  outline-offset: 2px;
+}
+
 /* Page entrance animation — triggers on every navigation via React key remount */
 .pageTransition {
   animation: pageEnter var(--duration-slow) var(--ease-out-expo) both;

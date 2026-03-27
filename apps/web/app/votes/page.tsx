@@ -26,6 +26,7 @@ import { StreakBadge } from "@/components/StreakBadge";
 import { VoteResultBar } from "@/components/VoteResultBar";
 import { Skeleton } from "@/components/Skeleton";
 import { EmptyState } from "@/components/EmptyState";
+import { FilterBar, PeriodControlRow } from "@/components/FilterBar";
 
 type GroupPosition = "pour" | "contre" | "abstention";
 type ViewMode = "week" | "month";
@@ -253,49 +254,19 @@ function VotesPageContent() {
         defaultClosed
       />
 
-      {/* Control bar */}
-      <div className={`controlBar ${styles.controlBar}`}>
-        {/* Row 1: navigation + period + view toggle */}
-        <div className={styles.controlBarTop}>
-          <div className={styles.leftControls}>
-            <button type="button" className={styles.iconButton} onClick={handlePrevious} aria-label="Période précédente">‹</button>
-            <button type="button" className={styles.iconButton} onClick={handleNext} aria-label="Période suivante">›</button>
-            <button type="button" className={styles.todayButton} onClick={handleToday}>Aujourd&apos;hui</button>
-          </div>
+      <FilterBar layout="stacked" aria-label="Filtres et période des scrutins">
+        <PeriodControlRow
+          accent="votes"
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          periodLabel={getPeriodLabel()}
+          dateInput={dateInput}
+          onDateInputChange={handleDateChange}
+          onPrevious={handlePrevious}
+          onNext={handleNext}
+          onToday={handleToday}
+        />
 
-          <div className={styles.centerControls}>
-            <h2 className={styles.periodTitle}>{getPeriodLabel()}</h2>
-          </div>
-
-          <div className={styles.topRightControls}>
-            <div className={styles.datePickerWrapper}>
-              <span className={styles.calendarIcon} aria-hidden>📅</span>
-              <input
-                type="date"
-                className={styles.datePicker}
-                value={dateInput}
-                onChange={handleDateChange}
-                aria-label="Sélectionner une date"
-              />
-            </div>
-            <div className={styles.viewToggle}>
-              <button
-                type="button"
-                className={`${styles.viewButton} ${viewMode === "week" ? styles.activeView : ""}`}
-                onClick={() => setViewMode("week")}
-                title="Vue semaine"
-              >S</button>
-              <button
-                type="button"
-                className={`${styles.viewButton} ${viewMode === "month" ? styles.activeView : ""}`}
-                onClick={() => setViewMode("month")}
-                title="Vue mois"
-              >M</button>
-            </div>
-          </div>
-        </div>
-
-        {/* Row 2: search + filters */}
         <div className={styles.controlBarBottom}>
           <form
             className={styles.searchForm}
@@ -424,7 +395,7 @@ function VotesPageContent() {
             </div>
           </div>
         </div>
-      </div>
+      </FilterBar>
 
       {/* Content */}
       {loading && <LoadingSkeleton />}

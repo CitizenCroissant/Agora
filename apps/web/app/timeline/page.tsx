@@ -20,6 +20,7 @@ import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./timeline.module.css";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { FilterBar, PeriodControlRow } from "@/components/FilterBar";
 import { SittingReminderButton } from "@/components/SittingReminderButton";
 import { Skeleton } from "@/components/Skeleton";
 import skeletonStyles from "@/components/Skeleton.module.css";
@@ -157,63 +158,19 @@ export default function TimelinePage() {
         <p className={styles.pageSubtitle}>Naviguez dans les séances de l&apos;Assemblée par semaine ou par mois.</p>
       </div>
 
-          <div className={styles.controlBar}>
-            <div className={styles.leftControls}>
-              <button
-                className={styles.iconButton}
-                onClick={handlePrevious}
-                aria-label="Période précédente"
-                title="Période précédente"
-              >
-                ‹
-              </button>
-              <button
-                className={styles.iconButton}
-                onClick={handleNext}
-                aria-label="Période suivante"
-                title="Période suivante"
-              >
-                ›
-              </button>
-              <button className={styles.todayButton} onClick={handleToday}>
-                Aujourd'hui
-              </button>
-            </div>
-
-            <div className={styles.centerControls}>
-              <h2 className={styles.periodTitle}>{getPeriodLabel()}</h2>
-            </div>
-
-            <div className={styles.rightControls}>
-              <div className={styles.datePickerWrapper}>
-                <span className={styles.calendarIcon}>📅</span>
-                <input
-                  type="date"
-                  className={styles.datePicker}
-                  value={dateInput}
-                  onChange={handleDateChange}
-                  aria-label="Sélectionner une date"
-                  title="Choisir une date"
-                />
-              </div>
-              <div className={styles.viewToggle}>
-                <button
-                  className={`${styles.viewButton} ${viewMode === "week" ? styles.activeView : ""}`}
-                  onClick={() => setViewMode("week")}
-                  title="Vue semaine"
-                >
-                  S
-                </button>
-                <button
-                  className={`${styles.viewButton} ${viewMode === "month" ? styles.activeView : ""}`}
-                  onClick={() => setViewMode("month")}
-                  title="Vue mois"
-                >
-                  M
-                </button>
-              </div>
-            </div>
-          </div>
+          <FilterBar layout="inline" aria-label="Période du calendrier">
+            <PeriodControlRow
+              accent="timeline"
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+              periodLabel={getPeriodLabel()}
+              dateInput={dateInput}
+              onDateInputChange={handleDateChange}
+              onPrevious={handlePrevious}
+              onNext={handleNext}
+              onToday={handleToday}
+            />
+          </FilterBar>
 
           {loading && <TimelineSkeleton />}
 

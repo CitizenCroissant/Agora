@@ -53,6 +53,16 @@ export function Card({
 
   const style = accentColor ? ({ '--accent-color': accentColor } as React.CSSProperties) : undefined
 
+  const divClick = onClick as React.MouseEventHandler<HTMLDivElement> | undefined
+  const isClickableDiv = Boolean(divClick)
+
+  const handleDivKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!divClick) return
+    if (e.key !== 'Enter' && e.key !== ' ') return
+    e.preventDefault()
+    divClick(e as unknown as React.MouseEvent<HTMLDivElement>)
+  }
+
   if (href) {
     return (
       <Link
@@ -70,7 +80,10 @@ export function Card({
     <div
       className={classNames}
       style={style}
-      onClick={onClick as React.MouseEventHandler<HTMLDivElement>}
+      onClick={divClick}
+      onKeyDown={isClickableDiv ? handleDivKeyDown : undefined}
+      role={isClickableDiv ? 'button' : undefined}
+      tabIndex={isClickableDiv ? 0 : undefined}
     >
       {children}
     </div>
