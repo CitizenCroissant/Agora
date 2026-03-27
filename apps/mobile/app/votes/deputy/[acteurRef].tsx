@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
   StyleSheet
 } from "react-native";
 import { useLocalSearchParams, Stack } from "expo-router";
@@ -15,7 +14,8 @@ import type {
 } from "@agora/shared";
 import { formatDate } from "@agora/shared";
 import { apiClient } from "@/lib/api";
-import { colors } from "@/theme";
+import { StatusMessage } from "@/app/components/StatusMessage";
+import { colors, spacing, radius, typography, shadows } from "@/theme";
 
 const POSITION_LABELS: Record<string, string> = {
   pour: "Pour",
@@ -67,16 +67,11 @@ export default function DeputyVotesScreen() {
       />
       <ScrollView style={styles.container}>
         {loading && (
-          <View style={styles.centerContent}>
-            <ActivityIndicator size="large" color={colors.primary} />
-            <Text style={styles.loadingText}>Chargement des votes...</Text>
-          </View>
+          <StatusMessage type="loading" message="Chargement des votes..." />
         )}
 
         {error && (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>Erreur: {error}</Text>
-          </View>
+          <StatusMessage type="error" message={`Erreur: ${error}`} />
         )}
 
         {!loading && !error && data && (
@@ -89,9 +84,10 @@ export default function DeputyVotesScreen() {
             </View>
 
             {data.votes.length === 0 ? (
-              <Text style={styles.emptyText}>
-                Aucun vote enregistré pour ce député.
-              </Text>
+              <StatusMessage
+                type="empty"
+                message="Aucun vote enregistré pour ce député."
+              />
             ) : (
               <View style={styles.voteList}>
                 {data.votes.map((v) => {
@@ -150,109 +146,84 @@ export default function DeputyVotesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
-  },
-  centerContent: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 48
-  },
-  loadingText: {
-    marginTop: 16,
-    color: "#666",
-    fontSize: 16
-  },
-  errorContainer: {
-    padding: 24,
-    alignItems: "center"
-  },
-  errorText: {
-    color: "#ef4135",
-    fontSize: 16,
-    fontWeight: "500"
+    backgroundColor: colors.backgroundAlt
   },
   content: {
-    padding: 16
+    padding: spacing.lg,
+    paddingBottom: spacing.xxxl
   },
   header: {
-    marginBottom: 20,
-    paddingBottom: 16,
-    borderBottomWidth: 2,
-    borderBottomColor: "#e0e0e0"
+    marginBottom: spacing.xl,
+    paddingBottom: spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border
   },
   title: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#0055a4",
-    marginBottom: 4
+    fontSize: typography.fontSize.xl,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.primary,
+    marginBottom: spacing.xs
   },
   acteurRef: {
-    fontSize: 14,
-    color: "#666"
-  },
-  emptyText: {
-    fontSize: 16,
-    color: "#666",
-    textAlign: "center",
-    padding: 24
+    fontSize: typography.fontSize.sm,
+    color: colors.textLight
   },
   voteList: {
-    gap: 12
+    gap: spacing.md
   },
   voteCard: {
-    backgroundColor: "#f5f5f5",
-    padding: 16,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#e0e0e0"
+    backgroundColor: colors.backgroundCard,
+    padding: spacing.lg,
+    borderRadius: radius.md,
+    ...shadows.sm
   },
   voteHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 8,
-    gap: 8
+    marginBottom: spacing.sm,
+    gap: spacing.sm
   },
   positionBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.sm
   },
   badgePour: {
-    backgroundColor: "rgba(0, 128, 0, 0.15)"
+    backgroundColor: colors.successBg
   },
   badgeContre: {
-    backgroundColor: "rgba(200, 0, 0, 0.15)"
+    backgroundColor: colors.errorBg
   },
   badgeAbstention: {
-    backgroundColor: "rgba(128, 128, 0, 0.15)"
+    backgroundColor: colors.primaryTintLight
   },
   badgeNonVotant: {
-    backgroundColor: "rgba(128, 128, 128, 0.15)"
+    backgroundColor: colors.backgroundAlt
   },
   positionText: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#333"
+    fontSize: typography.fontSize.xs,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.text
   },
   voteDate: {
-    fontSize: 12,
-    color: "#666",
+    fontSize: typography.fontSize.xs,
+    color: colors.textLight,
     textTransform: "capitalize"
   },
   voteTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 8
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text,
+    marginBottom: spacing.sm
   },
   voteComparisonLine: {
-    fontSize: 12,
-    color: "#666",
-    marginBottom: 8
+    fontSize: typography.fontSize.sm,
+    color: colors.textLight,
+    marginBottom: spacing.sm
   },
   voteLink: {
-    fontSize: 14,
-    color: "#0055a4",
-    fontWeight: "500"
+    fontSize: typography.fontSize.md,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.medium
   }
 });

@@ -1,0 +1,31 @@
+/* Page entrance animation — triggers on every navigation via React key remount */
+.pageTransition {
+  animation: pageEnter var(--duration-slow) var(--ease-out-expo) both;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .pageTransition {
+    animation: pageEnterReduced var(--duration-fast) linear both;
+  }
+
+  @keyframes pageEnterReduced {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}

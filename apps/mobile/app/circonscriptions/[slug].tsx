@@ -4,14 +4,14 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
   StyleSheet
 } from "react-native";
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useRouter } from "expo-router";
 import type { CirconscriptionDetail } from "@agora/shared";
 import { apiClient } from "@/lib/api";
-import { colors } from "@/theme";
+import { StatusMessage } from "@/app/components/StatusMessage";
+import { colors, spacing, radius, typography, shadows } from "@/theme";
 
 export default function CirconscriptionDetailScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
@@ -53,18 +53,11 @@ export default function CirconscriptionDetailScreen() {
       />
       <ScrollView style={styles.container}>
         {loading && (
-          <View style={styles.centerContent}>
-            <ActivityIndicator size="large" color={colors.primary} />
-            <Text style={styles.loadingText}>
-              Chargement de la circonscription...
-            </Text>
-          </View>
+          <StatusMessage type="loading" message="Chargement de la circonscription..." />
         )}
 
         {error && (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>Erreur: {error}</Text>
-          </View>
+          <StatusMessage type="error" message={`Erreur: ${error}`} />
         )}
 
         {!loading && !error && circonscription && (
@@ -114,59 +107,39 @@ export default function CirconscriptionDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
-  },
-  centerContent: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 48
-  },
-  loadingText: {
-    marginTop: 16,
-    color: "#666",
-    fontSize: 16
-  },
-  errorContainer: {
-    padding: 24,
-    alignItems: "center"
-  },
-  errorText: {
-    color: "#ef4135",
-    fontSize: 16,
-    fontWeight: "500"
+    backgroundColor: colors.backgroundAlt
   },
   content: {
-    padding: 16
+    padding: spacing.lg
   },
   deputyCount: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 16
+    fontSize: typography.fontSize.base,
+    color: colors.textLight,
+    marginBottom: spacing.lg
   },
   deputyList: {
-    gap: 12
+    gap: spacing.md
   },
   deputyCard: {
-    backgroundColor: "#f5f5f5",
-    padding: 16,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#e0e0e0"
+    backgroundColor: colors.backgroundCard,
+    padding: spacing.lg,
+    borderRadius: radius.md,
+    ...shadows.sm
   },
   deputyName: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#0055a4",
-    marginBottom: 4
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.primary,
+    marginBottom: spacing.xs
   },
   deputyMeta: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 8
+    fontSize: typography.fontSize.md,
+    color: colors.textLight,
+    marginBottom: spacing.sm
   },
   deputyLink: {
-    fontSize: 14,
-    color: "#0055a4",
-    fontWeight: "500"
+    fontSize: typography.fontSize.md,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.medium
   }
 });

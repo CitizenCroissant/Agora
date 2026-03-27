@@ -21,6 +21,16 @@ export default function AboutPage() {
   return (
     <div className="container">
       <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "À propos" }]} />
+
+      <div className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>
+          À <span>propos</span>
+        </h1>
+        <p className={styles.pageSubtitle}>
+          Notre mission, notre fonctionnement et notre engagement pour la transparence parlementaire.
+        </p>
+      </div>
+
           <section className={styles.section}>
             <h2>Notre mission</h2>
             <p>

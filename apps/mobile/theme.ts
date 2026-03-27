@@ -1,43 +1,67 @@
 /**
  * Design tokens aligned with web app (apps/web/app/globals.css).
- * Use these instead of hardcoded colors/spacing/radius across the mobile app.
+ * Civic Warmth palette -- use these instead of hardcoded values.
  */
 
 export const colors = {
   // Brand
-  primary: '#0055a4',
-  primaryDark: '#003d7a',
-  secondary: '#ef4135',
+  primary: '#1E3A5F',
+  primaryDark: '#142A47',
+  accentCoral: '#E85D3A',
+  accentCoralDark: '#C44827',
+  accentCoralTint: 'rgba(232, 93, 58, 0.12)',
+  accentTeal: '#2BA89E',
+  accentTealDark: '#1F7D75',
+  accentTealTint: 'rgba(43, 168, 158, 0.12)',
+  accentAmber: '#F0A030',
+  accentAmberDark: '#B07510',
+  accentAmberTint: 'rgba(240, 160, 48, 0.1)',
+  accentAmberBorder: 'rgba(240, 160, 48, 0.3)',
+
+  // Backwards-compat alias (used by many screens)
+  secondary: '#E85D3A',
 
   // Text
-  text: '#1a1a1a',
-  textLight: '#666666',
-  textMuted: '#999999',
+  text: '#2A2A2A',
+  textLight: '#7A7A7A',
+  textMuted: '#A0A0A0',
+  textInverse: '#FFFFFF',
 
-  // Backgrounds
-  background: '#ffffff',
-  backgroundAlt: '#f5f5f5',
-  backgroundInput: '#f9fafb',
+  // Backgrounds -- warm, paper-like
+  background: '#FAFAF7',
+  backgroundAlt: '#F4F2EE',
+  backgroundCard: '#FFFFFF',
+  backgroundInput: '#F4F2EE',
+  backgroundHover: 'rgba(30, 58, 95, 0.05)',
 
   // Border
-  border: '#e0e0e0',
-  borderLight: '#f0f0f0',
+  border: '#E8E4DC',
+  borderLight: '#F0EDE8',
 
   // Semantic status
-  success: '#15803d',
-  successDark: '#14532d',
-  successBg: 'rgba(0, 128, 0, 0.15)',
-  error: '#b91c1c',
-  errorDark: '#991b1b',
-  errorBg: 'rgba(200, 0, 0, 0.15)',
-  errorBgLight: '#fff5f5',
-  warning: '#a16207',
+  success: '#2E8B57',
+  successDark: '#1E6B3F',
+  successBg: 'rgba(46, 139, 87, 0.12)',
+  error: '#C0392B',
+  errorDark: '#962D22',
+  errorBg: 'rgba(232, 93, 58, 0.12)',
+  errorBgLight: '#FFF8F6',
+  warning: '#D4870A',
 
   // Primary tints (links, pills, focus)
-  primaryTintLight: 'rgba(0, 85, 164, 0.08)',
-  primaryTint: 'rgba(0, 85, 164, 0.1)',
-  primaryTintMedium: 'rgba(0, 85, 164, 0.15)',
-  primaryTintStrong: 'rgba(0, 85, 164, 0.2)'
+  primaryTintLight: 'rgba(30, 58, 95, 0.06)',
+  primaryTint: 'rgba(30, 58, 95, 0.1)',
+  primaryTintMedium: 'rgba(30, 58, 95, 0.15)',
+  primaryTintStrong: 'rgba(30, 58, 95, 0.2)'
+} as const
+
+/** Section accent colors (Guardian-inspired per-section identity) */
+export const sectionColors = {
+  aujourdhui: '#E85D3A',
+  votes: '#F0A030',
+  calendrier: '#2BA89E',
+  explorer: '#1E3A5F',
+  comprendre: '#7B5EA7'
 } as const
 
 /** Spacing scale (px). Aligns with web rem: 8≈0.5rem, 16≈1rem, 24≈1.5rem, 32≈2rem, 48≈3rem */
@@ -77,21 +101,43 @@ export const typography = {
   }
 } as const
 
-/** Shadow presets for React Native (shadowColor + shadowOffset + shadowOpacity + shadowRadius + elevation) */
+/** Shadow presets for React Native -- warm-tinted (shadowColor uses primary navy) */
 export const shadows = {
   sm: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: '#1E3A5F',
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
-    shadowRadius: 8,
+    shadowRadius: 4,
     elevation: 2
   },
   md: {
-    shadowColor: '#000',
+    shadowColor: '#1E3A5F',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: 8,
     elevation: 3
+  },
+  elevated: {
+    shadowColor: '#1E3A5F',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.14,
+    shadowRadius: 16,
+    elevation: 6
+  }
+} as const
+
+/** Animation presets for use with react-native-reanimated or Animated API */
+export const animation = {
+  duration: {
+    fast: 120,
+    normal: 220,
+    slow: 380
+  },
+  easing: {
+    // Approximate JS easing functions matching CSS counterparts
+    outExpo: [0.16, 1, 0.3, 1] as [number, number, number, number],
+    inOut: [0.4, 0, 0.2, 1] as [number, number, number, number],
+    spring: [0.34, 1.56, 0.64, 1] as [number, number, number, number]
   }
 } as const
 
@@ -102,17 +148,15 @@ export const commonStyles = {
     backgroundColor: colors.backgroundAlt
   },
   card: {
-    backgroundColor: colors.background,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: colors.backgroundCard,
+    borderRadius: radius.lg,
     padding: spacing.lg,
     ...shadows.md
   },
   controlBar: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.backgroundCard,
     borderBottomWidth: 1,
-    borderBottomColor: colors.primaryTint,
+    borderBottomColor: colors.border,
     padding: spacing.lg,
     paddingBottom: spacing.md,
     ...shadows.sm
@@ -132,7 +176,7 @@ export const commonStyles = {
     alignItems: 'center' as const
   },
   errorText: {
-    color: colors.secondary,
+    color: colors.accentCoral,
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.medium,
     marginBottom: spacing.sm
@@ -155,9 +199,11 @@ export const commonStyles = {
 
 export const theme = {
   colors,
+  sectionColors,
   spacing,
   radius,
   typography,
   shadows,
+  animation,
   commonStyles
 } as const

@@ -3,7 +3,6 @@ import {
   View,
   Text,
   ScrollView,
-  ActivityIndicator,
   StyleSheet,
   Linking,
   TouchableOpacity
@@ -13,7 +12,8 @@ import { useRouter } from "expo-router";
 import { SittingDetailResponse } from "@agora/shared";
 import { formatDate } from "@agora/shared";
 import { apiClient } from "@/lib/api";
-import { colors } from "@/theme";
+import { StatusMessage } from "@/app/components/StatusMessage";
+import { colors, spacing, radius, typography, shadows } from "@/theme";
 
 export default function SittingDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -52,16 +52,11 @@ export default function SittingDetailScreen() {
       />
       <ScrollView style={styles.container}>
         {loading && (
-          <View style={styles.centerContent}>
-            <ActivityIndicator size="large" color={colors.primary} />
-            <Text style={styles.loadingText}>Chargement...</Text>
-          </View>
+          <StatusMessage type="loading" message="Chargement..." />
         )}
 
         {error && (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>Erreur: {error}</Text>
-          </View>
+          <StatusMessage type="error" message={`Erreur: ${error}`} />
         )}
 
         {!loading && !error && sitting && (
@@ -196,219 +191,209 @@ export default function SittingDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
-  },
-  centerContent: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 48
-  },
-  loadingText: {
-    marginTop: 16,
-    color: "#666",
-    fontSize: 16
-  },
-  errorContainer: {
-    padding: 24,
-    alignItems: "center"
-  },
-  errorText: {
-    color: "#ef4135",
-    fontSize: 16,
-    fontWeight: "500"
+    backgroundColor: colors.backgroundAlt
   },
   content: {
-    padding: 16
+    padding: spacing.lg,
+    paddingBottom: spacing.xxxl
   },
   header: {
-    marginBottom: 16,
-    paddingBottom: 16,
-    borderBottomWidth: 2,
-    borderBottomColor: "#e0e0e0"
+    marginBottom: spacing.lg,
+    paddingBottom: spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border
   },
   title: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#0055a4",
-    marginBottom: 8
+    fontSize: typography.fontSize.xl + 2,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.primary,
+    marginBottom: spacing.sm,
+    lineHeight: 30
   },
   date: {
-    fontSize: 16,
-    color: "#666",
+    fontSize: typography.fontSize.base,
+    color: colors.textLight,
     textTransform: "capitalize",
-    marginBottom: 12
+    marginBottom: spacing.md
   },
   timeContainer: {
-    backgroundColor: "#f5f5f5",
-    padding: 12,
-    borderRadius: 8,
-    alignItems: "center"
+    backgroundColor: colors.primaryTintLight,
+    padding: spacing.md,
+    borderRadius: radius.md,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: colors.primaryTintMedium
   },
   timeLabel: {
-    fontSize: 12,
-    color: "#666",
-    marginBottom: 4
+    fontSize: typography.fontSize.xs,
+    color: colors.textLight,
+    marginBottom: spacing.xs,
+    textTransform: "uppercase",
+    letterSpacing: 0.5
   },
   time: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#0055a4"
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.primary
   },
   locationContainer: {
-    backgroundColor: "#f5f5f5",
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 16
+    backgroundColor: colors.backgroundAlt,
+    padding: spacing.md,
+    borderRadius: radius.md,
+    marginBottom: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.border
   },
   location: {
-    fontSize: 14
+    fontSize: typography.fontSize.md,
+    color: colors.text
   },
   section: {
-    marginBottom: 24
+    marginBottom: spacing.xl
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#0055a4",
-    marginBottom: 12
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.primary,
+    marginBottom: spacing.md
   },
   description: {
-    fontSize: 16,
+    fontSize: typography.fontSize.base,
     lineHeight: 24,
-    color: "#333"
+    color: colors.text
   },
   agendaItem: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12
+    backgroundColor: colors.backgroundCard,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+    ...shadows.sm
   },
   itemHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 8,
-    flexWrap: "wrap"
+    marginBottom: spacing.sm,
+    flexWrap: "wrap",
+    gap: spacing.sm
   },
   itemNumber: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: "#0055a4",
+    backgroundColor: colors.primary,
     alignItems: "center",
-    justifyContent: "center",
-    marginRight: 8
+    justifyContent: "center"
   },
   itemNumberText: {
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: "600"
+    color: colors.textInverse,
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.semibold
   },
   itemTime: {
-    fontSize: 12,
-    color: "#666",
-    backgroundColor: "#f5f5f5",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-    marginRight: 8
+    fontSize: typography.fontSize.xs,
+    color: colors.textLight,
+    backgroundColor: colors.backgroundAlt,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.sm
   },
   itemCategory: {
-    fontSize: 10,
-    color: "#fff",
-    backgroundColor: "#0055a4",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
+    fontSize: typography.fontSize.xs,
+    color: colors.textInverse,
+    backgroundColor: colors.accentTeal,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.sm,
     textTransform: "uppercase",
-    fontWeight: "500"
+    fontWeight: typography.fontWeight.semibold
   },
   itemTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 4,
-    color: "#333"
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    marginBottom: spacing.xs,
+    color: colors.text
   },
   itemDescription: {
-    fontSize: 14,
+    fontSize: typography.fontSize.md,
     lineHeight: 20,
-    color: "#666",
-    marginBottom: 4
+    color: colors.textLight,
+    marginBottom: spacing.xs
   },
   itemReference: {
-    fontSize: 12,
-    color: "#999",
-    marginBottom: 4
+    fontSize: typography.fontSize.xs,
+    color: colors.textMuted,
+    marginBottom: spacing.xs
   },
   itemLink: {
-    fontSize: 14,
-    color: "#0055a4",
-    fontWeight: "500"
+    fontSize: typography.fontSize.md,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.medium
   },
   sourceContainer: {
-    backgroundColor: "#f5f5f5",
-    padding: 16,
-    borderRadius: 8,
+    backgroundColor: colors.backgroundCard,
+    padding: spacing.lg,
+    borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: "#e0e0e0",
-    marginTop: 16
+    borderColor: colors.border,
+    marginTop: spacing.lg,
+    ...shadows.sm
   },
   sourceTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 8
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    marginBottom: spacing.sm,
+    color: colors.text
   },
   sourceLabel: {
-    fontSize: 14,
-    fontWeight: "500",
-    marginBottom: 4
+    fontSize: typography.fontSize.md,
+    fontWeight: typography.fontWeight.medium,
+    marginBottom: spacing.xs,
+    color: colors.text
   },
   sourceDate: {
-    fontSize: 12,
-    color: "#666",
-    marginBottom: 8
+    fontSize: typography.fontSize.sm,
+    color: colors.textLight,
+    marginBottom: spacing.sm
   },
   sourceLink: {
-    fontSize: 14,
-    color: "#0055a4",
-    fontWeight: "500"
+    fontSize: typography.fontSize.md,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.medium
   },
   scrutinItem: {
-    backgroundColor: "#f5f5f5",
-    padding: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    marginBottom: 12
+    backgroundColor: colors.backgroundCard,
+    padding: spacing.md,
+    borderRadius: radius.md,
+    marginBottom: spacing.md,
+    ...shadows.sm
   },
   scrutinBadge: {
     alignSelf: "flex-start",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    marginBottom: 8
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.sm,
+    marginBottom: spacing.sm
   },
   scrutinBadgeAdopte: {
-    backgroundColor: "rgba(0, 128, 0, 0.15)"
+    backgroundColor: colors.successBg
   },
   scrutinBadgeRejete: {
-    backgroundColor: "rgba(200, 0, 0, 0.15)"
+    backgroundColor: colors.errorBg
   },
   scrutinBadgeText: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#333"
+    fontSize: typography.fontSize.xs,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.text
   },
   scrutinTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 8
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text,
+    marginBottom: spacing.sm
   },
   scrutinLink: {
-    fontSize: 14,
-    color: "#0055a4",
-    fontWeight: "500"
+    fontSize: typography.fontSize.sm,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.medium
   }
 });

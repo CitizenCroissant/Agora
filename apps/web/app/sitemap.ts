@@ -27,6 +27,10 @@ const STATIC_DESCRIPTION_PAGES: {
   { path: "/democratie/senat", changeFrequency: "yearly", priority: 0.7 },
   { path: "/democratie/votre-role-citoyen", changeFrequency: "yearly", priority: 0.7 },
   { path: "/democratie/commissions", changeFrequency: "yearly", priority: 0.7 },
+  { path: "/democratie/elections-municipales", changeFrequency: "yearly", priority: 0.7 },
+  { path: "/municipales-2026", changeFrequency: "monthly", priority: 0.7 },
+  // Redirect source — kept in sitemap to preserve inbound links during transition
+  { path: "/elections-2026", changeFrequency: "yearly", priority: 0.4 },
   { path: "/sources", changeFrequency: "monthly", priority: 0.8 },
   { path: "/bills", changeFrequency: "daily", priority: 0.7 },
   { path: "/commissions", changeFrequency: "weekly", priority: 0.7 },

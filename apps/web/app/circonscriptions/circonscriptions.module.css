@@ -1,32 +1,52 @@
-.backLink {
-  display: inline-block;
-  margin-bottom: var(--spacing-sm);
-  color: white;
-  opacity: 0.9;
-  transition: opacity 0.2s;
+/* ============================================================
+   Circonscriptions page -- Civic Warmth redesign
+   Section accent: navy #1E3A5F (Explorer)
+   ============================================================ */
+
+/* ---------- Page header ---------- */
+
+.pageHeader {
+  margin-bottom: var(--spacing-xl);
 }
 
-.backLink:hover {
-  opacity: 1;
-}
-
-.title {
-  font-size: 2rem;
+.pageTitle {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
   font-weight: 700;
-  margin-bottom: var(--spacing-xs);
+  color: var(--color-text);
+  margin: 0 0 var(--spacing-xs);
+  line-height: 1.2;
 }
 
-.subtitle {
-  font-size: 1.125rem;
-  opacity: 0.9;
+.pageTitle span {
+  color: var(--color-section-explorer);
 }
+
+.pageSubtitle {
+  font-size: 1.0625rem;
+  color: var(--color-text-light);
+  margin: 0;
+}
+
+.errorHint {
+  margin-top: var(--spacing-sm);
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+}
+
+/* ---------- Toolbar ---------- */
 
 .toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-md);
+  gap: var(--spacing-sm);
   align-items: center;
   margin-bottom: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--color-background-card);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border-light);
 }
 
 .expandButtons {
@@ -34,29 +54,34 @@
 }
 
 .expandBtn {
-  padding: var(--spacing-sm) var(--spacing-md);
-  font-size: 0.9375rem;
-  font-weight: 500;
-  color: var(--color-primary);
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  color: var(--color-section-explorer);
   background: transparent;
-  border: 1px solid var(--color-primary);
-  border-radius: var(--border-radius);
+  border: 1.5px solid var(--color-section-explorer);
+  border-radius: var(--border-radius-pill);
   cursor: pointer;
   transition:
-    background 0.2s,
-    color 0.2s;
+    background var(--duration-fast),
+    color var(--duration-fast);
+  white-space: nowrap;
 }
 
 .expandBtn:hover {
-  background: var(--color-primary);
+  background: var(--color-section-explorer);
   color: white;
 }
 
 .stats {
-  font-size: 0.9375rem;
-  color: var(--color-text-light);
-  margin-bottom: var(--spacing-lg);
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-md);
+  font-family: var(--font-mono);
 }
+
+/* ---------- Accordion groups ---------- */
 
 .groups {
   display: flex;
@@ -65,11 +90,17 @@
 }
 
 .group {
-  background: var(--color-background);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius);
+  background: var(--color-background-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--border-radius-lg);
   overflow: hidden;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--duration-fast);
+}
+
+.group[data-expanded="true"] {
+  box-shadow: var(--shadow-warm);
+  border-color: rgba(30, 58, 95, 0.2);
 }
 
 .groupHeader {
@@ -78,38 +109,46 @@
   gap: var(--spacing-md);
   width: 100%;
   padding: var(--spacing-md) var(--spacing-lg);
+  font-family: var(--font-body);
   font-size: 1rem;
   font-weight: 600;
   color: var(--color-text);
-  background: var(--color-background-alt);
+  background: transparent;
   border: none;
   cursor: pointer;
   text-align: left;
-  transition: background 0.2s;
+  transition: background var(--duration-fast);
 }
 
 .groupHeader:hover {
-  background: var(--color-border);
+  background: var(--color-background-hover);
 }
 
 .groupName {
   flex: 1;
+  font-family: var(--font-display);
 }
 
 .groupMeta {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--color-text-light);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
 }
 
 .groupChevron {
   flex-shrink: 0;
-  font-size: 0.75rem;
-  color: var(--color-text-light);
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+  transition: transform var(--duration-fast) var(--ease-in-out);
+}
+
+.group[data-expanded="true"] .groupChevron {
+  transform: rotate(90deg);
 }
 
 .groupContent {
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-border-light);
 }
 
 .groupContent[hidden] {
@@ -119,8 +158,10 @@
 .groupContent .list {
   margin: 0;
   padding: var(--spacing-sm);
-  gap: var(--spacing-sm);
+  gap: var(--spacing-xs);
 }
+
+/* ---------- Lists ---------- */
 
 .list {
   list-style: none;
@@ -128,38 +169,39 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--spacing-sm);
 }
+
+/* ---------- Circonscription card ---------- */
 
 .card {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  padding: var(--spacing-md) var(--spacing-lg);
+  padding: var(--spacing-sm) var(--spacing-md);
   background: var(--color-background);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-light);
   border-radius: var(--border-radius);
   color: var(--color-text);
   text-decoration: none;
-  box-shadow: var(--shadow);
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    border-color 0.2s ease;
+    transform var(--duration-fast) var(--ease-in-out),
+    box-shadow var(--duration-fast) var(--ease-in-out),
+    border-color var(--duration-fast) var(--ease-in-out);
 }
 
 .card:hover {
-  border-color: var(--color-primary);
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
+  border-color: rgba(30, 58, 95, 0.25);
+  box-shadow: var(--shadow-sm);
+  transform: translateX(3px);
 }
 
 .cardAccent {
   flex-shrink: 0;
-  width: 4px;
-  height: 48px;
+  width: 3px;
+  height: 2.5rem;
   border-radius: 2px;
-  background: var(--accent, var(--color-primary));
+  background: var(--accent, var(--color-section-explorer));
 }
 
 .cardBody {
@@ -169,49 +211,43 @@
 
 .cardLabel {
   display: block;
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  margin-bottom: var(--spacing-xs);
+  font-size: 0.9375rem;
+  font-weight: 600;
   color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .cardCount {
   display: block;
-  font-size: 0.9375rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--color-text-light);
+  color: var(--color-text-muted);
 }
 
 .cardArrow {
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--color-background-alt);
-  color: var(--color-text-light);
-  font-size: 1rem;
+  color: var(--color-text-muted);
   font-weight: 600;
-  transition:
-    transform 0.2s ease,
-    color 0.2s ease,
-    background 0.2s ease;
+  font-size: 0.875rem;
+  transition: color var(--duration-fast), transform var(--duration-fast);
 }
 
 .card:hover .cardArrow {
-  background: var(--color-primary);
-  color: white;
-  transform: translateX(4px);
+  color: var(--color-section-explorer);
+  transform: translateX(3px);
 }
 
-.footer {
-  background: var(--color-background-alt);
-  border-top: 1px solid var(--color-border);
-  padding: var(--spacing-lg) 0;
-  text-align: center;
-  color: var(--color-text-light);
-  font-size: 0.875rem;
+/* ---------- Responsive ---------- */
+
+@media (max-width: 640px) {
+  .toolbar {
+    padding: var(--spacing-md);
+  }
+
+  .groupHeader {
+    padding: var(--spacing-md);
+  }
 }

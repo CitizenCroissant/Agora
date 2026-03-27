@@ -4,14 +4,46 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  StyleSheet
+  StyleSheet,
+  LayoutAnimation
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { DatePickerModal } from "@/app/components/DatePickerModal";
 import { StatusMessage } from "@/app/components/StatusMessage";
 import { ScreenContainer } from "@/app/components/ScreenContainer";
 import type { Scrutin, ScrutinsResponse } from "@agora/shared";
-import { colors, spacing, radius, typography, shadows } from "@/theme";
+import { colors, spacing, radius, typography, shadows, sectionColors } from "@/theme";
+import { layoutAnimationPresets } from "@/lib/animations";
+
+function VoteResultBar({ pour, contre, abstention }: { pour: number; contre: number; abstention: number }) {
+  const total = pour + contre + abstention
+  if (total === 0) return null
+  const pourPct = (pour / total) * 100
+  const contrePct = (contre / total) * 100
+  const abstPct = (abstention / total) * 100
+  return (
+    <View style={barStyles.container}>
+      <View style={[barStyles.segment, barStyles.pour, { flex: pourPct }]} />
+      <View style={[barStyles.segment, barStyles.abstention, { flex: abstPct }]} />
+      <View style={[barStyles.segment, barStyles.contre, { flex: contrePct }]} />
+    </View>
+  )
+}
+
+const barStyles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    height: 5,
+    borderRadius: 3,
+    overflow: "hidden",
+    marginTop: spacing.sm,
+    backgroundColor: colors.backgroundAlt
+  },
+  segment: { height: "100%" },
+  pour: { backgroundColor: colors.success },
+  contre: { backgroundColor: colors.accentCoral },
+  abstention: { backgroundColor: colors.accentAmber }
+})
 import {
   getTodayDate,
   formatDate,
@@ -73,6 +105,7 @@ export default function VotesTabScreen() {
           ? getWeekEnd(currentDate)
           : getMonthEnd(currentDate);
       const result = await apiClient.getScrutins(from, to);
+      LayoutAnimation.configureNext(layoutAnimationPresets.spring);
       setData(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load scrutins");
@@ -267,10 +300,15 @@ export default function VotesTabScreen() {
                       )}
                       <View style={styles.syntheseRow}>
                         <Text style={styles.syntheseText}>
-                          Pour {scrutin.synthese_pour} · Contre{" "}
-                          {scrutin.synthese_contre}
+                          ✅ {scrutin.synthese_pour} · ❌ {scrutin.synthese_contre}
+                          {scrutin.synthese_abstentions ? ` · ○ ${scrutin.synthese_abstentions}` : ""}
                         </Text>
                       </View>
+                      <VoteResultBar
+                        pour={scrutin.synthese_pour ?? 0}
+                        contre={scrutin.synthese_contre ?? 0}
+                        abstention={scrutin.synthese_abstentions ?? 0}
+                      />
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -402,7 +440,7 @@ const styles = StyleSheet.create({
   dateSectionTitle: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.primary,
+    color: sectionColors.votes,
     marginBottom: spacing.md,
     textTransform: "capitalize"
   },
@@ -424,7 +462,7 @@ const styles = StyleSheet.create({
   badge: {
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
-    borderRadius: 6
+    borderRadius: radius.sm
   },
   badgeAdopte: {
     backgroundColor: colors.successBg
@@ -433,8 +471,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.errorBg
   },
   badgeText: {
-    fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.semibold,
+    fontSize: typography.fontSize.xs,
+    fontWeight: typography.fontWeight.bold,
     color: colors.text
   },
   scrutinNumero: {

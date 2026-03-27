@@ -6,6 +6,7 @@ import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./commissions.module.css";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { EmptyState } from "@/components/EmptyState";
 
 const DEFAULT_TYPE = "COMPER";
 
@@ -82,7 +83,7 @@ export default function CommissionsPage() {
       <Breadcrumb
         items={[{ label: "Accueil", href: "/" }, { label: "Commissions" }]}
       />
-      <h1 className={styles.title}>Commissions et organes</h1>
+      <h1 className={styles.title}>Commissions <span>et organes</span></h1>
       <p className={styles.intro}>
         Commissions permanentes, commissions d&apos;enquête, délégations et
         autres organes de travail de l&apos;Assemblée nationale.
@@ -136,18 +137,20 @@ export default function CommissionsPage() {
       )}
 
       {!loadingTypes && !error && types.length === 0 && (
-        <p className="stateEmpty">
-          Aucun type d&apos;organe disponible. Exécutez l&apos;ingestion des
-          organes pour remplir les données.
-        </p>
+        <EmptyState
+          variant="commissions"
+          message="Aucun type d'organe disponible. Exécutez l'ingestion des organes pour remplir les données."
+        />
       )}
 
       {!loadingOrganes && !error && types.length > 0 && (
         <>
           {organes.length === 0 ? (
-            <p className="stateEmpty">
-              Aucun organe pour ce type. Choisissez un autre type dans la liste.
-            </p>
+            <EmptyState
+              variant="commissions"
+              title="Aucun organe"
+              message="Aucun organe pour ce type. Choisissez un autre type dans la liste."
+            />
           ) : (
             <div className={styles.listByType}>
               <section
@@ -157,7 +160,7 @@ export default function CommissionsPage() {
                 <h2 id="type-heading" className={styles.typeHeading}>
                   {labelByCode[typeFilter] ?? typeFilter}
                 </h2>
-                <ul className={styles.list}>
+                <ul className={`${styles.list} staggerChildren`}>
                   {organes.map((org) => (
                     <li key={org.id}>
                       <Link

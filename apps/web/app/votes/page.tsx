@@ -23,13 +23,14 @@ import styles from "./votes.module.css";
 import { PageHelp } from "@/components/PageHelp";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { StreakBadge } from "@/components/StreakBadge";
+import { VoteResultBar } from "@/components/VoteResultBar";
+import { Skeleton } from "@/components/Skeleton";
+import { EmptyState } from "@/components/EmptyState";
 
 type GroupPosition = "pour" | "contre" | "abstention";
-
 type ViewMode = "week" | "month";
 type SortFilter = "all" | "adopté" | "rejeté";
 
-// Available thematic tags (could be fetched from API in the future)
 const THEMATIC_TAGS = [
   { slug: "sante", label: "Santé" },
   { slug: "economie", label: "Économie" },
@@ -57,6 +58,23 @@ function groupScrutinsByDate(scrutins: Scrutin[]): Map<string, Scrutin[]> {
     map.get(d)!.push(s);
   }
   return map;
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className={styles.skeletonList}>
+      {[1, 2, 3, 4].map((n) => (
+        <div key={n} className={styles.skeletonCard}>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <Skeleton shape="pill" width={70} height={22} />
+            <Skeleton shape="text" width={120} height={14} />
+          </div>
+          <Skeleton shape="heading" width="80%" height={18} />
+          <Skeleton shape="rect" width="100%" height={6} />
+        </div>
+      ))}
+    </div>
+  );
 }
 
 function VotesPageContent() {
@@ -87,17 +105,14 @@ function VotesPageContent() {
   const [currentDate, setCurrentDate] = useState<string>(getTodayDate());
   const [dateInput, setDateInput] = useState<string>(getTodayDate());
 
-  // Fetch political groups once
   useEffect(() => {
     apiClient.getPoliticalGroups().then((r) => setPoliticalGroups(r.groups)).catch(() => {});
   }, []);
 
-  // Engagement: record that user visited the votes section (for streaks)
   useEffect(() => {
     recordVotePageVisit();
   }, []);
 
-  // Keep state in sync with URL (e.g. back/forward, shared link, ?date=)
   useEffect(() => {
     setSelectedTag(searchParams.get("tag"));
     setGroupSlug(searchParams.get("group"));
@@ -117,9 +132,7 @@ function VotesPageContent() {
     setError(null);
     try {
       const trimmedQuery = searchQuery.trim();
-
       if (trimmedQuery.length >= 2) {
-        // Keyword search mode using /search endpoint
         const searchResponse = await apiClient.search(trimmedQuery, "scrutins", {
           group: groupSlug || undefined,
           group_position: groupPosition || undefined
@@ -127,15 +140,8 @@ function VotesPageContent() {
         setSearchResults(searchResponse.scrutins);
         setData(null);
       } else {
-        // Default mode: date range (week/month) + optional thematic tag + optional group filter
-        const from =
-          viewMode === "week"
-            ? getWeekStart(currentDate)
-            : getMonthStart(currentDate);
-        const to =
-          viewMode === "week"
-            ? getWeekEnd(currentDate)
-            : getMonthEnd(currentDate);
+        const from = viewMode === "week" ? getWeekStart(currentDate) : getMonthStart(currentDate);
+        const to = viewMode === "week" ? getWeekEnd(currentDate) : getMonthEnd(currentDate);
         const result = await apiClient.getScrutins(
           from,
           to,
@@ -160,19 +166,13 @@ function VotesPageContent() {
   }, [loadScrutins]);
 
   const handlePrevious = () => {
-    if (viewMode === "week") {
-      setCurrentDate(addWeeks(currentDate, -1));
-    } else {
-      setCurrentDate(addMonths(currentDate, -1));
-    }
+    if (viewMode === "week") setCurrentDate(addWeeks(currentDate, -1));
+    else setCurrentDate(addMonths(currentDate, -1));
   };
 
   const handleNext = () => {
-    if (viewMode === "week") {
-      setCurrentDate(addWeeks(currentDate, 1));
-    } else {
-      setCurrentDate(addMonths(currentDate, 1));
-    }
+    if (viewMode === "week") setCurrentDate(addWeeks(currentDate, 1));
+    else setCurrentDate(addMonths(currentDate, 1));
   };
 
   const handleToday = () => {
@@ -184,386 +184,327 @@ function VotesPageContent() {
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDate = e.target.value;
     setDateInput(newDate);
-    if (newDate && newDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
-      setCurrentDate(newDate);
-    }
+    if (newDate && newDate.match(/^\d{4}-\d{2}-\d{2}$/)) setCurrentDate(newDate);
   };
 
   const getPeriodLabel = () => {
     if (viewMode === "week") {
-      const from = getWeekStart(currentDate);
-      const to = getWeekEnd(currentDate);
-      return formatDateRange(from, to);
+      return formatDateRange(getWeekStart(currentDate), getWeekEnd(currentDate));
     }
     return formatMonth(currentDate);
   };
 
+  const handleTagSelect = (slug: string | null) => {
+    setSelectedTag(slug);
+    const params = new URLSearchParams(searchParams.toString());
+    if (slug) params.set("tag", slug);
+    else params.delete("tag");
+    router.push(`/votes?${params.toString()}`, { scroll: false });
+  };
+
   const baseScrutins =
-    (searchResults ?? data?.scrutins) &&
-    (searchResults ?? data?.scrutins)!.length > 0
+    (searchResults ?? data?.scrutins) && (searchResults ?? data?.scrutins)!.length > 0
       ? (searchResults ?? data?.scrutins)!
       : [];
 
   const availableTypes = Array.from(
-    new Set(
-      baseScrutins
-        .map((s) => s.type_vote_libelle)
-        .filter((t): t is string => Boolean(t))
-    )
+    new Set(baseScrutins.map((s) => s.type_vote_libelle).filter((t): t is string => Boolean(t)))
   );
 
-  const filteredScrutins =
-    baseScrutins.filter((s) => {
-      if (sortFilter === "all") return true;
-      if (s.sort_code !== sortFilter) return false;
-      if (typeFilter !== "all") {
-        return s.type_vote_libelle === typeFilter;
-      }
-      return true;
-    }) ?? [];
+  const filteredScrutins = baseScrutins.filter((s) => {
+    if (sortFilter !== "all" && s.sort_code !== sortFilter) return false;
+    if (typeFilter !== "all" && s.type_vote_libelle !== typeFilter) return false;
+    return true;
+  });
 
   const byDate =
     filteredScrutins.length > 0
       ? groupScrutinsByDate(filteredScrutins)
       : new Map<string, Scrutin[]>();
-  const sortedDates = Array.from(byDate.keys()).sort((a, b) =>
-    b.localeCompare(a)
-  );
+  const sortedDates = Array.from(byDate.keys()).sort((a, b) => b.localeCompare(a));
+
+  const totalShown = filteredScrutins.length;
 
   return (
     <div className="container">
       <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Scrutins" }]} />
-      <StreakBadge />
-          <PageHelp
-            title="Comment lire cette page ?"
-            points={[
-              "Chaque carte correspond à un scrutin (vote public) sur un texte ou un article.",
-              "Utilisez la barre de recherche pour retrouver un scrutin par mots-clés (objet, texte, etc.).",
-              "Les filtres permettent de restreindre la période, le type de vote, le résultat (adopté ou rejeté) et les thèmes.",
-              "Filtre avancé : choisissez un groupe politique pour n'afficher que les scrutins où ce groupe a voté, et optionnellement où sa position majoritaire est « pour », « contre » ou « abstention »."
-            ]}
-            collapsible
-            defaultClosed
-          />
 
-          <div className={`controlBar ${styles.controlBar}`}>
-            <div className={styles.controlBarTop}>
-              <div className={styles.leftControls}>
-                <button
-                  type="button"
-                  className={styles.iconButton}
-                  onClick={handlePrevious}
-                  aria-label="Période précédente"
-                  title="Période précédente"
-                >
-                  ‹
-                </button>
-                <button
-                  type="button"
-                  className={styles.iconButton}
-                  onClick={handleNext}
-                  aria-label="Période suivante"
-                  title="Période suivante"
-                >
-                  ›
-                </button>
-                <button
-                  type="button"
-                  className={styles.todayButton}
-                  onClick={handleToday}
-                >
-                  Aujourd&apos;hui
-                </button>
-              </div>
+      <div className={styles.pageIntro}>
+        <div>
+          <h1 className={styles.pageTitle}>
+            Scrutins <span>publics</span>
+          </h1>
+          <p className={styles.pageSubtitle}>
+            Les votes nominatifs de l&apos;Assemblée nationale
+          </p>
+        </div>
+        <StreakBadge />
+      </div>
 
-              <div className={styles.centerControls}>
-                <h2 className={styles.periodTitle}>{getPeriodLabel()}</h2>
-              </div>
+      <PageHelp
+        title="Comment lire cette page ?"
+        points={[
+          "Chaque carte correspond à un scrutin (vote public) sur un texte ou un article.",
+          "La barre colorée montre la répartition pour / contre / abstention.",
+          "Utilisez les filtres thématiques (pilules amber) pour cibler un domaine.",
+          "Filtrez par groupe politique pour voir comment votre groupe a voté."
+        ]}
+        collapsible
+        defaultClosed
+      />
 
-              <div className={styles.topRightControls}>
-                <div className={styles.datePickerWrapper}>
-                  <span className={styles.calendarIcon} aria-hidden>
-                    📅
-                  </span>
-                  <input
-                    type="date"
-                    className={styles.datePicker}
-                    value={dateInput}
-                    onChange={handleDateChange}
-                    aria-label="Sélectionner une date"
-                    title="Choisir une date"
-                  />
-                </div>
-                <div className={styles.viewToggle}>
-                  <button
-                    type="button"
-                    className={`${styles.viewButton} ${viewMode === "week" ? styles.activeView : ""}`}
-                    onClick={() => setViewMode("week")}
-                    title="Vue semaine"
-                  >
-                    S
-                  </button>
-                  <button
-                    type="button"
-                    className={`${styles.viewButton} ${viewMode === "month" ? styles.activeView : ""}`}
-                    onClick={() => setViewMode("month")}
-                    title="Vue mois"
-                  >
-                    M
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className={styles.controlBarBottom}>
-              <form
-                className={styles.searchForm}
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  const params = new URLSearchParams(searchParams.toString());
-                  const trimmed = searchQuery.trim();
-                  if (trimmed.length >= 2) {
-                    params.set("q", trimmed);
-                  } else {
-                    params.delete("q");
-                  }
-                  router.push(`/votes?${params.toString()}`, { scroll: false });
-                }}
-              >
-                <input
-                  type="search"
-                  className="searchInput"
-                  placeholder="Rechercher un scrutin (min. 2 caractères)"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  aria-label="Rechercher un scrutin"
-                />
-              </form>
-
-              <div className={styles.filtersRow}>
-                {availableTypes.length > 0 && (
-                  <div className={styles.typeFilter}>
-                    <select
-                      className={styles.typeSelect}
-                      value={typeFilter}
-                      onChange={(e) => setTypeFilter(e.target.value)}
-                      aria-label="Filtrer par type de vote"
-                    >
-                      <option value="all">Tous les types de vote</option>
-                      {availableTypes.map((type) => (
-                        <option key={type} value={type}>
-                          {type}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-
-                <div className={styles.tagFilter}>
-                  <select
-                    className={styles.tagSelect}
-                    value={selectedTag || ""}
-                    onChange={(e) => {
-                      const newTag = e.target.value || null;
-                      setSelectedTag(newTag);
-                      const params = new URLSearchParams(searchParams.toString());
-                      if (newTag) params.set("tag", newTag);
-                      else params.delete("tag");
-                      router.push(`/votes?${params.toString()}`, { scroll: false });
-                    }}
-                    aria-label="Filtrer par thème"
-                  >
-                    <option value="">Tous les thèmes</option>
-                    {THEMATIC_TAGS.map((tag) => (
-                      <option key={tag.slug} value={tag.slug}>
-                        {tag.label}
-                      </option>
-                    ))}
-                  </select>
-                  {selectedTag && (
-                    <button
-                      type="button"
-                      className={styles.clearTagButton}
-                      onClick={() => {
-                        setSelectedTag(null);
-                        const params = new URLSearchParams(searchParams.toString());
-                        params.delete("tag");
-                        router.push(`/votes?${params.toString()}`, { scroll: false });
-                      }}
-                      aria-label="Effacer le filtre"
-                      title="Effacer le filtre"
-                    >
-                      ×
-                    </button>
-                  )}
-                </div>
-
-                <div className={styles.groupFilter}>
-                  <select
-                    className={styles.typeSelect}
-                    value={groupSlug || ""}
-                    onChange={(e) => {
-                      const slug = e.target.value || null;
-                      setGroupSlug(slug);
-                      const params = new URLSearchParams(searchParams.toString());
-                      if (slug) params.set("group", slug);
-                      else params.delete("group");
-                      if (!slug) params.delete("group_position");
-                      router.push(`/votes?${params.toString()}`, { scroll: false });
-                    }}
-                    aria-label="Filtrer par groupe politique"
-                    title="Filtrer par groupe politique (position majoritaire du groupe)"
-                  >
-                    <option value="">Tous les groupes</option>
-                    {politicalGroups.map((g) => (
-                      <option key={g.slug} value={g.slug}>
-                        {g.label}
-                      </option>
-                    ))}
-                  </select>
-                  {groupSlug && (
-                    <select
-                      className={styles.typeSelect}
-                      value={groupPosition}
-                      onChange={(e) => {
-                        const pos = (e.target.value || "") as GroupPosition | "";
-                        setGroupPosition(pos);
-                        const params = new URLSearchParams(searchParams.toString());
-                        if (pos) params.set("group_position", pos);
-                        else params.delete("group_position");
-                        router.push(`/votes?${params.toString()}`, { scroll: false });
-                      }}
-                      aria-label="Position du groupe"
-                      title="Position majoritaire du groupe (pour, contre, abstention)"
-                    >
-                      <option value="">Toute position</option>
-                      <option value="pour">Pour</option>
-                      <option value="contre">Contre</option>
-                      <option value="abstention">Abstention</option>
-                    </select>
-                  )}
-                </div>
-
-                <div className={styles.sortFilterToggle}>
-                  <button
-                    type="button"
-                    className={`${styles.sortFilterButton} ${sortFilter === "all" ? styles.activeSortFilter : ""}`}
-                    onClick={() => setSortFilter("all")}
-                    title="Tous les scrutins"
-                  >
-                    Tous
-                  </button>
-                  <button
-                    type="button"
-                    className={`${styles.sortFilterButton} ${styles.sortFilterAdopte} ${sortFilter === "adopté" ? styles.activeSortFilter : ""}`}
-                    onClick={() => setSortFilter("adopté")}
-                    title="Adoptés uniquement"
-                  >
-                    Adoptés
-                  </button>
-                  <button
-                    type="button"
-                    className={`${styles.sortFilterButton} ${styles.sortFilterRejete} ${sortFilter === "rejeté" ? styles.activeSortFilter : ""}`}
-                    onClick={() => setSortFilter("rejeté")}
-                    title="Rejetés uniquement"
-                  >
-                    Rejetés
-                  </button>
-                </div>
-              </div>
-            </div>
+      {/* Control bar */}
+      <div className={`controlBar ${styles.controlBar}`}>
+        {/* Row 1: navigation + period + view toggle */}
+        <div className={styles.controlBarTop}>
+          <div className={styles.leftControls}>
+            <button type="button" className={styles.iconButton} onClick={handlePrevious} aria-label="Période précédente">‹</button>
+            <button type="button" className={styles.iconButton} onClick={handleNext} aria-label="Période suivante">›</button>
+            <button type="button" className={styles.todayButton} onClick={handleToday}>Aujourd&apos;hui</button>
           </div>
 
-          {loading && (
-            <div className="stateLoading">Chargement des scrutins...</div>
-          )}
+          <div className={styles.centerControls}>
+            <h2 className={styles.periodTitle}>{getPeriodLabel()}</h2>
+          </div>
 
-          {error && (
-            <div className="stateError">
-              <p>Erreur: {error}</p>
+          <div className={styles.topRightControls}>
+            <div className={styles.datePickerWrapper}>
+              <span className={styles.calendarIcon} aria-hidden>📅</span>
+              <input
+                type="date"
+                className={styles.datePicker}
+                value={dateInput}
+                onChange={handleDateChange}
+                aria-label="Sélectionner une date"
+              />
             </div>
-          )}
+            <div className={styles.viewToggle}>
+              <button
+                type="button"
+                className={`${styles.viewButton} ${viewMode === "week" ? styles.activeView : ""}`}
+                onClick={() => setViewMode("week")}
+                title="Vue semaine"
+              >S</button>
+              <button
+                type="button"
+                className={`${styles.viewButton} ${viewMode === "month" ? styles.activeView : ""}`}
+                onClick={() => setViewMode("month")}
+                title="Vue mois"
+              >M</button>
+            </div>
+          </div>
+        </div>
 
-          {!loading && !error && data && (
-            <div className={styles.scrutinsList}>
-              {sortedDates.length === 0 ? (
-                <div className="stateEmpty">
-                  <p>Aucun scrutin pour cette période.</p>
-                </div>
-              ) : (
-                sortedDates.map((date) => {
-                  const isToday = date === getTodayDate();
-                  const scrutinsForDate = byDate.get(date) ?? [];
-                  return (
-                    <div
-                      key={date}
-                      className={`${styles.dateSection} ${isToday ? styles.today : ""}`}
-                    >
-                      <div className={styles.dateHeader}>
-                        <h2>{formatDate(date)}</h2>
-                        {isToday && (
-                          <span className={styles.todayBadge}>
-                            Aujourd&apos;hui
-                          </span>
-                        )}
-                      </div>
+        {/* Row 2: search + filters */}
+        <div className={styles.controlBarBottom}>
+          <form
+            className={styles.searchForm}
+            onSubmit={(e) => {
+              e.preventDefault();
+              const params = new URLSearchParams(searchParams.toString());
+              const trimmed = searchQuery.trim();
+              if (trimmed.length >= 2) params.set("q", trimmed);
+              else params.delete("q");
+              router.push(`/votes?${params.toString()}`, { scroll: false });
+            }}
+          >
+            <input
+              type="search"
+              className="searchInput"
+              placeholder="Rechercher un scrutin…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label="Rechercher un scrutin"
+            />
+          </form>
 
-                      <div className={styles.scrutinCards}>
-                        {scrutinsForDate.map((scrutin) => (
-                          <Link
-                            key={scrutin.id}
-                            href={`/votes/${scrutin.id}`}
-                            className={styles.scrutinCard}
-                          >
-                            <div className={styles.scrutinHeader}>
-                              <span
-                                className={
-                                  scrutin.sort_code === "adopté"
-                                    ? styles.badgeAdopte
-                                    : styles.badgeRejete
-                                }
-                              >
-                                {scrutin.sort_code === "adopté"
-                                  ? "Adopté"
-                                  : "Rejeté"}
-                              </span>
-                              {scrutin.type_vote_libelle && (
-                                <span className={styles.typeVote}>
-                                  {scrutin.type_vote_libelle}
-                                </span>
-                              )}
-                            </div>
-                            <h3 className={styles.scrutinTitle}>
-                              {scrutin.titre}
-                            </h3>
-                            {scrutin.tags && scrutin.tags.length > 0 && (
-                              <div className={styles.scrutinTags}>
-                                {scrutin.tags.map((tag) => (
-                                  <span
-                                    key={tag.id}
-                                    className={styles.tag}
-                                    title={tag.label}
-                                  >
-                                    {tag.label}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                            <p className={styles.scrutinCounts}>
-                              Pour: {scrutin.synthese_pour} · Contre:{" "}
-                              {scrutin.synthese_contre}
-                              {scrutin.synthese_abstentions > 0 &&
-                                ` · Abstentions: ${scrutin.synthese_abstentions}`}
-                            </p>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })
+          <div className={styles.filtersRow}>
+            {/* Outcome filter pills */}
+            <div className={styles.outcomeFilter}>
+              <button
+                type="button"
+                className={`${styles.outcomePill} ${sortFilter === "all" ? `${styles.active} ${styles.activeAll}` : ""}`}
+                onClick={() => setSortFilter("all")}
+              >
+                Tous{totalShown > 0 && sortFilter === "all" ? ` (${totalShown})` : ""}
+              </button>
+              <button
+                type="button"
+                className={`${styles.outcomePill} ${sortFilter === "adopté" ? `${styles.active} ${styles.activeAdopte}` : ""}`}
+                onClick={() => setSortFilter("adopté")}
+              >
+                ✓ Adoptés
+              </button>
+              <button
+                type="button"
+                className={`${styles.outcomePill} ${sortFilter === "rejeté" ? `${styles.active} ${styles.activeRejete}` : ""}`}
+                onClick={() => setSortFilter("rejeté")}
+              >
+                ✕ Rejetés
+              </button>
+
+              {/* Type select */}
+              {availableTypes.length > 0 && (
+                <select
+                  className={styles.filterSelect}
+                  value={typeFilter}
+                  onChange={(e) => setTypeFilter(e.target.value)}
+                  aria-label="Filtrer par type de vote"
+                >
+                  <option value="all">Tous types</option>
+                  {availableTypes.map((type) => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+              )}
+
+              {/* Group select */}
+              <select
+                className={styles.filterSelect}
+                value={groupSlug || ""}
+                onChange={(e) => {
+                  const slug = e.target.value || null;
+                  setGroupSlug(slug);
+                  const params = new URLSearchParams(searchParams.toString());
+                  if (slug) params.set("group", slug);
+                  else params.delete("group");
+                  if (!slug) params.delete("group_position");
+                  router.push(`/votes?${params.toString()}`, { scroll: false });
+                }}
+                aria-label="Filtrer par groupe politique"
+              >
+                <option value="">Tous les groupes</option>
+                {politicalGroups.map((g) => (
+                  <option key={g.slug} value={g.slug}>{g.label}</option>
+                ))}
+              </select>
+
+              {groupSlug && (
+                <select
+                  className={styles.filterSelect}
+                  value={groupPosition}
+                  onChange={(e) => {
+                    const pos = (e.target.value || "") as GroupPosition | "";
+                    setGroupPosition(pos);
+                    const params = new URLSearchParams(searchParams.toString());
+                    if (pos) params.set("group_position", pos);
+                    else params.delete("group_position");
+                    router.push(`/votes?${params.toString()}`, { scroll: false });
+                  }}
+                  aria-label="Position du groupe"
+                >
+                  <option value="">Toute position</option>
+                  <option value="pour">Pour</option>
+                  <option value="contre">Contre</option>
+                  <option value="abstention">Abstention</option>
+                </select>
               )}
             </div>
+
+            {/* Thematic tag pills */}
+            <div className={styles.tagPillsRow}>
+              <span className={styles.tagPillAllLabel}>Thème :</span>
+              <button
+                type="button"
+                className={`${styles.tagPill} ${!selectedTag ? styles.activeTag : ""}`}
+                onClick={() => handleTagSelect(null)}
+              >
+                Tous
+              </button>
+              {THEMATIC_TAGS.map((tag) => (
+                <button
+                  key={tag.slug}
+                  type="button"
+                  className={`${styles.tagPill} ${selectedTag === tag.slug ? styles.activeTag : ""}`}
+                  onClick={() => handleTagSelect(selectedTag === tag.slug ? null : tag.slug)}
+                >
+                  {tag.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      {loading && <LoadingSkeleton />}
+
+      {error && (
+        <div className="stateError">
+          <p>Erreur : {error}</p>
+        </div>
+      )}
+
+      {!loading && !error && (
+        <div className={styles.scrutinsList}>
+          {sortedDates.length === 0 ? (
+            <EmptyState
+              variant="votes"
+              message="Essayez une autre semaine, ou effacez les filtres actifs."
+            />
+          ) : (
+            sortedDates.map((date) => {
+              const isToday = date === getTodayDate();
+              const scrutinsForDate = byDate.get(date) ?? [];
+              return (
+                <div key={date} className={styles.dateSection}>
+                  <div className={styles.dateHeader}>
+                    <h2 className={styles.dateLabel}>{formatDate(date)}</h2>
+                    {isToday && <span className={styles.todayBadge}>Aujourd&apos;hui</span>}
+                    <span className={styles.dateAccent} aria-hidden />
+                  </div>
+
+                  <div className={`${styles.scrutinCards} staggerChildren`}>
+                    {scrutinsForDate.map((scrutin) => {
+                      const isAdopte = scrutin.sort_code === "adopté";
+                      return (
+                        <Link
+                          key={scrutin.id}
+                          href={`/votes/${scrutin.id}`}
+                          className={`${styles.scrutinCard} ${isAdopte ? styles.adopte : styles.rejete}`}
+                        >
+                          <div className={styles.scrutinCardTop}>
+                            <div className={styles.scrutinMeta}>
+                              <span className={isAdopte ? styles.badgeAdopte : styles.badgeRejete}>
+                                {isAdopte ? "✓ Adopté" : "✕ Rejeté"}
+                              </span>
+                              {scrutin.type_vote_libelle && (
+                                <span className={styles.typeVote}>{scrutin.type_vote_libelle}</span>
+                              )}
+                            </div>
+                            {scrutin.numero && (
+                              <span className={styles.scrutinNumber}>#{scrutin.numero}</span>
+                            )}
+                          </div>
+
+                          <h3 className={styles.scrutinTitle}>{scrutin.titre}</h3>
+
+                          {scrutin.tags && scrutin.tags.length > 0 && (
+                            <div className={styles.scrutinTags}>
+                              {scrutin.tags.map((tag) => (
+                                <span key={tag.id} className={styles.cardTag}>{tag.label}</span>
+                              ))}
+                            </div>
+                          )}
+
+                          <VoteResultBar
+                            pour={scrutin.synthese_pour}
+                            contre={scrutin.synthese_contre}
+                            abstentions={scrutin.synthese_abstentions}
+                            nonVotants={scrutin.synthese_non_votants ?? 0}
+                            size="sm"
+                            showLegend
+                          />
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })
           )}
+        </div>
+      )}
     </div>
   );
 }

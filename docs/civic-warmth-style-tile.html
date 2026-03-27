@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Civic Warmth — Style Tile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1E3A5F;
+    --primary-dark: #142942;
+    --primary-light: #2A4F7A;
+    --coral: #E85D3A;
+    --coral-dark: #D04A28;
+    --teal: #2BA89E;
+    --teal-dark: #1F8A82;
+    --amber: #F0A030;
+    --amber-dark: #D98B1A;
+    --plum: #7B5EA7;
+    --plum-dark: #654B8E;
+    --bg: #FAFAF7;
+    --bg-alt: #F4F2EE;
+    --bg-card: #FFFFFF;
+    --text: #2A2A2A;
+    --text-secondary: #5C5C5C;
+    --text-muted: #7A7A7A;
+    --border: #E5E2DC;
+    --border-light: #F0EDE7;
+    --success: #2E8B57;
+    --success-bg: #EDF7F0;
+    --error: #D14654;
+    --error-bg: #FDF0F0;
+    --shadow-sm: 0 1px 3px rgba(30, 58, 95, 0.06);
+    --shadow: 0 2px 8px rgba(30, 58, 95, 0.08);
+    --shadow-md: 0 4px 12px rgba(30, 58, 95, 0.10);
+    --shadow-lg: 0 8px 24px rgba(30, 58, 95, 0.12);
+    --font-display: 'Sora', sans-serif;
+    --font-body: 'Figtree', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .tile {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 64px 48px;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    margin-bottom: 80px;
+    animation: fadeUp 0.6s var(--ease-out-expo) both;
+  }
+  .hero-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(48px, 7vw, 80px);
+    line-height: 0.95;
+    color: var(--primary);
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+  .hero p {
+    font-size: 20px;
+    color: var(--text-secondary);
+    max-width: 540px;
+    line-height: 1.5;
+  }
+
+  /* ── Section ── */
+  .section {
+    margin-bottom: 72px;
+    animation: fadeUp 0.6s var(--ease-out-expo) both;
+  }
+  .section:nth-child(3) { animation-delay: 0.08s; }
+  .section:nth-child(4) { animation-delay: 0.16s; }
+  .section:nth-child(5) { animation-delay: 0.24s; }
+  .section:nth-child(6) { animation-delay: 0.32s; }
+  .section:nth-child(7) { animation-delay: 0.40s; }
+  .section:nth-child(8) { animation-delay: 0.48s; }
+
+  .section-label {
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  /* ── Colors ── */
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .color-swatch {
+    aspect-ratio: 1.2;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s var(--ease-out-expo), box-shadow 0.25s var(--ease-out-expo);
+    cursor: default;
+  }
+  .color-swatch:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+  .color-swatch .swatch-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(4px);
+  }
+  .color-swatch .swatch-name {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .color-swatch .swatch-hex {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .neutrals-row {
+    display: flex;
+    gap: 8px;
+  }
+  .neutral-chip {
+    flex: 1;
+    height: 48px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    border: 1px solid var(--border-light);
+  }
+
+  /* ── Typography ── */
+  .type-specimen {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 32px;
+  }
+  .type-col h3 {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .type-col .sample-large {
+    font-size: 56px;
+    line-height: 1;
+    color: var(--primary);
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  .type-col:nth-child(1) .sample-large { font-family: var(--font-display); font-weight: 700; }
+  .type-col:nth-child(2) .sample-large { font-family: var(--font-body); font-weight: 400; }
+  .type-col:nth-child(3) .sample-large { font-family: var(--font-mono); font-weight: 400; font-size: 44px; }
+  .type-col .sample-word {
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .type-col:nth-child(1) .sample-word { font-family: var(--font-display); font-weight: 600; }
+  .type-col:nth-child(2) .sample-word { font-family: var(--font-body); }
+  .type-col:nth-child(3) .sample-word { font-family: var(--font-mono); font-size: 15px; }
+  .type-col .sample-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .type-scale {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .type-scale-row {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .type-scale-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    width: 48px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .type-scale-sample {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--primary);
+    white-space: nowrap;
+  }
+
+  /* ── Cards ── */
+  .card-demos {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+  }
+  .demo-card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+    transition: transform 0.25s var(--ease-out-expo), box-shadow 0.25s var(--ease-out-expo);
+  }
+  .demo-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .demo-card .card-section-bar {
+    width: 32px;
+    height: 3px;
+    border-radius: 2px;
+    margin-bottom: 14px;
+  }
+  .demo-card h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .demo-card p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+  .demo-card .card-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* ── Vote Bar ── */
+  .vote-demo {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 28px 32px;
+    box-shadow: var(--shadow);
+    max-width: 560px;
+  }
+  .vote-demo .vote-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .vote-demo h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.35;
+  }
+  .vote-bar {
+    display: flex;
+    height: 28px;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .vote-bar .pour { background: var(--success); flex: 312; transition: flex 0.6s var(--ease-out-expo); }
+  .vote-bar .contre { background: var(--error); flex: 228; transition: flex 0.6s var(--ease-out-expo) 0.05s; }
+  .vote-bar .abstention { background: var(--border); flex: 37; transition: flex 0.6s var(--ease-out-expo) 0.1s; }
+  .vote-legend {
+    display: flex;
+    gap: 20px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .vote-legend span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .vote-legend .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .vote-legend strong {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  /* ── Badges ── */
+  .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition: transform 0.15s var(--ease-spring);
+  }
+  .badge:hover { transform: scale(1.04); }
+  .badge-coral { background: #FDEBE6; color: var(--coral-dark); }
+  .badge-teal { background: #E5F5F3; color: var(--teal-dark); }
+  .badge-amber { background: #FDF3E0; color: var(--amber-dark); }
+  .badge-plum { background: #F0EBF5; color: var(--plum-dark); }
+  .badge-navy { background: #E8EDF3; color: var(--primary); }
+  .badge-success { background: var(--success-bg); color: var(--success); }
+  .badge-error { background: var(--error-bg); color: var(--error); }
+
+  /* ── Buttons ── */
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s var(--ease-out-expo);
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--primary-light); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .btn-coral {
+    background: var(--coral);
+    color: white;
+  }
+  .btn-coral:hover { background: var(--coral-dark); transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--primary);
+    border: 1.5px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--primary); background: #E8EDF3; }
+  .btn-pill {
+    background: var(--bg-alt);
+    color: var(--text-secondary);
+    border-radius: 999px;
+    padding: 8px 18px;
+    font-size: 13px;
+  }
+  .btn-pill:hover { background: var(--border); color: var(--text); }
+
+  /* ── Section stripe ── */
+  .section-stripe {
+    display: flex;
+    height: 4px;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .section-stripe > div { flex: 1; }
+
+  /* ── Footer ── */
+  .footer-demo {
+    background: var(--primary-dark);
+    border-radius: 16px;
+    padding: 40px 48px 32px;
+    color: white;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 32px;
+  }
+  .footer-demo h5 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 24px;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+  .footer-demo .tagline {
+    font-size: 13px;
+    color: #C8D6E5;
+    line-height: 1.5;
+  }
+  .footer-col-title {
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #C8D6E5;
+    margin-bottom: 12px;
+  }
+  .footer-link {
+    display: block;
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
+    padding: 3px 0;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .footer-link:hover { color: white; }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 768px) {
+    .tile { padding: 32px 20px; }
+    .color-grid { grid-template-columns: repeat(3, 1fr); }
+    .type-specimen { grid-template-columns: 1fr; gap: 24px; }
+    .card-demos { grid-template-columns: 1fr; }
+    .footer-demo { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="tile">
+
+  <!-- Hero -->
+  <div class="hero section">
+    <div class="hero-label">Design System v1.0</div>
+    <h1>Civic<br>Warmth</h1>
+    <p>Information as invitation, not obligation. A visual language for democratic engagement.</p>
+  </div>
+
+  <!-- Colors -->
+  <div class="section">
+    <div class="section-label">Color Palette</div>
+    <div class="color-grid">
+      <div class="color-swatch" style="background: var(--primary);">
+        <div class="swatch-info"><div class="swatch-name">Primary</div><div class="swatch-hex">#1E3A5F</div></div>
+      </div>
+      <div class="color-swatch" style="background: var(--coral);">
+        <div class="swatch-info"><div class="swatch-name">Coral</div><div class="swatch-hex">#E85D3A</div></div>
+      </div>
+      <div class="color-swatch" style="background: var(--teal);">
+        <div class="swatch-info"><div class="swatch-name">Teal</div><div class="swatch-hex">#2BA89E</div></div>
+      </div>
+      <div class="color-swatch" style="background: var(--amber);">
+        <div class="swatch-info"><div class="swatch-name">Amber</div><div class="swatch-hex">#F0A030</div></div>
+      </div>
+      <div class="color-swatch" style="background: var(--plum);">
+        <div class="swatch-info"><div class="swatch-name">Plum</div><div class="swatch-hex">#7B5EA7</div></div>
+      </div>
+    </div>
+    <div class="neutrals-row">
+      <div class="neutral-chip" style="background: var(--bg); color: var(--text-muted);">#FAFAF7</div>
+      <div class="neutral-chip" style="background: var(--bg-alt); color: var(--text-muted);">#F4F2EE</div>
+      <div class="neutral-chip" style="background: #fff; color: var(--text-muted);">#FFFFFF</div>
+      <div class="neutral-chip" style="background: var(--text); color: white;">#2A2A2A</div>
+      <div class="neutral-chip" style="background: var(--text-muted); color: white;">#7A7A7A</div>
+    </div>
+    <div class="section-stripe" style="margin-top: 24px;">
+      <div style="background: var(--coral);"></div>
+      <div style="background: var(--amber);"></div>
+      <div style="background: var(--teal);"></div>
+      <div style="background: var(--primary);"></div>
+      <div style="background: var(--plum);"></div>
+    </div>
+  </div>
+
+  <!-- Typography -->
+  <div class="section">
+    <div class="section-label">Typography</div>
+    <div class="type-specimen">
+      <div class="type-col">
+        <h3>Display — Sora</h3>
+        <div class="sample-large">Aa</div>
+        <div class="sample-word">Assemblée nationale</div>
+        <div class="sample-meta">Sora 700 · Headers, titles</div>
+      </div>
+      <div class="type-col">
+        <h3>Body — Figtree</h3>
+        <div class="sample-large">Aa</div>
+        <div class="sample-word">Transparence citoyenne</div>
+        <div class="sample-meta">Figtree 400 · Body, UI text</div>
+      </div>
+      <div class="type-col">
+        <h3>Data — JetBrains Mono</h3>
+        <div class="sample-large">01</div>
+        <div class="sample-word">2026-03-27 · Scrutin n°847</div>
+        <div class="sample-meta">JetBrains Mono 400 · Dates, data</div>
+      </div>
+    </div>
+    <div class="type-scale">
+      <div class="type-scale-row">
+        <span class="type-scale-label">48px</span>
+        <span class="type-scale-sample" style="font-size: 48px; letter-spacing: -0.03em;">L'Assemblée</span>
+      </div>
+      <div class="type-scale-row">
+        <span class="type-scale-label">32px</span>
+        <span class="type-scale-sample" style="font-size: 32px; letter-spacing: -0.02em;">Scrutins du jour</span>
+      </div>
+      <div class="type-scale-row">
+        <span class="type-scale-label">20px</span>
+        <span class="type-scale-sample" style="font-size: 20px; font-weight: 600;">Dossiers législatifs</span>
+      </div>
+      <div class="type-scale-row">
+        <span class="type-scale-label">16px</span>
+        <span class="type-scale-sample" style="font-size: 16px; font-weight: 600; font-family: var(--font-body); color: var(--text);">Projet de loi relatif à la transition énergétique</span>
+      </div>
+      <div class="type-scale-row">
+        <span class="type-scale-label">14px</span>
+        <span class="type-scale-sample" style="font-size: 14px; font-weight: 400; font-family: var(--font-body); color: var(--text-secondary);">Commission des finances, de l'économie générale et du contrôle budgétaire</span>
+      </div>
+      <div class="type-scale-row">
+        <span class="type-scale-label">11px</span>
+        <span class="type-scale-sample" style="font-size: 11px; font-weight: 500; font-family: var(--font-mono); color: var(--text-muted); letter-spacing: 0.04em;">SÉANCE PUBLIQUE · 15:00 — 19:30</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cards -->
+  <div class="section">
+    <div class="section-label">Card Components</div>
+    <div class="card-demos">
+      <div class="demo-card">
+        <div class="card-section-bar" style="background: var(--coral);"></div>
+        <h4>Séance publique</h4>
+        <p>Discussion du projet de loi de finances rectificative pour 2026.</p>
+        <div class="card-meta">15:00 — 19:30 · Hémicycle</div>
+      </div>
+      <div class="demo-card">
+        <div class="card-section-bar" style="background: var(--amber);"></div>
+        <h4>Scrutin n° 847</h4>
+        <p>Vote sur l'ensemble du projet de loi relatif à la transition énergétique.</p>
+        <div class="card-meta">Adopté · 312 pour, 228 contre</div>
+      </div>
+      <div class="demo-card">
+        <div class="card-section-bar" style="background: var(--teal);"></div>
+        <h4>Commission des lois</h4>
+        <p>Audition du ministre de l'Intérieur sur la sécurité intérieure.</p>
+        <div class="card-meta">10:00 — 12:30 · Salle 6241</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vote visualization -->
+  <div class="section">
+    <div class="section-label">Vote Visualization</div>
+    <div class="vote-demo">
+      <div class="vote-label">Scrutin n° 847 · 27 mars 2026</div>
+      <h4>Projet de loi relatif à la transition énergétique et au climat</h4>
+      <div class="vote-bar">
+        <div class="pour"></div>
+        <div class="contre"></div>
+        <div class="abstention"></div>
+      </div>
+      <div class="vote-legend">
+        <span><span class="dot" style="background: var(--success);"></span> Pour <strong>312</strong></span>
+        <span><span class="dot" style="background: var(--error);"></span> Contre <strong>228</strong></span>
+        <span><span class="dot" style="background: var(--border);"></span> Abstention <strong>37</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Badges -->
+  <div class="section">
+    <div class="section-label">Badges &amp; Pills</div>
+    <div class="badge-row">
+      <span class="badge badge-success">Adopté</span>
+      <span class="badge badge-error">Rejeté</span>
+      <span class="badge badge-coral">Séance publique</span>
+      <span class="badge badge-teal">Commission</span>
+      <span class="badge badge-amber">En cours</span>
+      <span class="badge badge-plum">Éducation</span>
+      <span class="badge badge-navy">Hémicycle</span>
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="section">
+    <div class="section-label">Buttons</div>
+    <div class="btn-row">
+      <button class="btn btn-primary">Voir le scrutin</button>
+      <button class="btn btn-coral">Vote du jour</button>
+      <button class="btn btn-ghost">Explorer</button>
+      <button class="btn btn-pill">Semaine</button>
+      <button class="btn btn-pill">Mois</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="section">
+    <div class="section-label">Footer</div>
+    <div class="footer-demo">
+      <div>
+        <h5>Agora</h5>
+        <p class="tagline">L'Assemblée nationale, en clair.<br>Données officielles, accessibles et transparentes.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Aujourd'hui</div>
+        <a href="#" class="footer-link">Agenda du jour</a>
+        <a href="#" class="footer-link">Vote du jour</a>
+        <a href="#" class="footer-link">Calendrier</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Explorer</div>
+        <a href="#" class="footer-link">Scrutins</a>
+        <a href="#" class="footer-link">Dossiers</a>
+        <a href="#" class="footer-link">Députés</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Comprendre</div>
+        <a href="#" class="footer-link">La démocratie</a>
+        <a href="#" class="footer-link">Sources</a>
+        <a href="#" class="footer-link">À propos</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xxl) var(--spacing-lg);
+  text-align: center;
+  animation: fadeUpIn var(--duration-slow) var(--ease-out-expo) both;
+}
+
+@keyframes fadeUpIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.illustration {
+  width: 120px;
+  height: 100px;
+  margin-bottom: var(--spacing-md);
+  opacity: 0.9;
+  animation: scaleIn 0.5s var(--ease-out-expo) both;
+  animation-delay: 80ms;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 var(--spacing-xs);
+  animation: fadeUpIn var(--duration-slow) var(--ease-out-expo) both;
+  animation-delay: 120ms;
+}
+
+.message {
+  font-size: 0.9375rem;
+  color: var(--color-text-light);
+  margin: 0;
+  max-width: 320px;
+  line-height: 1.6;
+  animation: fadeUpIn var(--duration-slow) var(--ease-out-expo) both;
+  animation-delay: 160ms;
+}
+
+.action {
+  margin-top: var(--spacing-md);
+  animation: fadeUpIn var(--duration-slow) var(--ease-out-expo) both;
+  animation-delay: 200ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wrap,
+  .illustration,
+  .title,
+  .message,
+  .action {
+    animation: none;
+  }
+}

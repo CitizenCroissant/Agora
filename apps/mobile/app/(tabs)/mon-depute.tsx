@@ -4,14 +4,16 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
-  StyleSheet
+  StyleSheet,
+  LayoutAnimation
 } from "react-native";
 import { useRouter } from "expo-router";
 import type { DepartementSummary, Deputy } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import { isCurrentlySitting } from "@agora/shared";
-import { colors } from "@/theme";
+import { StatusMessage } from "@/app/components/StatusMessage";
+import { colors, spacing, radius, typography, shadows, commonStyles } from "@/theme";
+import { layoutAnimationPresets } from "@/lib/animations";
 
 export default function MonDeputeTabScreen() {
   const router = useRouter();
@@ -41,6 +43,7 @@ export default function MonDeputeTabScreen() {
     setError(null);
     try {
       const data = await apiClient.getDepartements();
+      LayoutAnimation.configureNext(layoutAnimationPresets.spring);
       setDepartements(data.departements.filter((d) => d.deputy_count > 0));
     } catch (err) {
       setError(
@@ -59,6 +62,7 @@ export default function MonDeputeTabScreen() {
     setError(null);
     try {
       const data = await apiClient.getDeputiesByDepartement(departement);
+      LayoutAnimation.configureNext(layoutAnimationPresets.normal);
       setDeputies(data.deputies);
     } catch (err) {
       setError(
@@ -84,7 +88,7 @@ export default function MonDeputeTabScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={commonStyles.screenContainer}>
       {selectedDepartement && (
         <TouchableOpacity
           style={styles.backBar}
@@ -97,21 +101,15 @@ export default function MonDeputeTabScreen() {
 
       <ScrollView style={styles.content}>
         {loadingDepts && !selectedDepartement && (
-          <View style={styles.centerContent}>
-            <ActivityIndicator size="large" color={colors.primary} />
-            <Text style={styles.loadingText}>
-              Chargement des départements...
-            </Text>
-          </View>
+          <StatusMessage type="loading" message="Chargement des départements..." />
         )}
 
         {error && !selectedDepartement && (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>Erreur: {error}</Text>
-            <Text style={styles.errorHint}>
-              Vérifiez que l&apos;API est disponible.
-            </Text>
-          </View>
+          <StatusMessage
+            type="error"
+            message={`Erreur: ${error}`}
+            hint="Vérifiez que l'API est disponible."
+          />
         )}
 
         {!selectedDepartement && !loadingDepts && departements.length > 0 && (
@@ -150,18 +148,14 @@ export default function MonDeputeTabScreen() {
         {selectedDepartement && (
           <>
             {loadingDeputies && (
-              <View style={styles.centerContent}>
-                <ActivityIndicator size="large" color={colors.primary} />
-                <Text style={styles.loadingText}>
-                  Chargement des députés du {selectedDepartement}...
-                </Text>
-              </View>
+              <StatusMessage
+                type="loading"
+                message={`Chargement des députés du ${selectedDepartement}...`}
+              />
             )}
 
             {error && selectedDepartement && (
-              <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>Erreur: {error}</Text>
-              </View>
+              <StatusMessage type="error" message={`Erreur: ${error}`} />
             )}
 
             {!loadingDeputies && !error && (
@@ -241,7 +235,7 @@ export default function MonDeputeTabScreen() {
                 )}
 
                 {currentDeputies.length === 0 && pastDeputies.length === 0 && (
-                  <Text style={styles.empty}>
+                  <Text style={[commonStyles.emptyText, { marginTop: spacing.xl }]}>
                     Aucun député trouvé pour ce département.
                   </Text>
                 )}
@@ -254,11 +248,10 @@ export default function MonDeputeTabScreen() {
           departements.length === 0 &&
           !error &&
           !selectedDepartement && (
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>
-                Aucun département avec députés en base.
-              </Text>
-            </View>
+            <StatusMessage
+              type="empty"
+              message="Aucun département avec députés en base."
+            />
           )}
       </ScrollView>
     </View>
@@ -266,193 +259,148 @@ export default function MonDeputeTabScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5"
-  },
   backBar: {
-    backgroundColor: "#fff",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    backgroundColor: colors.backgroundCard,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0"
+    borderBottomColor: colors.border
   },
   backBarText: {
-    fontSize: 15,
-    color: "#0055a4",
-    fontWeight: "600"
+    fontSize: typography.fontSize.base,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.semibold
   },
   content: {
     flex: 1
   },
-  centerContent: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 48
-  },
-  loadingText: {
-    marginTop: 16,
-    color: "#666",
-    fontSize: 16
-  },
-  errorContainer: {
-    padding: 24,
-    alignItems: "center"
-  },
-  errorText: {
-    color: "#ef4135",
-    fontSize: 16,
-    fontWeight: "500",
-    marginBottom: 8
-  },
-  errorHint: {
-    color: "#666",
-    fontSize: 14,
-    textAlign: "center"
-  },
   intro: {
-    padding: 16
+    padding: spacing.lg
   },
   introText: {
-    fontSize: 15,
-    color: "#333",
-    marginBottom: 16,
+    fontSize: typography.fontSize.base,
+    color: colors.text,
+    marginBottom: spacing.lg,
     lineHeight: 22
   },
   deptListTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#666",
-    marginBottom: 12,
-    textTransform: "uppercase"
+    fontSize: typography.fontSize.xs,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.textLight,
+    marginBottom: spacing.md,
+    textTransform: "uppercase",
+    letterSpacing: 0.5
   },
   list: {
-    gap: 8
+    gap: spacing.sm
   },
   deptCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
-    padding: 16,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#e0e0e0"
+    backgroundColor: colors.backgroundCard,
+    padding: spacing.lg,
+    borderRadius: radius.md,
+    ...shadows.sm
   },
   deptName: {
     flex: 1,
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#0055a4"
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.primary
   },
   deptCount: {
-    fontSize: 14,
-    color: "#666",
-    marginRight: 8
+    fontSize: typography.fontSize.md,
+    color: colors.textLight,
+    marginRight: spacing.sm
   },
   deptArrow: {
     fontSize: 20,
-    color: "#999",
+    color: colors.textMuted,
     fontWeight: "300",
     lineHeight: 20,
-    marginLeft: 8
+    marginLeft: spacing.sm
   },
   circoLink: {
-    marginTop: 20,
-    paddingVertical: 12,
+    marginTop: spacing.xl,
+    paddingVertical: spacing.md,
     alignItems: "center"
   },
   circoLinkText: {
-    fontSize: 15,
-    color: "#0055a4",
-    fontWeight: "500"
+    fontSize: typography.fontSize.base,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.medium
   },
   deputiesSection: {
-    padding: 16,
-    paddingBottom: 32
+    padding: spacing.lg,
+    paddingBottom: spacing.xxxl
   },
   deputyCount: {
-    fontSize: 15,
-    color: "#666",
-    marginBottom: 16
+    fontSize: typography.fontSize.base,
+    color: colors.textLight,
+    marginBottom: spacing.lg
   },
   deputyCard: {
-    backgroundColor: "#fff",
-    padding: 16,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    marginBottom: 12
+    backgroundColor: colors.backgroundCard,
+    padding: spacing.lg,
+    borderRadius: radius.md,
+    marginBottom: spacing.md,
+    ...shadows.sm
   },
   deputyName: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#0055a4",
-    marginBottom: 4
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.primary,
+    marginBottom: spacing.xs
   },
   deputyNameSmall: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#0055a4",
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.primary,
     flex: 1
   },
   deputyMeta: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 4
+    fontSize: typography.fontSize.md,
+    color: colors.textLight,
+    marginBottom: spacing.xs
   },
   deputyLinks: {
-    marginTop: 12,
-    gap: 8
+    marginTop: spacing.md,
+    gap: spacing.sm
   },
   primaryLink: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#0055a4",
-    marginBottom: 4
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.primary,
+    marginBottom: spacing.xs
   },
   secondaryLink: {
-    fontSize: 14,
-    color: "#666"
+    fontSize: typography.fontSize.md,
+    color: colors.textLight
   },
   sectionTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#666",
-    marginTop: 24,
-    marginBottom: 12,
-    textTransform: "uppercase"
+    fontSize: typography.fontSize.xs,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.textLight,
+    marginTop: spacing.xl,
+    marginBottom: spacing.md,
+    textTransform: "uppercase",
+    letterSpacing: 0.5
   },
   deputyCardSmall: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#fff",
-    padding: 14,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    marginBottom: 8
+    backgroundColor: colors.backgroundCard,
+    padding: spacing.md,
+    borderRadius: radius.md,
+    marginBottom: spacing.sm,
+    ...shadows.sm
   },
   deputyCardArrow: {
     fontSize: 20,
-    color: "#999",
+    color: colors.textMuted,
     fontWeight: "300",
     lineHeight: 20,
     marginLeft: "auto"
-  },
-  empty: {
-    fontSize: 15,
-    color: "#666",
-    textAlign: "center",
-    marginTop: 24
-  },
-  emptyContainer: {
-    padding: 48,
-    alignItems: "center"
-  },
-  emptyText: {
-    color: "#666",
-    fontSize: 16,
-    textAlign: "center"
   }
 });

@@ -1,18 +1,15 @@
-.backLink {
-  color: white;
-  opacity: 0.9;
-  transition: opacity 0.2s;
-}
-
-.backLink:hover {
-  opacity: 1;
-}
+/* ============================================================
+   Deputy profile page -- Civic Warmth redesign
+   Section accent: navy #1E3A5F (Explorer)
+   ============================================================ */
 
 .errorHint {
   margin-top: var(--spacing-sm);
   font-size: 0.9375rem;
   color: var(--color-text-light);
 }
+
+/* ---------- Actions row ---------- */
 
 .actionsRow {
   display: flex;
@@ -22,39 +19,49 @@
   margin-bottom: var(--spacing-md);
 }
 
-/* Header: name, group, official link */
+/* ---------- Profile header ---------- */
+
 .profileHeader {
   margin-bottom: var(--spacing-lg);
-  padding-bottom: var(--spacing-md);
-  border-bottom: 2px solid var(--color-border);
+  padding: var(--spacing-lg);
+  background: var(--color-background-card);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border-light);
+  border-top: 4px solid var(--color-section-explorer);
 }
 
 .profileTitleRow {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: flex-start;
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-sm);
 }
 
 .title {
+  font-family: var(--font-display);
   font-size: 1.75rem;
   color: var(--color-text);
   margin: 0;
-  line-height: 1.25;
+  line-height: 1.2;
   font-weight: 700;
+  flex: 1;
 }
 
 .badge {
-  display: inline-block;
-  padding: 0.25em 0.6em;
-  background: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: var(--color-section-explorer);
   color: white;
-  border-radius: var(--border-radius);
+  border-radius: var(--border-radius-pill);
   font-size: 0.8125rem;
   font-weight: 600;
   text-decoration: none;
   letter-spacing: 0.02em;
+  white-space: nowrap;
+  margin-top: 4px;
 }
 
 .badge:hover {
@@ -62,43 +69,64 @@
 }
 
 .officialLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 0.9375rem;
-  color: var(--color-primary);
+  color: var(--color-section-explorer);
   font-weight: 500;
+  transition: opacity var(--duration-fast);
 }
 
 .officialLink:hover {
   text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
-/* Section titles: consistent hierarchy */
+/* ---------- Section layout ---------- */
+
 .sectionTitle {
+  font-family: var(--font-display);
   font-size: 1.125rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text);
   margin: 0 0 var(--spacing-md);
-  letter-spacing: 0.01em;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.sectionTitle::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 1.1em;
+  background: var(--color-section-explorer);
+  border-radius: 2px;
+  flex-shrink: 0;
 }
 
 .sectionSubtitle {
-  font-size: 0.9375rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
   font-weight: 600;
   color: var(--color-text);
   margin: var(--spacing-lg) 0 var(--spacing-sm);
-  letter-spacing: 0.01em;
 }
 
 .sectionSubtitle:first-of-type {
   margin-top: 0;
 }
 
-/* Fiche: single block, rows of key facts */
+/* ---------- Profile info block ---------- */
+
 .ficheBlock {
   margin-bottom: var(--spacing-xl);
   padding: var(--spacing-lg);
-  background: var(--color-background-alt);
-  border-radius: var(--border-radius);
-  border: 1px solid var(--color-border);
+  background: var(--color-background-card);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border-light);
 }
 
 .ficheList {
@@ -107,7 +135,7 @@
   margin: 0;
   grid-template-columns: auto 1fr;
   column-gap: var(--spacing-lg);
-  row-gap: var(--spacing-xs);
+  row-gap: var(--spacing-sm);
   align-items: baseline;
 }
 
@@ -117,8 +145,11 @@
 
 .ficheRow dt {
   font-size: 0.8125rem;
-  color: var(--color-text-light);
+  color: var(--color-text-muted);
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 0;
 }
 
 .ficheRow dd {
@@ -128,25 +159,31 @@
 }
 
 .ficheRow code {
+  font-family: var(--font-mono);
   font-size: 0.8125rem;
-  background: white;
+  background: var(--color-background-alt);
   padding: 2px 6px;
   border-radius: 4px;
   border: 1px solid var(--color-border);
+  color: var(--color-text-light);
 }
+
+/* ---------- Commissions ---------- */
 
 .commissionsBlock {
   margin-top: var(--spacing-lg);
   padding-top: var(--spacing-md);
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-border-light);
 }
 
 .commissionsLabel {
   display: block;
   font-size: 0.8125rem;
-  color: var(--color-text-light);
-  font-weight: 500;
+  font-weight: 600;
+  color: var(--color-text-muted);
   margin-bottom: var(--spacing-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .commissionsChips {
@@ -163,40 +200,165 @@
 }
 
 .commissionChip {
-  display: inline-block;
-  padding: 0.25em 0.6em;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
   font-size: 0.8125rem;
-  background: white;
+  background: var(--color-background-alt);
   border: 1px solid var(--color-border);
-  border-radius: 999px;
-  color: var(--color-primary);
+  border-radius: var(--border-radius-pill);
+  color: var(--color-text);
   font-weight: 500;
   text-decoration: none;
+  transition:
+    border-color var(--duration-fast),
+    background var(--duration-fast),
+    color var(--duration-fast);
 }
 
 .commissionChip:hover {
-  border-color: var(--color-primary);
-  background: var(--color-primary-tint, rgba(0 0 0 / 0.02));
+  border-color: var(--color-section-explorer);
+  background: var(--color-primary-tint-light);
+  color: var(--color-section-explorer);
 }
+
+/* ---------- Activity section ---------- */
+
+.activitySection {
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  background: var(--color-background-card);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border-light);
+}
+
+/* Stats summary */
+.activitySummary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.activitySummaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.activitySummaryValue {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-section-explorer);
+  line-height: 1;
+}
+
+.activitySummaryLabel {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Attendance state */
+.attendanceState {
+  margin: 0 0 var(--spacing-md);
+  font-size: 0.9375rem;
+  color: var(--color-text-light);
+}
+
+/* ---------- Vote / attendance list items ---------- */
+
+.activityVoteList,
+.attendanceList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.activityVoteItem,
+.attendanceItem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-background);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--border-radius-lg);
+  transition:
+    border-color var(--duration-fast),
+    box-shadow var(--duration-fast);
+}
+
+.activityVoteItem:hover,
+.attendanceItem:hover {
+  border-color: rgba(30, 58, 95, 0.25);
+  box-shadow: var(--shadow-sm);
+}
+
+.activityVoteDate,
+.attendanceDate {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  min-width: 90px;
+}
+
+.activityVoteTitre,
+.attendanceTitle {
+  flex: 1;
+  font-size: 0.9375rem;
+  color: var(--color-section-explorer);
+  min-width: 0;
+  font-weight: 500;
+}
+
+.activityVoteTitre:hover,
+.attendanceTitle:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ---------- View all / footer ---------- */
 
 .viewAllButton {
   margin-top: var(--spacing-sm);
   padding: 0;
   border: none;
   background: none;
+  font-family: var(--font-body);
   font-size: 0.9375rem;
-  color: var(--color-primary);
-  font-weight: 500;
+  color: var(--color-section-explorer);
+  font-weight: 600;
   cursor: pointer;
+  transition: opacity var(--duration-fast);
 }
 
 .viewAllButton:hover {
   text-decoration: underline;
+  text-underline-offset: 2px;
 }
+
+.activityFooter,
+.activityEmpty {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--color-text);
+}
+
+/* ---------- Mandate badges ---------- */
 
 .mandatActuel {
   font-weight: 600;
-  color: var(--color-primary);
+  color: var(--color-success);
 }
 
 .mandatPasse {
@@ -204,53 +366,291 @@
   font-style: italic;
 }
 
+/* ---------- Vote position badges ---------- */
+
+.badgePour {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  background: rgba(46, 139, 87, 0.12);
+  color: var(--color-success);
+  border-radius: var(--border-radius-pill);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  min-width: 64px;
+  text-align: center;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badgeContre {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  background: rgba(232, 93, 58, 0.12);
+  color: var(--color-accent-coral);
+  border-radius: var(--border-radius-pill);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  min-width: 64px;
+  text-align: center;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badgeAbstention {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  background: rgba(122, 122, 122, 0.1);
+  color: var(--color-text-light);
+  border-radius: var(--border-radius-pill);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  min-width: 64px;
+  text-align: center;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badgeNonVotant {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  background: rgba(160, 160, 160, 0.1);
+  color: var(--color-text-muted);
+  border-radius: var(--border-radius-pill);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  min-width: 64px;
+  text-align: center;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Attendance badges ---------- */
+
+.badgePresent {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  background: rgba(46, 139, 87, 0.12);
+  color: var(--color-success);
+  border-radius: var(--border-radius-pill);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  min-width: 64px;
+  text-align: center;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badgeAbsent {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  background: rgba(232, 93, 58, 0.12);
+  color: var(--color-accent-coral);
+  border-radius: var(--border-radius-pill);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  min-width: 64px;
+  text-align: center;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badgeExcuse {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  background: rgba(240, 160, 48, 0.12);
+  color: var(--color-accent-amber);
+  border-radius: var(--border-radius-pill);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  min-width: 64px;
+  text-align: center;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Contact section ---------- */
+
 .contactSection {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
   padding: var(--spacing-lg);
-  background: var(--color-background-alt);
-  border-radius: var(--border-radius);
-  border: 1px solid var(--color-border);
+  background: var(--color-background-card);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border-light);
 }
 
 .contactBlock {
-  margin: 0;
+  display: grid;
+  gap: var(--spacing-lg);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
 .contactRow {
-  margin: 0 0 var(--spacing-md);
+  margin: 0;
   font-size: 0.9375rem;
-  line-height: 1.6;
+  line-height: 1.8;
   color: var(--color-text);
-}
-
-.contactRow:last-child {
-  margin-bottom: 0;
+  padding: var(--spacing-md);
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius-lg);
 }
 
 .contactLink {
-  color: var(--color-primary);
-  font-weight: 500;
+  color: var(--color-section-explorer);
+  font-weight: 600;
 }
 
 .contactLink:hover {
   text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .contactHint {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+/* ---------- Misc ---------- */
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.actionLink {
+  color: var(--color-section-explorer);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  transition: opacity var(--duration-fast);
+}
+
+.actionLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ---------- Vote position breakdown chart ---------- */
+
+.voteBreakdown {
+  margin-bottom: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.breakdownBar {
+  display: flex;
+  height: 12px;
+  border-radius: var(--border-radius-pill);
+  overflow: hidden;
+  gap: 2px;
+  background: var(--color-background-alt);
+  margin-bottom: var(--spacing-sm);
+}
+
+.breakdownSegment {
+  border-radius: 0;
+  transition: opacity var(--duration-fast);
+  min-width: 4px;
+}
+
+.breakdownSegment:first-child {
+  border-radius: var(--border-radius-pill) 0 0 var(--border-radius-pill);
+}
+
+.breakdownSegment:last-child {
+  border-radius: 0 var(--border-radius-pill) var(--border-radius-pill) 0;
+}
+
+.breakdownSegment:only-child {
+  border-radius: var(--border-radius-pill);
+}
+
+.breakdownSegmentPour {
+  background: var(--color-success);
+}
+
+.breakdownSegmentContre {
+  background: var(--color-accent-coral);
+}
+
+.breakdownSegmentAbstention {
+  background: var(--color-accent-amber);
+}
+
+.breakdownSegmentNonVotant {
+  background: var(--color-text-muted);
+  opacity: 0.6;
+}
+
+.breakdownStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.breakdownStat {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8125rem;
+}
+
+.breakdownSwatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.breakdownStatValue {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-text);
   font-size: 0.875rem;
+}
+
+.breakdownStatLabel {
   color: var(--color-text-light);
 }
 
-/* Activity section */
-.activitySection {
-  margin-bottom: var(--spacing-xl);
-  padding: var(--spacing-lg);
-  background: var(--color-background-alt);
-  border-radius: var(--border-radius);
-  border: 1px solid var(--color-border);
+.breakdownStatPct {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
 }
 
-/* Attendance heatmap */
+.breakdownStatTotal {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-left: auto;
+  padding: 2px 8px;
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius-pill);
+  border: 1px solid var(--color-border-light);
+}
+
+/* ---------- Heatmap ---------- */
+
 .heatmapWrapper {
   margin-top: var(--spacing-md);
 }
@@ -262,9 +662,9 @@
   grid-template-rows: repeat(7, 9px);
   gap: 3px;
   padding: var(--spacing-sm);
-  background: white;
+  background: var(--color-background-alt);
   border-radius: var(--border-radius);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-light);
   width: fit-content;
   max-width: 100%;
   overflow-x: auto;
@@ -283,31 +683,31 @@
 }
 
 .heatmapTileEmpty {
-  background: var(--color-background-alt);
+  background: var(--color-border);
 }
 
 .heatmapTilePartialLow {
-  background: #d0e3f5;
+  background: rgba(43, 168, 158, 0.2);
 }
 
 .heatmapTilePartialMid {
-  background: #7fb3e6;
+  background: rgba(43, 168, 158, 0.45);
 }
 
 .heatmapTilePartialHigh {
-  background: #2f7ed8;
+  background: rgba(43, 168, 158, 0.7);
 }
 
 .heatmapTileFull {
-  background: #66c27c;
+  background: var(--color-section-calendrier);
 }
 
 .heatmapTileAbsent {
-  background: #c0392b;
+  background: var(--color-accent-coral);
 }
 
 .heatmapTileExcused {
-  background: #8e44ad;
+  background: var(--color-accent-amber);
 }
 
 .heatmapLegend {
@@ -317,7 +717,7 @@
   gap: var(--spacing-sm);
   margin-top: var(--spacing-sm);
   font-size: 0.75rem;
-  color: var(--color-text-light);
+  color: var(--color-text-muted);
 }
 
 .heatmapLegendLabel {
@@ -339,230 +739,38 @@
   flex: 0 0 10px;
 }
 
-.activitySummary {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
-}
+/* ---------- Responsive ---------- */
 
-.activitySummaryItem {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-}
+@media (max-width: 640px) {
+  .title {
+    font-size: 1.5rem;
+  }
 
-.activitySummaryValue {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-text);
-  line-height: 1.2;
-}
+  .profileHeader {
+    padding: var(--spacing-md);
+  }
 
-.activitySummaryLabel {
-  font-size: 0.75rem;
-  color: var(--color-text-light);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-}
+  .ficheBlock,
+  .activitySection,
+  .contactSection {
+    padding: var(--spacing-md);
+  }
 
+  .ficheList {
+    column-gap: var(--spacing-md);
+  }
 
-.attendanceState {
-  margin: 0 0 var(--spacing-md);
-  font-size: 0.9375rem;
-  color: var(--color-text-light);
-}
+  .activitySummary {
+    gap: var(--spacing-md);
+  }
 
-.activityVoteList {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 var(--spacing-md);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
+  .activityVoteItem,
+  .attendanceItem {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-.activityVoteItem {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: white;
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius);
-  transition: border-color 0.2s;
-}
-
-.activityVoteItem:hover {
-  border-color: var(--color-primary);
-}
-
-.activityVoteDate {
-  font-size: 0.875rem;
-  color: var(--color-text-light);
-  min-width: 100px;
-}
-
-.activityVoteTitre {
-  flex: 1;
-  font-size: 0.9375rem;
-  color: var(--color-primary);
-  min-width: 0;
-}
-
-.activityVoteTitre:hover {
-  text-decoration: underline;
-}
-
-.activityFooter,
-.activityEmpty {
-  margin: 0;
-  font-size: 0.9375rem;
-  color: var(--color-text);
-}
-
-/* Vote position badges (activity section) */
-.badgePour {
-  padding: 2px 8px;
-  background: var(--color-success);
-  color: white;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  min-width: 60px;
-  text-align: center;
-}
-
-.badgeContre {
-  padding: 2px 8px;
-  background: var(--color-secondary);
-  color: white;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  min-width: 60px;
-  text-align: center;
-}
-
-.badgeAbstention {
-  padding: 2px 8px;
-  background: var(--color-text-light);
-  color: white;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  min-width: 60px;
-  text-align: center;
-}
-
-.badgeNonVotant {
-  padding: 2px 8px;
-  background: var(--color-text-light);
-  color: white;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  min-width: 60px;
-  text-align: center;
-}
-
-/* Attendance (commission reunions) */
-.attendanceList {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 var(--spacing-md);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-.attendanceItem {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: white;
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius);
-  transition: border-color 0.2s;
-}
-
-.attendanceItem:hover {
-  border-color: var(--color-primary);
-}
-
-.attendanceDate {
-  font-size: 0.875rem;
-  color: var(--color-text-light);
-  min-width: 100px;
-}
-
-.attendanceTitle {
-  flex: 1;
-  font-size: 0.9375rem;
-  color: var(--color-primary);
-  min-width: 0;
-}
-
-.attendanceTitle:hover {
-  text-decoration: underline;
-}
-
-.badgePresent {
-  padding: 2px 8px;
-  background: var(--color-success);
-  color: white;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  min-width: 64px;
-  text-align: center;
-}
-
-.badgeAbsent {
-  padding: 2px 8px;
-  background: var(--color-secondary);
-  color: white;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  min-width: 64px;
-  text-align: center;
-}
-
-.badgeExcuse {
-  padding: 2px 8px;
-  background: var(--color-text-light);
-  color: white;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  min-width: 64px;
-  text-align: center;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-md);
-}
-
-.actionLink {
-  color: var(--color-primary);
-  font-weight: 500;
-}
-
-.actionLink:hover {
-  text-decoration: underline;
-}
-
-.footer {
-  background: var(--color-background-alt);
-  border-top: 1px solid var(--color-border);
-  padding: var(--spacing-lg) 0;
-  text-align: center;
-  color: var(--color-text-light);
-  font-size: 0.875rem;
+  .contactBlock {
+    grid-template-columns: 1fr;
+  }
 }

@@ -75,6 +75,9 @@ export default function CommissionDetailPage() {
 
   const title = organe?.libelle ?? organe?.libelle_abrege ?? id;
   const membersByParty = groupMembersByParty(members);
+  const reunionsSorted = [...reunions].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
   const totalVisible = membersExpanded ? members.length : MEMBERS_VISIBLE_INITIAL;
   let remaining = totalVisible;
   const visibleGroups = membersByParty.map(({ group, members: groupMembers }) => {
@@ -155,8 +158,8 @@ export default function CommissionDetailPage() {
                 ingérée.
               </p>
             ) : (
-              <ul className={styles.reunionsList}>
-                {reunions.map((sitting) => (
+              <ul className={`${styles.reunionsList} staggerChildren`}>
+                {reunionsSorted.map((sitting) => (
                   <li key={sitting.id}>
                     <Link
                       href={`/sitting/${sitting.id}`}
@@ -203,7 +206,7 @@ export default function CommissionDetailPage() {
                       {groupMembers.length} membre{groupMembers.length !== 1 ? "s" : ""}
                     </span>
                   </h3>
-                  <div className={styles.membersGrid}>
+                  <div className={`${styles.membersGrid} staggerChildren`}>
                     {toShow.map((member) => (
                       <Link
                         key={member.acteur_ref}

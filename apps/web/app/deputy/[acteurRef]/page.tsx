@@ -23,6 +23,62 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import { ShareBar } from "@/components/ShareBar";
 import { FollowButton } from "@/components/FollowButton";
 import { AttendanceHeatmap } from "./AttendanceHeatmap";
+import { Skeleton } from "@/components/Skeleton";
+import skeletonStyles from "@/components/Skeleton.module.css";
+
+interface VotePositionBreakdownProps {
+  votes: { position: string }[];
+}
+
+function VotePositionBreakdown({ votes }: VotePositionBreakdownProps) {
+  const total = votes.length;
+  if (total === 0) return null;
+
+  const counts = {
+    pour: votes.filter((v) => v.position === "pour").length,
+    contre: votes.filter((v) => v.position === "contre").length,
+    abstention: votes.filter((v) => v.position === "abstention").length,
+    non_votant: votes.filter((v) => v.position === "non_votant").length
+  };
+
+  const pct = (n: number) => Math.round((n / total) * 100);
+
+  const segments: { key: string; label: string; count: number; pct: number; style: string }[] = [
+    { key: "pour", label: "Pour", count: counts.pour, pct: pct(counts.pour), style: styles.breakdownSegmentPour },
+    { key: "contre", label: "Contre", count: counts.contre, pct: pct(counts.contre), style: styles.breakdownSegmentContre },
+    { key: "abstention", label: "Abstention", count: counts.abstention, pct: pct(counts.abstention), style: styles.breakdownSegmentAbstention },
+    { key: "non_votant", label: "Non votant", count: counts.non_votant, pct: pct(counts.non_votant), style: styles.breakdownSegmentNonVotant }
+  ].filter((s) => s.count > 0);
+
+  return (
+    <div className={styles.voteBreakdown}>
+      <h3 className={styles.sectionSubtitle}>Répartition des votes</h3>
+      <div className={styles.breakdownBar} role="img" aria-label="Répartition des votes">
+        {segments.map((seg) => (
+          <div
+            key={seg.key}
+            className={`${styles.breakdownSegment} ${seg.style}`}
+            style={{ width: `${seg.pct}%` }}
+            title={`${seg.label} : ${seg.count} (${seg.pct}%)`}
+          />
+        ))}
+      </div>
+      <div className={styles.breakdownStats}>
+        {segments.map((seg) => (
+          <div key={seg.key} className={styles.breakdownStat}>
+            <span className={`${styles.breakdownSwatch} ${seg.style}`} aria-hidden />
+            <span className={styles.breakdownStatValue}>{seg.count}</span>
+            <span className={styles.breakdownStatLabel}>{seg.label}</span>
+            <span className={styles.breakdownStatPct}>({seg.pct}%)</span>
+          </div>
+        ))}
+        <div className={styles.breakdownStat}>
+          <span className={styles.breakdownStatTotal}>{total} scrutins</span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const POSITION_LABELS: Record<string, string> = {
   pour: "Pour",
@@ -62,6 +118,62 @@ function computeAge(dateNaissance: string | null): number | null {
   const m = today.getMonth() - birth.getMonth();
   if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
   return age;
+}
+
+function DeputySkeleton() {
+  return (
+    <div aria-busy="true" aria-label="Chargement du député">
+      {/* Profile header */}
+      <header style={{ marginBottom: "var(--spacing-xl)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+          <Skeleton shape="heading" width="45%" height={34} />
+          <Skeleton shape="pill" width={110} height={26} />
+        </div>
+        <Skeleton shape="text" width={220} height={14} />
+      </header>
+
+      {/* Fiche section */}
+      <section style={{ marginBottom: "var(--spacing-xl)" }}>
+        <Skeleton shape="heading" width={160} height={20} style={{ marginBottom: 14 }} />
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {[["30%", "50%"], ["25%", "40%"], ["30%", "60%"], ["28%", "70%"], ["32%", "55%"], ["28%", "65%"]].map(([dt, dd], i) => (
+            <div key={i} style={{ display: "flex", gap: 16, alignItems: "center" }}>
+              <Skeleton shape="text" width={dt} height={14} />
+              <Skeleton shape="text" width={dd} height={14} />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Activity section */}
+      <section style={{ marginBottom: "var(--spacing-xl)" }}>
+        <Skeleton shape="heading" width={100} height={20} style={{ marginBottom: 14 }} />
+        {/* Summary stats */}
+        <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
+          {[0, 1, 2].map((i) => (
+            <div key={i} className={skeletonStyles.card} style={{ flex: "1 1 120px", alignItems: "center", padding: 16 }}>
+              <Skeleton shape="heading" width={48} height={28} style={{ marginBottom: 6 }} />
+              <Skeleton shape="text" width="80%" height={12} />
+            </div>
+          ))}
+        </div>
+        {/* Heatmap placeholder */}
+        <Skeleton shape="text" width={200} height={17} style={{ marginBottom: 10 }} />
+        <Skeleton shape="rect" width="100%" height={96} style={{ borderRadius: 8, marginBottom: 20 }} />
+        {/* Vote list */}
+        <Skeleton shape="text" width={160} height={17} style={{ marginBottom: 12 }} />
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {Array.from({ length: 5 }, (_, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <Skeleton shape="pill" width={72} height={22} />
+              <Skeleton shape="text" width={80} height={13} />
+              <Skeleton shape="text" width={`${45 + i * 8}%`} height={13} />
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
 }
 
 export default function DeputyPage() {
@@ -150,7 +262,7 @@ export default function DeputyPage() {
           { label: displayName || "Député" }
         ]}
       />
-      {loading && <div className="stateLoading">Chargement du député...</div>}
+      {loading && <DeputySkeleton />}
 
       {error && (
         <div className="stateError">
@@ -410,6 +522,10 @@ export default function DeputyPage() {
                   </button>
                 )}
               </>
+            )}
+
+            {votes?.votes && votes.votes.length > 0 && (
+              <VotePositionBreakdown votes={votes.votes} />
             )}
 
             <h3 id="section-votes" className={styles.sectionSubtitle}>

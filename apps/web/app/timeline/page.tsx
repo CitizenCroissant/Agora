@@ -21,8 +21,41 @@ import Link from "next/link";
 import styles from "./timeline.module.css";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { SittingReminderButton } from "@/components/SittingReminderButton";
+import { Skeleton } from "@/components/Skeleton";
+import skeletonStyles from "@/components/Skeleton.module.css";
 
 type ViewMode = "week" | "month";
+
+function TimelineSkeleton() {
+  const dateSectionWidths = ["55%", "45%", "60%"];
+  const cardCounts = [3, 2, 3];
+  return (
+    <div className={styles.timeline} aria-busy="true" aria-label="Chargement du calendrier">
+      {dateSectionWidths.map((dateW, si) => (
+        <div key={si} className={styles.dateSection}>
+          <div className={styles.dateHeader}>
+            <Skeleton shape="heading" width={dateW} height={22} />
+          </div>
+          <div className={styles.sittings}>
+            {Array.from({ length: cardCounts[si] }, (_, ci) => (
+              <div key={ci} className={`${skeletonStyles.card} ${styles.sittingCard}`} style={{ display: "block" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                  <Skeleton shape="heading" width={`${50 + ci * 12}%`} height={18} />
+                  <div style={{ display: "flex", gap: 6 }}>
+                    <Skeleton shape="pill" width={80} height={20} />
+                    <Skeleton shape="pill" width={55} height={20} />
+                  </div>
+                </div>
+                <Skeleton shape="text" width="35%" height={13} style={{ marginBottom: 6 }} />
+                <Skeleton shape="text" width="25%" height={12} />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function TimelinePage() {
   const router = useRouter();
@@ -116,7 +149,15 @@ export default function TimelinePage() {
   return (
     <div className="container">
       <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Calendrier" }]} />
-          <div className={`controlBar ${styles.controlBar}`}>
+
+      <div className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>
+          Calendrier <span>parlementaire</span>
+        </h1>
+        <p className={styles.pageSubtitle}>Naviguez dans les séances de l&apos;Assemblée par semaine ou par mois.</p>
+      </div>
+
+          <div className={styles.controlBar}>
             <div className={styles.leftControls}>
               <button
                 className={styles.iconButton}
@@ -174,9 +215,7 @@ export default function TimelinePage() {
             </div>
           </div>
 
-          {loading && (
-            <div className="stateLoading">Chargement du calendrier...</div>
-          )}
+          {loading && <TimelineSkeleton />}
 
           {error && (
             <div className="stateError">

@@ -202,6 +202,16 @@ export default function BillsPageClient() {
   return (
     <div className="container">
       <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Dossiers législatifs" }]} />
+
+      <div className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>
+          Dossiers <span>législatifs</span>
+        </h1>
+        <p className={styles.pageSubtitle}>
+          Projets et propositions de loi examinés par l&apos;Assemblée nationale.
+        </p>
+      </div>
+
       <PageHelp
         title="Comment lire cette page ?"
         points={[
@@ -332,7 +342,7 @@ export default function BillsPageClient() {
           ) : (
             <>
               {billsWithVotes.length > 0 && (
-                <section className={styles.list}>
+                <section className={`${styles.list} staggerChildren`}>
                   <h2 className={styles.sectionTitle}>Dossiers avec votes récents</h2>
                   {billsWithVotes.map((bill) => (
                     <Link
@@ -387,7 +397,7 @@ export default function BillsPageClient() {
               )}
 
               {billsWithoutVotes.length > 0 && !onlyWithVotes && (
-                <section className={styles.list}>
+                <section className={`${styles.list} staggerChildren`}>
                   <h2 className={styles.sectionTitle}>Dossiers sans scrutin</h2>
                   {billsWithoutVotes.map((bill) => (
                     <Link

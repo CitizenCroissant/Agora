@@ -1,84 +1,226 @@
-.title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: var(--spacing-xs);
+/* ============================================================
+   Bills / Dossiers législatifs page -- Civic Warmth redesign
+   Section accent: navy #1E3A5F (Explorer)
+   ============================================================ */
+
+/* ---------- Page header ---------- */
+
+.pageHeader {
+  margin-bottom: var(--spacing-lg);
 }
 
-.subtitle {
-  font-size: 1.05rem;
-  opacity: 0.9;
+.pageTitle {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 var(--spacing-xs);
+  line-height: 1.2;
 }
+
+.pageTitle span {
+  color: var(--color-section-explorer);
+}
+
+.pageSubtitle {
+  font-size: 1.0625rem;
+  color: var(--color-text-light);
+  margin: 0;
+}
+
+/* ---------- Stats bar ---------- */
 
 .statsBar {
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-md);
   align-items: center;
-  margin-bottom: var(--spacing-lg);
-  font-size: 0.9rem;
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius-lg);
+  font-size: 0.875rem;
   color: var(--color-text-light);
+  font-family: var(--font-mono);
+  border: 1px solid var(--color-border-light);
 }
 
 .statsBar strong {
   color: var(--color-text);
+  font-weight: 700;
 }
+
+/* ---------- Filter bar (control bar) ---------- */
 
 .searchForm {
   flex: 1;
+  min-width: 0;
 }
 
 .typeFilter {
-  min-width: 180px;
+  min-width: 160px;
 }
 
 .typeSelect {
   width: 100%;
   padding: 8px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--color-border);
-  background: white;
+  border-radius: var(--border-radius-pill);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-background-card);
+  font-family: var(--font-body);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
+  transition: border-color var(--duration-fast);
+  color: var(--color-text);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7a7a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
 }
+
+.typeSelect:focus {
+  outline: none;
+  border-color: var(--color-section-explorer);
+}
+
+/* ---------- Toggle: votes filter ---------- */
 
 .votesToggle {
   padding: 8px 14px;
   border-radius: var(--border-radius-pill);
-  border: 1px solid var(--color-border);
-  background: var(--color-background-input);
-  font-size: 0.85rem;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-background-card);
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
   cursor: pointer;
   font-weight: 500;
   color: var(--color-text);
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  transition:
+    background var(--duration-fast),
+    border-color var(--duration-fast),
+    color var(--duration-fast);
+  white-space: nowrap;
 }
 
 .votesToggleActive {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
+  background: var(--color-section-explorer);
+  border-color: var(--color-section-explorer);
   color: #fff;
 }
+
+/* ---------- Tag filter ---------- */
+
+.tagFilter {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.tagSelect {
+  padding: 8px 30px 8px 14px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-background-card);
+  color: var(--color-text);
+  border-radius: var(--border-radius-pill);
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color var(--duration-fast);
+  min-width: 140px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7a7a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
+.tagSelect:hover {
+  border-color: var(--color-text-light);
+}
+
+.tagSelect:focus {
+  outline: none;
+  border-color: var(--color-section-explorer);
+}
+
+.clearTagButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-background-card);
+  color: var(--color-text-light);
+  border-radius: 50%;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background var(--duration-fast),
+    border-color var(--duration-fast),
+    color var(--duration-fast);
+  line-height: 1;
+}
+
+.clearTagButton:hover {
+  background: rgba(232, 93, 58, 0.1);
+  border-color: var(--color-accent-coral);
+  color: var(--color-accent-coral);
+}
+
+/* ---------- Bill list ---------- */
 
 .list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
 }
 
+/* ---------- Section titles ---------- */
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-sm);
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 2px solid var(--color-section-explorer);
+  display: inline-block;
+}
+
+/* ---------- Bill card ---------- */
+
 .card {
-  background: var(--color-background);
+  background: var(--color-background-card);
   border-radius: var(--border-radius-lg);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-light);
+  border-left: 3px solid var(--color-border);
   padding: var(--spacing-md);
-  transition: box-shadow 0.2s, border-color 0.2s, transform 0.1s;
+  transition:
+    box-shadow var(--duration-normal) var(--ease-out-expo),
+    border-color var(--duration-normal) var(--ease-out-expo),
+    border-left-color var(--duration-normal) var(--ease-out-expo),
+    transform var(--duration-normal) var(--ease-out-expo),
+    background var(--duration-fast);
   display: block;
+  box-shadow: var(--shadow-sm);
 }
 
 .card:hover {
-  box-shadow: var(--shadow);
-  border-color: var(--color-primary);
-  transform: translateY(-1px);
+  box-shadow: var(--shadow-warm);
+  border-color: rgba(30, 58, 95, 0.18);
+  border-left-color: var(--color-section-explorer);
+  transform: translateX(3px);
+  background: var(--color-background);
+}
+
+.card:hover .cardTitle {
+  color: var(--color-section-explorer);
 }
 
 .cardHeader {
@@ -89,26 +231,36 @@
 }
 
 .cardTitle {
-  font-size: 1.05rem;
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
   color: var(--color-text);
+  line-height: 1.4;
+  margin: 0;
+  transition: color var(--duration-fast);
 }
+
+/* ---------- Pills row ---------- */
 
 .pillRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 4px;
+  gap: 5px;
+  margin-bottom: 6px;
 }
 
 .typePill {
-  padding: 4px 10px;
+  padding: 3px 10px;
   border-radius: var(--border-radius-pill);
   background: var(--color-primary-tint-light);
   color: var(--color-primary);
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
+
+/* ---------- Bill tags ---------- */
 
 .billTags {
   display: flex;
@@ -120,116 +272,76 @@
 
 .tag {
   display: inline-block;
-  padding: 4px 10px;
-  background: var(--color-primary-tint);
-  color: var(--color-primary);
-  border-radius: var(--border-radius-lg);
+  padding: 3px 10px;
+  background: rgba(43, 168, 158, 0.1);
+  color: var(--color-section-calendrier);
+  border-radius: var(--border-radius-pill);
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 600;
   white-space: nowrap;
 }
 
-.tagFilter {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-}
-
-.tagSelect {
-  padding: 8px 14px;
-  border: 1px solid var(--color-border);
-  background: white;
-  color: var(--color-text);
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  min-width: 160px;
-}
-
-.tagSelect:hover {
-  border-color: var(--color-text-light);
-  background: var(--color-background-alt);
-}
-
-.tagSelect:focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-.clearTagButton {
-  padding: 8px 12px;
-  border: 1px solid var(--color-border);
-  background: white;
-  color: var(--color-text);
-  border-radius: 8px;
-  font-size: 1.25rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.clearTagButton:hover {
-  background: var(--color-background-alt);
-  border-color: var(--color-secondary);
-  color: var(--color-secondary);
-}
+/* ---------- Meta line ---------- */
 
 .meta {
-  font-size: 0.8rem;
-  color: var(--color-text-light);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin-top: 4px;
 }
 
-.sectionTitle {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-text);
-  margin-bottom: var(--spacing-sm);
-}
+/* ---------- Reset / load more ---------- */
 
 .resetButton {
   margin-top: var(--spacing-md);
-  padding: 8px 16px;
+  padding: 8px 18px;
   border-radius: var(--border-radius-pill);
-  border: 1px solid var(--color-border);
-  background: var(--color-background-input);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-background-card);
+  font-family: var(--font-body);
   font-size: 0.9rem;
   cursor: pointer;
   font-weight: 500;
+  color: var(--color-text);
+  transition:
+    border-color var(--duration-fast),
+    background var(--duration-fast);
 }
 
 .resetButton:hover {
-  border-color: var(--color-primary);
+  border-color: var(--color-section-explorer);
   background: var(--color-background-hover);
 }
 
 .loadMoreSection {
   margin-top: var(--spacing-lg);
   text-align: center;
+  padding: var(--spacing-lg) 0;
 }
 
 .loadMoreButton {
-  padding: 10px 24px;
+  padding: 12px 28px;
   border-radius: var(--border-radius-pill);
-  border: 1px solid var(--color-border);
-  background: var(--color-background-input);
-  font-size: 1rem;
-  font-weight: 500;
+  border: 1.5px solid var(--color-section-explorer);
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 600;
   cursor: pointer;
-  color: var(--color-primary);
+  color: var(--color-section-explorer);
+  transition:
+    background var(--duration-fast),
+    color var(--duration-fast),
+    box-shadow var(--duration-fast);
 }
 
 .loadMoreButton:hover:not(:disabled) {
-  border-color: var(--color-primary);
-  background: var(--color-background-hover);
+  background: var(--color-section-explorer);
+  color: white;
+  box-shadow: var(--shadow-warm);
 }
 
 .loadMoreButton:disabled {
-  opacity: 0.7;
+  opacity: 0.6;
   cursor: not-allowed;
 }

@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
   StyleSheet,
   Linking
 } from "react-native";
@@ -20,7 +19,8 @@ import {
   isPushSupported,
   FAVORITE_DEPUTY_KEY
 } from "@/lib/notifications";
-import { colors } from "@/theme";
+import { StatusMessage } from "@/app/components/StatusMessage";
+import { colors, spacing, radius, typography, shadows } from "@/theme";
 
 const PUSH_ENABLED_KEY = "@agora_push_enabled";
 const PUSH_TOKEN_KEY = "@agora_push_token";
@@ -96,16 +96,11 @@ export default function DeputyDetailScreen() {
       />
       <ScrollView style={styles.container}>
         {loading && (
-          <View style={styles.centerContent}>
-            <ActivityIndicator size="large" color={colors.primary} />
-            <Text style={styles.loadingText}>Chargement du député...</Text>
-          </View>
+          <StatusMessage type="loading" message="Chargement du député..." />
         )}
 
         {error && (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>Erreur: {error}</Text>
-          </View>
+          <StatusMessage type="error" message={`Erreur: ${error}`} />
         )}
 
         {!loading && !error && deputy && (
@@ -285,107 +280,107 @@ export default function DeputyDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
-  },
-  centerContent: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 48
-  },
-  loadingText: {
-    marginTop: 16,
-    color: "#666",
-    fontSize: 16
-  },
-  errorContainer: {
-    padding: 24,
-    alignItems: "center"
-  },
-  errorText: {
-    color: "#ef4135",
-    fontSize: 16,
-    fontWeight: "500"
+    backgroundColor: colors.backgroundAlt
   },
   content: {
-    padding: 16
+    padding: spacing.lg,
+    paddingBottom: spacing.xxxl
   },
   header: {
-    marginBottom: 20,
-    paddingBottom: 16,
-    borderBottomWidth: 2,
-    borderBottomColor: "#e0e0e0"
+    marginBottom: spacing.xl,
+    paddingBottom: spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border
   },
   title: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#0055a4",
-    marginBottom: 8
+    fontSize: typography.fontSize.xl + 2,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.primary,
+    marginBottom: spacing.sm,
+    lineHeight: 30
   },
   badge: {
     alignSelf: "flex-start",
-    backgroundColor: "rgba(0, 85, 164, 0.15)",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8
+    backgroundColor: colors.primaryTint,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.pill
   },
   badgeText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#0055a4"
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.primary
   },
   section: {
-    marginBottom: 20
+    marginBottom: spacing.xl,
+    backgroundColor: colors.backgroundCard,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    ...shadows.sm
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#0055a4",
-    marginBottom: 12
+    fontSize: typography.fontSize.xs,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.primary,
+    marginBottom: spacing.md,
+    textTransform: "uppercase",
+    letterSpacing: 0.5
   },
   infoRow: {
-    marginBottom: 8
+    marginBottom: spacing.md,
+    paddingBottom: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderLight
   },
   infoLabel: {
-    fontSize: 12,
-    color: "#666",
-    marginBottom: 2
+    fontSize: typography.fontSize.xs,
+    color: colors.textMuted,
+    marginBottom: spacing.xs,
+    textTransform: "uppercase",
+    letterSpacing: 0.3
   },
   infoValue: {
-    fontSize: 16,
-    color: "#333"
+    fontSize: typography.fontSize.base,
+    color: colors.text
   },
   linkText: {
-    fontSize: 16,
-    color: "#0055a4",
-    fontWeight: "500"
+    fontSize: typography.fontSize.base,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.medium
   },
   actions: {
-    marginTop: 16,
-    gap: 12
+    marginTop: spacing.sm,
+    gap: spacing.md
   },
   actionButton: {
-    paddingVertical: 12
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    backgroundColor: colors.backgroundCard,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...shadows.sm
   },
   actionText: {
-    fontSize: 14,
-    color: "#0055a4",
-    fontWeight: "500"
+    fontSize: typography.fontSize.md,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.medium
   },
   notifyButton: {
-    backgroundColor: "rgba(0, 85, 164, 0.08)",
-    padding: 16,
-    borderRadius: 8,
+    backgroundColor: colors.primaryTintLight,
+    padding: spacing.lg,
+    borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: "#0055a4"
+    borderColor: colors.primaryTintMedium
   },
   notifyButtonText: {
-    fontSize: 16,
-    color: "#0055a4",
-    fontWeight: "600"
+    fontSize: typography.fontSize.base,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.semibold
   },
   notifyButtonSubtext: {
-    fontSize: 12,
-    color: "#666",
-    marginTop: 4
+    fontSize: typography.fontSize.sm,
+    color: colors.textLight,
+    marginTop: spacing.xs
   }
 });

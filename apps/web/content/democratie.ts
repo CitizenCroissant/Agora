@@ -39,6 +39,12 @@ export const DEMOCRATIE = {
           "Commissions permanentes, spéciales, d'enquête, missions d'information : organisation et rôle du travail en commission."
       },
       {
+        id: "municipales",
+        title: "Les élections municipales",
+        description:
+          "Comment fonctionne le scrutin municipal, qui est élu, et quel lien avec le Parlement."
+      },
+      {
         id: "methodologie",
         title: "Comment nous présentons les votes",
         description:
@@ -233,6 +239,30 @@ export const DEMOCRATIE = {
       { label: "Voir toutes les commissions et organes", href: "/commissions" },
       { label: "Calendrier des séances et réunions", href: "/timeline" }
     ]
+  },
+  municipales: {
+    title: "Les élections municipales",
+    intro:
+      "Les élections municipales sont un scrutin local majeur : elles désignent les conseillers municipaux dans chacune des quelque 35 000 communes de France. Ces conseillers élisent ensuite le maire.",
+    body: "Le scrutin municipal se déroule tous les six ans, sur deux tours. Le mode de scrutin diffère selon la taille de la commune : scrutin de liste avec représentation proportionnelle dans les communes de 1 000 habitants et plus, scrutin majoritaire plurinominal dans les communes plus petites.",
+    parlement:
+      "Les municipales n'élisent ni députés ni sénateurs, mais elles ont un impact indirect important sur le Parlement. Les conseillers municipaux forment l'essentiel du collège des grands électeurs qui élit les sénateurs. Un renouvellement municipal peut donc, à terme, modifier la majorité au Sénat.",
+    summaryTitle: "En résumé",
+    summary:
+      "Les municipales élisent les conseillers municipaux qui désignent le maire. Scrutin tous les 6 ans, en deux tours, avec des règles différentes selon la taille de la commune. Les conseillers municipaux sont aussi grands électeurs du Sénat.",
+    links: [
+      { label: "Municipales 2026 : bilan et résultats", href: "/municipales-2026" },
+      {
+        label: "Résultats officiels (Ministère de l'Intérieur)",
+        href: "https://www.resultats-elections.interieur.gouv.fr/",
+        external: true
+      },
+      {
+        label: "Fiche service-public.fr",
+        href: "https://www.service-public.fr/particuliers/vosdroits/F1947",
+        external: true
+      }
+    ]
   }
 } as const;
 
@@ -242,5 +272,6 @@ export const DEMOCRATIE_SUBPAGE_SLUGS: Record<string, string> = {
   assemblee: "assemblee-nationale",
   senat: "senat",
   citoyen: "votre-role-citoyen",
-  commissions: "commissions"
+  commissions: "commissions",
+  municipales: "elections-municipales"
 } as const;

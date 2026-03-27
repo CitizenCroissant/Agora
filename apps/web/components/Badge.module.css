@@ -1,0 +1,78 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.25em 0.75em;
+  border-radius: var(--border-radius-pill);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+/* Variants */
+.default {
+  background: var(--color-primary-tint-light);
+  color: var(--color-primary);
+}
+
+.primary {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.coral {
+  background: var(--color-accent-coral-tint);
+  color: var(--color-accent-coral-dark);
+}
+
+.teal {
+  background: var(--color-accent-teal-tint);
+  color: var(--color-accent-teal-dark);
+}
+
+.amber {
+  background: var(--color-accent-amber-tint);
+  color: var(--color-accent-amber-dark);
+}
+
+.success {
+  background: var(--color-success-bg);
+  color: var(--color-success-dark);
+}
+
+.error {
+  background: var(--color-error-bg);
+  color: var(--color-error-dark);
+}
+
+.neutral {
+  background: var(--color-background-alt);
+  color: var(--color-text-light);
+}
+
+/* Sizes */
+.sm {
+  font-size: 0.6875rem;
+  padding: 0.2em 0.6em;
+}
+
+.md {
+  font-size: 0.75rem;
+}
+
+.lg {
+  font-size: 0.875rem;
+  padding: 0.3em 0.9em;
+}
+
+/* Dot indicator */
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}

@@ -3,7 +3,6 @@ import {
   View,
   Text,
   ScrollView,
-  ActivityIndicator,
   StyleSheet,
   TouchableOpacity,
   Linking
@@ -13,7 +12,8 @@ import { useRouter } from "expo-router";
 import type { ScrutinDetailResponse } from "@agora/shared";
 import { formatDate, slugify } from "@agora/shared";
 import { apiClient } from "@/lib/api";
-import { colors } from "@/theme";
+import { StatusMessage } from "@/app/components/StatusMessage";
+import { colors, spacing, radius, typography, shadows, sectionColors } from "@/theme";
 
 const POSITION_LABELS: Record<string, string> = {
   pour: "Pour",
@@ -21,6 +21,59 @@ const POSITION_LABELS: Record<string, string> = {
   abstention: "Abstention",
   non_votant: "Non votant"
 };
+
+function ResultBar({ pour, contre, abstention }: { pour: number; contre: number; abstention: number }) {
+  const total = pour + contre + abstention;
+  if (total === 0) return null;
+  const pourPct = (pour / total) * 100;
+  const contrePct = (contre / total) * 100;
+  const abstPct = (abstention / total) * 100;
+  return (
+    <View style={resultBarStyles.wrap}>
+      <View style={resultBarStyles.bar}>
+        <View style={[resultBarStyles.seg, resultBarStyles.pour, { flex: pourPct }]} />
+        <View style={[resultBarStyles.seg, resultBarStyles.abst, { flex: abstPct }]} />
+        <View style={[resultBarStyles.seg, resultBarStyles.contre, { flex: contrePct }]} />
+      </View>
+      <View style={resultBarStyles.legend}>
+        <View style={resultBarStyles.legendItem}>
+          <View style={[resultBarStyles.dot, { backgroundColor: colors.success }]} />
+          <Text style={resultBarStyles.legendText}>Pour {pourPct.toFixed(0)}%</Text>
+        </View>
+        <View style={resultBarStyles.legendItem}>
+          <View style={[resultBarStyles.dot, { backgroundColor: colors.accentCoral }]} />
+          <Text style={resultBarStyles.legendText}>Contre {contrePct.toFixed(0)}%</Text>
+        </View>
+        {abstPct > 0 && (
+          <View style={resultBarStyles.legendItem}>
+            <View style={[resultBarStyles.dot, { backgroundColor: colors.accentAmber }]} />
+            <Text style={resultBarStyles.legendText}>Abst. {abstPct.toFixed(0)}%</Text>
+          </View>
+        )}
+      </View>
+    </View>
+  );
+}
+
+const resultBarStyles = StyleSheet.create({
+  wrap: { marginBottom: spacing.lg },
+  bar: {
+    flexDirection: "row",
+    height: 10,
+    borderRadius: 5,
+    overflow: "hidden",
+    backgroundColor: colors.backgroundAlt,
+    marginBottom: spacing.sm
+  },
+  seg: { height: "100%" },
+  pour: { backgroundColor: colors.success },
+  contre: { backgroundColor: colors.accentCoral },
+  abst: { backgroundColor: colors.accentAmber },
+  legend: { flexDirection: "row", gap: spacing.lg, flexWrap: "wrap" },
+  legendItem: { flexDirection: "row", alignItems: "center", gap: 5 },
+  dot: { width: 8, height: 8, borderRadius: 4 },
+  legendText: { fontSize: typography.fontSize.sm, color: colors.textLight }
+});
 
 export default function ScrutinDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -69,16 +122,11 @@ export default function ScrutinDetailScreen() {
       />
       <ScrollView style={styles.container}>
         {loading && (
-          <View style={styles.centerContent}>
-            <ActivityIndicator size="large" color={colors.primary} />
-            <Text style={styles.loadingText}>Chargement du scrutin...</Text>
-          </View>
+          <StatusMessage type="loading" message="Chargement du scrutin..." />
         )}
 
         {error && (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>Erreur: {error}</Text>
-          </View>
+          <StatusMessage type="error" message={`Erreur: ${error}`} />
         )}
 
         {!loading && !error && scrutin && (
@@ -131,15 +179,20 @@ export default function ScrutinDetailScreen() {
 
             <View style={styles.synthese}>
               <Text style={styles.sectionTitle}>Résultat</Text>
+              <ResultBar
+                pour={scrutin.synthese_pour ?? 0}
+                contre={scrutin.synthese_contre ?? 0}
+                abstention={scrutin.synthese_abstentions ?? 0}
+              />
               <View style={styles.syntheseGrid}>
-                <View style={styles.syntheseItem}>
-                  <Text style={styles.syntheseValue}>
+                <View style={[styles.syntheseItem, styles.syntheseItemPour]}>
+                  <Text style={[styles.syntheseValue, styles.syntheseValuePour]}>
                     {scrutin.synthese_pour}
                   </Text>
                   <Text style={styles.syntheseLabel}>Pour</Text>
                 </View>
-                <View style={styles.syntheseItem}>
-                  <Text style={styles.syntheseValue}>
+                <View style={[styles.syntheseItem, styles.syntheseItemContre]}>
+                  <Text style={[styles.syntheseValue, styles.syntheseValueContre]}>
                     {scrutin.synthese_contre}
                   </Text>
                   <Text style={styles.syntheseLabel}>Contre</Text>
@@ -161,7 +214,7 @@ export default function ScrutinDetailScreen() {
 
             {scrutin.group_votes && scrutin.group_votes.length > 0 && (
               <View style={styles.groupVotesSection}>
-                <Text style={styles.sectionTitle}>
+                <Text style={[styles.sectionTitle, { paddingHorizontal: spacing.lg, paddingTop: spacing.lg }]}>
                   Comment chaque groupe a voté
                 </Text>
                 <Text style={styles.groupVotesHint}>
@@ -293,222 +346,232 @@ export default function ScrutinDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
-  },
-  centerContent: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 48
-  },
-  loadingText: {
-    marginTop: 16,
-    color: "#666",
-    fontSize: 16
-  },
-  errorContainer: {
-    padding: 24,
-    alignItems: "center"
-  },
-  errorText: {
-    color: "#ef4135",
-    fontSize: 16,
-    fontWeight: "500"
+    backgroundColor: colors.backgroundAlt
   },
   content: {
-    padding: 16
+    padding: spacing.lg,
+    paddingBottom: spacing.xxxl
   },
   header: {
-    marginBottom: 20,
-    paddingBottom: 16,
-    borderBottomWidth: 2,
-    borderBottomColor: "#e0e0e0"
+    marginBottom: spacing.xl,
+    paddingBottom: spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border
   },
   badge: {
     alignSelf: "flex-start",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 8,
-    marginBottom: 8
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.md,
+    marginBottom: spacing.sm
   },
   badgeAdopte: {
-    backgroundColor: "rgba(0, 128, 0, 0.15)"
+    backgroundColor: colors.successBg
   },
   badgeRejete: {
-    backgroundColor: "rgba(200, 0, 0, 0.15)"
+    backgroundColor: colors.errorBg
   },
   badgeText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#333"
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.text
   },
   typeVote: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 8
+    fontSize: typography.fontSize.sm,
+    color: colors.textLight,
+    marginBottom: spacing.sm
   },
   title: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#0055a4",
-    marginBottom: 8
+    fontSize: typography.fontSize.xl + 2,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.primary,
+    marginBottom: spacing.sm,
+    lineHeight: 28
   },
   tagsSection: {
-    marginTop: 16,
-    marginBottom: 16,
-    padding: 12,
-    backgroundColor: "#f5f5f5",
-    borderRadius: 8
+    marginTop: spacing.lg,
+    marginBottom: spacing.lg,
+    padding: spacing.md,
+    backgroundColor: colors.primaryTintLight,
+    borderRadius: radius.md
   },
   tagsTitle: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#666",
-    marginBottom: 8,
+    fontSize: typography.fontSize.xs,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.textLight,
+    marginBottom: spacing.sm,
     textTransform: "uppercase",
     letterSpacing: 0.5
   },
   tagsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8
+    gap: spacing.sm
   },
   tag: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: "rgba(0, 85, 164, 0.1)",
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "transparent"
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    backgroundColor: colors.primaryTint,
+    borderRadius: radius.pill
   },
   tagText: {
-    fontSize: 13,
-    fontWeight: "500",
-    color: "#0055a4"
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.medium,
+    color: colors.primary
   },
   date: {
-    fontSize: 14,
-    color: "#666",
+    fontSize: typography.fontSize.sm,
+    color: colors.textLight,
     textTransform: "capitalize"
   },
   sourcesLink: {
-    marginTop: 12
+    marginTop: spacing.md
   },
   sourcesLinkText: {
-    fontSize: 14,
-    color: "#0055a4",
-    fontWeight: "500"
+    fontSize: typography.fontSize.sm,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.medium
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#0055a4",
-    marginBottom: 12
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.semibold,
+    color: sectionColors.votes,
+    marginBottom: spacing.md
   },
   synthese: {
-    marginBottom: 20
+    marginBottom: spacing.xl,
+    backgroundColor: colors.backgroundCard,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    ...shadows.sm
   },
   syntheseGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 12
+    gap: spacing.md
   },
   syntheseItem: {
-    backgroundColor: "#f5f5f5",
-    padding: 16,
-    borderRadius: 8,
-    minWidth: 70,
+    backgroundColor: colors.backgroundAlt,
+    padding: spacing.lg,
+    borderRadius: radius.md,
+    minWidth: 72,
     alignItems: "center"
   },
+  syntheseItemPour: {
+    backgroundColor: colors.successBg
+  },
+  syntheseItemContre: {
+    backgroundColor: colors.errorBg
+  },
   syntheseValue: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#0055a4"
+    fontSize: 26,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.primary
+  },
+  syntheseValuePour: {
+    color: colors.success
+  },
+  syntheseValueContre: {
+    color: colors.accentCoral
   },
   syntheseLabel: {
-    fontSize: 12,
-    color: "#666",
-    marginTop: 4
+    fontSize: typography.fontSize.xs,
+    color: colors.textLight,
+    marginTop: spacing.xs
   },
   linkButton: {
-    marginBottom: 20
+    marginBottom: spacing.xl,
+    padding: spacing.md,
+    backgroundColor: colors.primaryTintLight,
+    borderRadius: radius.md
   },
   linkText: {
-    fontSize: 14,
-    color: "#0055a4",
-    fontWeight: "500"
+    fontSize: typography.fontSize.md,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.medium
   },
   groupVotesSection: {
-    marginBottom: 20,
-    padding: 12,
-    backgroundColor: "#f5f5f5",
-    borderRadius: 8
+    marginBottom: spacing.xl,
+    backgroundColor: colors.backgroundCard,
+    borderRadius: radius.lg,
+    overflow: "hidden",
+    ...shadows.sm
   },
   groupVotesHint: {
-    fontSize: 12,
-    color: "#666",
-    marginBottom: 12
+    fontSize: typography.fontSize.sm,
+    color: colors.textLight,
+    marginBottom: spacing.md,
+    paddingHorizontal: spacing.lg
   },
   groupVotesRow: {
-    paddingVertical: 10,
-    paddingHorizontal: 8,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0"
+    borderBottomColor: colors.borderLight
   },
   groupVotesGroupLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#0055a4",
-    marginBottom: 4
+    fontSize: typography.fontSize.md,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.primary,
+    marginBottom: spacing.xs
   },
   groupVotesStats: {
-    fontSize: 12,
-    color: "#666"
+    fontSize: typography.fontSize.sm,
+    color: colors.textLight
   },
   likeAssemblyBlock: {
-    marginTop: 12,
-    paddingTop: 12,
+    marginTop: spacing.md,
+    paddingTop: spacing.md,
     borderTopWidth: 1,
-    borderTopColor: "#e0e0e0"
+    borderTopColor: colors.border,
+    paddingHorizontal: spacing.lg
   },
   likeAssemblyText: {
-    fontSize: 12,
-    color: "#333",
-    marginBottom: 6
+    fontSize: typography.fontSize.sm,
+    color: colors.text,
+    marginBottom: spacing.xs
   },
   votesSection: {
-    marginBottom: 20
+    marginBottom: spacing.xl
   },
   positionBlock: {
-    marginBottom: 16
+    marginBottom: spacing.lg
   },
   positionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 8
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text,
+    marginBottom: spacing.sm
   },
   deputyRow: {
-    paddingVertical: 8,
-    paddingLeft: 8
+    paddingVertical: spacing.sm,
+    paddingLeft: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderLight
   },
   deputyLink: {
-    fontSize: 14,
-    color: "#0055a4",
-    fontWeight: "500"
+    fontSize: typography.fontSize.md,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.medium
   },
   voteComparisonLine: {
-    fontSize: 11,
-    color: "#666",
-    marginTop: 4,
-    marginLeft: 0
+    fontSize: typography.fontSize.xs,
+    color: colors.textLight,
+    marginTop: spacing.xs
   },
   sourceButton: {
-    marginTop: 16,
-    paddingVertical: 12
+    marginTop: spacing.lg,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    backgroundColor: colors.backgroundCard,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.border
   },
   sourceLink: {
-    fontSize: 14,
-    color: "#0055a4",
-    fontWeight: "500"
+    fontSize: typography.fontSize.md,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.medium,
+    textAlign: "center"
   }
 });

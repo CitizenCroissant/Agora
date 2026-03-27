@@ -4,14 +4,16 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  StyleSheet
+  StyleSheet,
+  LayoutAnimation
 } from "react-native";
 import { useRouter } from "expo-router";
 import { DatePickerModal } from "@/app/components/DatePickerModal";
 import { StatusMessage } from "@/app/components/StatusMessage";
 import { ScreenContainer } from "@/app/components/ScreenContainer";
 import { AgendaRangeResponse } from "@agora/shared";
-import { colors, spacing, radius, typography, shadows } from "@/theme";
+import { colors, spacing, radius, typography, shadows, sectionColors } from "@/theme";
+import { layoutAnimationPresets } from "@/lib/animations";
 import {
   getTodayDate,
   formatDate,
@@ -63,6 +65,7 @@ export default function TimelineScreen() {
       }
 
       const data = await apiClient.getAgendaRange(from, to);
+      LayoutAnimation.configureNext(layoutAnimationPresets.normal);
       setAgendaRange(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load timeline");
@@ -382,10 +385,11 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
     paddingLeft: 20,
     borderLeftWidth: 4,
-    borderLeftColor: colors.border
+    borderLeftColor: colors.border,
+    marginLeft: spacing.lg
   },
   todaySection: {
-    borderLeftColor: colors.secondary
+    borderLeftColor: sectionColors.calendrier
   },
   dateHeader: {
     flexDirection: "row",
@@ -401,22 +405,24 @@ const styles = StyleSheet.create({
   dateLinkText: {
     fontSize: typography.fontSize.md,
     fontWeight: typography.fontWeight.medium,
-    color: colors.primary
+    color: sectionColors.votes
   },
   dateText: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.semibold,
     textTransform: "capitalize",
-    flex: 1
+    flex: 1,
+    color: colors.text
   },
   todayBadge: {
-    backgroundColor: colors.secondary,
+    backgroundColor: sectionColors.calendrier,
     color: colors.background,
-    fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.medium,
+    fontSize: typography.fontSize.xs,
+    fontWeight: typography.fontWeight.bold,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
-    borderRadius: radius.sm
+    borderRadius: radius.pill,
+    overflow: "hidden"
   },
   noSittings: {
     fontSize: typography.fontSize.md,

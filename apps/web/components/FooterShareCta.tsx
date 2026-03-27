@@ -6,14 +6,17 @@ import styles from "./FooterShareCta.module.css";
 const AGORA_HOME_MESSAGE =
   "Découvrez l'agenda et les votes de l'Assemblée nationale en clair – Agora, transparence citoyenne.";
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://agora-app.fr";
+
 function getHomeUrl(): string {
   if (typeof window !== "undefined") {
     return window.location.origin + "/";
   }
-  return "https://agora.example.com/";
+  return SITE_URL + "/";
 }
 
-export function FooterShareCta() {
+export function FooterShareCta({ dark = false }: { dark?: boolean }) {
   const [copied, setCopied] = useState(false);
 
   const handleShare = useCallback(async () => {
@@ -60,7 +63,7 @@ export function FooterShareCta() {
   }
 
   return (
-    <div className={styles.cta}>
+    <div className={[styles.cta, dark ? styles.dark : ""].filter(Boolean).join(" ")}>
       <p className={styles.text}>
         Connaissez-vous quelqu&apos;un qui s&apos;intéresse à l&apos;Assemblée ?{" "}
         <button

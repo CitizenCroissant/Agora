@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, LayoutAnimation } from 'react-native'
 import { useRouter } from 'expo-router'
 import { AgendaResponse } from '@agora/shared'
 import { getTodayDate, formatDate, addDays, subtractDays } from '@agora/shared'
 import { apiClient } from '@/lib/api'
 import { ScreenContainer } from '@/app/components/ScreenContainer'
 import { StatusMessage } from '@/app/components/StatusMessage'
-import { colors, spacing, radius, typography, shadows } from '@/theme'
+import { colors, spacing, radius, typography, shadows, sectionColors } from '@/theme'
+import { layoutAnimationPresets } from '@/lib/animations'
 
 export default function TodayScreen() {
   const router = useRouter()
@@ -24,6 +25,7 @@ export default function TodayScreen() {
     setError(null)
     try {
       const data = await apiClient.getAgenda(date)
+      LayoutAnimation.configureNext(layoutAnimationPresets.normal)
       setAgenda(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load agenda')
@@ -45,34 +47,41 @@ export default function TodayScreen() {
     setCurrentDate(getTodayDate())
   }
 
+  const isToday = currentDate === getTodayDate()
+
   return (
     <ScreenContainer>
-      <View style={styles.controlBar}>
-        <View style={styles.topRow}>
-          <View style={styles.navigationControls}>
-            <TouchableOpacity style={styles.iconButton} onPress={goToPreviousDay}>
-              <Text style={styles.iconButtonText}>‹</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.iconButton} onPress={goToNextDay}>
-              <Text style={styles.iconButtonText}>›</Text>
-            </TouchableOpacity>
-            {currentDate !== getTodayDate() && (
-              <TouchableOpacity style={styles.todayButton} onPress={goToToday}>
-                <Text style={styles.todayButtonText}>Aujourd&apos;hui</Text>
-              </TouchableOpacity>
+      <View style={styles.heroBar}>
+        <View style={styles.navigationRow}>
+          <TouchableOpacity style={styles.navButton} onPress={goToPreviousDay}>
+            <Text style={styles.navButtonText}>‹</Text>
+          </TouchableOpacity>
+          <View style={styles.heroDateArea}>
+            <Text style={styles.heroDate}>{formatDate(currentDate)}</Text>
+            {isToday && (
+              <View style={styles.todayPill}>
+                <Text style={styles.todayPillText}>Aujourd&apos;hui</Text>
+              </View>
             )}
           </View>
+          <TouchableOpacity style={styles.navButton} onPress={goToNextDay}>
+            <Text style={styles.navButtonText}>›</Text>
+          </TouchableOpacity>
         </View>
-
-        <Text style={styles.dateTitle}>{formatDate(currentDate)}</Text>
+        {!isToday && (
+          <TouchableOpacity style={styles.backTodayBtn} onPress={goToToday}>
+            <Text style={styles.backTodayText}>← Revenir à aujourd&apos;hui</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <TouchableOpacity
         style={styles.voteCta}
         onPress={() => router.push(`/votes?date=${getTodayDate()}`)}
       >
+        <View style={styles.voteCtaAccent} />
         <Text style={styles.voteCtaText}>
-          Comprendre les votes d&apos;aujourd&apos;hui →
+          🗳 Scrutins du jour — voir les votes →
         </Text>
       </TouchableOpacity>
 
@@ -142,85 +151,104 @@ export default function TodayScreen() {
 }
 
 const styles = StyleSheet.create({
-  controlBar: {
+  heroBar: {
     backgroundColor: colors.background,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: colors.primaryTint,
-    padding: spacing.lg,
-    paddingBottom: spacing.md,
+    borderBottomColor: colors.border,
     ...shadows.sm
   },
-  topRow: {
-    marginBottom: spacing.md
-  },
-  navigationControls: {
+  navigationRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    justifyContent: 'center'
+    justifyContent: 'space-between'
   },
-  iconButton: {
-    width: 36,
-    height: 36,
+  navButton: {
+    width: 40,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radius.md,
-    backgroundColor: colors.background
+    backgroundColor: colors.backgroundAlt
   },
-  iconButtonText: {
+  navButtonText: {
     fontSize: 28,
     fontWeight: '300',
     color: colors.text,
     lineHeight: 32
   },
-  todayButton: {
-    paddingHorizontal: 14,
-    paddingVertical: spacing.sm,
-    backgroundColor: colors.primary,
-    borderRadius: radius.md,
-    marginLeft: 6
+  heroDateArea: {
+    alignItems: 'center',
+    flex: 1,
+    gap: 6
   },
-  todayButtonText: {
-    fontSize: 13,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.background
+  heroDate: {
+    fontSize: typography.fontSize.xl,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.primary,
+    textTransform: 'capitalize',
+    textAlign: 'center'
   },
-  dateTitle: {
-    fontSize: typography.fontSize.base,
+  todayPill: {
+    backgroundColor: sectionColors.aujourdhui,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 3,
+    borderRadius: radius.pill
+  },
+  todayPillText: {
+    color: colors.textInverse,
+    fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.text,
-    textAlign: 'center',
-    textTransform: 'capitalize'
+    textTransform: 'uppercase',
+    letterSpacing: 0.5
+  },
+  backTodayBtn: {
+    marginTop: spacing.sm,
+    alignSelf: 'center'
+  },
+  backTodayText: {
+    fontSize: typography.fontSize.sm,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.medium
   },
   voteCta: {
     marginHorizontal: spacing.lg,
     marginTop: spacing.md,
     marginBottom: spacing.sm,
     padding: spacing.md,
-    backgroundColor: colors.primaryTintLight,
-    borderRadius: radius.md,
+    backgroundColor: colors.accentAmberTint,
+    borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: colors.primaryTintStrong
+    borderColor: colors.accentAmberBorder,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  voteCtaAccent: {
+    width: 3,
+    alignSelf: 'stretch',
+    backgroundColor: sectionColors.votes,
+    borderRadius: 2,
+    marginRight: spacing.md
   },
   voteCtaText: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.primary,
-    textAlign: 'center'
+    color: colors.warning,
+    flex: 1
   },
   content: {
     flex: 1
   },
   sittingCard: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.backgroundCard,
     marginHorizontal: spacing.lg,
-    marginTop: spacing.lg,
+    marginTop: spacing.md,
     padding: spacing.lg,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderRadius: radius.lg,
     ...shadows.md
   },
   sittingHeader: {
@@ -230,14 +258,14 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm
   },
   sittingTitle: {
-    fontSize: typography.fontSize.lg,
+    fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
     color: colors.primary,
     flex: 1,
     marginRight: spacing.sm
   },
   timeRange: {
-    fontSize: typography.fontSize.sm,
+    fontSize: typography.fontSize.xs,
     color: colors.textLight,
     backgroundColor: colors.backgroundAlt,
     paddingHorizontal: spacing.sm,
@@ -245,7 +273,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.sm
   },
   location: {
-    fontSize: typography.fontSize.md,
+    fontSize: typography.fontSize.sm,
     color: colors.textLight,
     marginBottom: spacing.sm
   },

@@ -31,3 +31,23 @@
   outline-offset: 2px;
   border-radius: 2px;
 }
+
+/* Dark variant — for use on dark/navy backgrounds */
+.dark {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.dark .text {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.82rem;
+}
+
+.dark .shareButton {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.dark .shareButton:hover {
+  color: #ffffff;
+}

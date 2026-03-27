@@ -1,0 +1,122 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background var(--duration-fast) var(--ease-in-out),
+    color var(--duration-fast) var(--ease-in-out),
+    box-shadow var(--duration-fast) var(--ease-in-out),
+    transform var(--duration-fast) var(--ease-in-out),
+    border-color var(--duration-fast) var(--ease-in-out);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Variants */
+.primary {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.primary:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+  box-shadow: var(--shadow-warm);
+  transform: translateY(-1px);
+}
+
+.secondary {
+  background: transparent;
+  color: var(--color-primary);
+  border: 1.5px solid var(--color-primary);
+}
+
+.secondary:hover:not(:disabled) {
+  background: var(--color-primary-tint-light);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--color-text);
+  border: 1.5px solid transparent;
+}
+
+.ghost:hover:not(:disabled) {
+  background: var(--color-background-hover);
+  border-color: var(--color-border);
+}
+
+.coral {
+  background: var(--color-accent-coral);
+  color: var(--color-text-inverse);
+}
+
+.coral:hover:not(:disabled) {
+  background: var(--color-accent-coral-dark);
+  box-shadow: var(--shadow-warm);
+  transform: translateY(-1px);
+}
+
+.teal {
+  background: var(--color-accent-teal);
+  color: var(--color-text-inverse);
+}
+
+.teal:hover:not(:disabled) {
+  background: var(--color-accent-teal-dark);
+  box-shadow: var(--shadow-warm);
+  transform: translateY(-1px);
+}
+
+/* Sizes */
+.sm {
+  font-size: 0.8125rem;
+  padding: 0.4em 0.9em;
+  border-radius: var(--border-radius);
+}
+
+.md {
+  font-size: 0.9375rem;
+  padding: 0.6em 1.25em;
+}
+
+.lg {
+  font-size: 1rem;
+  padding: 0.75em 1.75em;
+  border-radius: var(--border-radius-lg);
+}
+
+/* Pill modifier */
+.pill {
+  border-radius: var(--border-radius-pill);
+}
+
+/* Full width */
+.fullWidth {
+  width: 100%;
+}

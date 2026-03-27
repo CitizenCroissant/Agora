@@ -6,17 +6,18 @@ import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./groupes.module.css";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { EmptyState } from "@/components/EmptyState";
 
-/** Palette of accent colors for group cards (Assemblée-inspired) */
+/** Palette of accent colors for group cards (Civic Warmth) */
 const ACCENT_COLORS = [
-  "#0055a4" /* primary blue */,
-  "#0d7377",
-  "#7d4e57",
-  "#2d6a4f",
-  "#9b5de5",
-  "#00b4d8",
-  "#e63946",
-  "#f4a261"
+  "#1E3A5F" /* deep navy */,
+  "#2BA89E" /* teal */,
+  "#E85D3A" /* coral */,
+  "#7B5EA7" /* plum */,
+  "#F0A030" /* amber */,
+  "#2E8B57" /* sea green */,
+  "#4A7FA5" /* muted blue */,
+  "#C0603A" /* burnt orange */
 ];
 
 function accentForSlug(slug: string): string {
@@ -51,6 +52,16 @@ export default function GroupesPage() {
   return (
     <div className="container">
       <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Groupes politiques" }]} />
+
+      <div className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>
+          Groupes <span>politiques</span>
+        </h1>
+        <p className={styles.pageSubtitle}>
+          Les groupes politiques de l&apos;Assemblée nationale et leurs membres.
+        </p>
+      </div>
+
           {loading && (
             <div className="stateLoading">
               Chargement des groupes politiques...
@@ -70,12 +81,12 @@ export default function GroupesPage() {
           {!loading && !error && (
             <>
               {groups.length === 0 ? (
-                <p className="stateEmpty">
-                  Aucun groupe politique trouvé. Réingérez les députés pour
-                  remplir les groupes.
-                </p>
+                <EmptyState
+                  variant="groups"
+                  message="Aucun groupe politique trouvé. Réingérez les députés pour remplir les groupes."
+                />
               ) : (
-                <ul className={styles.groupList}>
+                <ul className={`${styles.groupList} staggerChildren`}>
                   {groups.map((g) => (
                     <li key={g.slug}>
                       <Link

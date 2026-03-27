@@ -1,0 +1,138 @@
+/* VoteResultBar -- proportional pour/contre/abstention visualisation */
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+/* The segmented bar */
+.bar {
+  display: flex;
+  width: 100%;
+  border-radius: var(--border-radius-pill);
+  overflow: hidden;
+  background: var(--color-background-alt);
+}
+
+.bar.sm {
+  height: 6px;
+}
+
+.bar.md {
+  height: 10px;
+}
+
+.bar.lg {
+  height: 16px;
+  border-radius: var(--border-radius);
+}
+
+.segPour {
+  background: var(--color-success);
+  height: 100%;
+  transition: width 0.75s var(--ease-out-expo);
+  min-width: 0;
+}
+
+.segContre {
+  background: var(--color-accent-coral);
+  height: 100%;
+  transition: width 0.75s 0.08s var(--ease-out-expo);
+  min-width: 0;
+}
+
+.segAbstention {
+  background: var(--color-accent-amber);
+  height: 100%;
+  opacity: 0.75;
+  transition: width 0.75s 0.04s var(--ease-out-expo);
+  min-width: 0;
+}
+
+/* Legend row for sm/md sizes */
+.legend {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+  font-family: var(--font-mono);
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot.pour { background: var(--color-success); }
+.dot.contre { background: var(--color-accent-coral); }
+.dot.abstention { background: var(--color-accent-amber); }
+
+.count {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* Big stats layout for detail page */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-background-alt);
+}
+
+.statItem.pour { border-top: 3px solid var(--color-success); }
+.statItem.contre { border-top: 3px solid var(--color-accent-coral); }
+.statItem.abstention { border-top: 3px solid var(--color-accent-amber); }
+.statItem.nonVotant { border-top: 3px solid var(--color-border); }
+
+.statValue {
+  font-family: var(--font-mono);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1;
+}
+
+.statItem.pour .statValue { color: var(--color-success); }
+.statItem.contre .statValue { color: var(--color-accent-coral); }
+.statItem.abstention .statValue { color: var(--color-accent-amber); }
+
+.statLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-light);
+}
+
+@media (max-width: 640px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .statValue {
+    font-size: 1.375rem;
+  }
+}

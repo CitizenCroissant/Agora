@@ -18,6 +18,16 @@ export default function SourcesPage() {
   return (
     <div className="container">
       <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Sources de données" }]} />
+
+      <div className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>
+          Sources de <span>données</span>
+        </h1>
+        <p className={styles.pageSubtitle}>
+          Transparence totale sur nos sources, notre méthodologie et notre glossaire.
+        </p>
+      </div>
+
           <section className={styles.section}>
             <h2>Données officielles</h2>
             <p>

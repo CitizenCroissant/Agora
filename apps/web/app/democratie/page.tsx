@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 };
 
 export default function DemocratiePage() {
-  const { hub, loi, assemblee, senat, citoyen, commissions } = DEMOCRATIE;
+  const { hub, loi, assemblee, senat, citoyen, commissions, municipales } = DEMOCRATIE;
 
   return (
     <div className="container">
@@ -34,7 +34,12 @@ export default function DemocratiePage() {
         ]}
       />
 
-      <p className={styles.intro}>{hub.intro}</p>
+      <div className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>
+          Comprendre la <span>démocratie</span>
+        </h1>
+        <p className={styles.intro}>{hub.intro}</p>
+      </div>
 
       <nav className={styles.cards} aria-label="Sections de la page">
         {hub.cards.map((card) => {
@@ -204,6 +209,34 @@ export default function DemocratiePage() {
           {commissions.links.map((link) => (
             <li key={link.href}>
               <Link href={link.href}>{link.label}</Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section
+        id="municipales"
+        className={styles.section}
+        aria-labelledby="municipales-title"
+      >
+        <h2 id="municipales-title">{municipales.title}</h2>
+        <p>{municipales.intro}</p>
+        <p>{municipales.body}</p>
+        <p>{municipales.parlement}</p>
+        <div className={styles.summaryBox}>
+          <h3>{municipales.summaryTitle}</h3>
+          <p>{municipales.summary}</p>
+        </div>
+        <ul className={styles.linkList}>
+          {municipales.links.map((link) => (
+            <li key={link.href}>
+              {"external" in link && link.external ? (
+                <a href={link.href} target="_blank" rel="noopener noreferrer">
+                  {link.label}
+                </a>
+              ) : (
+                <Link href={link.href}>{link.label}</Link>
+              )}
             </li>
           ))}
         </ul>

@@ -12,16 +12,15 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
-    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  font-family: var(--font-body, "Figtree"), -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  color: #1a1a1a;
-  background: #ffffff;
+  color: var(--color-text);
+  background: var(--color-background);
 }
 
 a {
@@ -29,49 +28,98 @@ a {
   text-decoration: none;
 }
 
-/* Design tokens */
+/* Design tokens -- Civic Warmth palette */
 :root {
-  --color-primary: #0055a4;
-  --color-primary-dark: #003d7a;
-  --color-secondary: #ef4135;
-  --color-text: #1a1a1a;
-  --color-text-light: #666666;
-  --color-background: #ffffff;
-  --color-background-alt: #f5f5f5;
-  --color-border: #e0e0e0;
+  /* Typography */
+  --font-display: "Sora", sans-serif;
+  --font-body: "Figtree", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Brand colors */
+  --color-primary: #1e3a5f;
+  --color-primary-dark: #142a47;
+  --color-accent-coral: #e85d3a;
+  --color-accent-coral-dark: #c44827;
+  --color-accent-coral-tint: rgba(232, 93, 58, 0.12);
+  --color-accent-teal: #2ba89e;
+  --color-accent-teal-dark: #1f7d75;
+  --color-accent-teal-tint: rgba(43, 168, 158, 0.12);
+  --color-accent-amber: #f0a030;
+  --color-accent-amber-dark: #b07510;
+  --color-accent-amber-tint: rgba(240, 160, 48, 0.15);
+  --color-secondary: var(--color-accent-coral);
+
+  /* Section color-coding (Guardian-inspired) */
+  --color-section-aujourdhui: #e85d3a;
+  --color-section-votes: #f0a030;
+  --color-section-calendrier: #2ba89e;
+  --color-section-explorer: #1e3a5f;
+  --color-section-comprendre: #7b5ea7;
+
+  /* Text */
+  --color-text: #2a2a2a;
+  --color-text-light: #7a7a7a;
+  --color-text-muted: #a0a0a0;
+  --color-text-inverse: #ffffff;
+
+  /* Backgrounds -- warm, paper-like */
+  --color-background: #fafaf7;
+  --color-background-alt: #f4f2ee;
+  --color-background-card: #ffffff;
+  --color-background-input: #f4f2ee;
+  --color-background-hover: rgba(30, 58, 95, 0.05);
+
+  /* Borders */
+  --color-border: #e8e4dc;
+  --color-border-light: #f0ede8;
+
+  /* Semantic status */
+  --color-success: #2e8b57;
+  --color-success-dark: #1e6b3f;
+  --color-success-bg: rgba(46, 139, 87, 0.12);
+  --color-error: #c0392b;
+  --color-error-dark: #962d22;
+  --color-error-bg: rgba(232, 93, 58, 0.12);
+  --color-error-bg-light: #fff8f6;
+  --color-warning: #d4870a;
+
+  /* Primary tints */
+  --color-primary-tint-light: rgba(30, 58, 95, 0.06);
+  --color-primary-tint: rgba(30, 58, 95, 0.1);
+  --color-primary-tint-medium: rgba(30, 58, 95, 0.15);
+  --color-primary-tint-strong: rgba(30, 58, 95, 0.2);
+  --color-primary-tint-shadow: rgba(30, 58, 95, 0.25);
+
+  /* Spacing */
   --spacing-xs: 0.5rem;
   --spacing-sm: 1rem;
   --spacing-md: 1.5rem;
   --spacing-lg: 2rem;
   --spacing-xl: 3rem;
+  --spacing-xxl: 4rem;
+
+  /* Border radii */
   --border-radius: 8px;
   --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
   --border-radius-pill: 999px;
-  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
-  --shadow-focus: 0 0 0 2px rgba(0, 85, 164, 0.15);
 
-  /* Semantic status colors */
-  --color-success: #15803d;
-  --color-success-dark: #14532d;
-  --color-success-bg: rgba(0, 128, 0, 0.15);
-  --color-error: #b91c1c;
-  --color-error-dark: #991b1b;
-  --color-error-bg: rgba(200, 0, 0, 0.15);
-  --color-error-bg-light: #fff5f5;
-  --color-warning: #a16207;
+  /* Shadows -- warm-tinted instead of pure black */
+  --shadow-sm: 0 1px 4px rgba(30, 58, 95, 0.08), 0 1px 2px rgba(30, 58, 95, 0.04);
+  --shadow: 0 2px 8px rgba(30, 58, 95, 0.1), 0 1px 3px rgba(30, 58, 95, 0.06);
+  --shadow-warm: 0 4px 12px rgba(30, 58, 95, 0.12), 0 2px 4px rgba(30, 58, 95, 0.06);
+  --shadow-card: 0 2px 8px rgba(30, 58, 95, 0.08), 0 0 0 1px rgba(30, 58, 95, 0.04);
+  --shadow-elevated: 0 8px 24px rgba(30, 58, 95, 0.14), 0 2px 6px rgba(30, 58, 95, 0.08);
+  --shadow-lg: 0 12px 32px rgba(30, 58, 95, 0.16), 0 4px 8px rgba(30, 58, 95, 0.08);
+  --shadow-focus: 0 0 0 3px rgba(30, 58, 95, 0.2);
 
-  /* Primary tints */
-  --color-primary-tint-light: rgba(0, 85, 164, 0.08);
-  --color-primary-tint: rgba(0, 85, 164, 0.1);
-  --color-primary-tint-medium: rgba(0, 85, 164, 0.15);
-  --color-primary-tint-strong: rgba(0, 85, 164, 0.2);
-  --color-primary-tint-shadow: rgba(0, 85, 164, 0.3);
-
-  /* Neutral extras */
-  --color-background-input: #f9fafb;
-  --color-background-hover: #eef2ff;
+  /* Transitions */
+  --duration-fast: 120ms;
+  --duration-normal: 220ms;
+  --duration-slow: 380ms;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /*
    * Breakpoints (for reference; CSS cannot use var() in media queries).
@@ -89,11 +137,10 @@ a {
 }
 
 .card {
-  background: var(--color-background);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius);
+  background: var(--color-background-card);
+  border-radius: var(--border-radius-lg);
   padding: var(--spacing-md);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-card);
 }
 
 .button {
@@ -105,18 +152,28 @@ a {
   border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 1rem;
-  font-weight: 500;
-  transition: background 0.2s;
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: background var(--duration-fast) var(--ease-in-out),
+    box-shadow var(--duration-fast) var(--ease-in-out),
+    transform var(--duration-fast) var(--ease-in-out);
 }
 
 .button:hover {
   background: var(--color-primary-dark);
+  box-shadow: var(--shadow-warm);
+  transform: translateY(-1px);
+}
+
+.button:active {
+  transform: translateY(0);
 }
 
 .button-secondary {
   background: transparent;
   color: var(--color-primary);
-  border: 1px solid var(--color-primary);
+  border: 1.5px solid var(--color-primary);
 }
 
 .button-secondary:hover {
@@ -133,7 +190,7 @@ a {
 
 .pageHeader {
   background: var(--color-primary);
-  color: white;
+  color: var(--color-text-inverse);
   padding: var(--spacing-lg) 0;
 }
 
@@ -182,6 +239,95 @@ a {
   box-shadow: var(--shadow-focus);
 }
 
+/* ── Global animation keyframes ────────────────────────────────── */
+
+@keyframes fadeUpIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes expandWidth {
+  from { width: 0 !important; }
+  to   { width: var(--target-width); }
+}
+
+/* ── Animation utility classes ──────────────────────────────────── */
+
+/* Basic entrance — apply once to trigger on render */
+.animateIn {
+  animation: fadeUpIn var(--duration-slow) var(--ease-out-expo) both;
+}
+
+/* Staggered children — add .staggerChildren to parent; each direct
+   child gets a CSS var --i (0..n) set via JS, or fall back to
+   :nth-child delays for the first 12 items (CSS-only path). */
+.staggerChildren > * {
+  animation: fadeUpIn var(--duration-slow) var(--ease-out-expo) both;
+  animation-delay: calc(var(--stagger-i, 0) * 55ms);
+}
+
+.staggerChildren > *:nth-child(1)  { --stagger-i: 0; }
+.staggerChildren > *:nth-child(2)  { --stagger-i: 1; }
+.staggerChildren > *:nth-child(3)  { --stagger-i: 2; }
+.staggerChildren > *:nth-child(4)  { --stagger-i: 3; }
+.staggerChildren > *:nth-child(5)  { --stagger-i: 4; }
+.staggerChildren > *:nth-child(6)  { --stagger-i: 5; }
+.staggerChildren > *:nth-child(7)  { --stagger-i: 6; }
+.staggerChildren > *:nth-child(8)  { --stagger-i: 7; }
+.staggerChildren > *:nth-child(9)  { --stagger-i: 8; }
+.staggerChildren > *:nth-child(10) { --stagger-i: 9; }
+.staggerChildren > *:nth-child(11) { --stagger-i: 10; }
+.staggerChildren > *:nth-child(12) { --stagger-i: 11; }
+
+/* Explicit delay helpers (for use without JS) */
+.delay1 { animation-delay: 55ms !important; }
+.delay2 { animation-delay: 110ms !important; }
+.delay3 { animation-delay: 165ms !important; }
+.delay4 { animation-delay: 220ms !important; }
+.delay5 { animation-delay: 275ms !important; }
+
+/* Reduce motion — collapse animations to simple fade */
+@media (prefers-reduced-motion: reduce) {
+  .animateIn,
+  .staggerChildren > * {
+    animation: fadeIn var(--duration-fast) linear both !important;
+    animation-delay: 0ms !important;
+  }
+}
+
 /* State indicators (loading, error, empty) */
 .stateLoading,
 .stateError,
@@ -192,7 +338,7 @@ a {
 }
 
 .stateError {
-  color: var(--color-secondary);
+  color: var(--color-error);
 }
 
 @media (max-width: 768px) {

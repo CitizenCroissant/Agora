@@ -17,7 +17,7 @@ function formatLastSynced(isoString: string): string {
   });
 }
 
-export function DataFreshness() {
+export function DataFreshness({ dark = false }: { dark?: boolean }) {
   const [status, setStatus] = useState<IngestionStatusResponse | null>(null);
   const [error, setError] = useState(false);
 
@@ -43,7 +43,12 @@ export function DataFreshness() {
   const { last_synced_at, is_fresh } = status.agenda;
 
   return (
-    <p className={styles.freshness} aria-live="polite">
+    <p
+      className={[styles.freshness, dark ? styles.dark : ""]
+        .filter(Boolean)
+        .join(" ")}
+      aria-live="polite"
+    >
       <span className={is_fresh ? styles.fresh : styles.stale}>
         {is_fresh ? "Données à jour" : "Données mises à jour le "}
         {is_fresh

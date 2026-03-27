@@ -21,3 +21,22 @@
 .sourcesLink:hover {
   text-decoration: none;
 }
+
+/* Dark variant — for use on dark/navy backgrounds */
+.dark {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.78rem;
+}
+
+.dark .fresh,
+.dark .stale {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.dark .sourcesLink {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.dark .sourcesLink:hover {
+  color: #ffffff;
+}

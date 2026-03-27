@@ -7,6 +7,37 @@ import { apiClient } from "@/lib/api";
 import Link from "next/link";
 import styles from "./search.module.css";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { EmptyState } from "@/components/EmptyState";
+import { Skeleton } from "@/components/Skeleton";
+import skeletonStyles from "@/components/Skeleton.module.css";
+
+function SearchSkeleton() {
+  const sections = [
+    { label: "Scrutins", cards: 4 },
+    { label: "Députés", cards: 3 },
+    { label: "Groupes politiques", cards: 2 }
+  ];
+  return (
+    <div aria-busy="true" aria-label="Recherche en cours">
+      {sections.map(({ label, cards }) => (
+        <section key={label} style={{ marginBottom: "var(--spacing-xl)" }}>
+          <Skeleton shape="heading" width={label === "Scrutins" ? 90 : label === "Députés" ? 75 : 170} height={20} style={{ marginBottom: 12 }} />
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {Array.from({ length: cards }, (_, i) => (
+              <div key={i} className={skeletonStyles.card}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                  {label === "Scrutins" && <Skeleton shape="pill" width={60} height={22} />}
+                  <Skeleton shape="heading" width={`${55 + i * 7}%`} height={16} />
+                </div>
+                <Skeleton shape="text" width="35%" height={13} />
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  );
+}
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
@@ -59,6 +90,16 @@ export default function SearchPage() {
   return (
     <div className="container">
       <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Recherche" }]} />
+
+      <div className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>
+          Recherche <span>globale</span>
+        </h1>
+        <p className={styles.pageSubtitle}>
+          Recherchez des scrutins, des députés ou des groupes politiques.
+        </p>
+      </div>
+
           <form onSubmit={handleSubmit} className={styles.searchForm}>
             <input
               type="search"
@@ -74,9 +115,7 @@ export default function SearchPage() {
             </button>
           </form>
 
-          {loading && (
-            <div className="stateLoading">Recherche en cours...</div>
-          )}
+          {loading && <SearchSkeleton />}
 
           {error && (
             <div className="stateError">
@@ -85,9 +124,11 @@ export default function SearchPage() {
           )}
 
           {emptyAfterSearch && (
-            <p className="stateEmpty">
-              Aucun résultat pour &quot;{results.q}&quot;.
-            </p>
+            <EmptyState
+              variant="search"
+              title={`Aucun résultat pour « ${results.q} »`}
+              message="Essayez d'autres mots-clés ou vérifiez l'orthographe."
+            />
           )}
 
           {!loading && hasResults && results && (
@@ -95,7 +136,7 @@ export default function SearchPage() {
               {results.scrutins.length > 0 && (
                 <section className={styles.section}>
                   <h2 className={styles.sectionTitle}>Scrutins</h2>
-                  <ul className={styles.list}>
+                  <ul className={`${styles.list} staggerChildren`}>
                     {results.scrutins.map((s) => (
                       <li key={s.id}>
                         <Link href={`/votes/${s.id}`} className={styles.card}>
@@ -122,7 +163,7 @@ export default function SearchPage() {
               {results.deputies.length > 0 && (
                 <section className={styles.section}>
                   <h2 className={styles.sectionTitle}>Députés</h2>
-                  <ul className={styles.list}>
+                  <ul className={`${styles.list} staggerChildren`}>
                     {results.deputies.map((d) => (
                       <li key={d.acteur_ref}>
                         <Link

@@ -1,40 +1,74 @@
-.backLink {
-  display: inline-block;
-  margin-bottom: var(--spacing-sm);
-  color: white;
-  opacity: 0.9;
-  transition: opacity 0.2s;
+/* ============================================================
+   About page -- Civic Warmth redesign
+   Section accent: plum #7B5EA7 (Comprendre)
+   ============================================================ */
+
+.pageHeader {
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border-light);
 }
 
-.backLink:hover {
-  opacity: 1;
-}
-
-.title {
-  font-size: 2.5rem;
+.pageTitle {
+  font-family: var(--font-display);
+  font-size: 2rem;
   font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 var(--spacing-xs);
+  line-height: 1.2;
 }
+
+.pageTitle span {
+  color: var(--color-section-comprendre);
+}
+
+.pageSubtitle {
+  font-size: 1.0625rem;
+  color: var(--color-text-light);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ---------- Sections ---------- */
 
 .section {
   margin-bottom: var(--spacing-xl);
 }
 
 .section h2 {
-  font-size: 1.75rem;
-  color: var(--color-primary);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
   margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.section h2::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 1.2em;
+  background: var(--color-section-comprendre);
+  border-radius: 2px;
+  flex-shrink: 0;
 }
 
 .section p {
   line-height: 1.8;
   margin-bottom: var(--spacing-md);
-  font-size: 1.125rem;
+  font-size: 1.0625rem;
+  color: var(--color-text);
 }
+
+/* ---------- How it works: numbered steps ---------- */
 
 .steps {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-md);
   margin-top: var(--spacing-md);
 }
 
@@ -42,33 +76,49 @@
   display: flex;
   gap: var(--spacing-md);
   align-items: flex-start;
+  background: var(--color-background-card);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border-light);
+  transition: box-shadow var(--duration-fast) var(--ease-in-out);
+}
+
+.step:hover {
+  box-shadow: var(--shadow-warm);
 }
 
 .stepNumber {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3rem;
-  height: 3rem;
-  background: var(--color-primary);
+  width: 2.75rem;
+  height: 2.75rem;
+  background: var(--color-section-comprendre);
   color: white;
   border-radius: 50%;
-  font-size: 1.5rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
   font-weight: 700;
   flex-shrink: 0;
 }
 
 .step h3 {
-  font-size: 1.25rem;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 600;
   margin-bottom: var(--spacing-xs);
   color: var(--color-text);
 }
 
 .step p {
   margin: 0;
+  font-size: 0.9375rem;
   line-height: 1.6;
   color: var(--color-text-light);
 }
+
+/* ---------- Lists ---------- */
 
 .list {
   margin-left: var(--spacing-lg);
@@ -78,8 +128,10 @@
 .list li {
   line-height: 1.8;
   margin-bottom: var(--spacing-xs);
-  font-size: 1.125rem;
+  font-size: 1.0625rem;
 }
+
+/* ---------- CTA ---------- */
 
 .cta {
   margin-top: var(--spacing-xl);
@@ -88,45 +140,52 @@
 }
 
 .ctaButton {
-  display: inline-block;
-  padding: var(--spacing-md) var(--spacing-lg);
-  background: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 14px 28px;
+  background: var(--color-section-comprendre);
   color: white;
-  border-radius: var(--border-radius);
-  font-size: 1.125rem;
-  font-weight: 500;
-  transition: background 0.2s;
+  border-radius: var(--border-radius-pill);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  transition:
+    background var(--duration-fast) var(--ease-in-out),
+    box-shadow var(--duration-fast) var(--ease-in-out),
+    transform var(--duration-fast) var(--ease-in-out);
+  box-shadow: var(--shadow-warm);
 }
 
 .ctaButton:hover {
-  background: var(--color-primary-dark);
+  background: #6a4d96;
+  box-shadow: var(--shadow-elevated);
+  transform: translateY(-2px);
 }
 
-.footer {
-  background: var(--color-background-alt);
-  border-top: 1px solid var(--color-border);
-  padding: var(--spacing-lg) 0;
-  text-align: center;
-  color: var(--color-text-light);
-  font-size: 0.875rem;
+.ctaButton:active {
+  transform: translateY(0);
 }
+
+/* ---------- Responsive ---------- */
 
 @media (max-width: 768px) {
-  .title {
-    font-size: 2rem;
+  .pageTitle {
+    font-size: 1.625rem;
   }
 
   .section h2 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
 
-  .section p {
-    font-size: 1rem;
+  .step {
+    flex-direction: column;
+    gap: var(--spacing-sm);
   }
 
   .stepNumber {
     width: 2.5rem;
     height: 2.5rem;
-    font-size: 1.25rem;
+    font-size: 1.125rem;
   }
 }

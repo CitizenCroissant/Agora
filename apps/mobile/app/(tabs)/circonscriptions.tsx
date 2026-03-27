@@ -4,14 +4,16 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
   StyleSheet,
-  TextInput
+  TextInput,
+  LayoutAnimation
 } from "react-native";
 import { useRouter } from "expo-router";
 import type { CirconscriptionSummary } from "@agora/shared";
 import { apiClient } from "@/lib/api";
-import { colors } from "@/theme";
+import { StatusMessage } from "@/app/components/StatusMessage";
+import { colors, spacing, radius, typography, shadows, commonStyles } from "@/theme";
+import { layoutAnimationPresets } from "@/lib/animations";
 
 export default function CirconscriptionsTabScreen() {
   const router = useRouter();
@@ -31,6 +33,7 @@ export default function CirconscriptionsTabScreen() {
     setError(null);
     try {
       const data = await apiClient.getCirconscriptions();
+      LayoutAnimation.configureNext(layoutAnimationPresets.spring);
       setCirconscriptions(data.circonscriptions);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur de chargement");
@@ -50,13 +53,13 @@ export default function CirconscriptionsTabScreen() {
   }, [circonscriptions, filterText]);
 
   return (
-    <View style={styles.container}>
+    <View style={commonStyles.screenContainer}>
       {!loading && !error && circonscriptions.length > 0 && (
         <View style={styles.filterBar}>
           <TextInput
             style={styles.filterInput}
             placeholder="Filtrer les circonscriptions..."
-            placeholderTextColor="#999"
+            placeholderTextColor={colors.textMuted}
             value={filterText}
             onChangeText={setFilterText}
           />
@@ -64,34 +67,28 @@ export default function CirconscriptionsTabScreen() {
       )}
       <ScrollView style={styles.content}>
         {loading && (
-          <View style={styles.centerContent}>
-            <ActivityIndicator size="large" color={colors.primary} />
-            <Text style={styles.loadingText}>
-              Chargement des circonscriptions...
-            </Text>
-          </View>
+          <StatusMessage type="loading" message="Chargement des circonscriptions..." />
         )}
 
         {error && (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>Erreur: {error}</Text>
-            <Text style={styles.errorHint}>
-              Vérifiez que l&apos;API est disponible et que les députés ont été
-              ingérés.
-            </Text>
-          </View>
+          <StatusMessage
+            type="error"
+            message={`Erreur: ${error}`}
+            hint="Vérifiez que l'API est disponible et que les députés ont été ingérés."
+          />
         )}
 
         {!loading && !error && (
           <>
             {filtered.length === 0 ? (
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>
-                  {filterText.trim()
+              <StatusMessage
+                type="empty"
+                message={
+                  filterText.trim()
                     ? "Aucune circonscription ne correspond au filtre."
-                    : "Aucune circonscription trouvée."}
-                </Text>
-              </View>
+                    : "Aucune circonscription trouvée."
+                }
+              />
             ) : (
               <View style={styles.list}>
                 {filtered.map((c) => (
@@ -123,91 +120,47 @@ export default function CirconscriptionsTabScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5"
-  },
   filterBar: {
-    padding: 16,
-    paddingBottom: 0
+    padding: spacing.lg,
+    paddingBottom: spacing.sm
   },
   filterInput: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    fontSize: 14,
-    backgroundColor: "#fff",
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    fontSize: typography.fontSize.md,
+    backgroundColor: colors.backgroundCard,
     borderWidth: 1,
-    borderColor: "#e0e0e0",
-    borderRadius: 8,
-    color: "#333"
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    color: colors.text
   },
   content: {
     flex: 1
   },
-  centerContent: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 48
-  },
-  loadingText: {
-    marginTop: 16,
-    color: "#666",
-    fontSize: 16
-  },
-  errorContainer: {
-    padding: 24,
-    alignItems: "center"
-  },
-  errorText: {
-    color: "#ef4135",
-    fontSize: 16,
-    fontWeight: "500",
-    marginBottom: 8
-  },
-  errorHint: {
-    color: "#666",
-    fontSize: 14,
-    textAlign: "center"
-  },
-  emptyContainer: {
-    padding: 48,
-    alignItems: "center"
-  },
-  emptyText: {
-    color: "#666",
-    fontSize: 16,
-    textAlign: "center"
-  },
   list: {
-    padding: 16
+    padding: spacing.lg
   },
   card: {
-    backgroundColor: "#fff",
-    padding: 16,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2
+    backgroundColor: colors.backgroundCard,
+    padding: spacing.lg,
+    borderRadius: radius.md,
+    marginBottom: spacing.md,
+    ...shadows.sm
   },
   cardLabel: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#0055a4",
-    marginBottom: 4
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.primary,
+    marginBottom: spacing.xs
   },
   cardCount: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 8
+    fontSize: typography.fontSize.md,
+    color: colors.textLight,
+    marginBottom: spacing.sm
   },
   cardLink: {
-    fontSize: 14,
-    color: "#0055a4",
-    fontWeight: "500"
+    fontSize: typography.fontSize.md,
+    color: colors.primary,
+    fontWeight: typography.fontWeight.medium
   }
 });

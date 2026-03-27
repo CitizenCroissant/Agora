@@ -10,17 +10,17 @@ export default function CirconscriptionNotFound() {
         alignItems: "center",
         justifyContent: "center",
         padding: "2rem",
-        fontFamily: "system-ui, sans-serif"
+        background: "var(--color-background)"
       }}
     >
-      <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>404</h1>
-      <p style={{ color: "#666", marginBottom: "1.5rem" }}>
+      <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem", color: "var(--color-text)" }}>404</h1>
+      <p style={{ color: "var(--color-text-light)", marginBottom: "1.5rem" }}>
         Circonscription introuvable.
       </p>
       <Link
         href="/circonscriptions"
         style={{
-          color: "#0055a4",
+          color: "var(--color-primary)",
           fontWeight: 600,
           textDecoration: "none"
         }}

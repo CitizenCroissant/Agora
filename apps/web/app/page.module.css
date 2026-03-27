@@ -1,176 +1,173 @@
-.title {
-  font-size: 2.5rem;
-  font-weight: 700;
+/* ================================================================
+   HOME PAGE — Civic Warmth editorial redesign
+   ================================================================ */
+
+/* ── PAGE WRAPPER ───────────────────────────────────────────────── */
+
+.page {
+  min-height: 100vh;
+}
+
+/* ── HERO ───────────────────────────────────────────────────────── */
+
+.hero {
+  background: linear-gradient(
+    160deg,
+    var(--color-background) 0%,
+    var(--color-background-alt) 100%
+  );
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--spacing-xl) 0 var(--spacing-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle warm texture */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+      circle at 20% 80%,
+      rgba(232, 93, 58, 0.05) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(30, 58, 95, 0.04) 0%,
+      transparent 50%
+    );
+  pointer-events: none;
+}
+
+.heroInner {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  position: relative;
+  z-index: 1;
+}
+
+.heroLeft {
+  flex: 1;
+  min-width: 0;
+}
+
+.heroTodayPill {
+  display: inline-block;
+  padding: 4px 14px;
+  background: var(--color-section-aujourdhui);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: var(--border-radius-pill);
   margin-bottom: var(--spacing-xs);
 }
 
-.subtitle {
-  font-size: 1.25rem;
-  opacity: 0.9;
-}
-
-.nav {
-  background: var(--color-background-alt);
-  border-bottom: 1px solid var(--color-border);
-  padding: var(--spacing-sm) 0;
-}
-
-.navLinks {
-  display: flex;
-  gap: var(--spacing-md);
-}
-
-.navLink {
-  padding: var(--spacing-xs) var(--spacing-sm);
-  color: var(--color-text);
-  font-weight: 500;
-  border-radius: var(--border-radius);
-  transition: background 0.2s;
-}
-
-.navLink:hover {
-  background: var(--color-background);
-}
-
-.voteCta {
-  display: inline-block;
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--color-primary-tint-light);
+.heroDate {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
   color: var(--color-primary);
-  font-weight: 600;
-  border-radius: var(--border-radius);
-  border: 1px solid var(--color-primary-tint-strong);
-  transition:
-    background 0.2s,
-    border-color 0.2s;
+  line-height: 1.05;
+  text-transform: capitalize;
+  margin: 0 0 0.4rem;
+  letter-spacing: -0.025em;
 }
 
-.voteCta:hover {
-  background: var(--color-primary-tint);
-  border-color: var(--color-primary);
+.heroTagline {
+  font-size: 1.0625rem;
+  color: var(--color-text-light);
+  margin: 0 0 var(--spacing-sm);
+  font-weight: 400;
 }
 
-.ctaRow {
+.heroRight {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-lg);
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
 }
 
-.digestCta {
-  @extend .voteCta;
-  background: #0b7285;
-  color: #f8fafc;
-  border-color: #0b7285;
-}
+/* Date navigation */
 
-.digestCta:hover {
-  background: #0e869c;
-  border-color: #0e869c;
-}
-
-.controlBar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-md);
-}
-
-.leftControls {
+.dateNav {
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
 }
 
-.iconButton {
+.dateNavBtn {
   width: 36px;
   height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--color-border);
-  background: white;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-background-card);
   color: var(--color-text);
-  border-radius: 8px;
-  font-size: 24px;
+  border-radius: var(--border-radius);
+  font-size: 22px;
   font-weight: 300;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--duration-fast) var(--ease-out-expo);
   line-height: 1;
   padding: 0;
 }
 
-.iconButton:hover {
+.dateNavBtn:hover {
   background: var(--color-primary);
-  color: white;
+  color: #fff;
   border-color: var(--color-primary);
-  transform: scale(1.05);
+  transform: scale(1.08);
 }
 
-.todayButton {
-  padding: 8px 16px;
+.todayBtn {
+  padding: 8px 14px;
   border: none;
   background: var(--color-primary);
-  color: white;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 500;
+  color: #fff;
+  border-radius: var(--border-radius);
+  font-size: 0.8125rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
-  margin-left: var(--spacing-xs);
+  font-family: var(--font-body);
+  transition: all var(--duration-fast) var(--ease-out-expo);
 }
 
-.todayButton:hover {
+.todayBtn:hover {
   background: var(--color-primary-dark);
   transform: translateY(-1px);
-  box-shadow: 0 2px 6px var(--color-primary-tint-shadow);
+  box-shadow: var(--shadow-warm);
 }
 
-.centerControls {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
-
-.dateTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--color-text);
-  text-transform: capitalize;
-  margin: 0;
-}
-
-.rightControls {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-}
+/* Date picker */
 
 .datePickerWrapper {
   position: relative;
   display: flex;
   align-items: center;
-  background: white;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
+  gap: 8px;
+  background: var(--color-background-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--border-radius);
   padding: 8px 12px;
   cursor: pointer;
-  transition: all 0.2s;
-  gap: 8px;
+  transition: all var(--duration-fast) var(--ease-out-expo);
 }
 
-.datePickerWrapper:hover {
+.datePickerWrapper:hover,
+.datePickerWrapper:focus-within {
   border-color: var(--color-primary);
   box-shadow: var(--shadow-focus);
 }
 
-.datePickerWrapper:focus-within {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--color-primary-tint);
-}
-
 .calendarIcon {
-  font-size: 1.125rem;
+  font-size: 1rem;
   line-height: 1;
   pointer-events: none;
 }
@@ -181,7 +178,7 @@
   font-size: 0.875rem;
   color: var(--color-text);
   cursor: pointer;
-  font-family: inherit;
+  font-family: var(--font-body);
   padding: 0;
   min-width: 110px;
 }
@@ -200,420 +197,810 @@
   top: 0;
 }
 
-.errorHint {
-  margin-top: var(--spacing-sm);
-  font-size: 0.875rem;
-}
+/* ── CTA STRIP ──────────────────────────────────────────────────── */
 
-/* Vote du jour */
-.voteOfTheDaySection {
+.ctaStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-lg) 0 0;
   margin-bottom: var(--spacing-lg);
 }
 
-.voteOfTheDayHeading {
-  font-size: 1.25rem;
-  font-weight: 600;
+.ctaChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: var(--color-background-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--border-radius-pill);
+  font-size: 0.875rem;
+  font-weight: 500;
   color: var(--color-text);
-  margin: 0 0 var(--spacing-sm) 0;
+  transition: all var(--duration-fast) var(--ease-out-expo);
 }
 
-.voteOfTheDayLoading,
-.voteOfTheDayError,
-.voteOfTheDayEmpty {
-  font-size: 0.938rem;
-  color: var(--color-text-light);
-  margin: 0;
-  padding: var(--spacing-md);
-  background: var(--color-background-alt);
-  border-radius: var(--border-radius);
-}
-
-.voteOfTheDayError {
-  color: var(--color-error, #c00);
-}
-
-.voteOfTheDayCard {
-  background: var(--color-background);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius);
-  padding: var(--spacing-md) var(--spacing-lg);
-  box-shadow: var(--shadow);
-}
-
-.voteOfTheDayBadgeWrapper {
-  margin-bottom: var(--spacing-xs);
-}
-
-.voteOfTheDayBadgeAdopte,
-.voteOfTheDayBadgeRejete {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: var(--border-radius);
-}
-
-.voteOfTheDayBadgeAdopte {
-  background: var(--color-primary-tint-light);
+.ctaChip:hover {
+  border-color: var(--color-primary);
   color: var(--color-primary);
+  background: var(--color-primary-tint-light);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
-.voteOfTheDayBadgeRejete {
-  background: #fce8e8;
-  color: #b91c1c;
+.ctaChipTeal {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: rgba(43, 168, 158, 0.07);
+  border: 1.5px solid rgba(43, 168, 158, 0.28);
+  border-radius: var(--border-radius-pill);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1a7a72;
+  transition: all var(--duration-fast) var(--ease-out-expo);
 }
 
-.voteOfTheDayTitle {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--color-text);
-  margin: 0 0 var(--spacing-xs) 0;
-  line-height: 1.35;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
+.ctaChipTeal:hover {
+  background: rgba(43, 168, 158, 0.14);
+  border-color: var(--color-accent-teal);
+  color: #0f5e57;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── VOTE DU JOUR ───────────────────────────────────────────────── */
+
+.voteSection {
+  margin-bottom: var(--spacing-xl);
+}
+
+.voteDuJourCard {
+  background: var(--color-background-card);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-warm);
+  border-left: 4px solid var(--color-section-aujourdhui);
+  transition: box-shadow var(--duration-normal) var(--ease-out-expo);
   overflow: hidden;
 }
 
-.voteOfTheDayMeta {
-  font-size: 0.8125rem;
-  color: var(--color-text-light);
-  margin: 0 0 var(--spacing-sm) 0;
+.voteDuJourCard:hover {
+  box-shadow: var(--shadow-elevated);
 }
 
-.voteOfTheDayContext {
-  font-size: 0.875rem;
-  color: var(--color-text);
-  margin: 0 0 var(--spacing-sm) 0;
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.voteOfTheDaySynthese {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-sm);
-  font-size: 0.875rem;
-  color: var(--color-text-light);
-  margin-bottom: var(--spacing-md);
-}
-
-.voteOfTheDayPoll {
-  padding-top: var(--spacing-sm);
-  border-top: 1px solid var(--color-border);
-  margin-bottom: var(--spacing-md);
-}
-
-.voteOfTheDayPollQuestion {
-  font-size: 0.875rem;
-  color: var(--color-text);
-  margin: 0 0 var(--spacing-xs) 0;
-}
-
-.voteOfTheDayPollThanks {
-  font-size: 0.875rem;
-  color: var(--color-primary);
-  font-weight: 500;
-  margin: 0;
-}
-
-.voteOfTheDayPollButtons {
-  display: flex;
-  gap: var(--spacing-sm);
-  margin-top: var(--spacing-xs);
-}
-
-.voteOfTheDayPollBtn {
-  padding: 6px 14px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  border: 1px solid var(--color-border);
-  background: white;
-  color: var(--color-text);
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-}
-
-.voteOfTheDayPollBtn:hover {
-  border-color: var(--color-primary);
-  background: var(--color-primary-tint-light);
-  color: var(--color-primary);
-}
-
-.voteOfTheDayPollBtn[aria-pressed="true"] {
-  background: var(--color-primary);
-  color: white;
-  border-color: var(--color-primary);
-}
-
-.voteOfTheDayCta {
-  display: inline-block;
-  font-weight: 600;
-  font-size: 0.938rem;
-  color: var(--color-primary);
-}
-
-.voteOfTheDayCta:hover {
-  text-decoration: underline;
-}
-
-.sittings {
+.voteDuJourInner {
+  padding: var(--spacing-lg);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
-  margin-bottom: var(--spacing-lg);
 }
 
-.sittingCard {
-  background: var(--color-background);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius);
-  padding: var(--spacing-md) var(--spacing-lg);
-  box-shadow: var(--shadow);
-  transition: all 0.2s;
-  cursor: pointer;
-  display: block;
-  text-align: left;
-}
-
-.sittingCard:hover {
-  box-shadow: var(--shadow-lg);
-  border-color: var(--color-primary);
-}
-
-.sittingHeader {
+.voteDuJourHeader {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: var(--spacing-xs);
-  gap: var(--spacing-md);
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
 }
 
-.sittingHeader h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--color-primary);
-  flex: 1;
-  min-width: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  line-height: 1.35;
-}
-
-.sittingHeaderMeta {
+.voteDuJourBadges {
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
   flex-wrap: wrap;
 }
 
-.reminderWrap {
-  margin-left: auto;
-  flex-shrink: 0;
+.defiDuJourBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  background: linear-gradient(
+    135deg,
+    var(--color-section-aujourdhui),
+    #c94420
+  );
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: var(--border-radius-pill);
 }
 
-.typeBadgeSeance,
-.typeBadgeCommission {
+.defiDuJourBadge::before {
+  content: "⚡";
+  font-size: 0.65rem;
+}
+
+.badgeAdopte {
+  display: inline-block;
+  padding: 4px 10px;
+  background: var(--color-success-bg);
+  color: var(--color-success);
   font-size: 0.75rem;
-  padding: 2px 8px;
-  border-radius: var(--border-radius);
-  font-weight: 500;
+  font-weight: 600;
+  border-radius: var(--border-radius-pill);
+  border: 1px solid rgba(46, 139, 87, 0.2);
 }
 
-.typeBadgeSeance {
-  background: var(--color-background-alt);
-  color: var(--color-text);
+.badgeRejete {
+  display: inline-block;
+  padding: 4px 10px;
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--border-radius-pill);
+  border: 1px solid rgba(192, 57, 43, 0.2);
 }
 
-.typeBadgeCommission {
-  background: var(--color-primary-tint-light);
-  color: var(--color-primary);
-}
-
-.timeRange {
-  padding: var(--spacing-xs) var(--spacing-sm);
-  background: var(--color-background-alt);
-  border-radius: var(--border-radius);
-  font-size: 0.875rem;
-  font-weight: 500;
+.voteMeta {
+  font-size: 0.8125rem;
+  color: var(--color-text-light);
+  margin: 0;
+  font-family: var(--font-mono);
   white-space: nowrap;
 }
 
-.organeLine {
+.voteDuJourTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.voteDuJourContext {
+  font-size: 0.9375rem;
+  color: var(--color-text-light);
+  margin: 0;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Vote result bar */
+
+.voteResultBar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.voteBarTrack {
+  display: flex;
+  height: 10px;
+  border-radius: var(--border-radius-pill);
+  overflow: hidden;
+  background: var(--color-background-alt);
+}
+
+.voteBarSegmentPour {
+  height: 100%;
+  background: var(--color-success);
+  transition: width var(--duration-slow) var(--ease-out-expo);
+  min-width: 2px;
+}
+
+.voteBarSegmentAbst {
+  height: 100%;
+  background: var(--color-accent-amber);
+  transition: width var(--duration-slow) var(--ease-out-expo);
+  min-width: 2px;
+}
+
+.voteBarSegmentContre {
+  height: 100%;
+  background: var(--color-accent-coral);
+  transition: width var(--duration-slow) var(--ease-out-expo);
+  min-width: 2px;
+}
+
+.voteBarLegend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8125rem;
+  font-family: var(--font-mono);
+  gap: var(--spacing-sm);
+}
+
+.voteBarLabelPour {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.voteBarLabelAbst {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--color-warning);
+  font-weight: 500;
+}
+
+.voteBarLabelContre {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--color-accent-coral);
+  font-weight: 600;
+}
+
+.voteBarDotPour,
+.voteBarDotAbst,
+.voteBarDotContre {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.voteBarDotPour {
+  background: var(--color-success);
+}
+
+.voteBarDotAbst {
+  background: var(--color-accent-amber);
+}
+
+.voteBarDotContre {
+  background: var(--color-accent-coral);
+}
+
+/* Poll interaction */
+
+.votePoll {
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.pollQuestion {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 var(--spacing-xs);
+}
+
+.pollThanks {
+  font-size: 0.9375rem;
+  color: var(--color-success);
+  margin: 0;
+}
+
+.pollBtns {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.pollBtnPour,
+.pollBtnContre {
+  padding: 9px 22px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  border-radius: var(--border-radius-pill);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out-expo);
+}
+
+.pollBtnPour {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  border: 1.5px solid rgba(46, 139, 87, 0.28);
+}
+
+.pollBtnPour:hover {
+  background: var(--color-success);
+  color: #fff;
+  border-color: var(--color-success);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(46, 139, 87, 0.22);
+}
+
+.pollBtnContre {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  border: 1.5px solid rgba(192, 57, 43, 0.2);
+}
+
+.pollBtnContre:hover {
+  background: var(--color-accent-coral);
+  color: #fff;
+  border-color: var(--color-accent-coral);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(232, 93, 58, 0.22);
+}
+
+/* CTA link */
+
+.voteDuJourCta {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-section-aujourdhui);
+  transition: all var(--duration-fast) var(--ease-out-expo);
+  gap: 4px;
+}
+
+.voteDuJourCta:hover {
+  color: var(--color-primary);
+  gap: 8px;
+}
+
+/* Skeleton stack */
+
+.skeletonStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+/* ── AGENDA SECTION ─────────────────────────────────────────────── */
+
+.agendaSection {
+  margin-bottom: var(--spacing-xl);
+}
+
+/* Magazine grid: 3/5 featured + 2/5 compact stack */
+.sittingGrid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: var(--spacing-md);
+  align-items: start;
+}
+
+.sittingGridSingle {
+  grid-template-columns: 1fr;
+}
+
+.featuredSittingCol {
+  min-width: 0;
+}
+
+.compactSittingCol {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  min-width: 0;
+}
+
+/* Base card */
+.sittingCard {
+  background: var(--color-background-card);
+  border-radius: var(--border-radius-xl);
+  border: 1px solid var(--color-border-light);
+  box-shadow: var(--shadow-card);
+  display: block;
+  text-align: left;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--ease-out-expo);
+}
+
+.sittingCard:hover {
+  box-shadow: var(--shadow-elevated);
+  transform: translateY(-2px);
+  border-color: rgba(30, 58, 95, 0.18);
+}
+
+.sittingCard:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-card);
+}
+
+/* Featured variant */
+.sittingCardFeatured {
+  border-top: 3px solid var(--color-section-calendrier);
+  padding: var(--spacing-lg);
+}
+
+/* Compact variant */
+.sittingCardCompact {
+  padding: var(--spacing-md);
+}
+
+/* Card sub-elements */
+.sittingCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.sittingCardBadges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.badgeSeance {
+  display: inline-block;
+  padding: 3px 9px;
+  background: var(--color-primary-tint-light);
+  color: var(--color-primary);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  border-radius: var(--border-radius-pill);
+  letter-spacing: 0.02em;
+}
+
+.badgeCommission {
+  display: inline-block;
+  padding: 3px 9px;
+  background: rgba(43, 168, 158, 0.1);
+  color: #1a7a72;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  border-radius: var(--border-radius-pill);
+  letter-spacing: 0.02em;
+}
+
+.timeRange {
+  padding: 3px 8px;
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius-pill);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--color-text-light);
+  white-space: nowrap;
+}
+
+.reminderWrap {
+  flex-shrink: 0;
+}
+
+.sittingCardTitle {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0 0 6px;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.sittingCardFeatured .sittingCardTitle {
+  font-size: 1.375rem;
+  -webkit-line-clamp: 3;
+}
+
+.sittingCardOrg {
   font-size: 0.8125rem;
   color: var(--color-text-light);
-  margin-bottom: var(--spacing-xs);
+  margin: 0 0 4px;
 }
 
 .organeLink {
-  color: var(--color-primary);
+  color: var(--color-accent-teal);
   font-weight: 500;
+  cursor: pointer;
 }
 
 .organeLink:hover {
   text-decoration: underline;
 }
 
-.location {
-  color: var(--color-text-light);
+.sittingCardLocation {
   font-size: 0.8125rem;
-  margin-bottom: var(--spacing-xs);
+  color: var(--color-text-light);
+  margin: 0 0 var(--spacing-sm);
 }
 
-.description {
-  margin-bottom: var(--spacing-md);
-  line-height: 1.5;
-  font-size: 0.938rem;
-  color: var(--color-text);
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
+/* Agenda items */
 .agendaItems {
   background: var(--color-background-alt);
-  padding: var(--spacing-sm);
   border-radius: var(--border-radius);
-  margin-bottom: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
 }
 
-.agendaItems h4 {
-  font-size: 1rem;
-  margin-bottom: var(--spacing-xs);
-  color: var(--color-text);
+.agendaItemsCompact {
+  margin-top: var(--spacing-xs);
 }
 
-.agendaItems ul {
+.agendaItemsTitle {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 0 0 var(--spacing-xs);
+}
+
+.agendaItemsList {
   list-style: none;
+  display: flex;
+  flex-direction: column;
 }
 
-.agendaItems li {
-  padding: var(--spacing-xs) 0;
-  border-top: 1px solid var(--color-border);
-  font-size: 0.938rem;
+.agendaItem {
+  padding: 6px 0;
+  border-top: 1px solid var(--color-border-light);
+  font-size: 0.875rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 5px;
+  color: var(--color-text);
+  line-height: 1.4;
 }
 
-.agendaItems li:first-child {
+.agendaItem:first-child {
   border-top: none;
+  padding-top: 0;
 }
 
 .itemTime {
-  display: inline-block;
-  margin-right: var(--spacing-sm);
-  color: var(--color-primary);
-  font-weight: 500;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-section-calendrier);
+  font-weight: 600;
   min-width: 3rem;
+  flex-shrink: 0;
+}
+
+.itemTitle {
+  flex: 1;
+  min-width: 0;
 }
 
 .campaignTopics {
-  margin-top: 4px;
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   gap: 4px;
-  font-size: 0.75rem;
-}
-
-.campaignLabel {
-  font-weight: 500;
-  color: var(--color-text-light);
+  margin-top: 4px;
+  width: 100%;
 }
 
 .campaignBadge {
-  padding: 2px 6px;
-  border-radius: 999px;
-  border: 1px solid var(--color-primary-tint-strong);
+  padding: 2px 7px;
   background: var(--color-primary-tint-light);
   color: var(--color-primary);
-  font-weight: 500;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  border-radius: var(--border-radius-pill);
+  border: 1px solid var(--color-primary-tint-strong);
 }
 
 .moreItems {
-  color: var(--color-text-light);
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
   font-style: italic;
+  padding: 5px 0 0;
 }
 
-.sittingFooter {
+.sittingCardFooter {
   display: flex;
   justify-content: flex-end;
   padding-top: var(--spacing-sm);
-  border-top: 1px solid var(--color-border);
+  margin-top: var(--spacing-sm);
+  border-top: 1px solid var(--color-border-light);
 }
 
 .viewDetails {
+  font-size: 0.875rem;
+  font-weight: 600;
   color: var(--color-primary);
-  font-weight: 500;
-  font-size: 0.938rem;
+  transition: letter-spacing var(--duration-fast) var(--ease-out-expo);
 }
 
-.source {
+.sittingCard:hover .viewDetails {
+  letter-spacing: 0.01em;
+}
+
+/* Overflow grid for additional sittings beyond the sidebar */
+.overflowGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+/* Empty and source */
+.emptyAgenda {
+  text-align: center;
+  padding: var(--spacing-xxl) 0;
+}
+
+.emptyAgendaIcon {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.emptyAgendaText {
+  font-size: 1.0625rem;
+  color: var(--color-text-light);
+}
+
+.sourceNote {
   margin-top: var(--spacing-lg);
   padding: var(--spacing-sm) var(--spacing-md);
-  border-left: 3px solid var(--color-primary);
+  border-left: 3px solid var(--color-section-calendrier);
+  font-size: 0.8125rem;
+  color: var(--color-text-light);
+  background: var(--color-background-alt);
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+}
+
+.sourceDate {
+  color: var(--color-text-muted);
+}
+
+/* ── ACTION CARDS ───────────────────────────────────────────────── */
+
+.actionSection {
+  padding: var(--spacing-md) 0 var(--spacing-xxl);
+}
+
+.actionGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+}
+
+.actionCard {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--color-background-card);
+  border-radius: var(--border-radius-xl);
+  border: 1.5px solid var(--color-border);
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--duration-normal) var(--ease-out-expo);
+}
+
+.actionCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--card-accent, var(--color-primary));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--duration-normal) var(--ease-out-expo);
+}
+
+.actionCard:hover::before {
+  transform: scaleX(1);
+}
+
+.actionCard:hover {
+  box-shadow: var(--shadow-elevated);
+  transform: translateY(-3px);
+  border-color: rgba(30, 58, 95, 0.15);
+}
+
+.actionCardAmber {
+  --card-accent: var(--color-accent-amber);
+}
+
+.actionCardTeal {
+  --card-accent: var(--color-accent-teal);
+}
+
+.actionCardPlum {
+  --card-accent: var(--color-section-comprendre);
+}
+
+.actionCardIcon {
+  font-size: 1.75rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.actionCardContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.actionCardContent h3 {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0 0 3px;
+}
+
+.actionCardContent p {
+  font-size: 0.8125rem;
+  color: var(--color-text-light);
+  margin: 0;
+}
+
+.actionCardArrow {
+  font-size: 1.125rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: transform var(--duration-fast) var(--ease-out-expo),
+    color var(--duration-fast) var(--ease-in-out);
+}
+
+.actionCard:hover .actionCardArrow {
+  transform: translateX(5px);
+  color: var(--color-primary);
+}
+
+/* ── SHARED STATES ──────────────────────────────────────────────── */
+
+.stateError {
+  padding: var(--spacing-lg);
+  background: var(--color-error-bg-light);
+  border: 1px solid rgba(192, 57, 43, 0.15);
+  border-radius: var(--border-radius-lg);
+  color: var(--color-error);
+  font-size: 0.9375rem;
+}
+
+.errorHint {
+  margin-top: var(--spacing-xs);
   font-size: 0.8125rem;
   color: var(--color-text-light);
 }
 
-.sourceDate {
-  margin-top: 2px;
-}
-
-.footer {
-  background: var(--color-background-alt);
-  border-top: 1px solid var(--color-border);
-  padding: var(--spacing-lg) 0;
-  text-align: center;
+.emptyState {
+  padding: var(--spacing-lg);
   color: var(--color-text-light);
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
+  text-align: center;
 }
 
-.footer p {
-  margin-bottom: var(--spacing-xs);
-}
+/* ── RESPONSIVE ─────────────────────────────────────────────────── */
 
-.footer a {
-  color: var(--color-primary);
-  text-decoration: underline;
+@media (max-width: 960px) {
+  .actionGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sittingGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .overflowGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
-  .title {
-    font-size: 2rem;
-  }
-
-  .controlBar {
+  .heroInner {
     flex-direction: column;
-    gap: var(--spacing-sm);
-    padding: var(--spacing-md);
+    align-items: flex-start;
+    gap: var(--spacing-md);
   }
 
-  .leftControls {
-    order: 2;
+  .heroRight {
     width: 100%;
-    justify-content: center;
-  }
-
-  .centerControls {
-    order: 1;
-    width: 100%;
-  }
-
-  .dateTitle {
-    font-size: 1.125rem;
-    text-align: center;
-  }
-
-  .rightControls {
-    order: 3;
-    width: 100%;
-    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
   }
 
   .datePickerWrapper {
@@ -621,21 +1008,53 @@
     max-width: 200px;
   }
 
-  .datePicker {
+  .sittingGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .overflowGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .actionGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .sittingCardFeatured {
+    padding: var(--spacing-md);
+  }
+
+  .sittingCardFeatured .sittingCardTitle {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .voteDuJourInner {
+    padding: var(--spacing-md);
+  }
+
+  .voteDuJourTitle {
+    font-size: 1.125rem;
+  }
+
+  .voteBarLegend {
+    font-size: 0.75rem;
+  }
+
+  .pollBtnPour,
+  .pollBtnContre {
+    padding: 8px 16px;
     font-size: 0.875rem;
-    min-width: auto;
-    width: 100%;
   }
 
-  .calendarIcon {
-    font-size: 1rem;
+  .ctaStrip {
+    gap: 6px;
   }
 
-  .sittingHeader {
-    flex-direction: column;
-  }
-
-  .timeRange {
-    align-self: flex-start;
+  .ctaChip,
+  .ctaChipTeal {
+    font-size: 0.8125rem;
+    padding: 6px 12px;
   }
 }

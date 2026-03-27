@@ -7,15 +7,16 @@ import Link from "next/link";
 import styles from "./circonscriptions.module.css";
 import { Breadcrumb } from "@/components/Breadcrumb";
 
+/** Civic Warmth accent palette for circonscription cards */
 const ACCENT_COLORS = [
-  "#0055a4",
-  "#0d7377",
-  "#7d4e57",
-  "#2d6a4f",
-  "#9b5de5",
-  "#00b4d8",
-  "#e63946",
-  "#f4a261"
+  "#1E3A5F" /* deep navy */,
+  "#2BA89E" /* teal */,
+  "#E85D3A" /* coral */,
+  "#7B5EA7" /* plum */,
+  "#F0A030" /* amber */,
+  "#2E8B57" /* sea green */,
+  "#4A7FA5" /* muted blue */,
+  "#C0603A" /* burnt orange */
 ];
 
 function accentForId(id: string): string {
@@ -128,6 +129,16 @@ export default function CirconscriptionsPage() {
   return (
     <div className="container">
       <Breadcrumb items={[{ label: "Accueil", href: "/" }, { label: "Circonscriptions" }]} />
+
+      <div className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>
+          Circonscriptions <span>électorales</span>
+        </h1>
+        <p className={styles.pageSubtitle}>
+          Recherchez un département ou une circonscription pour trouver vos élus.
+        </p>
+      </div>
+
           {loading && (
             <div className="stateLoading">
               Chargement des circonscriptions...

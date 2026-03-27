@@ -1,21 +1,28 @@
 import React from "react";
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { colors } from "@/theme";
+import { colors, sectionColors } from "@/theme";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textLight,
-        headerStyle: {
-          backgroundColor: colors.primary
+        tabBarInactiveTintColor: colors.textMuted,
+        tabBarStyle: {
+          backgroundColor: colors.background,
+          borderTopColor: colors.border,
+          borderTopWidth: 1
         },
-        headerTintColor: colors.background,
+        headerStyle: {
+          backgroundColor: colors.background
+        },
+        headerTintColor: colors.primary,
         headerTitleStyle: {
-          fontWeight: "bold"
-        }
+          fontWeight: "bold",
+          color: colors.primary,
+          fontSize: 18
+        },
+        headerShadowVisible: false
       }}
     >
       <Tabs.Screen
@@ -24,6 +31,7 @@ export default function TabLayout() {
           title: "Aujourd'hui",
           tabBarLabel: "Aujourd'hui",
           headerTitle: "Agora",
+          tabBarActiveTintColor: sectionColors.aujourdhui,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="today" size={size} color={color} />
           )
@@ -35,6 +43,7 @@ export default function TabLayout() {
           title: "Scrutins",
           tabBarLabel: "Scrutins",
           headerTitle: "Scrutins",
+          tabBarActiveTintColor: sectionColors.votes,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="checkmark-circle" size={size} color={color} />
           )
@@ -46,6 +55,7 @@ export default function TabLayout() {
           title: "Calendrier",
           tabBarLabel: "Calendrier",
           headerTitle: "Calendrier",
+          tabBarActiveTintColor: sectionColors.calendrier,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="calendar" size={size} color={color} />
           )
@@ -57,6 +67,7 @@ export default function TabLayout() {
           title: "Explorer",
           tabBarLabel: "Explorer",
           headerTitle: "Explorer",
+          tabBarActiveTintColor: sectionColors.explorer,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="compass" size={size} color={color} />
           )
@@ -68,6 +79,7 @@ export default function TabLayout() {
           title: "À propos",
           tabBarLabel: "À propos",
           headerTitle: "À propos",
+          tabBarActiveTintColor: sectionColors.comprendre,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="information-circle" size={size} color={color} />
           )

@@ -1,0 +1,56 @@
+.card {
+  background: var(--color-background-card);
+  border-radius: var(--border-radius-lg);
+  transition:
+    box-shadow var(--duration-normal) var(--ease-out-expo),
+    transform var(--duration-normal) var(--ease-out-expo);
+}
+
+/* Variants */
+.default {
+  box-shadow: var(--shadow-card);
+}
+
+.elevated {
+  box-shadow: var(--shadow-warm);
+}
+
+.interactive {
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.interactive:hover {
+  box-shadow: var(--shadow-elevated);
+  transform: translateY(-2px);
+}
+
+.interactive:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-card);
+}
+
+.featured {
+  box-shadow: var(--shadow-elevated);
+}
+
+/* Padding */
+.padded {
+  padding: var(--spacing-md);
+}
+
+.paddedSm {
+  padding: var(--spacing-sm);
+}
+
+.paddedLg {
+  padding: var(--spacing-lg);
+}
+
+/* Section accent top border */
+.accentBorder {
+  border-top: 3px solid var(--accent-color, var(--color-primary));
+}

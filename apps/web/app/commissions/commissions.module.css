@@ -1,13 +1,29 @@
+/* ============================================================
+   Commissions page -- Civic Warmth redesign
+   Section accent: navy #1E3A5F (Explorer)
+   ============================================================ */
+
+/* ---------- Page header ---------- */
+
 .title {
-  font-size: 2rem;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
   font-weight: 700;
+  color: var(--color-text);
   margin-bottom: var(--spacing-xs);
+  line-height: 1.2;
 }
 
+.title span {
+  color: var(--color-section-explorer);
+}
+
+
 .intro {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--color-text-light);
   margin-bottom: var(--spacing-sm);
-  color: var(--color-text);
-  opacity: 0.9;
 }
 
 .comprendreBlock {
@@ -15,19 +31,28 @@
 }
 
 .comprendreLink {
-  color: var(--color-primary);
-  text-decoration: underline;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-section-explorer);
+  font-weight: 600;
   font-size: 0.9375rem;
+  text-decoration: none;
+  transition: opacity var(--duration-fast);
 }
 
 .comprendreLink:hover {
-  color: var(--color-primary-dark);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .errorHint {
   margin-top: var(--spacing-sm);
   font-size: 0.875rem;
+  color: var(--color-text-light);
 }
+
+/* ---------- Filter bar ---------- */
 
 .filters {
   display: flex;
@@ -35,38 +60,53 @@
   align-items: center;
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-lg);
-  padding: var(--spacing-md);
-  background: var(--color-background-alt);
-  border-radius: var(--border-radius);
-  border: 1px solid var(--color-border);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--color-background-card);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border-light);
 }
 
 .filterLabel {
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .filterSelect {
-  padding: var(--spacing-xs) var(--spacing-sm);
+  padding: 8px 14px;
   font-size: 0.9375rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius);
+  font-family: var(--font-body);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--border-radius-pill);
   background: var(--color-background);
   color: var(--color-text);
-  min-width: 12rem;
+  min-width: 14rem;
+  cursor: pointer;
+  transition: border-color var(--duration-fast);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7a7a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
 }
 
 .filterSelect:focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline: none;
+  border-color: var(--color-section-explorer);
+  box-shadow: 0 0 0 3px var(--color-primary-tint);
 }
 
 .resultCount {
   font-size: 0.875rem;
-  color: var(--color-text);
-  opacity: 0.9;
+  color: var(--color-text-muted);
+  margin-left: auto;
+  font-family: var(--font-mono);
 }
+
+/* ---------- Commission list ---------- */
 
 .listByType {
   display: flex;
@@ -81,12 +121,14 @@
 }
 
 .typeHeading {
+  font-family: var(--font-display);
   font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--color-primary);
+  font-weight: 700;
+  color: var(--color-text);
   margin: 0;
-  padding-bottom: var(--spacing-xs);
-  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--color-section-explorer);
+  display: inline-block;
 }
 
 .list {
@@ -95,51 +137,76 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-xs);
 }
+
+/* ---------- Commission card ---------- */
 
 .card {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--spacing-sm);
-  padding: var(--spacing-md);
-  background: var(--color-background);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--color-background-card);
+  border: 1px solid var(--color-border-light);
+  border-left: 3px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
   text-decoration: none;
   color: inherit;
-  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+  transition:
+    box-shadow var(--duration-normal) var(--ease-out-expo),
+    border-color var(--duration-normal) var(--ease-out-expo),
+    border-left-color var(--duration-normal) var(--ease-out-expo),
+    transform var(--duration-normal) var(--ease-out-expo),
+    background var(--duration-fast);
 }
 
 .card:hover {
-  border-color: var(--color-primary);
-  box-shadow: var(--shadow);
+  border-color: rgba(30, 58, 95, 0.18);
+  border-left-color: var(--color-section-explorer);
+  box-shadow: var(--shadow-warm);
+  transform: translateX(4px);
+  background: var(--color-background);
 }
 
 .cardLabel {
-  font-weight: 600;
-  color: var(--color-primary);
+  font-weight: 700;
+  color: var(--color-text);
   flex: 1;
   min-width: 0;
+  font-size: 1rem;
+  transition: color var(--duration-fast);
+}
+
+.card:hover .cardLabel {
+  color: var(--color-section-explorer);
 }
 
 .cardFullName {
-  font-size: 0.9rem;
-  color: var(--color-text);
-  opacity: 0.9;
+  font-size: 0.875rem;
+  color: var(--color-text-light);
   width: 100%;
+  line-height: 1.4;
 }
 
 .cardType {
   font-size: 0.75rem;
   padding: 2px 8px;
-  background: var(--color-background-alt);
-  border-radius: var(--border-radius);
-  color: var(--color-text);
+  background: var(--color-primary-tint-light);
+  border-radius: var(--border-radius-pill);
+  color: var(--color-primary);
+  font-weight: 500;
 }
 
 .cardArrow {
-  color: var(--color-primary);
+  color: var(--color-text-muted);
   font-weight: 600;
+  transition: color var(--duration-fast), transform var(--duration-fast);
+}
+
+.card:hover .cardArrow {
+  color: var(--color-section-explorer);
+  transform: translateX(3px);
 }

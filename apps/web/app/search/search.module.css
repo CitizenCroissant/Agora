@@ -1,47 +1,66 @@
-.backLink {
-  display: inline-block;
-  margin-bottom: var(--spacing-sm);
-  color: white;
-  opacity: 0.9;
-  transition: opacity 0.2s;
+/* ============================================================
+   Search page -- Civic Warmth redesign
+   Section accent: navy #1E3A5F (Explorer)
+   ============================================================ */
+
+/* ---------- Page header ---------- */
+
+.pageHeader {
+  margin-bottom: var(--spacing-lg);
 }
 
-.backLink:hover {
-  opacity: 1;
-}
-
-.title {
-  font-size: 2rem;
+.pageTitle {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
   font-weight: 700;
-  margin-bottom: var(--spacing-xs);
+  color: var(--color-text);
+  margin: 0 0 var(--spacing-xs);
+  line-height: 1.2;
 }
 
-.subtitle {
-  font-size: 1.125rem;
-  opacity: 0.9;
+.pageTitle span {
+  color: var(--color-section-explorer);
 }
+
+.pageSubtitle {
+  font-size: 1.0625rem;
+  color: var(--color-text-light);
+  margin: 0;
+}
+
+/* ---------- Search form ---------- */
 
 .searchForm {
   display: flex;
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-xl);
-  max-width: 560px;
+  max-width: 600px;
 }
 
 .searchButton {
-  padding: var(--spacing-md) var(--spacing-lg);
-  background: var(--color-primary);
+  padding: 10px 24px;
+  background: var(--color-section-explorer);
   color: white;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
   font-weight: 600;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius-pill);
   cursor: pointer;
-  transition: opacity 0.2s;
+  white-space: nowrap;
+  transition:
+    background var(--duration-fast) var(--ease-in-out),
+    box-shadow var(--duration-fast) var(--ease-in-out),
+    transform var(--duration-fast) var(--ease-in-out);
 }
 
 .searchButton:hover {
-  opacity: 0.9;
+  background: var(--color-primary-dark);
+  box-shadow: var(--shadow-warm);
+  transform: translateY(-1px);
 }
+
+/* ---------- Results ---------- */
 
 .results {
   display: flex;
@@ -50,13 +69,20 @@
 }
 
 .section {
-  margin-bottom: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
 }
 
 .sectionTitle {
-  font-size: 1.5rem;
-  color: var(--color-primary);
-  margin-bottom: var(--spacing-md);
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-sm);
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 2px solid var(--color-section-explorer);
+  display: inline-block;
 }
 
 .list {
@@ -65,8 +91,10 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-xs);
 }
+
+/* ---------- Result card ---------- */
 
 .card {
   display: flex;
@@ -74,55 +102,78 @@
   align-items: center;
   gap: var(--spacing-sm);
   padding: var(--spacing-md) var(--spacing-lg);
-  background: white;
-  border: 1px solid var(--color-primary-tint);
-  border-radius: 8px;
+  background: var(--color-background-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--border-radius-lg);
   text-decoration: none;
   color: inherit;
+  box-shadow: var(--shadow-sm);
   transition:
-    box-shadow 0.2s,
-    border-color 0.2s;
+    box-shadow var(--duration-fast) var(--ease-in-out),
+    border-color var(--duration-fast) var(--ease-in-out),
+    transform var(--duration-fast) var(--ease-in-out);
 }
 
 .card:hover {
-  border-color: var(--color-primary);
-  box-shadow: 0 4px 12px var(--color-primary-tint);
+  border-color: rgba(30, 58, 95, 0.25);
+  box-shadow: var(--shadow-warm);
+  transform: translateX(3px);
 }
 
 .cardTitle {
   font-weight: 600;
-  color: var(--color-primary);
+  color: var(--color-text);
   flex: 1;
   min-width: 0;
+  font-size: 1rem;
 }
 
 .cardMeta {
-  font-size: 0.875rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
   color: var(--color-text-muted);
+  white-space: nowrap;
 }
 
+/* ---------- Result status badges ---------- */
+
 .badgeAdopte {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  background: rgba(0, 128, 0, 0.15);
+  border-radius: var(--border-radius-pill);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  background: rgba(46, 139, 87, 0.12);
+  color: var(--color-success);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
 }
 
 .badgeRejete {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  background: rgba(200, 0, 0, 0.15);
+  border-radius: var(--border-radius-pill);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  background: rgba(232, 93, 58, 0.12);
+  color: var(--color-accent-coral);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
 }
 
-.footer {
-  padding: var(--spacing-lg) 0;
-  background: var(--color-background-alt);
-  text-align: center;
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
+/* ---------- Responsive ---------- */
+
+@media (max-width: 640px) {
+  .searchForm {
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+  .searchButton {
+    width: 100%;
+  }
 }

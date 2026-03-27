@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import Constants from "expo-constants";
-import { colors } from "@/theme";
+import { colors, spacing, radius, typography, shadows, sectionColors } from "@/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Config } from "../../config";
 import {
@@ -157,7 +157,7 @@ export default function AboutScreen() {
       : "https://agora.example.com/democratie";
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingTop: spacing.lg, paddingBottom: spacing.xxxl }}>
       <View style={styles.section}>
         <Text style={styles.heading}>Notre mission</Text>
         <Text style={styles.paragraph}>
@@ -269,20 +269,20 @@ export default function AboutScreen() {
             <Text
               style={[
                 styles.paragraph,
-                { marginTop: 8, fontStyle: "italic", color: "#666" }
+                { marginTop: spacing.sm, fontStyle: "italic", color: colors.textLight }
               ]}
             >
               {getPushSupportError() ??
                 "Les notifications push ne sont pas disponibles."}
             </Text>
-            <Text style={[styles.paragraph, { marginTop: 12 }]}>
+            <Text style={[styles.paragraph, { marginTop: spacing.md }]}>
               Pour tester les notifications push, créez un development build
               avec:
             </Text>
             <Text
               style={[
                 styles.paragraph,
-                { fontFamily: "monospace", fontSize: 12, marginTop: 4 }
+                { fontFamily: "monospace", fontSize: typography.fontSize.sm, marginTop: spacing.xs }
               ]}
             >
               eas build --platform android --profile development
@@ -303,7 +303,7 @@ export default function AboutScreen() {
                 value={pushEnabled}
                 onValueChange={handlePushToggle}
                 disabled={pushLoading}
-                trackColor={{ false: "#ccc", true: colors.primary }}
+                trackColor={{ false: colors.textMuted, true: colors.primary }}
                 thumbColor={colors.background}
               />
             </View>
@@ -381,123 +381,129 @@ export default function AboutScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background
+    backgroundColor: colors.backgroundAlt
   },
   section: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.md,
+    backgroundColor: colors.backgroundCard,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    ...shadows.sm
   },
   heading: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: colors.primary,
-    marginBottom: 12
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.semibold,
+    color: sectionColors.comprendre,
+    marginBottom: spacing.md
   },
   paragraph: {
-    fontSize: 16,
+    fontSize: typography.fontSize.base,
     lineHeight: 24,
     color: colors.text,
-    marginBottom: 12
+    marginBottom: spacing.md
   },
   step: {
     flexDirection: "row",
-    marginBottom: 16
+    marginBottom: spacing.lg
   },
   stepNumber: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.primary,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: sectionColors.comprendre,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 12
+    marginRight: spacing.md
   },
   stepNumberText: {
-    color: colors.background,
-    fontSize: 18,
-    fontWeight: "600"
+    color: colors.textInverse,
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.bold
   },
   stepContent: {
     flex: 1
   },
   stepTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 4
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
+    marginBottom: spacing.xs,
+    color: colors.text
   },
   stepText: {
-    fontSize: 14,
+    fontSize: typography.fontSize.md,
     lineHeight: 20,
     color: colors.textLight
   },
   link: {
-    paddingVertical: 8
+    paddingVertical: spacing.sm
   },
   linkText: {
-    fontSize: 16,
+    fontSize: typography.fontSize.base,
     color: colors.primary,
-    fontWeight: "500"
+    fontWeight: typography.fontWeight.medium
   },
   footer: {
-    padding: 24,
-    alignItems: "center"
+    padding: spacing.xl,
+    alignItems: "center",
+    marginTop: spacing.md
   },
   footerText: {
-    fontSize: 12,
+    fontSize: typography.fontSize.xs,
     color: colors.textMuted,
-    marginBottom: 4
+    marginBottom: spacing.xs
   },
   pushRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 8
+    marginTop: spacing.sm
   },
   pushLabel: {
-    fontSize: 16,
+    fontSize: typography.fontSize.base,
     color: colors.text
   },
   pushError: {
-    fontSize: 14,
+    fontSize: typography.fontSize.md,
     color: colors.error,
-    marginTop: 8
+    marginTop: spacing.sm
   },
   topicRow: {
-    marginTop: 16
+    marginTop: spacing.lg
   },
   topicLabel: {
-    fontSize: 14,
+    fontSize: typography.fontSize.md,
     color: colors.textLight,
-    marginBottom: 8
+    marginBottom: spacing.sm
   },
   topicButtons: {
     flexDirection: "row",
-    gap: 8
+    gap: spacing.sm,
+    flexWrap: "wrap"
   },
   topicButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 8,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.md,
     borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: colors.background
+    backgroundColor: colors.backgroundAlt
   },
   topicButtonActive: {
-    borderColor: colors.primary,
-    backgroundColor: colors.primary
+    borderColor: sectionColors.comprendre,
+    backgroundColor: sectionColors.comprendre
   },
   topicButtonText: {
-    fontSize: 14,
+    fontSize: typography.fontSize.md,
     color: colors.text
   },
   topicButtonTextActive: {
-    color: colors.background,
-    fontWeight: "600"
+    color: colors.textInverse,
+    fontWeight: typography.fontWeight.semibold
   },
   topicHint: {
-    fontSize: 12,
+    fontSize: typography.fontSize.xs,
     color: colors.textLight,
-    marginTop: 8
+    marginTop: spacing.sm
   }
 });
