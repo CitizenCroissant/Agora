@@ -175,6 +175,17 @@
   transform: translateX(2px);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .deputyCard:hover,
+  .deputyCard:active {
+    transform: none;
+  }
+
+  .deputyCard:hover .deputyCardArrow {
+    transform: none;
+  }
+}
+
 .footer {
   background: var(--color-background-alt);
   border-top: 1px solid var(--color-border);

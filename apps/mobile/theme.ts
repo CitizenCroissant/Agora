@@ -83,6 +83,16 @@ export const radius = {
   pill: 999
 } as const
 
+/** Loaded via expo-font in app/_layout.tsx — names match useAppFonts map keys */
+export const fonts = {
+  heading: "Sora_600SemiBold",
+  headingBold: "Sora_700Bold",
+  body: "Figtree_400Regular",
+  bodyMedium: "Figtree_500Medium",
+  bodySemibold: "Figtree_600SemiBold",
+  bodyBold: "Figtree_700Bold"
+} as const;
+
 /** Typography: font sizes and weights */
 export const typography = {
   fontSize: {
@@ -199,6 +209,7 @@ export const commonStyles = {
 
 export const theme = {
   colors,
+  fonts,
   sectionColors,
   spacing,
   radius,

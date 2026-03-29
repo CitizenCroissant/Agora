@@ -1,6 +1,7 @@
 import React from 'react'
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native'
-import { colors, spacing, typography } from '@/theme'
+import { View, Text, StyleSheet } from 'react-native'
+import { colors, spacing, typography, fonts } from '@/theme'
+import { SkeletonListPlaceholder } from '@/app/components/Skeleton'
 
 type StatusMessageType = 'loading' | 'error' | 'empty'
 
@@ -14,8 +15,10 @@ export function StatusMessage({ type, message, hint }: StatusMessageProps) {
   if (type === 'loading') {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={styles.loadingText}>{message ?? 'Chargement...'}</Text>
+        <SkeletonListPlaceholder rows={3} />
+        {message != null && message.length > 0 && (
+          <Text style={styles.loadingText}>{message}</Text>
+        )}
       </View>
     )
   }
@@ -38,14 +41,17 @@ export function StatusMessage({ type, message, hint }: StatusMessageProps) {
 
 const styles = StyleSheet.create({
   loadingContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.xxxl
+    alignItems: 'stretch',
+    justifyContent: 'flex-start',
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.xl
   },
   loadingText: {
     marginTop: spacing.lg,
     color: colors.textLight,
-    fontSize: typography.fontSize.base
+    fontSize: typography.fontSize.base,
+    fontFamily: fonts.body,
+    textAlign: 'center'
   },
   errorContainer: {
     padding: spacing.xl,
@@ -54,12 +60,13 @@ const styles = StyleSheet.create({
   errorText: {
     color: colors.error,
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.medium,
+    fontFamily: fonts.bodyMedium,
     marginBottom: spacing.sm
   },
   errorHint: {
     color: colors.textLight,
     fontSize: typography.fontSize.md,
+    fontFamily: fonts.body,
     textAlign: 'center'
   },
   emptyContainer: {
@@ -69,6 +76,7 @@ const styles = StyleSheet.create({
   emptyText: {
     color: colors.textLight,
     fontSize: typography.fontSize.base,
+    fontFamily: fonts.body,
     textAlign: 'center'
   }
 })

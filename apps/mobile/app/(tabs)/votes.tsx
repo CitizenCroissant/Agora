@@ -8,48 +8,9 @@ import {
   LayoutAnimation
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { DatePickerModal } from "@/app/components/DatePickerModal";
-import { StatusMessage } from "@/app/components/StatusMessage";
-import { ScreenContainer } from "@/app/components/ScreenContainer";
-import type { Scrutin, ScrutinsResponse } from "@agora/shared";
-import { colors, spacing, radius, typography, shadows, sectionColors } from "@/theme";
-import { layoutAnimationPresets } from "@/lib/animations";
-
-function VoteResultBar({ pour, contre, abstention }: { pour: number; contre: number; abstention: number }) {
-  const total = pour + contre + abstention
-  if (total === 0) return null
-  const pourPct = (pour / total) * 100
-  const contrePct = (contre / total) * 100
-  const abstPct = (abstention / total) * 100
-  const label = `Résultat du vote : ${pourPct.toFixed(0)} % pour, ${contrePct.toFixed(0)} % contre${abstPct > 0 ? `, ${abstPct.toFixed(0)} % abstentions` : ""}`
-  return (
-    <View
-      style={barStyles.container}
-      accessibilityRole="image"
-      accessibilityLabel={label}
-    >
-      <View style={[barStyles.segment, barStyles.pour, { flex: pourPct }]} />
-      <View style={[barStyles.segment, barStyles.abstention, { flex: abstPct }]} />
-      <View style={[barStyles.segment, barStyles.contre, { flex: contrePct }]} />
-    </View>
-  )
-}
-
-const barStyles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    height: 5,
-    borderRadius: 3,
-    overflow: "hidden",
-    marginTop: spacing.sm,
-    backgroundColor: colors.backgroundAlt
-  },
-  segment: { height: "100%" },
-  pour: { backgroundColor: colors.success },
-  contre: { backgroundColor: colors.accentCoral },
-  abstention: { backgroundColor: colors.accentAmber }
-})
 import {
+  type Scrutin,
+  type ScrutinsResponse,
   getTodayDate,
   formatDate,
   getWeekStart,
@@ -61,7 +22,17 @@ import {
   formatDateRange,
   formatMonth
 } from "@agora/shared";
+import { DatePickerModal } from "@/app/components/DatePickerModal";
+import { StatusMessage } from "@/app/components/StatusMessage";
+import { ScreenContainer } from "@/app/components/ScreenContainer";
+import { VoteResultBar } from "@/app/components/VoteResultBar";
+import { Badge } from "@/app/components/Badge";
+import { Card } from "@/app/components/Card";
+import { EmptyState } from "@/app/components/EmptyState";
+import { VotesListSkeleton } from "@/app/components/Skeleton";
 import { apiClient } from "@/lib/api";
+import { colors, spacing, radius, typography, shadows, sectionColors, fonts } from "@/theme";
+import { layoutAnimationPresets } from "@/lib/animations";
 
 type ViewMode = "week" | "month";
 
@@ -263,9 +234,7 @@ export default function VotesTabScreen() {
       </View>
 
       <ScrollView style={styles.content}>
-        {loading && (
-          <StatusMessage type="loading" message="Chargement des scrutins..." />
-        )}
+        {loading && <VotesListSkeleton />}
 
         {error && (
           <StatusMessage type="error" message={`Erreur: ${error}`} />
@@ -274,7 +243,7 @@ export default function VotesTabScreen() {
         {!loading && !error && (
           <>
             {sortedDates.length === 0 ? (
-              <StatusMessage type="empty" message="Aucun scrutin pour cette période." />
+              <EmptyState message="Aucun scrutin pour cette période." />
             ) : (
               sortedDates.map((dateStr) => (
                 <View key={dateStr} style={styles.dateSection}>
@@ -282,29 +251,23 @@ export default function VotesTabScreen() {
                     {formatDate(dateStr)}
                   </Text>
                   {(byDate.get(dateStr) ?? []).map((scrutin) => (
-                    <TouchableOpacity
+                    <Card
                       key={scrutin.id}
-                      style={styles.scrutinCard}
                       onPress={() => router.push(`/votes/${scrutin.id}`)}
+                      style={styles.scrutinCard}
                       accessibilityLabel={`${scrutin.sort_code === "adopté" ? "Adopté" : "Rejeté"} — ${scrutin.titre}`}
                       accessibilityHint="Voir les détails du scrutin"
-                      accessibilityRole="button"
                     >
                       <View style={styles.scrutinHeader}>
-                        <View
-                          style={[
-                            styles.badge,
-                            scrutin.sort_code === "adopté"
-                              ? styles.badgeAdopte
-                              : styles.badgeRejete
-                          ]}
+                        <Badge
+                          variant={
+                            scrutin.sort_code === "adopté" ? "success" : "error"
+                          }
                         >
-                          <Text style={styles.badgeText}>
-                            {scrutin.sort_code === "adopté"
-                              ? "Adopté"
-                              : "Rejeté"}
-                          </Text>
-                        </View>
+                          {scrutin.sort_code === "adopté"
+                            ? "Adopté"
+                            : "Rejeté"}
+                        </Badge>
                         <Text style={styles.scrutinNumero}>
                           Scrutin n°{scrutin.numero}
                         </Text>
@@ -315,9 +278,9 @@ export default function VotesTabScreen() {
                       {scrutin.tags && scrutin.tags.length > 0 && (
                         <View style={styles.tagsContainer}>
                           {scrutin.tags.slice(0, 3).map((tag) => (
-                            <View key={tag.id} style={styles.tag}>
-                              <Text style={styles.tagText}>{tag.label}</Text>
-                            </View>
+                            <Badge key={tag.id} variant="primary">
+                              {tag.label}
+                            </Badge>
                           ))}
                           {scrutin.tags.length > 3 && (
                             <Text style={styles.moreTags}>
@@ -333,11 +296,12 @@ export default function VotesTabScreen() {
                         </Text>
                       </View>
                       <VoteResultBar
+                        variant="compact"
                         pour={scrutin.synthese_pour ?? 0}
                         contre={scrutin.synthese_contre ?? 0}
                         abstention={scrutin.synthese_abstentions ?? 0}
                       />
-                    </TouchableOpacity>
+                    </Card>
                   ))}
                 </View>
               ))
@@ -396,7 +360,8 @@ const styles = StyleSheet.create({
   },
   dateButtonText: {
     fontSize: typography.fontSize.lg,
-    lineHeight: 20
+    lineHeight: 20,
+    fontFamily: fonts.body
   },
   viewToggle: {
     flexDirection: "row",
@@ -419,7 +384,7 @@ const styles = StyleSheet.create({
   },
   viewButtonText: {
     fontSize: typography.fontSize.md,
-    fontWeight: typography.fontWeight.semibold,
+    fontFamily: fonts.bodySemibold,
     color: colors.textLight
   },
   viewButtonTextActive: {
@@ -437,7 +402,7 @@ const styles = StyleSheet.create({
   },
   iconButtonText: {
     fontSize: 28,
-    fontWeight: "300",
+    fontFamily: fonts.body,
     color: colors.text
   },
   todayButton: {
@@ -448,12 +413,12 @@ const styles = StyleSheet.create({
   },
   todayButtonText: {
     fontSize: 13,
-    fontWeight: typography.fontWeight.semibold,
+    fontFamily: fonts.bodySemibold,
     color: colors.background
   },
   periodTitle: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold,
+    fontFamily: fonts.heading,
     color: colors.text,
     textAlign: "center",
     textTransform: "capitalize"
@@ -467,7 +432,7 @@ const styles = StyleSheet.create({
   },
   dateSectionTitle: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold,
+    fontFamily: fonts.heading,
     color: sectionColors.votes,
     marginBottom: spacing.md,
     textTransform: "capitalize"
@@ -487,29 +452,14 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
     gap: spacing.sm
   },
-  badge: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.sm
-  },
-  badgeAdopte: {
-    backgroundColor: colors.successBg
-  },
-  badgeRejete: {
-    backgroundColor: colors.errorBg
-  },
-  badgeText: {
-    fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.text
-  },
   scrutinNumero: {
     fontSize: typography.fontSize.sm,
+    fontFamily: fonts.body,
     color: colors.textLight
   },
   scrutinTitle: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold,
+    fontFamily: fonts.bodySemibold,
     color: colors.text,
     marginBottom: spacing.sm
   },
@@ -519,19 +469,9 @@ const styles = StyleSheet.create({
     gap: 6,
     marginBottom: spacing.sm
   },
-  tag: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    backgroundColor: colors.primaryTint,
-    borderRadius: radius.lg
-  },
-  tagText: {
-    fontSize: 11,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.primary
-  },
   moreTags: {
     fontSize: 11,
+    fontFamily: fonts.body,
     color: colors.textLight,
     alignSelf: "center"
   },
@@ -542,6 +482,7 @@ const styles = StyleSheet.create({
   },
   syntheseText: {
     fontSize: typography.fontSize.sm,
+    fontFamily: fonts.body,
     color: colors.textLight
   }
 });

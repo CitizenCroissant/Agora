@@ -227,7 +227,7 @@ export default function HomePageClient() {
 
       <div className="container">
         {/* ── CTA STRIP ───────────────────────────────── */}
-        <div className={styles.ctaStrip}>
+        <div className={`${styles.ctaStrip} staggerChildren`}>
           <Link href="/municipales-2026" className={styles.ctaChip}>
             Municipales 2026 →
           </Link>
@@ -263,7 +263,7 @@ export default function HomePageClient() {
           )}
 
           {!voteOfTheDayLoading && !voteOfTheDayError && voteOfTheDay && (
-            <div className={styles.voteDuJourCard}>
+            <div className={`${styles.voteDuJourCard} animateIn`}>
               <div className={styles.voteDuJourInner}>
                 {/* Header row: badges + meta */}
                 <div className={styles.voteDuJourHeader}>
@@ -397,7 +397,7 @@ export default function HomePageClient() {
                       <div className={styles.featuredSittingCol}>
                         <Link
                           href={`/sitting/${featuredSitting.id}`}
-                          className={`${styles.sittingCard} ${styles.sittingCardFeatured}`}
+                          className={`${styles.sittingCard} ${styles.sittingCardFeatured} animateIn`}
                         >
                           <div className={styles.sittingCardHeader}>
                             <div className={styles.sittingCardBadges}>
@@ -541,7 +541,9 @@ export default function HomePageClient() {
 
                     {/* Sidebar compact sittings (max 3 beside featured) */}
                     {sidebarSittings.length > 0 && (
-                      <div className={styles.compactSittingCol}>
+                      <div
+                        className={`${styles.compactSittingCol} staggerChildren`}
+                      >
                         {sidebarSittings.map((sitting) => (
                           <Link
                             key={sitting.id}
@@ -665,7 +667,7 @@ export default function HomePageClient() {
 
                   {/* Overflow sittings in a responsive grid */}
                   {overflowSittings.length > 0 && (
-                    <div className={styles.overflowGrid}>
+                    <div className={`${styles.overflowGrid} staggerChildren`}>
                       {overflowSittings.map((sitting) => (
                         <Link
                           key={sitting.id}

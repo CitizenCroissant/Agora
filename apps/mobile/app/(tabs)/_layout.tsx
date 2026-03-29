@@ -1,7 +1,7 @@
 import React from "react";
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { colors, sectionColors } from "@/theme";
+import { colors, fonts, sectionColors } from "@/theme";
 
 export default function TabLayout() {
   return (
@@ -18,7 +18,8 @@ export default function TabLayout() {
         },
         headerTintColor: colors.primary,
         headerTitleStyle: {
-          fontWeight: "bold",
+          fontWeight: "700",
+          fontFamily: fonts.headingBold,
           color: colors.primary,
           fontSize: 18
         },

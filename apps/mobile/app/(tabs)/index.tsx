@@ -6,7 +6,10 @@ import { getTodayDate, formatDate, addDays, subtractDays } from '@agora/shared'
 import { apiClient } from '@/lib/api'
 import { ScreenContainer } from '@/app/components/ScreenContainer'
 import { StatusMessage } from '@/app/components/StatusMessage'
-import { colors, spacing, radius, typography, shadows, sectionColors } from '@/theme'
+import { Card } from '@/app/components/Card'
+import { EmptyState } from '@/app/components/EmptyState'
+import { HomeAgendaSkeleton } from '@/app/components/Skeleton'
+import { colors, spacing, radius, typography, shadows, sectionColors, fonts } from '@/theme'
 import { layoutAnimationPresets } from '@/lib/animations'
 
 export default function TodayScreen() {
@@ -103,9 +106,7 @@ export default function TodayScreen() {
       </TouchableOpacity>
 
       <ScrollView style={styles.content}>
-        {loading && (
-          <StatusMessage type="loading" message="Chargement..." />
-        )}
+        {loading && <HomeAgendaSkeleton />}
 
         {error && (
           <StatusMessage
@@ -118,16 +119,15 @@ export default function TodayScreen() {
         {!loading && !error && agenda && (
           <>
             {agenda.sittings.length === 0 ? (
-              <StatusMessage type="empty" message="Aucune séance prévue pour cette date." />
+              <EmptyState message="Aucune séance prévue pour cette date." />
             ) : (
               agenda.sittings.map((sitting) => (
-                <TouchableOpacity
+                <Card
                   key={sitting.id}
                   style={styles.sittingCard}
                   onPress={() => router.push(`/sitting/${sitting.id}`)}
                   accessibilityLabel={sitting.title}
                   accessibilityHint="Voir les détails de la séance"
-                  accessibilityRole="button"
                 >
                   <View style={styles.sittingHeader}>
                     <Text style={styles.sittingTitle}>{sitting.title}</Text>
@@ -151,7 +151,7 @@ export default function TodayScreen() {
                       </Text>
                     </View>
                   )}
-                </TouchableOpacity>
+                </Card>
               ))
             )}
 
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
   },
   navButtonText: {
     fontSize: 28,
-    fontWeight: '300',
+    fontFamily: fonts.body,
     color: colors.text,
     lineHeight: 32
   },
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   },
   heroDate: {
     fontSize: typography.fontSize.xl,
-    fontWeight: typography.fontWeight.bold,
+    fontFamily: fonts.headingBold,
     color: colors.primary,
     textTransform: 'capitalize',
     textAlign: 'center'
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   todayPillText: {
     color: colors.textInverse,
     fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.semibold,
+    fontFamily: fonts.bodySemibold,
     textTransform: 'uppercase',
     letterSpacing: 0.5
   },
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   backTodayText: {
     fontSize: typography.fontSize.sm,
     color: colors.primary,
-    fontWeight: typography.fontWeight.medium
+    fontFamily: fonts.bodyMedium
   },
   voteCta: {
     marginHorizontal: spacing.lg,
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   },
   voteCtaText: {
     fontSize: 14,
-    fontWeight: typography.fontWeight.semibold,
+    fontFamily: fonts.bodySemibold,
     color: colors.warning,
     flex: 1
   },
@@ -264,7 +264,6 @@ const styles = StyleSheet.create({
     flex: 1
   },
   sittingCard: {
-    backgroundColor: colors.backgroundCard,
     marginHorizontal: spacing.lg,
     marginTop: spacing.md,
     padding: spacing.lg,
@@ -279,13 +278,14 @@ const styles = StyleSheet.create({
   },
   sittingTitle: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold,
+    fontFamily: fonts.bodySemibold,
     color: colors.primary,
     flex: 1,
     marginRight: spacing.sm
   },
   timeRange: {
     fontSize: typography.fontSize.xs,
+    fontFamily: fonts.body,
     color: colors.textLight,
     backgroundColor: colors.backgroundAlt,
     paddingHorizontal: spacing.sm,
@@ -294,12 +294,14 @@ const styles = StyleSheet.create({
   },
   location: {
     fontSize: typography.fontSize.sm,
+    fontFamily: fonts.body,
     color: colors.textLight,
     marginBottom: spacing.sm
   },
   description: {
     fontSize: typography.fontSize.md,
     lineHeight: 20,
+    fontFamily: fonts.body,
     color: colors.text,
     marginBottom: spacing.sm
   },
@@ -310,6 +312,7 @@ const styles = StyleSheet.create({
   },
   itemsCountText: {
     fontSize: typography.fontSize.sm,
+    fontFamily: fonts.body,
     color: colors.textLight
   },
   source: {
@@ -321,11 +324,13 @@ const styles = StyleSheet.create({
   },
   sourceLabel: {
     fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.semibold,
+    fontFamily: fonts.bodySemibold,
+    color: colors.text,
     marginBottom: spacing.xs
   },
   sourceDate: {
     fontSize: typography.fontSize.xs,
+    fontFamily: fonts.body,
     color: colors.textLight
   }
 })

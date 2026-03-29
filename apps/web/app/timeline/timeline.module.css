@@ -118,17 +118,29 @@
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-md);
   transition:
-    box-shadow var(--duration-fast) var(--ease-in-out),
-    border-color var(--duration-fast) var(--ease-in-out),
-    transform var(--duration-fast) var(--ease-in-out);
+    box-shadow var(--duration-normal) var(--ease-out-expo),
+    border-color var(--duration-normal) var(--ease-out-expo),
+    transform var(--duration-normal) var(--ease-out-expo);
   cursor: pointer;
   display: block;
 }
 
 .sittingCard:hover {
-  box-shadow: var(--shadow-warm);
+  box-shadow: var(--shadow-elevated);
   border-color: rgba(43, 168, 158, 0.3);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+}
+
+.sittingCard:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-card);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sittingCard:hover,
+  .sittingCard:active {
+    transform: none;
+  }
 }
 
 .sittingCardVote {

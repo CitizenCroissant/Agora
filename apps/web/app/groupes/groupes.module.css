@@ -132,6 +132,20 @@
   transform: translateX(3px);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .groupCard:hover {
+    transform: none;
+  }
+
+  .groupCard:hover .groupCardAccent {
+    height: 3rem;
+  }
+
+  .groupCard:hover .groupCardArrow {
+    transform: none;
+  }
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 640px) {

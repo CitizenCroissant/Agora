@@ -272,6 +272,17 @@
   transform: translateX(2px);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .deputyCard:hover,
+  .deputyCard:active {
+    transform: none;
+  }
+
+  .deputyCard:hover .deputyCardArrow {
+    transform: none;
+  }
+}
+
 .empty {
   color: var(--color-text-light);
   font-size: 1rem;

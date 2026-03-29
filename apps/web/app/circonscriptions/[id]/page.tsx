@@ -91,7 +91,7 @@ export default function CirconscriptionPage() {
                         <h2 className={styles.sectionTitle}>
                           Députés en mandat ({current.length})
                         </h2>
-                        <ul className={styles.deputyList}>
+                        <ul className={`${styles.deputyList} staggerChildren`}>
                           {current.map((d) => (
                             <li key={d.acteur_ref}>
                               <Link
@@ -138,7 +138,7 @@ export default function CirconscriptionPage() {
                         <h2 className={styles.sectionTitle}>
                           Anciens députés ({past.length})
                         </h2>
-                        <ul className={styles.deputyList}>
+                        <ul className={`${styles.deputyList} staggerChildren`}>
                           {past.map((d) => (
                             <li key={d.acteur_ref}>
                               <Link

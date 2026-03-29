@@ -244,7 +244,7 @@ export default function CirconscriptionsPage() {
                             className={styles.groupContent}
                             hidden={!isExpanded}
                           >
-                            <ul className={styles.list}>
+                            <ul className={`${styles.list} staggerChildren`}>
                               {group.circonscriptions.map((c) => (
                                 <li key={c.id}>
                                   <Link

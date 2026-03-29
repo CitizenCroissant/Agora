@@ -306,6 +306,18 @@ a {
 .staggerChildren > *:nth-child(10) { --stagger-i: 9; }
 .staggerChildren > *:nth-child(11) { --stagger-i: 10; }
 .staggerChildren > *:nth-child(12) { --stagger-i: 11; }
+.staggerChildren > *:nth-child(13) { --stagger-i: 12; }
+.staggerChildren > *:nth-child(14) { --stagger-i: 13; }
+.staggerChildren > *:nth-child(15) { --stagger-i: 14; }
+.staggerChildren > *:nth-child(16) { --stagger-i: 15; }
+.staggerChildren > *:nth-child(17) { --stagger-i: 16; }
+.staggerChildren > *:nth-child(18) { --stagger-i: 17; }
+.staggerChildren > *:nth-child(19) { --stagger-i: 18; }
+.staggerChildren > *:nth-child(20) { --stagger-i: 19; }
+.staggerChildren > *:nth-child(21) { --stagger-i: 20; }
+.staggerChildren > *:nth-child(22) { --stagger-i: 21; }
+.staggerChildren > *:nth-child(23) { --stagger-i: 22; }
+.staggerChildren > *:nth-child(24) { --stagger-i: 23; }
 
 /* Explicit delay helpers (for use without JS) */
 .delay1 { animation-delay: 55ms !important; }

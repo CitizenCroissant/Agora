@@ -13,7 +13,10 @@ import type { ScrutinDetailResponse } from "@agora/shared";
 import { formatDate, slugify } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import { StatusMessage } from "@/app/components/StatusMessage";
-import { colors, spacing, radius, typography, shadows, sectionColors } from "@/theme";
+import { VoteResultBar } from "@/app/components/VoteResultBar";
+import { Badge } from "@/app/components/Badge";
+import { Card } from "@/app/components/Card";
+import { colors, spacing, radius, typography, shadows, sectionColors, fonts } from "@/theme";
 
 const POSITION_LABELS: Record<string, string> = {
   pour: "Pour",
@@ -21,64 +24,6 @@ const POSITION_LABELS: Record<string, string> = {
   abstention: "Abstention",
   non_votant: "Non votant"
 };
-
-function ResultBar({ pour, contre, abstention }: { pour: number; contre: number; abstention: number }) {
-  const total = pour + contre + abstention;
-  if (total === 0) return null;
-  const pourPct = (pour / total) * 100;
-  const contrePct = (contre / total) * 100;
-  const abstPct = (abstention / total) * 100;
-  const label = `Résultat : ${pourPct.toFixed(0)} % pour, ${contrePct.toFixed(0)} % contre${abstPct > 0 ? `, ${abstPct.toFixed(0)} % abstentions` : ""}`;
-  return (
-    <View style={resultBarStyles.wrap}>
-      <View
-        style={resultBarStyles.bar}
-        accessibilityRole="image"
-        accessibilityLabel={label}
-      >
-        <View style={[resultBarStyles.seg, resultBarStyles.pour, { flex: pourPct }]} />
-        <View style={[resultBarStyles.seg, resultBarStyles.abst, { flex: abstPct }]} />
-        <View style={[resultBarStyles.seg, resultBarStyles.contre, { flex: contrePct }]} />
-      </View>
-      <View style={resultBarStyles.legend}>
-        <View style={resultBarStyles.legendItem}>
-          <View style={[resultBarStyles.dot, { backgroundColor: colors.success }]} />
-          <Text style={resultBarStyles.legendText}>Pour {pourPct.toFixed(0)}%</Text>
-        </View>
-        <View style={resultBarStyles.legendItem}>
-          <View style={[resultBarStyles.dot, { backgroundColor: colors.accentCoral }]} />
-          <Text style={resultBarStyles.legendText}>Contre {contrePct.toFixed(0)}%</Text>
-        </View>
-        {abstPct > 0 && (
-          <View style={resultBarStyles.legendItem}>
-            <View style={[resultBarStyles.dot, { backgroundColor: colors.accentAmber }]} />
-            <Text style={resultBarStyles.legendText}>Abst. {abstPct.toFixed(0)}%</Text>
-          </View>
-        )}
-      </View>
-    </View>
-  );
-}
-
-const resultBarStyles = StyleSheet.create({
-  wrap: { marginBottom: spacing.lg },
-  bar: {
-    flexDirection: "row",
-    height: 10,
-    borderRadius: 5,
-    overflow: "hidden",
-    backgroundColor: colors.backgroundAlt,
-    marginBottom: spacing.sm
-  },
-  seg: { height: "100%" },
-  pour: { backgroundColor: colors.success },
-  contre: { backgroundColor: colors.accentCoral },
-  abst: { backgroundColor: colors.accentAmber },
-  legend: { flexDirection: "row", gap: spacing.lg, flexWrap: "wrap" },
-  legendItem: { flexDirection: "row", alignItems: "center", gap: 5 },
-  dot: { width: 8, height: 8, borderRadius: 4 },
-  legendText: { fontSize: typography.fontSize.sm, color: colors.textLight }
-});
 
 export default function ScrutinDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -137,18 +82,12 @@ export default function ScrutinDetailScreen() {
         {!loading && !error && scrutin && (
           <View style={styles.content}>
             <View style={styles.header}>
-              <View
-                style={[
-                  styles.badge,
-                  scrutin.sort_code === "adopté"
-                    ? styles.badgeAdopte
-                    : styles.badgeRejete
-                ]}
+              <Badge
+                style={styles.headerBadge}
+                variant={scrutin.sort_code === "adopté" ? "success" : "error"}
               >
-                <Text style={styles.badgeText}>
-                  {scrutin.sort_code === "adopté" ? "Adopté" : "Rejeté"}
-                </Text>
-              </View>
+                {scrutin.sort_code === "adopté" ? "Adopté" : "Rejeté"}
+              </Badge>
               {scrutin.type_vote_libelle && (
                 <Text style={styles.typeVote}>{scrutin.type_vote_libelle}</Text>
               )}
@@ -163,12 +102,11 @@ export default function ScrutinDetailScreen() {
                     {scrutin.tags.map((tag) => (
                       <TouchableOpacity
                         key={tag.id}
-                        style={styles.tag}
                         onPress={() => router.push(`/votes?tag=${encodeURIComponent(tag.slug)}`)}
                         accessibilityLabel={`Filtrer par thème : ${tag.label}`}
                         accessibilityRole="button"
                       >
-                        <Text style={styles.tagText}>{tag.label}</Text>
+                        <Badge variant="primary">{tag.label}</Badge>
                       </TouchableOpacity>
                     ))}
                   </View>
@@ -186,9 +124,10 @@ export default function ScrutinDetailScreen() {
               </TouchableOpacity>
             </View>
 
-            <View style={styles.synthese}>
+            <Card style={styles.synthese}>
               <Text style={styles.sectionTitle}>Résultat</Text>
-              <ResultBar
+              <VoteResultBar
+                variant="detailed"
                 pour={scrutin.synthese_pour ?? 0}
                 contre={scrutin.synthese_contre ?? 0}
                 abstention={scrutin.synthese_abstentions ?? 0}
@@ -219,7 +158,7 @@ export default function ScrutinDetailScreen() {
                   <Text style={styles.syntheseLabel}>Non votants</Text>
                 </View>
               </View>
-            </View>
+            </Card>
 
             {scrutin.group_votes && scrutin.group_votes.length > 0 && (
               <View style={styles.groupVotesSection}>
@@ -377,32 +316,19 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border
   },
-  badge: {
+  headerBadge: {
     alignSelf: "flex-start",
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.md,
     marginBottom: spacing.sm
-  },
-  badgeAdopte: {
-    backgroundColor: colors.successBg
-  },
-  badgeRejete: {
-    backgroundColor: colors.errorBg
-  },
-  badgeText: {
-    fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.text
   },
   typeVote: {
     fontSize: typography.fontSize.sm,
+    fontFamily: fonts.body,
     color: colors.textLight,
     marginBottom: spacing.sm
   },
   title: {
     fontSize: typography.fontSize.xl + 2,
-    fontWeight: typography.fontWeight.bold,
+    fontFamily: fonts.headingBold,
     color: colors.primary,
     marginBottom: spacing.sm,
     lineHeight: 28
@@ -416,7 +342,7 @@ const styles = StyleSheet.create({
   },
   tagsTitle: {
     fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.bold,
+    fontFamily: fonts.bodyBold,
     color: colors.textLight,
     marginBottom: spacing.sm,
     textTransform: "uppercase",
@@ -427,19 +353,9 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: spacing.sm
   },
-  tag: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    backgroundColor: colors.primaryTint,
-    borderRadius: radius.pill
-  },
-  tagText: {
-    fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.medium,
-    color: colors.primary
-  },
   date: {
     fontSize: typography.fontSize.sm,
+    fontFamily: fonts.body,
     color: colors.textLight,
     textTransform: "capitalize"
   },
@@ -449,20 +365,16 @@ const styles = StyleSheet.create({
   sourcesLinkText: {
     fontSize: typography.fontSize.sm,
     color: colors.primary,
-    fontWeight: typography.fontWeight.medium
+    fontFamily: fonts.bodyMedium
   },
   sectionTitle: {
     fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.semibold,
+    fontFamily: fonts.heading,
     color: sectionColors.votes,
     marginBottom: spacing.md
   },
   synthese: {
-    marginBottom: spacing.xl,
-    backgroundColor: colors.backgroundCard,
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    ...shadows.sm
+    marginBottom: spacing.xl
   },
   syntheseGrid: {
     flexDirection: "row",
@@ -484,7 +396,7 @@ const styles = StyleSheet.create({
   },
   syntheseValue: {
     fontSize: 26,
-    fontWeight: typography.fontWeight.bold,
+    fontFamily: fonts.headingBold,
     color: colors.primary
   },
   syntheseValuePour: {
@@ -495,6 +407,7 @@ const styles = StyleSheet.create({
   },
   syntheseLabel: {
     fontSize: typography.fontSize.xs,
+    fontFamily: fonts.body,
     color: colors.textLight,
     marginTop: spacing.xs
   },
@@ -507,7 +420,7 @@ const styles = StyleSheet.create({
   linkText: {
     fontSize: typography.fontSize.md,
     color: colors.primary,
-    fontWeight: typography.fontWeight.medium
+    fontFamily: fonts.bodyMedium
   },
   groupVotesSection: {
     marginBottom: spacing.xl,
@@ -518,6 +431,7 @@ const styles = StyleSheet.create({
   },
   groupVotesHint: {
     fontSize: typography.fontSize.sm,
+    fontFamily: fonts.body,
     color: colors.textLight,
     marginBottom: spacing.md,
     paddingHorizontal: spacing.lg
@@ -530,12 +444,13 @@ const styles = StyleSheet.create({
   },
   groupVotesGroupLabel: {
     fontSize: typography.fontSize.md,
-    fontWeight: typography.fontWeight.semibold,
+    fontFamily: fonts.bodySemibold,
     color: colors.primary,
     marginBottom: spacing.xs
   },
   groupVotesStats: {
     fontSize: typography.fontSize.sm,
+    fontFamily: fonts.body,
     color: colors.textLight
   },
   likeAssemblyBlock: {
@@ -547,6 +462,7 @@ const styles = StyleSheet.create({
   },
   likeAssemblyText: {
     fontSize: typography.fontSize.sm,
+    fontFamily: fonts.body,
     color: colors.text,
     marginBottom: spacing.xs
   },
@@ -558,7 +474,7 @@ const styles = StyleSheet.create({
   },
   positionTitle: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold,
+    fontFamily: fonts.bodySemibold,
     color: colors.text,
     marginBottom: spacing.sm
   },
@@ -571,10 +487,11 @@ const styles = StyleSheet.create({
   deputyLink: {
     fontSize: typography.fontSize.md,
     color: colors.primary,
-    fontWeight: typography.fontWeight.medium
+    fontFamily: fonts.bodyMedium
   },
   voteComparisonLine: {
     fontSize: typography.fontSize.xs,
+    fontFamily: fonts.body,
     color: colors.textLight,
     marginTop: spacing.xs
   },
@@ -590,7 +507,7 @@ const styles = StyleSheet.create({
   sourceLink: {
     fontSize: typography.fontSize.md,
     color: colors.primary,
-    fontWeight: typography.fontWeight.medium,
+    fontFamily: fonts.bodyMedium,
     textAlign: "center"
   }
 });

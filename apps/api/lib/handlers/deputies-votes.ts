@@ -250,8 +250,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     );
 
-    // Sort by date descending
-    voteRecords.sort((a, b) => b.date_scrutin.localeCompare(a.date_scrutin));
+    // Newest first, then stable order by scrutin id
+    voteRecords.sort((a, b) => {
+      const byDate = b.date_scrutin.localeCompare(a.date_scrutin);
+      if (byDate !== 0) return byDate;
+      return b.scrutin_id.localeCompare(a.scrutin_id);
+    });
 
     const response: DeputyVotesResponse = {
       acteur_ref: acteurRef,

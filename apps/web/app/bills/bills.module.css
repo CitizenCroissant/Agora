@@ -212,11 +212,23 @@
 }
 
 .card:hover {
-  box-shadow: var(--shadow-warm);
+  box-shadow: var(--shadow-elevated);
   border-color: rgba(30, 58, 95, 0.18);
   border-left-color: var(--color-section-explorer);
-  transform: translateX(3px);
+  transform: translateY(-2px);
   background: var(--color-background);
+}
+
+.card:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-card);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card:hover,
+  .card:active {
+    transform: none;
+  }
 }
 
 .card:hover .cardTitle {

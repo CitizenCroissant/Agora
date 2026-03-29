@@ -222,7 +222,7 @@ export default function TimelinePage() {
                           Aucune séance prévue
                         </p>
                       ) : (
-                        <div className={styles.sittings}>
+                        <div className={`${styles.sittings} staggerChildren`}>
                           {agenda.sittings.map((sitting) => {
                             const hasVoteLike = (
                               sitting.agenda_items ?? []

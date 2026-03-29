@@ -11,8 +11,11 @@ import { useRouter } from "expo-router";
 import { DatePickerModal } from "@/app/components/DatePickerModal";
 import { StatusMessage } from "@/app/components/StatusMessage";
 import { ScreenContainer } from "@/app/components/ScreenContainer";
+import { Card } from "@/app/components/Card";
+import { EmptyState } from "@/app/components/EmptyState";
+import { TimelineAgendaSkeleton } from "@/app/components/Skeleton";
 import { AgendaRangeResponse } from "@agora/shared";
-import { colors, spacing, radius, typography, shadows, sectionColors } from "@/theme";
+import { colors, spacing, radius, typography, shadows, sectionColors, fonts } from "@/theme";
 import { layoutAnimationPresets } from "@/lib/animations";
 import {
   getTodayDate,
@@ -209,9 +212,7 @@ export default function TimelineScreen() {
       </View>
 
       <ScrollView style={styles.content}>
-        {loading && (
-          <StatusMessage type="loading" message="Chargement..." />
-        )}
+        {loading && <TimelineAgendaSkeleton />}
 
         {error && (
           <StatusMessage type="error" message={`Erreur: ${error}`} />
@@ -220,7 +221,7 @@ export default function TimelineScreen() {
         {!loading && !error && agendaRange && (
           <>
             {agendaRange.agendas.length === 0 ? (
-              <StatusMessage type="empty" message="Aucune séance prévue pour cette période." />
+              <EmptyState message="Aucune séance prévue pour cette période." />
             ) : (
               agendaRange.agendas.map((agenda) => {
                 const isToday = agenda.date === getTodayDate();
@@ -256,13 +257,13 @@ export default function TimelineScreen() {
                       </Text>
                     ) : (
                       agenda.sittings.map((sitting) => (
-                        <TouchableOpacity
+                        <Card
                           key={sitting.id}
+                          variant="flat"
                           style={styles.sittingCard}
                           onPress={() => router.push(`/sitting/${sitting.id}`)}
                           accessibilityLabel={sitting.title}
                           accessibilityHint="Voir les détails de la séance"
-                          accessibilityRole="button"
                         >
                           <View style={styles.sittingHeader}>
                             <Text style={styles.sittingTitle}>
@@ -278,7 +279,7 @@ export default function TimelineScreen() {
                             {sitting.agenda_items.length} point(s) à
                             l&apos;ordre du jour
                           </Text>
-                        </TouchableOpacity>
+                        </Card>
                       ))
                     )}
                   </View>
@@ -331,7 +332,7 @@ const styles = StyleSheet.create({
   },
   iconButtonText: {
     fontSize: 28,
-    fontWeight: "300",
+    fontFamily: fonts.body,
     color: colors.text,
     lineHeight: 32
   },
@@ -344,7 +345,7 @@ const styles = StyleSheet.create({
   },
   todayButtonText: {
     fontSize: 13,
-    fontWeight: typography.fontWeight.semibold,
+    fontFamily: fonts.bodySemibold,
     color: colors.background
   },
   rightControls: {
@@ -367,7 +368,8 @@ const styles = StyleSheet.create({
   },
   dateButtonText: {
     fontSize: typography.fontSize.lg,
-    lineHeight: 20
+    lineHeight: 20,
+    fontFamily: fonts.body
   },
   viewToggle: {
     flexDirection: "row",
@@ -390,7 +392,7 @@ const styles = StyleSheet.create({
   },
   viewButtonText: {
     fontSize: typography.fontSize.md,
-    fontWeight: typography.fontWeight.semibold,
+    fontFamily: fonts.bodySemibold,
     color: colors.textLight
   },
   viewButtonTextActive: {
@@ -398,7 +400,7 @@ const styles = StyleSheet.create({
   },
   periodLabel: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold,
+    fontFamily: fonts.heading,
     color: colors.text,
     textAlign: "center",
     textTransform: "capitalize"
@@ -429,12 +431,12 @@ const styles = StyleSheet.create({
   },
   dateLinkText: {
     fontSize: typography.fontSize.md,
-    fontWeight: typography.fontWeight.medium,
+    fontFamily: fonts.bodyMedium,
     color: sectionColors.votes
   },
   dateText: {
     fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.semibold,
+    fontFamily: fonts.heading,
     textTransform: "capitalize",
     flex: 1,
     color: colors.text
@@ -443,7 +445,7 @@ const styles = StyleSheet.create({
     backgroundColor: sectionColors.calendrier,
     color: colors.background,
     fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.bold,
+    fontFamily: fonts.bodyBold,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     borderRadius: radius.pill,
@@ -451,6 +453,7 @@ const styles = StyleSheet.create({
   },
   noSittings: {
     fontSize: typography.fontSize.md,
+    fontFamily: fonts.body,
     color: colors.textMuted,
     fontStyle: "italic",
     marginBottom: spacing.md
@@ -472,13 +475,14 @@ const styles = StyleSheet.create({
   },
   sittingTitle: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold,
+    fontFamily: fonts.bodySemibold,
     color: colors.primary,
     flex: 1,
     marginRight: spacing.sm
   },
   timeRange: {
     fontSize: typography.fontSize.sm,
+    fontFamily: fonts.body,
     color: colors.textLight,
     backgroundColor: colors.backgroundAlt,
     paddingHorizontal: spacing.sm,
@@ -487,6 +491,7 @@ const styles = StyleSheet.create({
   },
   itemCount: {
     fontSize: typography.fontSize.sm,
+    fontFamily: fonts.body,
     color: colors.textLight
   }
 });

@@ -10,7 +10,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useRouter } from "expo-router";
-import type { Deputy } from "@agora/shared";
+import type { Deputy, DeputyAttendanceHeatmapCell } from "@agora/shared";
 import { formatDate, slugify } from "@agora/shared";
 import { apiClient } from "@/lib/api";
 import { Config } from "@/config";
@@ -20,6 +20,7 @@ import {
   FAVORITE_DEPUTY_KEY
 } from "@/lib/notifications";
 import { StatusMessage } from "@/app/components/StatusMessage";
+import { AttendanceHeatmap } from "@/app/components/AttendanceHeatmap";
 import { colors, spacing, radius, typography, shadows } from "@/theme";
 
 const PUSH_ENABLED_KEY = "@agora_push_enabled";
@@ -43,11 +44,35 @@ export default function DeputyDetailScreen() {
   const [deputy, setDeputy] = useState<Deputy | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [heatmap, setHeatmap] = useState<DeputyAttendanceHeatmapCell[] | null>(
+    null
+  );
+  const [heatmapLoading, setHeatmapLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (acteurRef) {
       loadDeputy(acteurRef);
     }
+  }, [acteurRef]);
+
+  useEffect(() => {
+    if (!acteurRef) return;
+    let cancelled = false;
+    setHeatmapLoading(true);
+    setHeatmap(null);
+    (async () => {
+      try {
+        const data = await apiClient.getDeputyAttendanceHeatmap(acteurRef);
+        if (!cancelled) setHeatmap(data);
+      } catch {
+        if (!cancelled) setHeatmap(null);
+      } finally {
+        if (!cancelled) setHeatmapLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [acteurRef]);
 
   const loadDeputy = async (ref: string) => {
@@ -236,6 +261,22 @@ export default function DeputyDetailScreen() {
               )}
             </View>
 
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Activité</Text>
+              <Text style={styles.subsectionTitle}>
+                Présence globale (derniers 12 mois)
+              </Text>
+              {heatmapLoading ? (
+                <Text style={styles.attendanceStateText}>Chargement…</Text>
+              ) : heatmap && heatmap.length > 0 ? (
+                <AttendanceHeatmap cells={heatmap} />
+              ) : (
+                <Text style={styles.attendanceStateText}>
+                  Aucune donnée de présence disponible pour les 12 derniers mois.
+                </Text>
+              )}
+            </View>
+
             {isPushSupported() && (
               <View style={styles.section}>
                 <TouchableOpacity
@@ -337,6 +378,17 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
     textTransform: "uppercase",
     letterSpacing: 0.5
+  },
+  subsectionTitle: {
+    fontSize: typography.fontSize.md,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.text,
+    marginBottom: spacing.sm
+  },
+  attendanceStateText: {
+    fontSize: typography.fontSize.sm,
+    color: colors.textLight,
+    lineHeight: 20
   },
   infoRow: {
     marginBottom: spacing.md,

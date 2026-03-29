@@ -1,8 +1,12 @@
 import React, { useEffect } from "react";
 import { Stack, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import * as SplashScreen from "expo-splash-screen";
 import { setupNotificationHandler } from "@/lib/notifications";
-import { colors } from "@/theme";
+import { useAppFonts } from "@/lib/useAppFonts";
+import { colors, fonts } from "@/theme";
+
+void SplashScreen.preventAutoHideAsync();
 
 // Lazy load expo-notifications to avoid module loading errors
 function getNotifications() {
@@ -16,6 +20,13 @@ function getNotifications() {
 
 export default function RootLayout() {
   const router = useRouter();
+  const [fontsLoaded, fontError] = useAppFonts();
+
+  useEffect(() => {
+    if (fontsLoaded || fontError) {
+      void SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, fontError]);
 
   useEffect(() => {
     // Setup notification handler
@@ -42,6 +53,10 @@ export default function RootLayout() {
     return () => sub.remove();
   }, [router]);
 
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
+
   return (
     <>
       <StatusBar style="dark" />
@@ -52,7 +67,8 @@ export default function RootLayout() {
           },
           headerTintColor: colors.primary,
           headerTitleStyle: {
-            fontWeight: "bold",
+            fontWeight: "700",
+            fontFamily: fonts.headingBold,
             color: colors.primary
           },
           headerShadowVisible: false
